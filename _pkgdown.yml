@@ -46,11 +46,13 @@ reference:
       - sim_survtime
 
 navbar:
-  title: IVI026
+  title: IVI-RA
   left:
   - text: "Reference"
     href: reference/index.html
-  - text: "Vignettes"
+  - text: "Run the model"
     menu:
       - text: "Introduction to IVI026"
         href: articles/intro.html
+  - text: "Collaborate"
+    href: reference/index.html

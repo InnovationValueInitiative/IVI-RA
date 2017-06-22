@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rheumatoid arthritis microsimulation • IVI026</title>
+<title>Rheumatoid arthritis microsimulation • iviRA</title>
 <!-- jquery --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/simplex/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 <!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
@@ -24,7 +24,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="index.html">IVI026</a>
+      <a class="navbar-brand" href="index.html">IVI-RA</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
@@ -33,7 +33,7 @@
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Vignettes
+    Run the model
      
     <span class="caret"></span>
   </a>
@@ -42,6 +42,9 @@
       <a href="articles/intro.html">Introduction to IVI026</a>
     </li>
   </ul>
+</li>
+<li>
+  <a href="reference/index.html">Collaborate</a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right"></ul>
@@ -56,20 +59,20 @@
       </header><div class="row">
   <div class="contents col-md-9">
     
-<div id="ivi026" class="section level1">
+<div id="overview" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
-<a href="#ivi026" class="anchor"> </a>IVI026</h1></div>
-<p><code>IVI026</code> is a platform for open-source economic analysis of rheumatoid arthritis (RA) therapies. The R package provides a set of functions for simulating health and economic outcomes for RA patients using an individual patient simulation (IPS) approach.</p>
+<a href="#overview" class="anchor"> </a>Overview</h1></div>
+<p><code>iviRA</code> is an R package that runs the Innovation and Value Initiative’s (IVIs) cost-effectiveness model for rheumatoid arthritis. The IVI-RA model is an individual patient simulation (IPS) written mostly in C++ so that it can be run in a reasonable amount of time. The model is flexible and reflects a range of plausible structural assumptions and perspectives (e.g. health care sector, societal). Parameter uncertainty is quantified using probabilistic sensitivity analysis (PSA).</p>
 </div>
 <div id="installation" class="section level1">
 <h1 class="hasAnchor">
 <a href="#installation" class="anchor"> </a>Installation</h1>
-<p><code>IVI026</code> can be installed from GitHub using <code>devtools</code>:</p>
+<p><code>iviRA</code> can be installed from GitHub using <code>devtools</code>:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">"devtools"</span>)
 <span class="kw">library</span>(devtools)
-devtools::<span class="kw">install_github</span>(<span class="st">"InnovationValueInitiative/IVI026"</span>)</code></pre></div>
+devtools::<span class="kw">install_github</span>(<span class="st">"InnovationValueInitiative/iviRA"</span>)</code></pre></div>
 <p>It can then be loaded into <code>R</code>:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(IVI026)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(iviRA)</code></pre></div>
 </div>
 <div id="model-description" class="section level1">
 <h1 class="hasAnchor">
