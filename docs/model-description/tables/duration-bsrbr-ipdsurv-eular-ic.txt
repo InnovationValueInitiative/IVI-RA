@@ -1,0 +1,11 @@
+% latex table generated in R 3.3.2 by xtable 1.8-2 package
+% Wed Jun 21 23:02:39 2017
+  \hline
+Exponential & 38,840 & 38,847 & 15,126 & 15,132 \\ 
+  Weibull & 38,478 & 38,492 & 15,090 & 15,101 \\ 
+  Gompertz & 38,099 & 38,112 & 15,066 & 15,077 \\ 
+  Gamma & 38,587 & 38,600 & 15,098 & 15,110 \\ 
+  Log-logistic & 38,142 & 38,155 & 15,062 & 15,073 \\ 
+  Lognormal & 37,988 & 38,001 & 15,047 & 15,059 \\ 
+  Generalized gamma & 37,869 & 37,889 & 15,048 & 15,065 \\ 
+   \hline

@@ -1,0 +1,154 @@
+---
+title: Introduction to IVI026
+author: "Devin Incerti"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output: 
+   html_document:
+    toc: true
+    toc_depth: 1
+bibliography: vignettes.bib
+--- 
+
+# Overview
+`IVI026` is an R package that runs models within the IVI rheumatoid arthritis (RA) health-economic family of models. Each model is an individual patient simulation (IPS) that simulates individual patients one at a time. Probabilistic sensitivity analysis (PSA) is used to propagate uncertainty in the input parameters. The simulation is mostly written in `C++` to ensure that the simulation runs in a reasonable amount of time. 
+
+The package is current available on GitHub and can be installed by typing the following commands into the `R` console.
+
+```{r include=TRUE, eval=FALSE}
+install.packages("devtools")
+library(devtools)
+```
+
+Once installed, the package can be loaded into`R`.
+
+```{r }
+library("IVI026")
+```
+
+# Parameters and data
+Input parameters and data needed to run the simulation come preloaded with the package. To view the loaded data use the command `data(package = "IVI026")`.
+
+## Sampling patients
+Before running the IPS, patient characteristics must be specified. The patient dataset must be a matrix containing information on at least patient age, baseline HAQ, gender, and weight. Additionally, if the @wailoo2006modeling [utility agorithm is used](#simulating-qalys), then disease duration and the number of previous DMARDs must be specified as well. 
+
+The patient dataset can be generated using `sample_pats()`. The `type` argument specifies whether the patient cohort is homogeneous or heterogeneous. If the cohort is homogeneous, then the cohort consists of male and female patients that are identical in all respects other than gender; if the cohort is heterogeneous, then all variables vary across patients.
+
+```{r }
+pats <- sample_pats(n = 100, type = "heterog")
+head(pats)
+```
+
+## Sampling parameters
+PSA is conducted by sampling the parameters from their (joint) probability distribution and running the IPS for each randomly sampled parameter set. The parameters can be sampled using the function `sample_pars`, which generates a probability distribution for all parameters used within the family of models. 
+
+```{r }
+parsamp <- sample_pars(n = 100)
+names(parsamp)
+```
+
+`sample_pars` returns a list containing random draws of the different parameters used in the IPS. For example `parsamp$acr2eular` is an array containing two-way frequency matrices randomly sampled from a Dirichlet distribution that describe the probability of a EULAR response category conditional on ACR response.
+
+```{r }
+parsamp$acr2eular[,,1:2]
+```
+ 
+## Input data
+Model outcomes depend on both the parameters sampled using `sample_pars` and the characteristics of the patients. The `input_data` function generate the datasets needed to run the the simulation. 
+
+```{r }
+input.dat <- input_data(pats)
+names(input.dat)
+```
+
+# Running the IPS
+Given a sample of patients and parameters, the IPS is run in three steps. First, the progression of disease is simulated. Second, costs associated with the disease progression are simulated. Third, quality-adjusted life-years (QALYs) are simulated based on the relationship between disease progression and utility. 
+
+## Simulating disease progression
+Disease progression depends on the therapies used by patients. The list of potential therapies is available in the object `therapy.pars`, which contains all parameters in the model that vary across therapies.
+
+```{r }
+print(therapy.pars$info)
+```
+
+Therapies are specified within the simulation by providing the indices in `therapy.pars`. A treatment sequence of arbitrary length can be specified which consists of all the therapies used by a patient. Patients can either have same treatment sequence or different sequences. The treatment sequence (or set of treatment sequences) is referred to as an "arm". If the arm consists of a single treatment sequence, then it is specified as a single vector of indices; if each patient has their own treatment sequence, then the arm is specified as a matrix where each row contains the indices of the therapies used by a given patient
+
+In a cost-effectiveness analysis, we might want to compare a treatment arm of cDMARDs, etanercept + methotrexate, and adalimumab + methotrexate to a control arm of cDMARDs alone.
+
+```{r }
+arminds0 <- c(1)
+arminds1 <- c(1, 5, 2)
+```
+
+Disease progression is modeled using the function `sim_haq`, which simulates a patient's HAQ score over time. For example, we can simulate disease progression for patients on cDMARDs. 
+
+```{r, cache = TRUE }
+sim.out0 <- sim_haq(arminds0, input_dat = input.dat, pars = parsamp)
+head(sim.out0)
+
+```
+
+`sim_haq` returns a `data.table` which is an enhanced `data.frame` from the `data.table` package designed for fast data manipulation. For a given sampled parameter set (`sim`) a sampled patient (`id`) remains on a given `therapy` until time to treatment discontinuation (`ttd`) becomes less than zero in a given `month`. Treatment discontinuation is caused by a serious infection (`si` = 1) if the sampled time to serious infection at treatment initiation is less than the sampled time to discontinuation. After discontinuation, a patient switches to the next `therapy` and `therapy_seq` increments by one. Patient `age` increases in 6-month increments. The HAQ score (`haq`) during the initial 6-month period (`therapy_cycle = 1`) and `ttd` depend on ACR response (`acr`) and in turn, EULAR response (`eular`). The HAQ score (`haq`) progresses over time according to the treatment and the statistical method used to model the trajectory of the HAQ score. The simulation ends when a patient dies (`death = 1`).
+
+We might also want to simulate disease progression for the treatment arm. 
+```{r, cache = TRUE }
+sim.out1 <- sim_haq(arminds1, input_dat = input.dat, pars = parsamp)
+```
+
+Output from the simulations can be combined into a single `data.table`, which can be used to estimate cost and QALYs for each arm.  
+
+```{r, cache = TRUE }
+sim.out0$arm <- "arm0"
+sim.out1$arm <- "arm1"
+sim.out <- rbind(sim.out0, sim.out1)
+```
+
+## Simulating costs
+The costs associated with each arm are simulated using the output from `sim_haq`. Health sector costs and productivity losses are simulated using the functions `sim_hc_cost` and `sim_prod_loss` respectively. 
+
+```{r, cache = TRUE }
+sim.out <- cbind(sim.out, sim_hc_cost(sim.out, pats[, "weight"], pars = parsamp))
+sim.out$prod_loss <- sim_prod_loss(sim.out, pl_haq = parsamp$prod.loss)
+head(sim.out[, .(sim, id, month, infusion_cost, rx_cost, treat_cost, hosp_cost, mgmt_cost, si_cost, hc_cost, prod_loss)])
+```
+
+An important component of health care sector costs (`hc_cost`) are the costs associated with treatment (`treat_cost`) with consist of infusion costs (`infusion_cost`) and drug acquisition costs (`rx_cost`). Other health care sector costs are hospital costs (`hosp_cost`), which increase with the HAQ score; general management costs (`mgmt_cost`); and the costs of caused by serious infections (`si_cost`). Higher HAQ scores also increase productivity losses measured as lost wages (`prod_loss`).
+
+## Simulating QALYs
+Patient utility as a function of the HAQ score is determined using statistical algorithms that correlate HAQ to utility. The preferred algorithm is the mixture model by @alava2013relationship, which can be simulated using `sim_utility_mixture`. Since utility from the mixture model depends on both pain and HAQ, the algorithm simulates `pain` before simulating `utility`.  
+
+```{r, cache = TRUE }
+sim.out <- cbind(sim.out, sim_utility_mixture(sim.out, male = input.dat$male, 
+                                      pars = c(pain, parsamp$mixture.utility)))
+```
+
+The utility mapping algorithm of @wailoo2006modeling can be used as well. 
+
+```{r, cache = TRUE }
+util.wailoo <- sim_utility_wailoo(sim.out, input_data = input.dat, 
+                                      pars = parsamp$wailoo.utility)
+head(util.wailoo)
+```
+
+QALYs in a given 6-month period are calculated as a function of utility determined by the simulated HAQ score and whether a serious infection occurred (which creates a one-period loss in utility).
+
+```{r }
+sim.out$qalys <- sim_qalys(sim.out, sim.out$utility, si_ul = parsamp$si.ul)
+head(sim.out[, .(sim, id, month, pain, utility, qalys)])
+```
+
+# Cost-effectiveness analysis
+The `hesim` package contains a number of functions for conducting cost-effectiveness analyses. To prepare the data so that it can be analyzed with `hesim`, mean outcomes must be calculated for each simulation number and each treatment arm.
+
+```{r }
+n.inner <- max(sim.out$sim)
+ce <- sim.out[, .(grp = 1,
+             qalys = sum(qalys)/n.inner,
+                       dqalys = sum(qalys * .03)/n.inner,
+                       hc_cost = sum(hc_cost)/n.inner,
+                       dhc_cost = sum(hc_cost * .03)/n.inner),
+                   by = c("sim", "arm")]
+```
+
+The functions in `hesim` are designed for subgroup analyses so we must specify a group variable. The current analysis does not specify subgroups so we assume a single large group. Analysis from a health care sector perspective would compare clinical effectiveness as measured by discounted QALYs (`dqalys`) to costs as measured by discounted health care sector costs (`dhc_cost`). An analysis from a societal perspective would add productivity losses to health care sector costs. 
+
+# References

@@ -1,0 +1,56 @@
+templates:
+  params:
+    bootswatch: simplex
+    
+articles:
+  - title: "IVI026 vignettes"
+    contents:
+    - intro
+
+reference:
+  - title: "Model inputs"
+    contents:
+      - acr2eular
+      - dur.eular
+      - eular2haq
+      - haq.lprog.age
+      - lifetable
+      - mgmt.cost
+      - pain
+      - therapy.pars
+      - util.pars
+  - title: "Generate input data"
+    contents:
+      - sample_pats
+      - input_data
+  - title: "Sample parameters for PSA"
+    contents:
+      - sample_pars
+      - par_table
+      - sample_normal
+      - sample_mvnorm
+      - sample_dirichlet
+      - sample_gamma
+      - sample_survpars
+      - sample_pars_utility_mixture
+  - title: "Individual patient simulation"
+    contents:
+      - sim_haq
+      - sim_hc_cost
+      - sim_prod_loss
+      - sim_utility_mixture
+      - sim_utility_wailoo
+      - sim_qalys
+  - title: "Other useful functions"
+    contents:
+      - sim_survtime
+
+navbar:
+  title: IVI026
+  left:
+  - text: "Reference"
+    href: reference/index.html
+  - text: "Vignettes"
+    menu:
+      - text: "Introduction to IVI026"
+        href: articles/intro.html

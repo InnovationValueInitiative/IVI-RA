@@ -1,0 +1,8 @@
+% latex table generated in R 3.3.2 by xtable 1.8-2 package
+% Wed Jun 21 23:02:39 2017
+  \hline
+<20 & 755 & 136 & 57 \\ 
+  20-50 & 4 & 27 & 26 \\ 
+  50-70 & 2 & 2 & 10 \\ 
+  70+ & 0 & 2 & 2 \\ 
+   \hline

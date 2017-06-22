@@ -1,0 +1,9 @@
+% latex table generated in R 3.3.2 by xtable 1.8-2 package
+% Wed Jun 21 23:02:39 2017
+ \hspace{3mm}HAQ: 0-<0.5 & 0.260 & 0.000 & 1.725 & \citet{carlson2015economic} \\ 
+  \hspace{3mm}HAQ: 0.5-<1 & 0.130 & 0.000 & 1.409 & \citet{carlson2015economic} \\ 
+  \hspace{3mm}HAQ: 1-<1.5 & 0.510 & 0.015 & 1.850 & \citet{carlson2015economic} \\ 
+  \hspace{3mm}HAQ: 1.5-<2 & 0.720 & 0.092 & 1.979 & \citet{carlson2015economic} \\ 
+  \hspace{3mm}HAQ: 2-<2.5 & 1.860 & 1.013 & 2.960 & \citet{carlson2015economic} \\ 
+  \hspace{3mm}HAQ: >2.5 & 4.160 & 3.238 & 5.196 & \citet{carlson2015economic} \\ 
+  

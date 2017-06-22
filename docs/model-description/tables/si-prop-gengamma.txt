@@ -1,0 +1,6 @@
+% latex table generated in R 3.3.2 by xtable 1.8-2 package
+% Mon Jun 12 12:18:57 2017
+  \hline
+MTX or non-biologic treatment & 0.0608 & 0.0410 & 0.0810 \\ 
+  Biologic treatment & 0.1148 & 0.0830 & 0.1520 \\ 
+   \hline

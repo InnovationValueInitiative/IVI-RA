@@ -1,0 +1,1314 @@
+\documentclass[11pt,final,fleqn]{article}
+
+% basic packages
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in] { geometry }
+\usepackage{amssymb,amsmath, bm}
+\usepackage{verbatim}
+\usepackage[latin1]{inputenc}
+%\usepackage[OT1]{fontenc}
+\usepackage{setspace}
+\usepackage{natbib}
+\usepackage{enumitem}
+\usepackage[hyphens,spaces,obeyspaces]{url}
+\usepackage[font={bf}]{caption}
+%\usepackage{pgfplots}
+%\usepackage[font={bf}]{caption}
+\usepackage{setspace}
+\usepackage{latexsym}
+%\usepackage{euscript}
+\usepackage{graphicx}
+\usepackage{marvosym}
+%\usepackage[varg]{txfonts}  Older version of ``g'' in math.
+\usepackage{pdflscape}
+\usepackage{algorithm}
+
+% bibliography packages
+\usepackage{natbib}
+\bibpunct{(}{)}{;}{a}{}{,}
+\bibliographystyle{apa}
+\renewcommand{\bibname}{References}
+
+% hyperref options
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\hypersetup{
+    colorlinks,
+    linkcolor={blue!50!black},
+    citecolor={blue!50!black},
+    urlcolor={blue!80!black}
+}
+\newcommand*{\Appendixautorefname}{Appendix}
+\renewcommand*{\sectionautorefname}{Section}
+\renewcommand*{\subsectionautorefname}{Section}
+\renewcommand*{\subsubsectionautorefname}{Section}
+\newcommand{\aref}[1]{\hyperref[#1]{Appendix~\ref{#1}}}
+\newcommand{\algorithmautorefname}{Algorithm}
+
+% packages for tables
+\usepackage{longtable}
+\usepackage{booktabs, threeparttable}
+\usepackage{threeparttablex}
+\usepackage{tabularx}
+% dcolumn package
+\usepackage{dcolumn}
+\newcolumntype{.}{D{.}{.}{-1}}
+\newcolumntype{d}[1]{D{.}{.}{#1}}
+\captionsetup{belowskip=10pt,aboveskip=-5pt}
+\usepackage{multirow}
+% rotating package
+\usepackage[figuresright]{rotating}
+\usepackage{pdflscape}
+\usepackage{subcaption}
+\usepackage{caption} 
+\captionsetup[table]{skip=5pt}
+
+% packages for figures
+\usepackage{grffile}
+\usepackage{afterpage}
+\usepackage{float}
+\usepackage[section]{placeins}
+\usepackage[export]{adjustbox}
+
+% theorem package
+\usepackage{theorem}
+\theoremstyle{plain}
+\theoremheaderfont{\scshape}
+\newtheorem{theorem}{Theorem}
+\newtheorem{assumption}{Assumption}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+\newtheorem{remark}{Remark}
+\newcommand{\qed}{\hfill \ensuremath{\Box}}
+\newcommand\indep{\protect\mathpalette{\protect\independenT}{\perp}}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\argmin}{arg\min}
+\DeclareMathOperator{\argmax}{arg\max}
+\def\independenT#1#2{\mathrel{\rlap{$#1#2$}\mkern2mu{#1#2}}}
+\providecommand{\norm}[1]{\lVert#1\rVert}
+\renewcommand\r{\right}
+\renewcommand\l{\left}
+\newcommand\E{\mathbb{E}}
+\newcommand\dist{\buildrel\rm d\over\sim}
+\newcommand\iid{\stackrel{\rm i.i.d.}{\sim}}
+\newcommand\ind{\stackrel{\rm indep.}{\sim}}
+\newcommand\cov{{\rm Cov}}
+\newcommand\var{{\rm Var}}
+\newcommand\SD{{\rm SD}}
+\newcommand\bone{\mathbf{1}}
+\newcommand\bzero{\mathbf{0}}
+
+% file paths and definitions
+\makeatletter
+\newcommand*\ExpandableInput[1]{\@@input#1 }
+\makeatother
+
+% spacing 
+\usepackage[compact]{titlesec}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+
+% appendix settings
+\usepackage[toc,page,header]{appendix}
+\renewcommand{\appendixpagename}{\centering Appendices}
+\usepackage{chngcntr}
+\usepackage{etoolbox}
+\usepackage{lipsum}
+
+% title
+\title{A Description of the IVI-RA Model}
+\author{Devin Incerti\footnote{Innovation and Value Initiative} \and Jeroen P. Jansen\footnote{Innovation and Value Initiative}}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begingroup
+ \hypersetup{linkcolor=black} \tableofcontents
+ \listoffigures
+ \listoftables
+\endgroup
+
+<<setup, include=FALSE>>=
+# packages + settings
+library("pander")
+library("xtable")
+library("IVI026")
+library("data.table")
+library("ggplot2")
+theme_set(theme_bw())
+
+# some functions
+first_upper <- function(x) {
+   substr(x, 1, 1) <- toupper(substr(x, 1, 1))
+return(x)
+}
+@
+
+\section{Overview}\label{overview}
+
+This document describes version 1.0 of IVI's ``family'' of rheumatoid
+arthritis cost-effectiveness models. The family of models consists of a
+set of separate models with different underlying structural assumptions.
+Although the underlying modeling assumptions vary, each model is an
+individual patient simulation (IPS), which allows us to model treatment
+and disease progression as realistically as possible.
+
+The IVI026 family of models is available as an R package, but the
+majority of the code for the IPS is written in C++ so that the models
+can be simulated in a reasonable time frame. Documentation is available
+online at \url{https://www.google.com}.
+
+This document is structured as follows. \autoref{sec:model-structures}
+outlines the competing model structures. \autoref{sec:data-parameters}
+describes the statistical techniques used to estimate the model
+parameters and the data sources used. \autoref{sec:sim-uncertainty}
+describes the simulation techniques used to implement the RA family of
+models and quantify uncertainty. Finally, \autoref{sec:model-validation}
+validates the different components of the models and examines the
+implications of the alternative structural assumptions.
+
+\section{Competing model structures}\label{sec:model-structures}
+
+The competing model structures are based on the Sheffield RA health
+economic model \citep{tosh2011sheffield} and
+the IPS model by \citet{stevenson2016adalimumab} recently used
+by NICE in the United Kingdom.
+
+The models simulate treatment sequence of arbitrary length. bDMARDS that
+can be included in the sequence include tumor necrosis factor (TNF)
+inhibitors (etanercept, adalimumab, certolizumab, golimumab), non-TNF
+inhibitors (abatecept, tocilizumab, rituximab), and Janus kinase/signal
+transducers and activators of transcription (JAK/STAT) inhibitors
+(tofacitinib). Conventional DMARDS (cDMARDs) such as methotrexate can
+also be included in a treatment sequence.
+
+At the start of the model each patient is assigned a baseline Health
+Assessment Questionnaire (HAQ) Disability Index score. Subsequently, the
+impact of the disease measured by the HAQ trajectory over time is
+modeled as a function of sequenced treatments
+(\autoref{fig:haq-structure}). In the absence of treatment, HAQ
+deteriorates at a certain rate as depicted by the dashed line in the
+figure. Treatment is separated into two distinct phases: an initial
+phase of up to 6 months, consistent with data reported from randomized
+controlled trials (RCTs), and a maintenance phase thereafter until
+discontinuation. During the initial treatment phase HAQ is modeled as a
+change from baseline. In the maintenance phase, statistical models are
+used to simulate the progression of HAQ over time. Two possibilities are
+considered: a scenario in which HAQ progression is linear and a second
+scenario where HAQ progression is simulated using a non-linear mixture
+model.
+
+\begin{figure}
+\centering
+\includegraphics[max size={\textwidth}{\textheight}]{figs/haq-structure.pdf}
+\caption{Model structure regarding development of HAQ with sequential
+biologic treatment}\label{fig:haq-structure}
+\end{figure}
+
+Patients with insufficient response at the end of the initial 6-month
+period switch to the subsequent bDMARD, whereas those with a successful
+response continue with the same treatment as maintenance regimen until
+efficacy is lost or treatment is discontinued for other reasons. Most
+clinical trials use the American College of Rheumatology (ACR) 20/50/70
+response criteria to assess efficacy. However, in routine practice ACR
+response criteria are not used; decisions regarding treatment switching
+are more likely to be informed by response criteria based on SDAI in the
+US and EULAR response in the UK. To capture differences in clinical
+practice in different settings we will model separate scenarios where
+treatment duration depends on either EULAR response or
+SDAI \citep{tosh2011sheffield, madan2015consensus}. In the SDAI scenario
+patients with a SDAI major or minor response continue with maintenance
+treatment and in the EULAR scenario patients with a good or moderate
+response continue with maintenance treatment. In both cases, patients
+without a response switch to the next bDMARD. Duration of the treatment
+maintenance phase is modeled from real-world data using time-to-event
+distributions conditional upon SDAI or EULAR responses at 6 months.
+Patients with a better treatment response according to SDAI or EULAR
+tend to stay on maintenance treatment longer.
+
+The effect of treatment on HAQ during the initial treatment phase is
+modeled using two separate scenarios. In the first scenario, treatment
+has a direct effect on HAQ, and in the second scenario treatment has an
+indirect effect on HAQ through its effect on ACR response. In both
+scenarios, more effective treatments are associated with improvements
+(i.e. reductions) in HAQ relative to the score 6 months prior. In
+addition, these patients, who continue with the same bDMARD during the
+maintenance phase, experience an improvement in HAQ relative to patients
+without treatment. Upon discontinuation of treatment, the HAQ score
+rebounds by a proportion of the improvement experienced at the end of
+the initial 6-month period with that treatment. Given the more favorable
+HAQ progression rates with maintenance bDMARD than without treatment,
+the absolute HAQ score after rebound is at a more favorable level than
+what the HAQ would have been in the absence of treatment.
+
+In line with \citet{stevenson2016adalimumab} the adverse
+events included in the model are limited to serious infections; we
+assume that only serious infections have a significant cost impact and
+increased risk over background rates to be meaningful to
+include \citep{ramiro2017safety}. While on a
+treatment, a patient experiences a serious infection if the individual's
+sampled time to the adverse event is shorter than the sampled time to
+treatment discontinuation.
+
+Baseline HAQ scores and changes in HAQ over time determine mortality
+relative to age/sex specific rates for the US general population.
+Furthermore, the individual HAQ score in combination with matching pain
+levels and age/sex at a particular point in time is used to estimate the
+EQ-5D utility score (0-1 range). Utility is reduced for the duration of
+a month when a serious infection occurred. Accrued utility estimates
+among patients alive determine estimated QALYs. HAQ scores also
+determine annual hospitalization days and productivity loss. Health
+sector costs considered in the models are related to drug acquisition
+and administration, adverse events, general management of RA, and
+hospitalization. Non-health sector costs considered are limited to work
+related productivity loss.
+
+Patient preferences for treatment attributes have a direct effect on
+long-term treatment duration and utility. Patients with treatments that
+more closely match their preferences have longer treatment duration and
+higher utility. Treatment attributes that are incorporated into the
+models include route of administration and frequency of administration.
+
+The flow diagram in \autoref{fig:flow-diagram} describes the flow of a
+single patient through the simulation. Each patient begins the
+simulation by initiating treatment and ends the simulation with death.
+The rectangles in the figure represent ``processes'' determining the
+effect of treatment on disease progression and the diamonds represent
+``decisions'' that determine whether a patient will switch to a new
+treatment.
+
+\begin{figure}
+\centering
+\includegraphics[max size={\textwidth}{\textheight}]{figs/flow-diagram.png}
+\caption{Flow diagram of the simulation for a single
+patient}\label{fig:flow-diagram}
+\end{figure}
+
+The influence diagram in \autoref{fig:influence-diagram} summarizes the
+assumed structural relationships among the different parameters. Each
+arrow represents the direct effect of one parameter on another. Dashed
+lines represent relationships that depend on the structural modeling
+assumptions used. Different stakeholder perspectives can be considered
+based on whether productivity is included in the analysis: a societal
+perspective includes productivity and a health-sector perspective does
+not.
+
+\begin{figure}
+\centering
+\includegraphics[max size={\textwidth}{\textheight}]{figs/influence-diagram.png}
+\caption{Influence diagram outlining structural relationships between
+model parameters}\label{fig:influence-diagram}
+\end{figure}
+
+\autoref{tbl:competing-structures} summarizes the competing model
+structures, which are conditional on the perspective of the decision
+maker. First, the initial treatment response can either have a direct
+effect on HAQ or have an indirect effect on HAQ through its effect on
+ACR (and the association between ACR and the response criteria used).
+Second, the response criteria can either be based on SDAI or EULAR,
+which impacts treatment duration. Third, HAQ can either be linear or
+non-linear. Fourth, seven probability distributions (exponential,
+Weibull, Gompertz, gamma, log-logistic, lognormal, and generalized
+gamma) can be used to model treatment duration conditional on a positive
+treatment response at 6-months. All told, there are 2 x 2 x 2 x 7 = 56
+possible models.
+
+\renewcommand{\arraystretch}{1.5}
+
+\begin{table}[!ht]
+\begin{center}
+\begin{threeparttable}
+\caption{Sets of models within the family of models} \label{tbl:competing-structures}
+\begin{tabular}{p{0.80\linewidth}p{0.20\linewidth}}
+\hline
+\multicolumn{1}{c}{Component of model structure} & \multicolumn{1}{c}{Possible combinations} \\
+\hline
+Initial treatment response based on indirect effect of treatment on HAQ through ACR or direct effect of treatment on HAQ  & 2  \\
+Treatment duration based on SDAI or EULAR & 2 \\
+HAQ progression linear or non-linear & 2 \\
+Probability distribution for treatment duration & 7 \\
+\hline
+\hline
+\end{tabular}
+\end{threeparttable}
+\end{center}
+\end{table}\renewcommand{\arraystretch}{1}
+
+For a given model, the outcomes of interest are:
+
+\begin{itemize}
+\item HAQ over time
+\item Cumulative QALYs
+\item Total drug acquisition and administration costs
+\item General management and monitoring costs
+\item Adverse event costs
+\item Hospitalization costs
+\item Total health sector costs
+\item Productivity loss
+\item Total costs
+\item Net-monetary benefit (NMB)
+\end{itemize}
+
+\section{Source data and parameter
+estimation}\label{sec:data-parameters}
+
+\subsection{HAQ progression in the absence of bDMARD
+treatment}\label{haq-progression-in-the-absence-of-bdmard-treatment}
+
+The natural course of HAQ progression in the absence of bDMARDs is
+assumed to either be linear or non-linear. HAQ develops over time
+according to this estimated natural course for patients remaining on
+cDMARDs or following discontinuation of the last bDMARD of the sequence.
+
+The rate of progression in the linear case is based on the observational study by \citet{wolfe2010loss}. They assessed the development of HAQ over time at six month intervals for up to 11 years among 3,829 RA patients who switched from non-biologic treatment to biologic treatment and participated in the National Data Bank for Rheumatic Diseases (NDB) longitudinal study of RA outcomes. The annual HAQ progression rate prior to biologic therapy was 0.031 (95\% confidence interval (95\%CI): 0.026 to 0.036) and is assumed to reflect the course of progression of HAQ in the absence of bDMARD.
+
+Based on the same data, \citet{michaud2011treatment} reported overall
+and age-specific specific HAQ progression rates. The differences between
+the overall and age specific rates are as follows: \textless{}40: -0.020
+(95\%CI: -0.0223 to -0.0177); 40-64: -0.008 (95\%CI: -0.0101 to
+-0.0059); \(\geq\) 65 0.017 (95\%CI: 0.0136 to 0.0204). These estimates
+are applied to the overall progression rate of 0.031 to obtain age
+specific HAQ progression rates.
+
+<<haq_lp, echo = FALSE, include = FALSE>>=
+tab1 <- therapy.pars$haq.lprog[sname == "cdmards", .(est, lower, upper)]
+tab1 <- formatC(as.matrix(tab1), format = "f", digits = 3)
+tab1 <- cbind(tab1, "\\citet{wolfe2010loss}")
+tab1 <- cbind("\\hspace{3mm}MTX or non-biologic treatment", tab1)
+tex1 <- print(xtable(tab1), 
+      include.rownames = FALSE, include.colnames = FALSE,
+      only.contents = TRUE, sanitize.text.function = identity, hline.after = NULL,
+      file = "tables/haq-lprog-cdmards.txt")
+
+tab2 <- haq.lprog.age[, .(est, lower, upper)] 
+tab2 <- formatC(as.matrix(tab2), format = "f", digits = 3)
+tab2 <- cbind(paste0("\\hspace{3mm}", c("<40", "40-64", "65+")), 
+                   tab2)
+tab2 <- cbind(tab2, "\\citet{michaud2011treatment}")
+tex2 <- print(xtable(tab2), 
+      include.rownames = FALSE, include.colnames = FALSE,
+      only.contents = TRUE, sanitize.text.function = identity, hline.after = NULL,
+      file = "tables/haq-lprog-diff-byage.txt")
+@
+
+\begin{table}[!ht]
+\begin{center}
+\begin{threeparttable}
+\caption{Anuual linear progression of HAQ in the absense of bDMARDs beyond 6 months} \label{tbl:haq-lprog}
+\footnotesize
+\begin{tabularx}{\textwidth}{@{\extracolsep{\fill}}lrrrl}
+\hline
+\multicolumn{2}{l}{} & \multicolumn{2}{c}{95\% CI} & \multicolumn{1}{l}{} \\
+\cmidrule{3-4} 
+\multicolumn{1}{l}{} & \multicolumn{1}{r}{Estimate} & \multicolumn{1}{r}{Lower} & \multicolumn{1}{r}{Upper} & \multicolumn{1}{l}{Reference} \\
+\hline
+Overall progression rate \\
+\ExpandableInput{tables/haq-lprog-cdmards.txt}
+Change in overall progression rate by age \\
+\ExpandableInput{tables/haq-lprog-diff-byage.txt}
+\hline
+\end{tabularx}
+\scriptsize
+Notes: 95\% confidence intervals are calculated using a normal distribution. Confidence intervals for changes in HAQ progression rates by age assume no covariance between the overall progression rate and the age-specific rates reported by Michaud et al (2011).
+\end{threeparttable}
+\end{center}
+\end{table}
+
+The rate of progression in the non-linear case is based on a mixture model approach that has increasingly been used to model HAQ progression over time \citep{stevenson2016adalimumab, norton2013trajectories, norton2014health}. These models suggest that different subgroups have distinct HAQ trajectories and that the rate of worsening of HAQ progression decreases over time. Parameter estimates are based on We use the statistical model estimated on the Early Rheumatoid Arthritis Cohort Study (ERAS) cohort, which has a high percentage of patients receiving methotrexate and a very small percentage receiving biologics. Following \citet{stevenson2016adalimumab}, explanatory variables in the statistical model that are not used in the IPS will be set to their mean values in the ERAS cohort. Uncertainty in the parameters of the mixture model are based on standard errors since \citet{norton2013trajectories} did not report the full covariance matrix needed to model the covariance between the parameters.
+
+\subsection{Initial treatment effect}\label{initial-treatment-effect}
+
+Treatment effects for bDMARD \emph{naive} patients at 6 months are
+estimated using a Bayesian network meta-analysis (NMA) of published
+randomized controlled trials (RCTs) (see \autoref{sec:tech-nma-initial}).
+Two primary endpoints were considered: ACR 20/50/70 response and HAQ.
+The rationale for using ACR response rather than HAQ directly is that
+the evidence base is larger than for HAQ. In one version of the model
+structure, EULAR response categories are used to determine treatment
+continuation and duration. ACR responses from the NMA were translated
+into EULAR response probabilities based on evidence of their
+relationship reported in \citet{stevenson2016adalimumab} and obtained
+from the US Veterans Affairs Rheumatoid Arthritis (VARA) registry
+(\autoref{tbl:acr2eular}).
+
+<<acr2eular, echo = FALSE, include = FALSE>>=
+tab <- acr2eular
+tab <- formatC(tab, format = "d", big.mark = ",")
+rownames(tab) <- c("<20", "20-50", "50-70", "70+")
+tex <- print(xtable(tab), 
+      include.rownames = TRUE, include.colnames = FALSE,
+      only.contents = TRUE, sanitize.text.function = identity,
+      file = "tables/acr2eular.txt")
+@
+
+\begin{table}[!ht]
+\begin{center}
+\begin{threeparttable}
+\caption{Relationship between ACR response and EULAR response} \label{tbl:acr2eular}
+\begin{tabularx}{\textwidth}{@{\extracolsep{\fill}}lcccc}
+\hline
+\multicolumn{1}{l}{} & \multicolumn{3}{c}{EULAR response} \\
+\cmidrule{2-4} 
+\multicolumn{1}{c}{ACR response} & \multicolumn{1}{c}{None} & \multicolumn{1}{c}{Moderate} & \multicolumn{1}{c}{Good} \\
+\hline
+\ExpandableInput{tables/acr2eular.txt}
+\hline
+\end{tabularx}
+\scriptsize
+Notes: The VARA registry is a multicentre, US databse of verterans age 19 and older. Each cell represents the number of patients in the 
+database in a given category. 
+\end{threeparttable}
+\end{center}
+\end{table}
+
+<<eular2haq, echo = FALSE, include = FALSE>>=
+eular2haq.f <- formatC(as.matrix(eular2haq), format = "f", digits = 3)
+@
+
+The model structure allows treatment to impact HAQ either directly or indirerectly through its effect on ACR response. In the indirect case, ACR response first affects EULAR response or SDAI using the evidence reported in \autoref{tbl:acr2eular}, which, in turn, affects HAQ. The relationship between EULAR response and HAQ is based on analyses conducted by \citet{stevenson2016adalimumab} using the BSRBR databse. Their analysis is based on predictions from a mixture model with covariates set to sample means. Moderate and good EULAR response are associated with \Sexpr{eular2haq.f[2, "mean"]} (SE = \Sexpr{eular2haq.f[2, "se"]}) and \Sexpr{eular2haq.f[3, "mean"]} (SE = \Sexpr{eular2haq.f[3, "se"]}) changes in HAQ scores respectively. The impact of treatment on ACR response, EULAR response, and HAQ (given their ACR and EULAR responses) is shown in \autoref{tbl:initial-haq}.
+
+<<initial_haq, cache=TRUE, echo=FALSE, include=FALSE>>=
+arm.snames <- c("cdmards", "abtivmtx", "adamtx", "etnmtx", "golmtx", "ifxmtx", "tczmtx", "czpmtx",
+                          "abtscmtx", "rtxmtx", "tofmtx")
+arminds <- as.list(which(therapy.pars$info$sname %in% arm.snames))
+arm.names <- therapy.pars$info[sname %in% arm.snames, mname]
+ir <- function(arminds, arm_names, nouter = 1000, ninner = 1000, treat_hist = "naive"){
+  acr.mean <- matrix(NA, nrow = length(arminds), ncol = 4)
+  acr.lower <- acr.upper <- acr.mean
+  eular.mean <- matrix(NA, nrow = length(arminds), ncol = 3)
+  eular.lower <- eular.upper <- eular.mean
+  hc.mean <- hc.lower <- hc.upper <- rep(NA, length(arminds))
+  pat <- sample_pats(n = ninner)
+  input.dat <- input_data(patdata = pat)
+  parsamp <- sample_pars(n = nouter)
+  for (i in 1:length(arminds)){
+    sim6 <- sim_haq(arminds[[i]], input_data = input.dat, pars = parsamp, max_months = 6)
+
+    # acr
+    acr.full <- data.table(sim = rep(seq(1, ninner) - 1, 4),
+                            acr = rep(seq(0, 3), each = ninner))
+    acr <- setkey(sim6, sim, acr)[acr.full, .(prop = .N/ninner), by=.EACHI]
+    acr <- dcast(acr, sim ~ acr, value.var = "prop")
+    acr[is.na(acr)] <- 0
+    acr <- as.matrix(acr)[, -1, drop = FALSE]
+    acr.mean[i, ] <- apply(acr, 2, mean)
+    acr.lower[i, ] <- apply(acr, 2, quantile, .025)
+    acr.upper[i, ] <- apply(acr, 2, quantile, .975)
+
+    # eular
+    eular.full <- data.table(sim = rep(seq(1, ninner) - 1, 3),
+                           eular = rep(seq(0, 2), each = ninner))
+    eular <- setkey(sim6, sim, eular)[eular.full, .(prop = .N/ninner), by=.EACHI]
+    eular <- dcast(eular, sim ~ eular, value.var = "prop")
+    eular[is.na(eular)] <- 0
+    eular <- as.matrix(eular)[, -1]
+    eular.mean[i, ] <- apply(eular, 2, mean)
+    eular.lower[i, ] <- apply(eular, 2, quantile, .025)
+    eular.upper[i, ] <- apply(eular, 2, quantile, .975)
+
+    # haq change mean
+    hc <- input.dat$haq0[sim6$id] - sim6$haq
+    hc.mean[i] <- mean(hc)
+    hc.lower[i] <- quantile(hc, .025)
+    hc.upper[i] <- quantile(hc, .975)
+
+    print(i)
+  }
+  return(list(arm.names = arm_names,
+              acr.lower = acr.lower, acr.mean = acr.mean, acr.upper = acr.upper,
+              eular.lower = eular.lower, eular.mean = eular.mean, eular.upper = eular.upper,
+              hc.lower = hc.lower, hc.mean = hc.mean, hc.upper = hc.upper))
+}
+ir_table <- function(x, digits = 2){
+  # table output
+  table.mean <- cbind(x$acr.mean, x$eular.mean, x$hc.mean)
+  table.lower <- cbind(x$acr.lower, x$eular.lower, x$hc.lower)
+  table.upper <- cbind(x$acr.upper, x$eular.upper, x$hc.upper)
+  ftable.mean <- formatC(table.mean, format = "f", digits = digits)
+  ftable.lower <- formatC(table.lower, format = "f", digits = digits)
+  ftable.upper <- formatC(table.upper, format = "f", digits = digits)
+  ftable <- paste0(ftable.mean, " (", ftable.lower, "-", ftable.upper, ")")
+  ftable <- matrix(ftable, nrow = nrow(ftable.mean), ncol = ncol(ftable.mean))
+  cn <- c("acrl20", "acr20", "acr50", "acr70",
+                           "eular_nr", "eular_mr", "eular_gr", "hc_mean")
+  colnames(ftable) <- cn
+  rownames(ftable) <- x$arm.names
+  return(ftable)
+}
+sim.ir <- ir(arminds, arm.names)
+tab <- ir_table(sim.ir)
+tex <- print(xtable(tab),
+      include.rownames = TRUE, include.colnames = FALSE,
+      only.contents = TRUE, sanitize.text.function = identity,
+      file = "tables/initital_response.txt")
+@
+
+\begin{landscape}
+\begin{table}[!ht]
+\begin{center}
+\begin{threeparttable}
+\caption{Response at 6 months for 1st line treatment} \label{tbl:initial-haq}
+\scriptsize
+\begin{tabular}{lrrrrrrrr}
+\hline
+\multicolumn{1}{c}{} & \multicolumn{4}{c}{ACR response} & \multicolumn{3}{c}{EULAR response} & \multicolumn{1}{c}{\multirow{2}{*}{Mean HAQ}}\\
+\cmidrule(lr){2-5} \cmidrule(lr){6-8}
+\multicolumn{1}{l}{Treatment} & \multicolumn{1}{c}{$<$20} & \multicolumn{1}{c}{20-50} & \multicolumn{1}{c}{50-70}  & \multicolumn{1}{c}{70+}   & \multicolumn{1}{c}{None} & \multicolumn{1}{c}{Moderate}  & \multicolumn{1}{c}{Good}  & \multicolumn{1}{c}{decrease}\\
+\hline
+\ExpandableInput{tables/initital_response.txt}
+\hline
+\end{tabular}
+\tiny
+Notes: 95\% credible intervals are in parentheses. Estimates are based on 6-month simulations of 1,000 patients and 1,000 parameters sets for each therapy. cDMARDs = conventional disease-modifying antiheumatic drugs; MTX = methotrexate; ABT IV = abatacept intravenous; ADA = adalimumab; ETN = etanercept; GOL = golimumab; IFX = infliximab; TCZ = tocilizumab; CZP = certolizumab pegol; ABT SC = abatacept subcutaneous; RTX = rituximab; TOF = tofacitinib. ACR = American College of Rheumatology; EULAR = European League Against Rheumatism; HAQ = Health Assessment Questionnaire. 
+\end{threeparttable}
+\end{center}
+\end{table}
+\end{landscape}
+
+The relationship between ACR response and SDAI...
+
+In the direct case...
+
+\subsection{HAQ trajectory with bDMARD maintenance treatment}
+Based on the NDB longitudinal study, \citet{wolfe2010loss} estimated the overall annual HAQ progression rate among RA patients who had switched to biologic treatment at -0.001 (95CI: -0.004 to 0.002). In a separate analysis, also based on NDB data, \citet{michaud2011treatment} reported annual HAQ progression rates by treatment adjusted for baseline HAQ score, age, sex, education, smoking, BMI, comorbidity, and RA onset. The average HAQ rate among patients on a biologic was -0.001 as well, which instills confidence that the reported HAQ progression rates for different bDMARDs as reported by \citet{michaud2011treatment} can be directly compared with the overall annual HAQ progression rate of 0.031 reported by \citet{wolfe2010loss}. Accordingly, bDMARD specific HAQ progression rates by \citet{michaud2011treatment} are used in the model. For bDMARD treatments evaluated in the model for which no HAQ progression rate was reported by \citet{michaud2011treatment}, the overall biologic rate of -0.001 is used. 
+
+\subsection{Duration of maintenance treatment}\label{duration-of-maintenance-treatment}
+\subsubsection{By EULAR response}\label{by-eular-response}
+Treatment duration as a function of EULAR response is estimated from survival curves based on analyses of the British Society for Rheumatology Biologics Registers (BSRBR) database \citep{stevenson2016adalimumab}. Seven parametric survival models (exponential, Weibull, Gompertz, gamma, log-logistic, lognormal, and generalized gamma) were estimated on individual patient data reconstructed from the BSRBR survival curves using the algorithm developed in \citet{guyot2012enhanced}. The Akaike Information Criteria (AIK) and Bayesian Information Criteria (BIC) of each model by EULAR response category (moderate, good) are shown in \autoref{tbl:ic-dur-eular}.
+
+<<ipdsurv, echo = FALSE, resutls = 'tex'>>=
+tab <- read.csv("../../data-raw/tables/duration-bsrbr-ipdsurv-eular-ic.csv")
+tab <- cbind(as.matrix(tab[, 1]), formatC(as.matrix(tab[, -1]), format = "d", big.mark = ","))
+# colnames(tab) <- c("Distribution", "AIC (moderate)", "BIC (moderate)", "AIC (good)", "BIC (good)")
+# ptab <- pandoc.table(tab)
+tex <- print(xtable(tab), 
+      include.rownames = FALSE, include.colnames = FALSE,
+      only.contents = TRUE, sanitize.text.function = identity,
+      file = "tables/duration-bsrbr-ipdsurv-eular-ic.txt")
+@
+
+\begin{table}[!ht]
+\begin{center}
+\begin{threeparttable}
+\caption{AIC and BIC for parametric models of treatment duration by EULAR response} \label{tbl:ic-dur-eular}
+\begin{tabularx}{\textwidth}{@{\extracolsep{\fill}}lcccc}
+\hline
+\multicolumn{1}{l}{} & \multicolumn{2}{c}{Moderate EULAR response} & \multicolumn{2}{c}{Good EULAR response} \\
+\cmidrule{2-3} \cmidrule{4-5}
+\multicolumn{1}{l}{Distribution} & \multicolumn{1}{c}{AIC} & \multicolumn{1}{c}{BIC} & \multicolumn{1}{c}{AIC}  & \multicolumn{1}{c}{BIC}   \\
+\hline
+\ExpandableInput{tables/duration-bsrbr-ipdsurv-eular-ic.txt}
+\hline
+\end{tabularx}
+\end{threeparttable}
+\end{center}
+\end{table}
+
+One concern is that the BSRBR is representative of the UK but not the
+US. As a result, we also estimate ``adjusted'' survival models that are
+more representative of the US. The adjustment is made in six steps based
+on an analysis of the Consortium of Rheumatology Researchers of North
+America (Corrona) database.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item Calculate a hazard function based on a survival curve from an analysis
+  of the Corrona database. In particular, reconstruct individual patient
+  data from the survival curve \citet{guyot2012enhanced} and fit a
+  spline-based survival model. Then use the spline-based model to
+  estimate the hazard function $h(t)_{corrona}$.
+\item Calculate a hazard function based on the BSRBR. To do so, first
+  calculate hazard functions for both moderate and good EULAR responders
+  using the same method described in step 1. Then calculate an overall
+  hazard function with the proportion of moderate and good responders in
+  the BSRBR analysis. Given that the number of moderate responders is
+  \(5,492\) and the number of good responders is $2,417$ the overall
+  hazard function is $h(t)_{bsrbr} = \frac{5,492}{7,909}h(t)_{bsrbr, moderate} + \frac{2,417}{7,909}h(t)_{bbsrbr, good}$.
+\item At each point in time, calculate the ratio of the Corrona and BSRBR
+  hazard functions: $HR(t) = h(t)_{corrona}/h(t)_{bbsrbr}$.
+\item Apply the hazard ratio in step 3 to the BSRBR hazard functions for
+  each EULAR response category. That is $h(t)_{bsrbr, moderate, adj} = h(t)_{bsrbr, moderate} \cdot HR(t)$ and $h(t)_{bsrbr, good, adj} = h(t)_{bsrbr, good} \cdot HR(t)$.
+\item Generate survival curves using the hazard functions from step 4.
+  Specifically, given a general hazard function $h(t)$, calculate the
+  cumulative hazard functions, $H(t) = \int_{z = 0}^{t} h(z)dz$,
+  convert this to a survival function using $S(t) = exp(-H(t))$, and
+  reconstruct individual patient data using the survival curve.
+\item Fit parametric survival models to the individual patient data
+  generated in step 5.
+\end{enumerate}
+
+Both adjusted and unadjusted survival curves by EULAR response fit using
+a generalized gamma distribution are shown in \autoref{fig:bsrbr-gg}. AIC
+and BIC for the parametric models fit in step 6 do the adjusted
+individual patient data are shwon in \autoref{tbl:ic-dur-adj-eular}.
+
+\begin{figure}
+\centering
+\includegraphics[max size={\textwidth}{\textheight}]{../../data-raw/figs/duration-bsrbr-ipdsurv-comp-gengamma-by-eular.pdf}
+\caption{Generalized gamma survival curve of treatment duration using
+reconstructed individual patient data based on analyses from Stevenson
+et al. (2016) by EULAR response category}\label{fig:bsrbr-gg}
+\end{figure}
+
+<<bsrbr-eular-surv, echo = FALSE>>=
+tab <- read.csv("../../data-raw/tables/duration-bsrbr-ipdsurv-eular-adjusted-ic.csv")
+tab <- cbind(as.matrix(tab[, 1]), formatC(as.matrix(tab[, -1]), format = "d", big.mark = ","))
+# colnames(tab) <- c("Distribution", "AIC (moderate)", "BIC (moderate)", "AIC (good)", "BIC (good)")
+# ptab <- pandoc.table(tab)
+tex <- print(xtable(tab), 
+      include.rownames = FALSE, include.colnames = FALSE,
+      only.contents = TRUE, sanitize.text.function = identity,
+      file = "tables/duration-bsrbr-ipdsurv-eular-adjusted-ic.txt")
+@
+
+\begin{table}[!ht]
+\begin{center}
+\begin{threeparttable}
+\caption{AIC and BIC for Corrona adjusted parametric models of treatment duration by EULAR response} \label{tbl:ic-dur-adj-eular}
+\begin{tabularx}{\textwidth}{@{\extracolsep{\fill}}lcccc}
+\hline
+\multicolumn{1}{l}{} & \multicolumn{2}{c}{Moderate EULAR response} & \multicolumn{2}{c}{Good EULAR response} \\
+\cmidrule{2-3} \cmidrule{4-5}
+\multicolumn{1}{l}{Distribution} & \multicolumn{1}{c}{AIC} & \multicolumn{1}{c}{BIC} & \multicolumn{1}{c}{AIC}  & \multicolumn{1}{c}{BIC}   \\
+\hline
+\ExpandableInput{tables/duration-bsrbr-ipdsurv-eular-adjusted-ic.txt}
+\hline
+\end{tabularx}
+\end{threeparttable}
+\end{center}
+\end{table}
+
+\subsubsection{By SDAI}\label{by-sdai}
+TBD
+
+\subsection{Rebound post treatment}
+Since no data exists on the size of the HAQ rebound post treatment, we vary its size as a proportion of the initial 6-month HAQ decline. 1 is used as an upper bound, which implies that the HAQ rebound is equal to the improvement experienced at the end of the initial 6-month period with that treatment. 0.5 is used as a lower bound based on expert opinion.
+
+\subsection{Serious infections}
+Based on the NMA by \citet{singh2011adverse} and in accordance with \citet{stevenson2016adalimumab}, we assume a rate of 0.035 (95\% CI: 0.027 to 0.046) infections per person-year with all bDMARDs and a rate of 0.026 (no CI reported) infections per person-year with cDMARDs. The rate of infection is assumed to be equal across bDMARDs because the published results for specific bDMARDs are estimated with very little precision. The standard error on the infection rate for bDMARDs is assumed to be the same as the standard error for cDMARDs since no standard error was reported for bDMARDs in \citet{singh2011adverse}.
+
+<<si, echo = FALSE, include = FALSE, cache = TRUE, cache.lazy = FALSE>>=
+# set.seed(100)
+# pat <- sample_pats(n = 1000)
+# input.dat <- input_data(patdata = pat)
+# parsamp <- sample_pars(n = 1000)
+# arm.snames <- c("cdmards", "adamtx")
+# arminds <- as.list(which(therapy.pars$info$sname %in% arm.snames))
+# arm.names <- c("MTX or non-biologic treatment", "Biologic treatment")
+# dur.dist <- c("exponential", "weibull", "gompertz", "gamma", "llogis", "lnorm", "gengamma")
+# dur.dist.l <- c("Exponential", "Weibull", "Gompertz", "Gamma", "Log-logistic", "Lognormal",
+#                    "Generalized gamma")
+# sim6 <- vector(length(dur.dist) * length(arminds), mode = "list")
+# counter <- 1
+# for (i in 1:length(arminds)){
+#   for(j in 1:length(dur.dist)){
+#     sim6[[counter]] <- sim_haq(arminds[[i]], input_data = input.dat, pars = parsamp,
+#                                max_months = 6, dur_dist = dur.dist[i])
+#     sim6[[counter]][, dur_dist := dur.dist.l[j]]
+#     sim6[[counter]][, arm := arm.names[i]]
+#     counter <- counter + 1
+#   }
+# }
+# sim6 <- rbindlist(sim6)
+# sim6[, si_ever := ifelse(ttsi <= ttd, 1, 0)]
+# si.prop <- sim6[, .(si = mean(si_ever)), by = c("dur_dist", "arm", "sim")]
+# si.prop <- si.prop[, .(si_mean = mean(si), si_lower = quantile(si, .025),
+#                        si_upper = quantile(si, .974)), by = c("dur_dist", "arm")]
+# 
+# # tables comparing serious infection rates by drugs
+# tab1 <- si.prop[dur_dist == "Generalized gamma", .(arm, si_mean, si_lower, si_upper)]
+# tab1[, si_mean := formatC(si_mean, format = "f", digits = 4)]
+# tab1[, si_lower := formatC(si_lower, format = "f", digits = 4)]
+# tab1[, si_upper := formatC(si_upper, format = "f", digits = 4)]
+# tex <- print(xtable(tab1),
+#       include.rownames = FALSE, include.colnames = FALSE,
+#       only.contents = TRUE, sanitize.text.function = identity,
+#       file = "tables/si-prop-gengamma.txt")
+# 
+# # tables comparing serious infection by distribution
+# tab2 <- si.prop[arm == arm.names[1], .(dur_dist, si_mean)]
+# tab2[, si_mean := formatC(si_mean, format = "f", digits = 4)]
+# tex <- print(xtable(tab2),
+#       include.rownames = FALSE, include.colnames = FALSE,
+#       only.contents = TRUE, sanitize.text.function = identity,
+#       file = "tables/si-prop-mtx-bydist.txt")
+@
+
+\begin{table}[!ht]
+\begin{center}
+\begin{threeparttable}
+\caption{Probability of serious infection} \label{tbl:si-prob}
+\begin{tabularx}{\textwidth}{@{\extracolsep{\fill}}lrrr}
+\hline
+\multicolumn{1}{l}{} & \multicolumn{3}{c}{Probability} \\
+\cmidrule{2-4} 
+\multicolumn{2}{l}{} & \multicolumn{2}{c}{95\% CI} \\
+\cmidrule{3-4} 
+\multicolumn{1}{c}{} & \multicolumn{1}{c}{Mean} & \multicolumn{1}{c}{Lower} & \multicolumn{1}{c}{Upper} \\
+\hline
+\ExpandableInput{tables/si-prop-gengamma.txt}
+\hline
+\end{tabularx}
+\scriptsize
+Notes: Probabilities are estimated by simulating 1,000 patients and 1,000 parameter sets. Treatment duration is simulated using a generalized gamma disribution. 
+\end{threeparttable}
+\end{center}
+\end{table}
+
+\begin{table}[!ht]
+\begin{center}
+\begin{threeparttable}
+\caption{Probability of serious infection with methotrexate by distribution used to model treatment duration} \label{tbl:si-prop-bydist}
+\begin{tabularx}{.5\textwidth}{l@{\extracolsep{\fill}}r}
+\hline
+\multicolumn{1}{c}{Distribution} & \multicolumn{1}{c}{Mean probability} \\
+\hline
+\ExpandableInput{tables/si-prop-mtx-bydist.txt}
+\hline
+\end{tabularx}
+\scriptsize
+Notes: Probabilities are estimated by simulating 1,000 patients and 1,000 parameter sets. 
+\end{threeparttable}
+\end{center}
+\end{table}
+
+\subsection{Utility}\label{utility}
+\citet{alava2013relationship} developed a non-linear mixture model relating EQ-5D utility to HAQ, pain and age/sex. We simulate this mixture model for every patient in the model to obtain the
+distribution of utility over time. Since pain is not explicitly captured in our cost-effectiveness model, an individual's pain score is first sampled given that individual's HAQ score and the stochastic relationship between pain and HAQ. Disutility due to serious infections is assumed to be 0.156 for the duration of the month of infection based on prior studies \citep{stevenson2016adalimumab, oppong2013impact}. However, given the weak evidence for this estimate, the disutility of an infection is allowed to vary by 20\% in either direction.
+
+\autoref{fig:util-comparison}
+
+<<utility, echo = FALSE, include = FALSE, cache = TRUE>>=
+n <- 1000
+pat <- sample_pats(n = n)
+input.dat <- input_data(patdata = pat)
+haq = seq(0, 3, .1)
+simhaq <- data.table(id = 1, sim = rep(seq(1, n), each = length(haq)), haq = rep(haq, n), age = 55)
+parsamp <- sample_pars(n = n)
+util.mix <- sim_utility_mixture(simhaq, pat[, "male"],  pars = c(pain, parsamp$mixture.utility))$utility
+util.wailoo <- sim_utility_wailoo(simhaq, input.dat, parsamp$wailoo.utility)
+util.dt <- data.table(util = c(util.mix, util.wailoo), haq = rep(simhaq$haq, 2),
+                      lab = c(rep("Alava (2013) mixture model", nrow(simhaq)),
+                              rep("Wailoo (2006)", nrow(simhaq))))
+util.dt <- util.dt[, .(mean_util = mean(util)), by = c("haq", "lab")]
+p <- ggplot(util.dt, aes(x = haq, y = mean_util, col = lab)) + geom_line() + xlab("HAQ") + ylab("Mean utility") +
+  scale_colour_discrete("") + theme(legend.position = "bottom")
+ggsave("figs/util-byhaq-comparison.png", p, height = 5, width = 7)
+@
+
+\begin{figure}
+\centering
+\includegraphics[max size={\textwidth}{\textheight}]{figs/util-byhaq-comparison.png}
+\caption{Simulated mean utility by current
+HAQ}\label{fig:util-comparison}
+\end{figure}
+
+\subsection{Mortality}
+The probability of death is simulated as a function of age/sex specific mortality from U.S. lifetables \citep{arias2015united}, baseline HAQ, and changes in HAQ from baseline. \citet{wolfe2003predicting} estimate an odds ratio for the effect of HAQ on mortality of 2.22, which is applied to the absolute mortality rates of the general population (HAQ score of 0). To capture
+the effect of treatment on mortality, we assume that, for every 0.25-unit increase in HAQ score, subsequent 6-month mortality increases according to the hazard ratios reported in \citet{michaud2012mortality}.
+
+<<mortpars, echo = FALSE, include = FALSE>>=
+# odds ratio baseline haq
+tab1 <- mort.or[, .(logor, logor_lower, logor_upper)]
+tab1 <- formatC(as.matrix(tab1), format = "f", digits = 3)
+tab1 <- cbind("\\hspace{3mm}Log odds of mortality", tab1, "\\citet{wolfe2003predicting}")
+tex1 <- print(xtable(tab1), 
+      include.rownames = FALSE, include.colnames = FALSE,
+      only.contents = TRUE, sanitize.text.function = identity, hline.after = NULL,
+      file = "tables/mort-or.txt")
+
+# hazard ratio change in haqq
+tab2 <- mort.hr.haqdif[, .(loghr, loghr_lower, loghr_upper)]
+tab2 <- formatC(as.matrix(tab2), format = "f", digits = 3)
+tab2.names <- paste0("\\hspace{3mm}Log hazard ratio ", c("0-6 months", ">6-12 months", ">12-24 months",
+                                           ">24-36 months", ">36 months"))
+tab2 <- cbind(tab2.names, tab2, "\\citet{michaud2012mortality}")
+tex2 <- print(xtable(tab2), 
+      include.rownames = FALSE, include.colnames = FALSE,
+      only.contents = TRUE, sanitize.text.function = identity, hline.after = NULL,
+      file = "tables/mort-hr-haqdif.txt")
+@
+
+\begin{table}[!ht]
+\begin{center}
+\begin{threeparttable}
+\caption{Mortality parameters} \label{tbl:mortpars}
+\footnotesize
+\begin{tabularx}{\textwidth}{@{\extracolsep{\fill}}lcccc}
+\hline
+\multicolumn{2}{l}{} & \multicolumn{2}{c}{95\% CI} & \multicolumn{1}{l}{} \\
+\cmidrule{3-4} 
+\multicolumn{1}{l}{} & \multicolumn{1}{l}{Estimate} & \multicolumn{1}{c}{Lower} & \multicolumn{1}{c}{Upper} & \multicolumn{1}{c}{Reference} \\
+\hline
+Impact of baseline HAQ on mortality \\
+\ExpandableInput{tables/mort-or.txt}
+Impact of change in HAQ from baseline on mortality\\
+\ExpandableInput{tables/mort-hr-haqdif.txt}
+\hline
+\end{tabularx}
+\scriptsize
+Notes: 95\% confidence intervals are calculated using normal distributions on the log odds
+and log hazard ratio scales. 
+\end{threeparttable}
+\end{center}
+\end{table}
+
+\autoref{fig:surv}
+
+<<survplot, echo = FALSE, include = FALSE, cache = TRUE>>=
+set.seed(100)
+n <- 1000; age <- 55; haq0 <- 1; cycle.len <- 6; max.age <- 100
+t <- seq(0, 12/cycle.len * (max.age - age) - 1)
+haq.ts1 <- pmin(haq0 + 0 * t, 3)
+haq.ts2 <- pmin(haq0 + .03 * t, 3)
+surv <- c(sim_survtime(n = n, haq = haq.ts1, male = 0),
+          sim_survtime(n = n, haq = haq.ts1, male = 1),
+          sim_survtime(n = n, haq = haq.ts2, male = 0),
+          sim_survtime(n = n, haq = haq.ts2, male = 1))
+lab <- c(rep("Constant HAQ", 2 * n), rep("HAQ increase of .03 per year", 2 * n))
+gender <- rep(rep(c("Female", "Male"), each = n), 2)
+surv <- data.table(surv = surv, lab = lab, gender = gender)
+surv[, ecdf := ecdf(surv)(surv), by = c("lab", "gender")]
+p <- ggplot(surv, aes(x = surv, y = 1 - ecdf, col = lab)) + geom_line() + xlab("Age") + ylab("Proportion surviving") + facet_wrap(~gender) +
+  scale_colour_discrete("") + theme(legend.position = "bottom")
+ggsave("figs/surv.png", p)
+@
+
+\begin{figure}
+\centering
+\includegraphics[max size={\textwidth}{\textheight}]{figs/surv.png}
+\caption{Simulated survival curve for a patient age 55 with a baseline
+HAQ of 1 by change in HAQ per year}\label{fig:surv}
+\end{figure}
+
+\subsection{Cost}\label{cost}
+Drug costs are based on WACs; discounts can be applied by reducing WACs for specific bDMARDs. Costs related to physician visits, chest X-rays, tuberculosis tests, and inpatient hospital days are based on \citet{claxton2016economic}. The annual number of hospital days relates to the HAQ score according to \citet{carlson2015economic}. Cost of any serious infection are assumed to be equal to the cost of pneumonia hospitalization at \$5,873, based on Medicare reimbursement rates. \citet{wolfe2005household} provide an estimate of annual income loss in relation to HAQ scores: \$4,372 (95\% CI: 2,078 to 6,607; 2002 dollars) change per unit HAQ change. These estimates are inflated to 2016 dollars.
+
+<<resource_cost, echo = FALSE, include = FALSE>>=
+# hospital days by HAQ
+tab1 <- data.table(mean = eval(formals(sample_pars)$hosp_days_mean),
+                   se = eval(formals(sample_pars)$hosp_days_se))
+quant1 <- mom_gamma(tab1$mean, tab1$se, quant = c(.025, .975))
+tab1[, lower := quant1$q0.025]
+tab1[, upper := quant1$q0.975]
+tab1[, se := NULL]
+tab1 <- formatC(as.matrix(tab1), format = "f", digits = 3)
+tab1.names <- paste0("\\hspace{3mm}HAQ: ", c("0-<0.5", "0.5-<1", "1-<1.5", "1.5-<2", "2-<2.5",
+                                ">2.5"))
+tab1 <- cbind(tab1.names, tab1, "\\citet{carlson2015economic}")
+tex1 <- print(xtable(tab1), 
+      include.rownames = FALSE, include.colnames = FALSE,
+      only.contents = TRUE, sanitize.text.function = identity, hline.after = NULL,
+      file = "tables/hosp-days-haq.txt")
+
+# hospital cost per day in hospital
+tab2 <- data.table(mean = eval(formals(sample_pars)$hosp_cost_mean)[1],
+                   se = eval(formals(sample_pars)$hosp_cost_se)[1])
+quant2 <- mom_gamma(tab2$mean, tab2$se, quant = c(.025, .975))
+tab2[, lower := quant2$q0.025]
+tab2[, upper := quant2$q0.975]
+tab2[, se := NULL]
+tab2 <- formatC(as.matrix(tab2), format = "d", big.mark = ",")
+tab2 <- cbind("Cost per day in hospital", tab2, "\\citet{carlson2015economic}")
+tex2 <- print(xtable(tab2), 
+      include.rownames = FALSE, include.colnames = FALSE,
+      only.contents = TRUE, sanitize.text.function = identity, hline.after = NULL,
+      file = "tables/hosp-cost-perday.txt")
+
+# General management cost
+tab3 <- mgmt.cost[, .(est, lower, upper)]
+tab3 <- formatC(as.matrix(tab3), format = "d", big.mark = ",")
+tab3.names <- paste0("\\hspace{3mm}", c("Chest x-ray", "X-ray visit", "Outpatient follow-up", "Mantoux tuberculin skin test"))
+tab3 <- cbind(tab3.names, tab3, "\\citet{claxton2016economic}")
+tex3 <- print(xtable(tab3), 
+      include.rownames = FALSE, include.colnames = FALSE,
+      only.contents = TRUE, sanitize.text.function = identity, hline.after = NULL,
+      file = "tables/mgmt-cost.txt")
+
+# productivity loss
+tab4 <- data.table(mean = eval(formals(sample_pars)$pl_mean),
+                   se = eval(formals(sample_pars)$pl_se))
+tab4[, lower := mean - qnorm(.975) * se]
+tab4[, upper := mean + qnorm(.975) * se]
+tab4 <- formatC(as.matrix(tab4[, .(mean, lower, upper)]), format = "d", big.mark = ",")
+tab4 <- cbind("\\hspace{3mm}Linear regression coefficient - HAQ", tab4, "\\citet{wolfe2005household}")
+tex4 <- print(xtable(tab4), 
+      include.rownames = FALSE, include.colnames = FALSE,
+      only.contents = TRUE, sanitize.text.function = identity, hline.after = NULL,
+      file = "tables/prod-loss.txt")
+@
+
+\begin{table}[!ht]
+\begin{center}
+\begin{threeparttable}
+\caption{Resource use parameters} \label{tbl:resource-use-pars}
+\footnotesize
+\begin{tabularx}{\textwidth}{@{\extracolsep{\fill}}lcccc}
+\hline
+\multicolumn{2}{l}{} & \multicolumn{2}{c}{95\% CI} & \multicolumn{1}{l}{} \\
+\cmidrule{3-4} 
+\multicolumn{1}{l}{} & \multicolumn{1}{l}{Estimate} & \multicolumn{1}{c}{Lower} & \multicolumn{1}{c}{Upper} & \multicolumn{1}{c}{Reference} \\
+\hline
+Days in hospital per year \\
+\ExpandableInput{tables/hosp-days-haq.txt}
+\ExpandableInput{tables/hosp-cost-perday.txt}
+General management cost \\
+\ExpandableInput{tables/mgmt-cost.txt}
+Productivity loss \\
+\ExpandableInput{tables/prod-loss.txt}
+\hline
+\end{tabularx}
+\scriptsize
+Notes: 95\% confidence intervals for hospital days per year by HAQ score and hospital cost per day are calculated by using the methods of moments to generate the parameters of the gamma distribution given a mean and standard error. The 95\% confidence intervals for general management costs are based on normal distributions as assumed in Claxton et al (2016). 95\% confidence interval for productivity loss are calculated using a normal distribution and inflated to 2016 dollars. 
+\end{threeparttable}
+\end{center}
+\end{table}
+
+<<treat_cost, echo = FALSE, include = FALSE>>=
+set.seed(100)
+
+# cost for non-weight based dosing
+tab = copy(therapy.pars$cost)
+tab[, init_cost := init_dose_val/strength_val * init_num_doses * wac_per_unit + init_num_doses * infusion_cost]
+tab[, ann_cost := ann_dose_val/strength_val * ann_num_doses * wac_per_unit + ann_num_doses * infusion_cost]
+
+# cost for weight based dosing
+wt <- sample_pats(1000)[, "weight"]
+male.prop <- formals(sample_pats)$male_prop * 100
+wtmale <- formals(sample_pats)$wtmale
+wtfemale <- formals(sample_pats)$wtfemale
+ifx <- tab[sname == "ifx"]
+init.cost.ifx <- mean(ceiling(wt * ifx$init_dose_val / ifx$strength_val) * ifx$init_num_doses * ifx$wac_per_unit + ifx$init_num_doses * ifx$infusion_cost)
+ann.cost.ifx <- mean(ceiling(wt * ifx$ann_dose_val / ifx$strength_val) * ifx$ann_num_doses * ifx$wac_per_unit + ifx$ann_num_doses * ifx$infusion_cost) 
+tab[sname == "ifx", init_cost := init.cost.ifx]
+tab[sname == "ifx", ann_cost := ann.cost.ifx]
+
+# formatting
+tab1 <- tab[, .(name, dosage, strength_dosage_form)]
+tab2 <- tab[, .(init_num_doses, ann_num_doses, wac_per_unit, infusion_cost, 
+                              init_cost, ann_cost)]
+tab2f <- matrix(NA, nrow = nrow(tab2), ncol = ncol(tab2))
+for (i in 1:ncol(tab2)){
+  if (names(tab2)[i] == "wac_per_unit"){
+      tab2f[, i] <- formatC(tab2[[i]], format = "f", digits = 2, big.mark = ",")
+  } else{
+      tab2f[, i] <- formatC(tab2[[i]], format = "d", big.mark = ",") 
+  }
+}
+tab <- cbind(tab1, tab2f)
+tab[, name := first_upper(name)]
+tex <- print(xtable(tab), 
+      include.rownames = FALSE, include.colnames = FALSE,
+      only.contents = TRUE, sanitize.text.function = identity, hline.after = NULL,
+      file = "tables/treat-cost.txt")
+@
+
+\begin{landscape}
+\begin{table}[!ht]
+\begin{center}
+\begin{threeparttable}
+\caption{Drug acquisition and administration cost} \label{tbl:treat-cost}
+\scriptsize
+\begin{tabular}{lp{0.15\linewidth}p{0.15\linewidth}rrrrrr}
+\hline
+\multicolumn{1}{l}{Drug} &
+\multicolumn{1}{p{0.15\linewidth}}{Dose and frequency of administration} & 
+\multicolumn{1}{p{0.15\linewidth}}{Strength and dosage form} & 
+\multicolumn{1}{p{0.08\linewidth}}{Number of doses first 6 months}  & 
+\multicolumn{1}{p{0.08\linewidth}}{Number of dosees per year beyond the first 6 months} & 
+\multicolumn{1}{c}{Wac per unit} & \multicolumn{1}{c}{Infusion cost} & 
+\multicolumn{1}{p{0.08\linewidth}}{Cost for the first 6 months} &
+\multicolumn{1}{p{0.08\linewidth}}{Cost per year beyond the first 6 months}\\
+\hline
+\ExpandableInput{tables/treat-cost.txt}
+\hline
+\end{tabular}
+\tiny
+Notes: Costs do not include rebates or discounts. Cost for infliximab are calculated by assuming that `r male.prop`\% of patients are male and that the weight of men and women are `r wtmale` kg and `r wtfemale` kg respectively. Tocilizumab is dosed weekly if weight is greater than 100 kg; costs for tocilizumab reported in the table are for patients weighing less than 100 kg. IV = intravenous; SC = subcutaneous; WAC = whoesale acqusition cost. 
+\end{threeparttable}
+\end{center}
+\end{table}
+\end{landscape}
+
+\subsection{Patient preferences for treatment
+attributes}\label{patient-preferences-for-treatment-attributes}
+
+\section{Simulation and uncertainty analysis}\label{sec:sim-uncertainty}
+
+\subsection{Individual patient simulation}\label{individual-patient-simulation}
+
+The IPS is a discrete-time simulation that simulates individual patients one at a time. Model cycle, denoted by $t$, were chosen to be 6-months long to be consistent with most RCT and real-world data evidence. \autoref{alg:IPS} describes the main components of the IPS for a single patient and a given treatment in a treatment sequence. The full simulation cycles through each treatment in a sequence and through each simulated patient.
+
+\begin{algorithm}
+\caption{Main components of the individual patient simulation}
+\label{alg:IPS}
+\begin{enumerate}
+\item \textbf{Initial treatment effect ($t = 0$)}
+\begin{enumerate}
+\item Simulate clinical response (SDAI or EULAR), time to serious infection $T_{si}$, and death.
+\begin{enumerate}
+\item \textbf{If} no clinical response, \textbf{then} stop treatment. Treatment switch caused by a serious infection if time to serious infection occured during cycle 0 (i.e. $T_{si} = 0$). Change in HAQ is assumed to be $0$. 
+\newline \textbf{Else if} clinical response, \textbf{then} continue treatment. Simulate change in HAQ and time to treatment discontinuation $T$.
+\item \textbf{If} patient died, \textbf{then} move to next patient. 
+\end{enumerate}
+\end{enumerate}
+\item \textbf{Maintenance phase} (for $t > 0 \text{ and } t \leq T$)
+\begin{enumerate}
+\item Simulate death (see \autoref{ssec:simulating-death}) and change in HAQ.
+\item \textbf{If} patient died, \textbf{then} move to next patient.
+\item \textbf{If} $t = T$, \textbf{then} switch treatment. Treatment switch caused by a serious infection if time to serious infection occured during or before cycle T (i.e. $T_{si} \leq T$). 
+\end{enumerate}
+\end{enumerate}
+\end{algorithm}
+
+\subsection{Parameter uncertainty}\label{parameter-uncertainty}
+
+\subsection{Structural uncertainty}\label{stuctural-uncertainty}
+
+\subsection{Implementation}\label{implementation}
+
+\section{Model validation}\label{sec:model-validation}
+
+\begin{appendices}
+
+\section{Individual Patient Simulation}\label{appendix:IPS}
+\subsection{Effect of age on linear HAQ
+progression}\label{effect-of-age-on-linear-haq-progression}
+
+\subsection{Simulating death}\label{ssec:simulating-death}
+Death is simulated for each patient during each model cycle based on age, gender, baseline HAQ, and change in HAQ from baseline. A 0/1 death indicator is randomly drawn using the following procedure: 
+\begin{enumerate}
+\item Use the annual probability of death ($q_x$) from lifetables based on patient age and gender.
+\item Adjust the probability of mortality, $p_m$, using odds of mortality, $OR$, of a change in baseline HAQ.
+\begin{align}
+p_m = \frac{1}{1 + \exp{\left[-(\log(q_x) + HAQ \cdot \log(OR))\right]}}
+\end{align}
+\item Convert the mortality probability, $p_m$, into a mortality rate, $r_m$.
+\begin{align}
+r_m &= -log(1 - p_m)
+\end{align}
+\item Adjust the mortality rate using the estimated hazard ratio of mortality, $HR$ of a change in HAQ from baseline, $\Delta$ HAQ.
+\begin{align}
+r_m &= r_m \cdot \exp[\log(HR) \cdot \Delta HAQ]
+\end{align}
+\item Convert the mortality rate into a probability given a 6-month cycle length.
+\begin{align}
+p_m = 1 - \exp[-r_m * (6/12)]
+\end{align}
+\item Randomly draw a 0/1 death indicator, $d$, given the probability of death, $p_m$.
+\begin{align}
+d \sim \text{Bin}(1, p_m)
+\end{align}
+\end{enumerate}
+
+\subsection{Simulating utility}\label{simulating-utility}
+\subsubsection{Mixture model}
+Utiliy was simulated in a two stages using the mixture model estimated by \citet{alava2013relationship}. In the first stage, we sampled pain for a given individual in a particular model cycle based on the HAQ score. In the second stage, we simulated utility as a function of HAQ, pain and age/sex.
+
+\textbf{Simulating pain}\\
+To simulate pain from HAQ, we used the summary statistics for pain and HAQ reported in \citet{sarzi2002correlation}. Pain was measured with the visual analog scale (VAS) with mean  $\mu_{pain} =$ \Sexpr{pain$pain.mean} and standard deviation $\sigma_{pain} =$ \Sexpr{formatC(sqrt(pain$pain.var), format = "f", digits = 2)}, while HAQ was reported to have mean $\mu_{haq} =$ \Sexpr{pain$haq.mean} and standard deviation $\sigma_{haq} =$ \Sexpr{formatC(sqrt(pain$haq.var), format = "f", digits = 2)}. 
+
+We then estimated the correlation between pain and HAQ by digitally scanning the curve depicting the (linear) relationship between pain and HAQ (Figure 114) shown in \citet{stevenson2016adalimumab}. Using the scanned data, we regressed pain on HAQ using simple ordinary least squares (OLS). The correlation between pain and HAQ, estimated as $\rho =$ \Sexpr{formatC(pain$painhaq.cor, digits = 2)}, was calculated by rearranging the OLS estimate for the slope, $\beta$, of the regression model,
+
+\begin{align}
+\rho = \beta \cdot \frac{\sigma_{haq}}{\sigma_{pain}}.
+\end{align}
+
+Pain was simulated using these parameters by assuming that pain was normally distributed conditional on HAQ,
+
+\begin{align}
+pain | haq = h \sim N\left (\mu_{pain} + \rho \frac{\sigma_{pain}}{\sigma_{haq}}(h - \mu_{haq}), \sigma^2_{pain}(1 - \rho^2)\right).
+\end{align}
+
+However, since the VAS is constrained to lie between 0 and 100, pain was drawn from a truncated normal distribution with a lower limit of 0 and an upper limit of 100. 
+
+
+\textbf{Simulating utility}\\
+After simulating pain, we simulated utility with a mixture model. Within each class $c$, the HAQ score for patient $i$ in period $t$ was modeled as,
+
+\begin{align}
+y_{it|C_{it}} &= 
+\begin{cases}
+  1 & \text{if}\  y^{*}_{it|C_{it}}>0.883 \\
+  y^{*}_{it|C_{it}} & \text{otherwise}
+\end{cases}\\
+y^{*}_{it|C_{it}} &= \alpha_{ic} +  x_{it}^T\beta_{c} + \epsilon_{it}\\
+\alpha_{ic} &= \gamma_{ic} + z_{i}^T\gamma_{i}^{0} + \mu_{i}
+\end{align}
+
+The probability of class membership was modeled using a multinomial logit model,
+
+\begin{align}
+P(C_{it} = c) &= \frac{\exp(w_{it}^T\delta_c)}{\sum_{s=1}^{4}\exp(w_{it}^T\delta_s)}.
+\end{align}
+
+We sampled from the mixture model as follows.
+
+\begin{enumerate}
+\item For each individual $i$, sample the error term, $\mu_{i} \sim N(0, \sigma^2_\mu)$.
+\end{enumerate}
+
+
+\subsubsection{Wailoo utility algorithm}\label{Wailoo-utility}
+
+\section{Network Meta-Analysis}\label{appendix:NMA}
+
+\subsection{Bayesian NMA for initial treatment
+effects}\label{sec:tech-nma-initial}
+
+\subsubsection{Systematic literature
+review}\label{systematic-literature-review}
+
+\textbf{Population}
+\begin{itemize}
+\item
+  Adult (\textgreater{}18 years) patients with moderate to severe RA who
+  have had inadequate response to cDMARDs
+\end{itemize}
+
+\textbf{Interventions and comparators}
+
+\begin{itemize}
+\item
+  Biologics as monotherapy or in combination with cDMARDs (adalimumab,
+  certolizumab pegol, etanercept, golimumab, infliximab, abatacept,
+  rituximab, tocilizumab, sarilumab, tofacitinib, baricitinib)
+\item
+  Triple therapy (MTX, HCQ, and SSZ)
+\item
+  cDMARDs alone or in combination (MTX, HCQ, SSZ or LEF)
+\end{itemize}
+
+\textbf{Outcomes}
+\begin{itemize}
+\item
+  ACR20/ACR50/ACR70
+\item
+  DAS28
+\item
+  Total sharp score
+\item
+  HAQ-DI score
+\item
+  SF-36 PCS and MCS
+\item
+  EQ-5D (VAS and utility scores)
+\item
+  AEs leading to drop-outs
+\end{itemize}
+
+\begin{itemize}
+\item
+  Randomized controlled trials
+\end{itemize}
+
+\textbf{Other}
+
+\begin{itemize}
+\item
+  Studies published in English
+\item
+  Primary study available as full text published manuscript only; no
+  study available as a conference abstract only was included with the
+  exception of abstracts pertaining to investigational products,
+  baricitinib and sarilumab
+\end{itemize}
+
+\subsubsection{Criteria for studies to be selected from the systematic
+literature review and included in the
+NMA}\label{criteria-for-studies-to-be-selected-from-the-systematic-literature-review-and-included-in-the-nma}
+
+The following criteria were used to select relevant studies to be
+included in the NMA:
+
+\textbf{Population}
+
+\begin{itemize}
+\item
+  Adult (\textgreater{}18 years) patients with moderate to severe RA who
+  have had inadequate response to cDMARDs and are bDMARD-naive
+\end{itemize}
+
+\textbf{Interventions}
+
+\begin{itemize}
+\item
+  Biologics as monotherapy or in combination with cDMARDs (adalimumab,
+  certolizumab pegol, etanercept, golimumab, infliximab, abatacept,
+  rituximab, tocilizumab, sarilumab, tofacitinib, baricitinib)
+\end{itemize}
+
+\textbf{Comparators}
+
+\begin{itemize}
+\item
+  cDMARDs
+\item
+  Any active comparator that allows for an indirect comparison between
+  the bDMARDs of interest
+\end{itemize}
+
+\textbf{Outcomes}
+
+\begin{itemize}
+\item
+  ACR20/ACR50/ACR70 at 6 months follow-up
+\end{itemize}
+
+\subsubsection{Identified evidence base}\label{identified-evidence-base}
+
+\autoref{fig:study-selection} summarizes the study identification and
+selection process. Of the 181 studies included in the large systematic
+literature review, 79 studies concerned the bDMARD-naive population
+(table NMA studies). There were 66 studies evaluating 36 interventions
+for which ACR response criteria were reported at 6 months (with a
+tolerability window of \(\pm 4\) weeks). The corresponding evidence
+network is presented in \autoref{fig:nma-network-acr-naive}. For the
+network meta-analysis the following were deemed to be clinically
+equivalent and were pooled.
+
+\begin{itemize}
+\item
+  ``INF 3mg/kg q8w'' or ``INF 5mg/kg q8w'' or ``INF 6mg/kg q8w''
+\item
+  ``ETN 50mg qw'' or ``ETN 25mg biw''
+\item
+  ``ABA 10mg/kg q4wa or''ABA SC 125mg qw"
+\item
+  ``CER 200mg q2w+MTX'' or ``CER 400mg q4w+MTX
+\item
+  DMARDs including methotrexate, sulfasalazine, hydroxychloroquine,
+  leflunomide at any dosage; studies which only described DMARD therapy
+  as conventional or nonbiologic
+\end{itemize}
+
+\begin{figure}
+\centering
+\includegraphics[max size={\textwidth}{\textheight}]{figs/study-selection.png}
+\caption{Study identification and selection}\label{fig:study-selection}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{figs/nma-network-acr-naive.pdf}
+\caption{Bayesian random effects NMA network diagram for patients naive
+to bDMARDs}\label{fig:nma-network-acr-naive}
+\end{figure}
+
+\subsubsection{Network meta-analysis to obtain ACR 20/50/70
+response}\label{network-meta-analysis-to-obtain-acr-205070-response}
+
+The probability of ACR20/50/70 responses was estimated using a Bayesian (random effects) network meta-analyses model for ordered categorical data \citep{dias2013evidence}. The model assumes that there is an underlying continuous variable (ACR20/50/70) categorized by specifying different cutoffs corresponding to the point at which an individual moves from one category to the next in each trial. The advantage of this approach over an analysis that considers ACR categories separately is that all possible outcomes are analyzed simultaneously based on the same randomized controlled trials, allowing for consistent estimates by category. To avoid influencing the observed results by prior belief, uninformative prior distributions were used for the estimated model parameters. The relative treatment effects for each bDMARD versus cDMARDs estimated on the probit scale were transformed into absolute probabilities of the nonoverlapping ACR response categories by combining them with the average results for cDMARDs. The posterior distributions of parameters of interest were summarized by the median as a reflection of the point estimate and 95\% credible intervals, constructed from the 2.5 and 97.5 percentiles. Analyses were performed with the Markov chain Monte Carlo method using the JAGS software package (\url{http://mcmc-jags.sourceforge.net/}).
+
+\subsection{Network meta-analysis to obtain
+HAQ}\label{network-meta-analysis-to-obtain-haq}
+
+\end{appendices}
+
+\pdfbookmark[1]{References}{References}
+\bibliography{../../vignettes/vignettes}
+
+\end{document}
