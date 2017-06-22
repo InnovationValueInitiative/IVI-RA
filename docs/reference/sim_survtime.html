@@ -23,14 +23,17 @@
 <link href="../pkgdown.css" rel="stylesheet">
 <script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-
+  
+  
 <!-- mathjax -->
-<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+<script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
+
+
   </head>
 
   <body>
@@ -59,7 +62,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/intro.html">Introduction to IVI026</a>
+      <a href="../articles/intro.html">Introduction to iviRA</a>
     </li>
   </ul>
 </li>
@@ -88,38 +91,61 @@
     <p>Simulate survival time given age and a vector of HAQ scores</p>
     
 
-    <pre><span class='fu'>sim_survtime</span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>age</span> <span class='kw'>=</span> <span class='fl'>55</span>, <span class='kw'>haq0</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>male</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>haq</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='no'>haq0</span>,
+    <pre class="usage"><span class='fu'>sim_survtime</span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>age</span> <span class='kw'>=</span> <span class='fl'>55</span>, <span class='kw'>haq0</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>male</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>haq</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='no'>haq0</span>,
   <span class='fl'>12</span>/<span class='no'>cycle_length</span> * (<span class='fl'>100</span> - <span class='no'>age</span> + <span class='fl'>1</span>)), <span class='kw'>ltfemale</span> <span class='kw'>=</span> <span class='no'>lifetable.female</span>,
   <span class='kw'>ltmale</span> <span class='kw'>=</span> <span class='no'>lifetable.male</span>, <span class='kw'>x_mort</span> <span class='kw'>=</span> <span class='no'>haq0</span>, <span class='kw'>logor</span> <span class='kw'>=</span> <span class='no'>mort.or</span>$<span class='no'>logor</span>,
   <span class='kw'>cycle_length</span> <span class='kw'>=</span> <span class='fl'>6</span>, <span class='kw'>loghr</span> <span class='kw'>=</span> <span class='no'>mort.hr.haqdif</span>$<span class='no'>loghr</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
-    <dl class="dl-horizontal">
-      <dt>n</dt>
-      <dd>Number of observations</dd>
-      <dt>age</dt>
-      <dd>Age of patients. Length must be 1.</dd>
-      <dt>haq0</dt>
-      <dd>Baseline HAQ. Length must be 1.</dd>
-      <dt>male</dt>
-      <dd>Vector indicating patient gender (1 = male, 0 = female)</dd>
-      <dt>haq</dt>
-      <dd>Vector of HAQ scores (e.g. HAQ trajectory)</dd>
-      <dt>ltfemale</dt>
-      <dd>Lifetable for women. Must contain column &#39;age&#39; for single-year of age and &#39;qx&#39; for
-the probability of death at a given age.</dd>
-      <dt>ltmale</dt>
-      <dd>Identical to <code>ltfemale</code> but for men.</dd>
-      <dt>x_mort</dt>
-      <dd>Design matrix for mortality adjustment with odds ratios. Number of rows equal to n.</dd>
-      <dt>logor</dt>
-      <dd>Vector of log odds ratio mortality adjusters. Length equal to number of columns in x.</dd>
-      <dt>cycle_length</dt>
-      <dd>Length of model cycles in months. Default is 1 month cycles.</dd>
-      <dt>loghr</dt>
-      <dd>Log hazard ratio of impact of change in HAQ from baseline on mortality rate. A vector with
-each element denoting (in order) hazard ratio for months 0-6, &gt;6 - 12, &gt;12 - 24, &gt;24 -36, &gt;36.</dd>
-    </dl>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>n</th>
+      <td><p>Number of observations</p></td>
+    </tr>
+    <tr>
+      <th>age</th>
+      <td><p>Age of patients. Length must be 1.</p></td>
+    </tr>
+    <tr>
+      <th>haq0</th>
+      <td><p>Baseline HAQ. Length must be 1.</p></td>
+    </tr>
+    <tr>
+      <th>male</th>
+      <td><p>Vector indicating patient gender (1 = male, 0 = female)</p></td>
+    </tr>
+    <tr>
+      <th>haq</th>
+      <td><p>Vector of HAQ scores (e.g. HAQ trajectory)</p></td>
+    </tr>
+    <tr>
+      <th>ltfemale</th>
+      <td><p>Lifetable for women. Must contain column 'age' for single-year of age and 'qx' for
+the probability of death at a given age.</p></td>
+    </tr>
+    <tr>
+      <th>ltmale</th>
+      <td><p>Identical to <code>ltfemale</code> but for men.</p></td>
+    </tr>
+    <tr>
+      <th>x_mort</th>
+      <td><p>Design matrix for mortality adjustment with odds ratios. Number of rows equal to n.</p></td>
+    </tr>
+    <tr>
+      <th>logor</th>
+      <td><p>Vector of log odds ratio mortality adjusters. Length equal to number of columns in x.</p></td>
+    </tr>
+    <tr>
+      <th>cycle_length</th>
+      <td><p>Length of model cycles in months. Default is 1 month cycles.</p></td>
+    </tr>
+    <tr>
+      <th>loghr</th>
+      <td><p>Log hazard ratio of impact of change in HAQ from baseline on mortality rate. A vector with
+each element denoting (in order) hazard ratio for months 0-6, &gt;6 - 12, &gt;12 - 24, &gt;24 -36, &gt;36.</p></td>
+    </tr>
+    </table>
     
 
   </div>

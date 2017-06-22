@@ -1,4 +1,4 @@
-#' iviRA: an R package for a health-economic rheumatoid arthritis model
+#' iviRA: an R package for running the IVI-RA cost-effectiveness model
 #'
 #' @docType package
 #' @name iviRA

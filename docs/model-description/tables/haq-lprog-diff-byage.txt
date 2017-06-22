@@ -1,5 +1,5 @@
-% latex table generated in R 3.3.2 by xtable 1.8-2 package
-% Wed Jun 21 23:02:39 2017
+% latex table generated in R 3.4.0 by xtable 1.8-2 package
+% Thu Jun 22 15:46:42 2017
  \hspace{3mm}<40 & -0.020 & -0.028 & -0.012 & \citet{michaud2011treatment} \\ 
   \hspace{3mm}40-64 & -0.008 & -0.010 & -0.006 & \citet{michaud2011treatment} \\ 
   \hspace{3mm}65+ & 0.017 & 0.013 & 0.021 & \citet{michaud2011treatment} \\ 

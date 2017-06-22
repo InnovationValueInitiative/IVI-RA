@@ -4,7 +4,7 @@
 \name{iviRA}
 \alias{iviRA}
 \alias{iviRA-package}
-\title{iviRA: an R package for a health-economic rheumatoid arthritis model}
+\title{iviRA: an R package for running the IVI-RA cost-effectiveness model}
 \description{
-iviRA: an R package for a health-economic rheumatoid arthritis model
+iviRA: an R package for running the IVI-RA cost-effectiveness model
 }

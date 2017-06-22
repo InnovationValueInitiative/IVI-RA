@@ -93,7 +93,7 @@ std::vector<double> sample_survC(int n, double age0, double male, arma::mat life
         break;
       }
       age = age + cycle_length/12;
-      double month = month + cycle_length;
+      month = month + cycle_length;
     }
   le.push_back(age);
   }

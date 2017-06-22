@@ -23,14 +23,17 @@
 <link href="../pkgdown.css" rel="stylesheet">
 <script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-
+  
+  
 <!-- mathjax -->
-<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+<script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
+
+
   </head>
 
   <body>
@@ -59,7 +62,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/intro.html">Introduction to IVI026</a>
+      <a href="../articles/intro.html">Introduction to iviRA</a>
     </li>
   </ul>
 </li>
@@ -88,36 +91,43 @@
     <p>Generate data inputs for the IPS.</p>
     
 
-    <pre><span class='fu'>input_data</span>(<span class='no'>patdata</span>, <span class='kw'>vars_mort</span> <span class='kw'>=</span> <span class='st'>"haq0"</span>, <span class='kw'>vars_dur</span> <span class='kw'>=</span> <span class='st'>"1"</span>)</pre>
+    <pre class="usage"><span class='fu'>input_data</span>(<span class='no'>patdata</span>, <span class='kw'>vars_mort</span> <span class='kw'>=</span> <span class='st'>"haq0"</span>, <span class='kw'>vars_dur</span> <span class='kw'>=</span> <span class='st'>"1"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
-    <dl class="dl-horizontal">
-      <dt>patdata</dt>
-      <dd>Matrix of patient data. Must contain variables generated from <a href='sample_pats.html'>sample_pats</a>:
- &#39;age&#39; for age, &#39;haq0&#39; for baseline HAQ, &#39;male&#39; as a indicator equal to
-1 if the patient is male and 0 if female, &#39;weight&#39; for patient weight, &#39;dis_dur&#39; for disease
-duration and &#39;prev_dmards&#39; for number of previous DMARDs.</dd>
-      <dt>vars_mort</dt>
-      <dd>A chararacter vector of variables in <code>patdata</code> to be used to adjust
-&#39;qx&#39; (using odds ratios) in the lifetables. Use &#39;1&#39; to include an intercept.</dd>
-      <dt>vars_dur</dt>
-      <dd>A character vector of variables in <code>patdata</code> to be used to predict treatment
-duration. Use &#39;1&#39; to include an intercept.</dd>
-    </dl>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>patdata</th>
+      <td><p>Matrix of patient data. Must contain variables generated from <a href='sample_pats.html'>sample_pats</a>:
+ 'age' for age, 'haq0' for baseline HAQ, 'male' as a indicator equal to
+1 if the patient is male and 0 if female, 'weight' for patient weight, 'dis_dur' for disease
+duration and 'prev_dmards' for number of previous DMARDs.</p></td>
+    </tr>
+    <tr>
+      <th>vars_mort</th>
+      <td><p>A chararacter vector of variables in <code>patdata</code> to be used to adjust
+'qx' (using odds ratios) in the lifetables. Use '1' to include an intercept.</p></td>
+    </tr>
+    <tr>
+      <th>vars_dur</th>
+      <td><p>A character vector of variables in <code>patdata</code> to be used to predict treatment
+duration. Use '1' to include an intercept.</p></td>
+    </tr>
+    </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A list containing the following data inputs:
-<dl class='dl-horizontal'>
-  <dt>n</dt><dd>Number of simulated patients</dd>
-  <dt>haq0</dt><dd>A vector of patient HAQ at baseline.</dd>
-  <dt>age</dt><dd>A vector of patient age at baseline.</dd>
-  <dt>male</dt><dd>A vector of patient gender (1 = male, 0 = female).</dd>
-  <dt>dis.dur</dt><dd>A vector of disease duration</dd>
-  <dt>prev.dmards</dt><dd>A vector of the number of previous DMARDs</dd>
-  <dt>x.mort</dt><dd>Design matrix for mortality adjustment with odds ratios</dd>
-  <dt>x.dur</dt><dd>Design matrix for treatment duration.</dd>
-</dl></p>
+    <p>A list containing the following data inputs:</p><dl class='dl-horizontal'>
+  <dt>n</dt><dd><p>Number of simulated patients</p></dd>
+  <dt>haq0</dt><dd><p>A vector of patient HAQ at baseline.</p></dd>
+  <dt>age</dt><dd><p>A vector of patient age at baseline.</p></dd>
+  <dt>male</dt><dd><p>A vector of patient gender (1 = male, 0 = female).</p></dd>
+  <dt>dis.dur</dt><dd><p>A vector of disease duration</p></dd>
+  <dt>prev.dmards</dt><dd><p>A vector of the number of previous DMARDs</p></dd>
+  <dt>x.mort</dt><dd><p>Design matrix for mortality adjustment with odds ratios</p></dd>
+  <dt>x.dur</dt><dd><p>Design matrix for treatment duration.</p></dd>
+</dl>
+
     
 
   </div>

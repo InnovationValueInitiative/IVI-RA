@@ -23,14 +23,17 @@
 <link href="../pkgdown.css" rel="stylesheet">
 <script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-
+  
+  
 <!-- mathjax -->
-<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+<script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
+
+
   </head>
 
   <body>
@@ -59,7 +62,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/intro.html">Introduction to IVI026</a>
+      <a href="../articles/intro.html">Introduction to iviRA</a>
     </li>
   </ul>
 </li>
@@ -88,37 +91,50 @@
     <p>Simulate health care sector costs from HAQ score simulated using <code>sim_haq</code></p>
     
 
-    <pre><span class='fu'>sim_hc_cost</span>(<span class='no'>simhaq</span>, <span class='no'>weight</span>, <span class='no'>pars</span>,
+    <pre class="usage"><span class='fu'>sim_hc_cost</span>(<span class='no'>simhaq</span>, <span class='no'>weight</span>, <span class='no'>pars</span>,
   <span class='kw'>cdmards.ind</span> <span class='kw'>=</span> <span class='fu'>which</span>(<span class='no'>therapy.pars</span>$<span class='no'>info</span><span class='kw'>[[</span><span class='st'>"sname"</span>]] <span class='kw'>==</span> <span class='st'>"cdmards"</span>),
   <span class='kw'>tcz.ind</span> <span class='kw'>=</span> <span class='fu'>which</span>(<span class='no'>therapy.pars</span>$<span class='no'>info</span><span class='kw'>[[</span><span class='st'>"sname"</span>]] <span class='kw'>==</span> <span class='st'>"tcz"</span>),
   <span class='kw'>tczmtx.ind</span> <span class='kw'>=</span> <span class='fu'>which</span>(<span class='no'>therapy.pars</span>$<span class='no'>info</span><span class='kw'>[[</span><span class='st'>"sname"</span>]] <span class='kw'>==</span> <span class='st'>"tczmtx"</span>),
   <span class='kw'>check</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
-    <dl class="dl-horizontal">
-      <dt>simhaq</dt>
-      <dd>Simulation output from <a href='sim_haq.html'>sim_haq</a>.</dd>
-      <dt>weight</dt>
-      <dd>Weight of patient. Used to calculate treatment costs when dosing is based
-on weight.</dd>
-      <dt>pars</dt>
-      <dd>List of sampled parameter values. The format is the same as the ouptut produced 
-with <a href='sample_pars.html'>sample_pars</a>. The list must contain:
-<dl class='dl-horizontal'>
-<dt>treat.cost</dt><dd>Matrix of treatment cost data.</dd>
-<dt>hosp.cost</dt><dd>List of two matrices used to simulate hospital costs. </dd>
-<dt>mgmt.cost</dt><dd>Matrix of general management costs.</dd>
-</dl>
-</dd>
-      <dt>cdmards.ind</dt>
-      <dd>Index for cDMARDs.</dd>
-      <dt>tcz.ind</dt>
-      <dd>Index for tocilizumab.</dd>
-      <dt>tczmtx.ind</dt>
-      <dd>Index for tocilizuma + methotrexate.</dd>
-      <dt>check</dt>
-      <dd>Should the function check parameters and input data passed to the model? Default is TRUE.</dd>
-    </dl>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>simhaq</th>
+      <td><p>Simulation output from <a href='sim_haq.html'>sim_haq</a>.</p></td>
+    </tr>
+    <tr>
+      <th>weight</th>
+      <td><p>Weight of patient. Used to calculate treatment costs when dosing is based
+on weight.</p></td>
+    </tr>
+    <tr>
+      <th>pars</th>
+      <td><p>List of sampled parameter values. The format is the same as the ouptut produced 
+with <a href='sample_pars.html'>sample_pars</a>. The list must contain:</p><dl class='dl-horizontal'>
+<dt>treat.cost</dt><dd><p>Matrix of treatment cost data.</p></dd>
+<dt>hosp.cost</dt><dd><p>List of two matrices used to simulate hospital costs.</p></dd>
+<dt>mgmt.cost</dt><dd><p>Matrix of general management costs.</p></dd>
+</dl></td>
+    </tr>
+    <tr>
+      <th>cdmards.ind</th>
+      <td><p>Index for cDMARDs.</p></td>
+    </tr>
+    <tr>
+      <th>tcz.ind</th>
+      <td><p>Index for tocilizumab.</p></td>
+    </tr>
+    <tr>
+      <th>tczmtx.ind</th>
+      <td><p>Index for tocilizuma + methotrexate.</p></td>
+    </tr>
+    <tr>
+      <th>check</th>
+      <td><p>Should the function check parameters and input data passed to the model? Default is TRUE.</p></td>
+    </tr>
+    </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 

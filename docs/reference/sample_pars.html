@@ -23,14 +23,17 @@
 <link href="../pkgdown.css" rel="stylesheet">
 <script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-
+  
+  
 <!-- mathjax -->
-<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+<script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
+
+
   </head>
 
   <body>
@@ -59,7 +62,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/intro.html">Introduction to IVI026</a>
+      <a href="../articles/intro.html">Introduction to iviRA</a>
     </li>
   </ul>
 </li>
@@ -88,7 +91,7 @@
     <p>Randomly draw parameters from their (joint) probability distribution.</p>
     
 
-    <pre><span class='fu'>sample_pars</span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>rebound_lower</span> <span class='kw'>=</span> <span class='fl'>0.7</span>, <span class='kw'>rebound_upper</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+    <pre class="usage"><span class='fu'>sample_pars</span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>rebound_lower</span> <span class='kw'>=</span> <span class='fl'>0.7</span>, <span class='kw'>rebound_upper</span> <span class='kw'>=</span> <span class='fl'>1</span>,
   <span class='kw'>ltfemale</span> <span class='kw'>=</span> <span class='no'>lifetable.female</span>, <span class='kw'>ltmale</span> <span class='kw'>=</span> <span class='no'>lifetable.male</span>,
   <span class='kw'>acr2eular_mat</span> <span class='kw'>=</span> <span class='no'>acr2eular</span>, <span class='kw'>treat_cost</span> <span class='kw'>=</span> <span class='no'>therapy.pars</span>$<span class='no'>cost</span>,
   <span class='kw'>mort_logor</span> <span class='kw'>=</span> <span class='no'>mort.or</span>$<span class='no'>logor</span>, <span class='kw'>mort_logor_se</span> <span class='kw'>=</span> <span class='no'>mort.or</span>$<span class='no'>logor_se</span>,
@@ -113,202 +116,282 @@
   <span class='kw'>therapy_names</span> <span class='kw'>=</span> <span class='no'>therapy.pars</span>$<span class='no'>info</span>$<span class='no'>sname</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
-    <dl class="dl-horizontal">
-      <dt>n</dt>
-      <dd>Size of the posterior sample.</dd>
-      <dt>rebound_lower</dt>
-      <dd>The rebound is the increase in HAQ following treatment. It is defined as 
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>n</th>
+      <td><p>Size of the posterior sample.</p></td>
+    </tr>
+    <tr>
+      <th>rebound_lower</th>
+      <td><p>The rebound is the increase in HAQ following treatment. It is defined as 
 a proportion <em>f</em> times the size of the inititial treatment response. <code>rebound_lower</code> defines the
 lower bound for <em>f</em>. Default is 0.7, which implies
-that the rebound post treatment is 0.7 times the initial treatment effect.</dd>
-      <dt>rebound_upper</dt>
-      <dd><code>rebound_upper</code> defines the
+that the rebound post treatment is 0.7 times the initial treatment effect.</p></td>
+    </tr>
+    <tr>
+      <th>rebound_upper</th>
+      <td><p><code>rebound_upper</code> defines the
 upper bound for <em>f</em>. Default is 1, which implies
-that the rebound post treatment is the same as the initial treatment effect.</dd>
-      <dt>ltfemale</dt>
-      <dd>Lifetable for women. Must contain column &#39;age&#39; for single-year of age and &#39;qx&#39; for
-the probability of death at a given age.</dd>
-      <dt>ltmale</dt>
-      <dd>Identical to <code>ltfemale</code> but for men.</dd>
-      <dt>acr2eular_mat</dt>
-      <dd>A two-way frequency matrix with columns denoting EULAR response
-(none, moderate, good) and rows denoting ACR response  (&lt;20, 20-50, 50-70, 70+).</dd>
-      <dt>treat_cost</dt>
-      <dd>Treatment cost matrix in format of therapy.pars$cost.</dd>
-      <dt>mort_logor</dt>
-      <dd>Log odds ratio of impact of baseline HAQ on probability of mortality.</dd>
-      <dt>mort_logor_se</dt>
-      <dd>Standard error of log odds ratio of impact of baseline HAQ on probability of mortality.</dd>
-      <dt>mort_loghr_haqdif</dt>
-      <dd>Log hazard ratio of impact of change in HAQ from baseline on mortality rate. A vector with
-each element denoting (in order) hazard ratio for months 0-6, &gt;6 - 12, &gt;12 - 24, &gt;24 -36, &gt;36.</dd>
-      <dt>mort_loghr_se_haqdif</dt>
-      <dd>Standard error of log hazard ratio of impact of change in HAQ from baseline on mortality rate.</dd>
-      <dt>dur_eular_mod</dt>
-      <dd>A list containing treatment duration parameters for patientes with a moderate EULAR response. See &#39;Treatment duration&#39;.</dd>
-      <dt>dur_eular_good</dt>
-      <dd>A list containing treatment duration parameters for patientes with a good EULAR response. See &#39;Treatment duration&#39;.</dd>
-      <dt>nma1_mean</dt>
-      <dd>Posterior means for NMA parameters on probit scale (1st line). 
-NMA estimtes impact of therapy on ACR response.</dd>
-      <dt>nma1_sd</dt>
-      <dd>Posterior sd for NMA paramters on probit scale (1st line). 
-Used as diagonal for variance-covariance matrix.</dd>
-      <dt>nma2_mean</dt>
-      <dd>Posterior means for NMA parameters on probit scale (2+ lines).
-NMA estimtes impact of therapy on ACR response.</dd>
-      <dt>nma2_sd</dt>
-      <dd>Posterior sd for NMA paramters on probit scale (2+ lines). 
-Used as diagonal for variance-covariance matrix.</dd>
-      <dt>basedif_mean</dt>
-      <dd>Difference of mean effect of baseline treatment on probit scale
-between 2nd line and 1st line. Used if there are no 2nd line NMA results.</dd>
-      <dt>basedif_sd</dt>
-      <dd>Standard deviation of <code>basedif_mean</code></dd>
-      <dt>zdif_mean</dt>
-      <dd>Difference of ACR 50 and ACR 70 cutpoints on probit scale
-between 2nd line and 1st line.</dd>
-      <dt>treat_hist</dt>
-      <dd>Is patient TIM naive or experienced. If naive NMA results for TIM 
+that the rebound post treatment is the same as the initial treatment effect.</p></td>
+    </tr>
+    <tr>
+      <th>ltfemale</th>
+      <td><p>Lifetable for women. Must contain column 'age' for single-year of age and 'qx' for
+the probability of death at a given age.</p></td>
+    </tr>
+    <tr>
+      <th>ltmale</th>
+      <td><p>Identical to <code>ltfemale</code> but for men.</p></td>
+    </tr>
+    <tr>
+      <th>acr2eular_mat</th>
+      <td><p>A two-way frequency matrix with columns denoting EULAR response
+(none, moderate, good) and rows denoting ACR response  (&lt;20, 20-50, 50-70, 70+).</p></td>
+    </tr>
+    <tr>
+      <th>treat_cost</th>
+      <td><p>Treatment cost matrix in format of therapy.pars$cost.</p></td>
+    </tr>
+    <tr>
+      <th>mort_logor</th>
+      <td><p>Log odds ratio of impact of baseline HAQ on probability of mortality.</p></td>
+    </tr>
+    <tr>
+      <th>mort_logor_se</th>
+      <td><p>Standard error of log odds ratio of impact of baseline HAQ on probability of mortality.</p></td>
+    </tr>
+    <tr>
+      <th>mort_loghr_haqdif</th>
+      <td><p>Log hazard ratio of impact of change in HAQ from baseline on mortality rate. A vector with
+each element denoting (in order) hazard ratio for months 0-6, &gt;6 - 12, &gt;12 - 24, &gt;24 -36, &gt;36.</p></td>
+    </tr>
+    <tr>
+      <th>mort_loghr_se_haqdif</th>
+      <td><p>Standard error of log hazard ratio of impact of change in HAQ from baseline on mortality rate.</p></td>
+    </tr>
+    <tr>
+      <th>dur_eular_mod</th>
+      <td><p>A list containing treatment duration parameters for patientes with a moderate EULAR response. See 'Treatment duration'.</p></td>
+    </tr>
+    <tr>
+      <th>dur_eular_good</th>
+      <td><p>A list containing treatment duration parameters for patientes with a good EULAR response. See 'Treatment duration'.</p></td>
+    </tr>
+    <tr>
+      <th>nma1_mean</th>
+      <td><p>Posterior means for NMA parameters on probit scale (1st line). 
+NMA estimtes impact of therapy on ACR response.</p></td>
+    </tr>
+    <tr>
+      <th>nma1_sd</th>
+      <td><p>Posterior sd for NMA paramters on probit scale (1st line). 
+Used as diagonal for variance-covariance matrix.</p></td>
+    </tr>
+    <tr>
+      <th>nma2_mean</th>
+      <td><p>Posterior means for NMA parameters on probit scale (2+ lines).
+NMA estimtes impact of therapy on ACR response.</p></td>
+    </tr>
+    <tr>
+      <th>nma2_sd</th>
+      <td><p>Posterior sd for NMA paramters on probit scale (2+ lines). 
+Used as diagonal for variance-covariance matrix.</p></td>
+    </tr>
+    <tr>
+      <th>basedif_mean</th>
+      <td><p>Difference of mean effect of baseline treatment on probit scale
+between 2nd line and 1st line. Used if there are no 2nd line NMA results.</p></td>
+    </tr>
+    <tr>
+      <th>basedif_sd</th>
+      <td><p>Standard deviation of <code>basedif_mean</code></p></td>
+    </tr>
+    <tr>
+      <th>zdif_mean</th>
+      <td><p>Difference of ACR 50 and ACR 70 cutpoints on probit scale
+between 2nd line and 1st line.</p></td>
+    </tr>
+    <tr>
+      <th>treat_hist</th>
+      <td><p>Is patient TIM naive or experienced. If naive NMA results for TIM 
 naive patients are used during 1st line and TIM experienced NMA results are used
 for subsequent lines. If experienced, NMA results for TIM
-experienced patients are using during 1st and subsequent lines.</dd>
-      <dt>haq_lprog_therapy_mean</dt>
-      <dd>Point estimate of linear yearly HAQ progression rate by therapy.</dd>
-      <dt>haq_lprog_therapy_se</dt>
-      <dd>Standard error of linear yearly HAQ progression rate by therapy.</dd>
-      <dt>eular2haq_mean</dt>
-      <dd>Mean HAQ change by Eular response category.</dd>
-      <dt>eular2haq_se</dt>
-      <dd>Standard error of mean HAQ change by Eular response category.</dd>
-      <dt>haq_lprog_age_mean</dt>
-      <dd>Impact of age on annual linear haq progression rate.</dd>
-      <dt>haq_lprog_age_se</dt>
-      <dd>Standard error of impact of age on annual linear haq progression rate.</dd>
-      <dt>hosp_days_mean</dt>
-      <dd>Vector denoting average number of hospital days for HAQ &lt; 0.5,
-0.5 &lt;= HAQ &lt; 1, 1 &lt;= HAQ &lt; 1.5, 1.5 &lt;= HAQ &lt; 2, 2 &lt;= HAQ &lt; 2.5, HAQ &gt;= 2.5.</dd>
-      <dt>hosp_days_se</dt>
-      <dd>Vector denoting standard error of average number of hospital days for HAQ &lt; 0.5,
-0.5 &lt;= HAQ &lt; 1, 1 &lt;= HAQ &lt; 1.5, 1.5 &lt;= HAQ &lt; 2, 2 &lt;= HAQ &lt; 2.5, HAQ &gt;= 2.5.</dd>
-      <dt>hosp_cost_mean</dt>
-      <dd>Mean of daily hospital cost.</dd>
-      <dt>hosp_cost_se</dt>
-      <dd>Standard error of dail hospital cost.</dd>
-      <dt>mgmt_cost_mean</dt>
-      <dd>Mean of costs of services (in order: chest x-ray, x-ray visit,
-outpatient followup, Mantoux tuberculin skin test) for general management of RA.</dd>
-      <dt>mgmt_cost_se</dt>
-      <dd>Standard error of mean of costs of services for general management of RA
-for general management of RA.</dd>
-      <dt>pl_mean</dt>
-      <dd>Mean annual productivity loss per 1-unit increase in HAQ.</dd>
-      <dt>pl_se</dt>
-      <dd>Standard error of mean annual productivity loss per 1-unit increase in HAQ.</dd>
-      <dt>si_surv</dt>
-      <dd>Paramters of survival model used to estimate time to serious infection.</dd>
-      <dt>si_cost</dt>
-      <dd>Cost of a serious infection.</dd>
-      <dt>si_cost_range</dt>
-      <dd>Range used to vary serious infection cost. Default is to calculate upper and lower bound by multiplying 
-<code>si_cost</code> by 1 +/- 0.2 (i.e. a 20% change).</dd>
-      <dt>si_ul</dt>
-      <dd>One month loss in utility from a serious infection.</dd>
-      <dt>si_ul_range</dt>
-      <dd>Range used to vary serious infection utility loss. Default is to calculate upper and lower bound by multiplying 
-<code>si_ul</code> by 1 +/- 0.2 (i.e. a 20% change).</dd>
-      <dt>therapy_names</dt>
-      <dd>Vector of therapy names.</dd>
-    </dl>
+experienced patients are using during 1st and subsequent lines.</p></td>
+    </tr>
+    <tr>
+      <th>haq_lprog_therapy_mean</th>
+      <td><p>Point estimate of linear yearly HAQ progression rate by therapy.</p></td>
+    </tr>
+    <tr>
+      <th>haq_lprog_therapy_se</th>
+      <td><p>Standard error of linear yearly HAQ progression rate by therapy.</p></td>
+    </tr>
+    <tr>
+      <th>eular2haq_mean</th>
+      <td><p>Mean HAQ change by Eular response category.</p></td>
+    </tr>
+    <tr>
+      <th>eular2haq_se</th>
+      <td><p>Standard error of mean HAQ change by Eular response category.</p></td>
+    </tr>
+    <tr>
+      <th>haq_lprog_age_mean</th>
+      <td><p>Impact of age on annual linear haq progression rate.</p></td>
+    </tr>
+    <tr>
+      <th>haq_lprog_age_se</th>
+      <td><p>Standard error of impact of age on annual linear haq progression rate.</p></td>
+    </tr>
+    <tr>
+      <th>hosp_days_mean</th>
+      <td><p>Vector denoting average number of hospital days for HAQ &lt; 0.5,
+0.5 &lt;= HAQ &lt; 1, 1 &lt;= HAQ &lt; 1.5, 1.5 &lt;= HAQ &lt; 2, 2 &lt;= HAQ &lt; 2.5, HAQ &gt;= 2.5.</p></td>
+    </tr>
+    <tr>
+      <th>hosp_days_se</th>
+      <td><p>Vector denoting standard error of average number of hospital days for HAQ &lt; 0.5,
+0.5 &lt;= HAQ &lt; 1, 1 &lt;= HAQ &lt; 1.5, 1.5 &lt;= HAQ &lt; 2, 2 &lt;= HAQ &lt; 2.5, HAQ &gt;= 2.5.</p></td>
+    </tr>
+    <tr>
+      <th>hosp_cost_mean</th>
+      <td><p>Mean of daily hospital cost.</p></td>
+    </tr>
+    <tr>
+      <th>hosp_cost_se</th>
+      <td><p>Standard error of dail hospital cost.</p></td>
+    </tr>
+    <tr>
+      <th>mgmt_cost_mean</th>
+      <td><p>Mean of costs of services (in order: chest x-ray, x-ray visit,
+outpatient followup, Mantoux tuberculin skin test) for general management of RA.</p></td>
+    </tr>
+    <tr>
+      <th>mgmt_cost_se</th>
+      <td><p>Standard error of mean of costs of services for general management of RA
+for general management of RA.</p></td>
+    </tr>
+    <tr>
+      <th>pl_mean</th>
+      <td><p>Mean annual productivity loss per 1-unit increase in HAQ.</p></td>
+    </tr>
+    <tr>
+      <th>pl_se</th>
+      <td><p>Standard error of mean annual productivity loss per 1-unit increase in HAQ.</p></td>
+    </tr>
+    <tr>
+      <th>si_surv</th>
+      <td><p>Paramters of survival model used to estimate time to serious infection.</p></td>
+    </tr>
+    <tr>
+      <th>si_cost</th>
+      <td><p>Cost of a serious infection.</p></td>
+    </tr>
+    <tr>
+      <th>si_cost_range</th>
+      <td><p>Range used to vary serious infection cost. Default is to calculate upper and lower bound by multiplying 
+<code>si_cost</code> by 1 +/- 0.2 (i.e. a 20% change).</p></td>
+    </tr>
+    <tr>
+      <th>si_ul</th>
+      <td><p>One month loss in utility from a serious infection.</p></td>
+    </tr>
+    <tr>
+      <th>si_ul_range</th>
+      <td><p>Range used to vary serious infection utility loss. Default is to calculate upper and lower bound by multiplying 
+<code>si_ul</code> by 1 +/- 0.2 (i.e. a 20% change).</p></td>
+    </tr>
+    <tr>
+      <th>therapy_names</th>
+      <td><p>Vector of therapy names.</p></td>
+    </tr>
+    </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>List containing samples for the following model parameters:</p>
-    <p><dl class='dl-horizontal'>
- <dt>treat.cost</dt><dd><code>data.table</code> of treatment cost data.</dd>
- <dt>ltmale</dt><dd>Lifetable for males with qx transformed using the logit function.</dd>
-  <dt>ltfemale</dt><dd>Lifetable for females with qx transformed using the logit function.</dd>
- <dt>acr2eular</dt><dd>An array of matrices. Each matrix represents a random sample of the conditional 
- probability of each EULAR response category for a given ACR response.</dd>
-  <dt>logor.mort</dt><dd>Matrix of log odds ratio used to adjust mortality. One row for each sample
-  and one column for each variable used to adjust mortality.</dd>
-  <dt>mort.loghr.haqdif</dt><dd>Matrix of the log hazard ratio of the impact of a change in HAQ from baseline on mortality. Columns denote
-  hazard ratios at times &lt; 6 months, months 6 - &lt;12, months 12 - &lt;24, months 24 - &lt;36, and months 36+.</dd>
-  <dt>dur.eular.mod</dt><dd>Matrix of coefficients from a survival model. From a survival model for moderate Eular responders</dd>
-  <dt>dur.eular.good</dt><dd>Matrix of coefficients for the location parameter and a vector
-   of sampled values of the ancillary parameter. From a survival model for good Eular responders.</dd>
-  <dt>acr1</dt><dd>List of two matrices <code>p</code> and <code>po</code> with each row a sampled parameter 
+    <p>List containing samples for the following model parameters:</p><dl class='dl-horizontal'>
+ <dt>treat.cost</dt><dd><p><code>data.table</code> of treatment cost data.</p></dd>
+ <dt>ltmale</dt><dd><p>Lifetable for males with qx transformed using the logit function.</p></dd>
+  <dt>ltfemale</dt><dd><p>Lifetable for females with qx transformed using the logit function.</p></dd>
+ <dt>acr2eular</dt><dd><p>An array of matrices. Each matrix represents a random sample of the conditional 
+ probability of each EULAR response category for a given ACR response.</p></dd>
+  <dt>logor.mort</dt><dd><p>Matrix of log odds ratio used to adjust mortality. One row for each sample
+  and one column for each variable used to adjust mortality.</p></dd>
+  <dt>mort.loghr.haqdif</dt><dd><p>Matrix of the log hazard ratio of the impact of a change in HAQ from baseline on mortality. Columns denote
+  hazard ratios at times &lt; 6 months, months 6 - &lt;12, months 12 - &lt;24, months 24 - &lt;36, and months 36+.</p></dd>
+  <dt>dur.eular.mod</dt><dd><p>Matrix of coefficients from a survival model. From a survival model for moderate Eular responders</p></dd>
+  <dt>dur.eular.good</dt><dd><p>Matrix of coefficients for the location parameter and a vector
+   of sampled values of the ancillary parameter. From a survival model for good Eular responders.</p></dd>
+  <dt>acr1</dt><dd><p>List of two matrices <code>p</code> and <code>po</code> with each row a sampled parameter 
   value. The four columns in <code>p</code> are mutually exclusive categories (ACR &lt;20, ACR 20-50, 
   ACR 50-70, and ACR 70+) and the four columns in <code>po</code> are overlapping categories 
-  (ACR &lt; 20, ACR 20, ACR 50, and ACR 70</dd>.
-  <dt>acr2</dt><dd>Subject to change.</dd>
-   <dt>eular2haq</dt><dd>A matrix of sampled HAQ changes by Eular response category. The matrix has
-   three columns for no response, moderate response, and good response.</dd>
-   <dt>haq.lprog.therapy</dt><dd>A matrix of sampled yearly linear change in HAQ by therapy. The matrix has one column
-   for each therapy in <code>therapy.pars</code>.</dd>
-   <dt>haq.lprog.age</dt><dd>A matrix of sampled yearly linear change in HAQ by age. The matrix
-   has three columns for age &lt; 40, age 40-64, and age 65+.</dd>
-   <dt>mixture.utility</dt><dd>A list containing samples of all parameters in the Hernandez Alva (2013) mixture model. See &#39;Sampled mixture model parameters&#39;
-   for details.</dd>
-   <dt>wailoo.utility</dt><dd>A matrix of sampled regression coefficients from the model mapping HAQ to EQ5D utility in Wailoo (2006). Variables are
-   (in order) &quot;int&quot; (intercept), &quot;age&quot; (patient age), &quot;dis_dur&quot; (disease duration), &quot;haq0&quot; (baseline HAQ), &quot;male&quot; (1 = male, 0 = female),
-   &quot;prev_dmards&quot; (number of previous DMARDs), and &quot;haq&quot; (current HAQ).</dd>
-   <dt>hosp.cost</dt><dd>A list of two matrices <code>hosp.days</code> and <code>cost.pday</code>. <code>hosp.days</code> is sample of hospital days by HAQ category; the 
+  (ACR &lt; 20, ACR 20, ACR 50, and ACR 70</p></dd>.
+  <dt>acr2</dt><dd><p>Subject to change.</p></dd>
+   <dt>eular2haq</dt><dd><p>A matrix of sampled HAQ changes by Eular response category. The matrix has
+   three columns for no response, moderate response, and good response.</p></dd>
+   <dt>haq.lprog.therapy</dt><dd><p>A matrix of sampled yearly linear change in HAQ by therapy. The matrix has one column
+   for each therapy in <code>therapy.pars</code>.</p></dd>
+   <dt>haq.lprog.age</dt><dd><p>A matrix of sampled yearly linear change in HAQ by age. The matrix
+   has three columns for age &lt; 40, age 40-64, and age 65+.</p></dd>
+   <dt>mixture.utility</dt><dd><p>A list containing samples of all parameters in the Hernandez Alva (2013) mixture model. See 'Sampled mixture model parameters'
+   for details.</p></dd>
+   <dt>wailoo.utility</dt><dd><p>A matrix of sampled regression coefficients from the model mapping HAQ to EQ5D utility in Wailoo (2006). Variables are
+   (in order) "int" (intercept), "age" (patient age), "dis_dur" (disease duration), "haq0" (baseline HAQ), "male" (1 = male, 0 = female),
+   "prev_dmards" (number of previous DMARDs), and "haq" (current HAQ).</p></dd>
+   <dt>hosp.cost</dt><dd><p>A list of two matrices <code>hosp.days</code> and <code>cost.pday</code>. <code>hosp.days</code> is sample of hospital days by HAQ category; the 
    columns of the matrix are the six HAQ categories (HAQ &lt; 0.5, 0.5 &lt;= HAQ &lt; 1, 1 &lt;= HAQ &lt; 1.5, 1.5 &lt;= HAQ &lt; 2, 2 &lt;= HAQ &lt; 2.5, HAQ &gt;= 2.5). 
    in <code>hosp.days</code> are HAQ. <code>cost.pday</code> is a sample of the costs per hospital day by HAQ category; the columns are the same six HAQ
-   categories as in <code>hosp.days</code>.</dd>
-   <dt>mgmt.cost</dt><dd>Matrix of sampled values of general management costs. Each column is a different category of costs (
-   chest x-ray, x-ray visit, outpatient follow-up, and Mantoux tuberculin skin test). </dd>
-   <dt>prod.loss</dt><dd>Vector of sampled values of decrease in wages (e.g. productivity loss) per unit increase in HAQ.</dd>
-   <dt>si.surv</dt><dd>Matrix of coefficients from a survival model. Columns numbers coincide with therapy indices.</dd>
-   <dt>si.cost</dt><dd>Vector of sampled values of the medical cost of a serious infection.</dd>
-   <dt>si.ul</dt><dd>Vector of the sampled values of the annualized utility loss from a serious infection.</dd>
-</dl></p>
+   categories as in <code>hosp.days</code>.</p></dd>
+   <dt>mgmt.cost</dt><dd><p>Matrix of sampled values of general management costs. Each column is a different category of costs (
+   chest x-ray, x-ray visit, outpatient follow-up, and Mantoux tuberculin skin test).</p></dd>
+   <dt>prod.loss</dt><dd><p>Vector of sampled values of decrease in wages (e.g. productivity loss) per unit increase in HAQ.</p></dd>
+   <dt>si.surv</dt><dd><p>Matrix of coefficients from a survival model. Columns numbers coincide with therapy indices.</p></dd>
+   <dt>si.cost</dt><dd><p>Vector of sampled values of the medical cost of a serious infection.</p></dd>
+   <dt>si.ul</dt><dd><p>Vector of the sampled values of the annualized utility loss from a serious infection.</p></dd>
+</dl>
+
     
     <h2 class="hasAnchor" id="treatment-duration"><a class="anchor" href="#treatment-duration"></a>Treatment duration</h2>
 
-    <p></p>
+    
     <p>Treatment duration parameters should be contained in a list of lists. The top-level list identifies the name of the probability distribution;
 the possible distributions are the exponential (<code>exponential</code>), Weibull (<code>weibull</code>), Gompertz (<code>gompertz</code>),
 gamma (<code>gamma</code>), log-logistic (<code>llogis</code>), lognormal (<code>lnorm</code>), and generalized gamma (<code>gengamma</code>). Each distribution 
-should also contain a list with five elements:
-<dl class='dl-horizontal'>
-<dt>est</dt><dd>A vector of the maximum likelihood estimates of the parameters. </dd>
-<dt>vcov</dt><dd>The variance-covariance of the parameters.</dd>
-<dt>loc.index</dt><dd>A vector of the indices of the location parameters.</dd>
-<dt>anc1.index</dt><dd>A vector of the indices of the first ancillary parameter.</dd>
-<dt>anc2.index</dt><dd>A vector of indices of the second ancillary parameter.</dd>
-</dl></p>
-    <p>The maximum likelihood estimates should be transformed to the real line. For example, if the model is fit using 
+should also contain a list with five elements:</p><dl class='dl-horizontal'>
+<dt>est</dt><dd><p>A vector of the maximum likelihood estimates of the parameters.</p></dd>
+<dt>vcov</dt><dd><p>The variance-covariance of the parameters.</p></dd>
+<dt>loc.index</dt><dd><p>A vector of the indices of the location parameters.</p></dd>
+<dt>anc1.index</dt><dd><p>A vector of the indices of the first ancillary parameter.</p></dd>
+<dt>anc2.index</dt><dd><p>A vector of indices of the second ancillary parameter.</p></dd>
+</dl><p>The maximum likelihood estimates should be transformed to the real line. For example, if the model is fit using 
 <code>flexsurvreg</code> in the <code>flexsurv</code> package, the output should be returned from <code>res.t</code>.</p>
     
     <h2 class="hasAnchor" id="sampled-mixture-model-parameters"><a class="anchor" href="#sampled-mixture-model-parameters"></a>Sampled mixture model parameters</h2>
 
-    <p></p>
-    <p>The sampled mixture model parameters are contained in a list containing the following:
-<dl class='dl-horizontal'>
-<dt>beta1</dt><dd>Coefficients for class 1 explanatory variables. A matrix of random draws where each
- column is an explanatory variable.</dd>
-<dt>beta2</dt><dd>Coefficients for class 2 explanatory variables. A matrix of random draws where each
- column is an explanatory variable.</dd>
-<dt>beta3</dt><dd>Coefficients for class 3 explanatory variables. A matrix of random draws where each
- column is an explanatory variable.</dd>
-<dt>beta4</dt><dd>Coefficients for class 4 explanatory variables. A matrix of random draws where each
- column is an explanatory variable.</dd>
-<dt>alpha1</dt><dd>Random effects intecept term for class 1. A vector of random draws.</dd>
-<dt>alpha2</dt><dd>Random effects intecept term for class 2. A vector of random draws.</dd>
-<dt>alpha3</dt><dd>Random effects intecept term for class 3. A vector of random draws.</dd>
-<dt>alpha4</dt><dd>Random effects intecept term for class 4. A vector of random draws.</dd>
-<dt>alpha</dt><dd>Random effects term for male indicator variable. A vector of random draws.</dd>
-<dt>epsilon1</dt><dd>Variance for class 1. A vector of random draws.</dd>
-<dt>epsilon2</dt><dd>Variance for class 2. A vector of random draws.</dd>
-<dt>epsilon3</dt><dd>Variance for class 3. A vector of random draws.</dd>
-<dt>epsilon4</dt><dd>Variance for class 4. A vector of random draws.</dd>
-<dt>mu</dt><dd>Random effects variance term. A vector of random draws.</dd>
-<dt>delta</dt><dd>Coefficients for explanatory variables explaining the probbaility
+    
+    <p>The sampled mixture model parameters are contained in a list containing the following:</p><dl class='dl-horizontal'>
+<dt>beta1</dt><dd><p>Coefficients for class 1 explanatory variables. A matrix of random draws where each
+ column is an explanatory variable.</p></dd>
+<dt>beta2</dt><dd><p>Coefficients for class 2 explanatory variables. A matrix of random draws where each
+ column is an explanatory variable.</p></dd>
+<dt>beta3</dt><dd><p>Coefficients for class 3 explanatory variables. A matrix of random draws where each
+ column is an explanatory variable.</p></dd>
+<dt>beta4</dt><dd><p>Coefficients for class 4 explanatory variables. A matrix of random draws where each
+ column is an explanatory variable.</p></dd>
+<dt>alpha1</dt><dd><p>Random effects intecept term for class 1. A vector of random draws.</p></dd>
+<dt>alpha2</dt><dd><p>Random effects intecept term for class 2. A vector of random draws.</p></dd>
+<dt>alpha3</dt><dd><p>Random effects intecept term for class 3. A vector of random draws.</p></dd>
+<dt>alpha4</dt><dd><p>Random effects intecept term for class 4. A vector of random draws.</p></dd>
+<dt>alpha</dt><dd><p>Random effects term for male indicator variable. A vector of random draws.</p></dd>
+<dt>epsilon1</dt><dd><p>Variance for class 1. A vector of random draws.</p></dd>
+<dt>epsilon2</dt><dd><p>Variance for class 2. A vector of random draws.</p></dd>
+<dt>epsilon3</dt><dd><p>Variance for class 3. A vector of random draws.</p></dd>
+<dt>epsilon4</dt><dd><p>Variance for class 4. A vector of random draws.</p></dd>
+<dt>mu</dt><dd><p>Random effects variance term. A vector of random draws.</p></dd>
+<dt>delta</dt><dd><p>Coefficients for explanatory variables explaining the probbaility
 of class membership. An array of matrices where each matrix is a random draw. There are three rows in each matrix (one for each class) and
-four columns (one for each explanatory variable).</dd>
-</dl></p>
+four columns (one for each explanatory variable).</p></dd>
+</dl>
     
 
   </div>

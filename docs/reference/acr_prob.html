@@ -23,14 +23,17 @@
 <link href="../pkgdown.css" rel="stylesheet">
 <script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-
+  
+  
 <!-- mathjax -->
-<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+<script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
+
+
   </head>
 
   <body>
@@ -59,7 +62,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/intro.html">Introduction to IVI026</a>
+      <a href="../articles/intro.html">Introduction to iviRA</a>
     </li>
   </ul>
 </li>
@@ -88,19 +91,28 @@
     <p>Calculate ACR response probability from ordered probit NMA</p>
     
 
-    <pre><span class='fu'>acr_prob</span>(<span class='no'>A</span>, <span class='no'>z2</span>, <span class='no'>z3</span>, <span class='no'>delta</span>)</pre>
+    <pre class="usage"><span class='fu'>acr_prob</span>(<span class='no'>A</span>, <span class='no'>z2</span>, <span class='no'>z3</span>, <span class='no'>delta</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
-    <dl class="dl-horizontal">
-      <dt>A</dt>
-      <dd>Mean probability that ACR response &lt; 20 from cDMARDS</dd>
-      <dt>z2</dt>
-      <dd>Mean for ACR 50 cutpoint</dd>
-      <dt>z3</dt>
-      <dd>Mean for ACR 70 cutpoint</dd>
-      <dt>delta</dt>
-      <dd>Vector of regression coefficient means (on probit scale) for therapies</dd>
-    </dl>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>A</th>
+      <td><p>Mean probability that ACR response &lt; 20 from cDMARDS</p></td>
+    </tr>
+    <tr>
+      <th>z2</th>
+      <td><p>Mean for ACR 50 cutpoint</p></td>
+    </tr>
+    <tr>
+      <th>z3</th>
+      <td><p>Mean for ACR 70 cutpoint</p></td>
+    </tr>
+    <tr>
+      <th>delta</th>
+      <td><p>Vector of regression coefficient means (on probit scale) for therapies</p></td>
+    </tr>
+    </table>
     
 
   </div>

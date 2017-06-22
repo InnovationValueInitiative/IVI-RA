@@ -135,7 +135,7 @@
 # packages + settings
 library("pander")
 library("xtable")
-library("IVI026")
+library("iviRA")
 library("data.table")
 library("ggplot2")
 theme_set(theme_bw())
@@ -156,10 +156,9 @@ Although the underlying modeling assumptions vary, each model is an
 individual patient simulation (IPS), which allows us to model treatment
 and disease progression as realistically as possible.
 
-The IVI026 family of models is available as an R package, but the
+The IVI-RA model available as an R package, but the
 majority of the code for the IPS is written in C++ so that the models
-can be simulated in a reasonable time frame. Documentation is available
-online at \url{https://www.google.com}.
+can be simulated in a reasonable time frame. Documentation is available \href{https://innovationvalueinitiative.github.io/IVI-RA/index.html}{online}.
 
 This document is structured as follows. \autoref{sec:model-structures}
 outlines the competing model structures. \autoref{sec:data-parameters}
@@ -690,51 +689,51 @@ Since no data exists on the size of the HAQ rebound post treatment, we vary its 
 \subsection{Serious infections}
 Based on the NMA by \citet{singh2011adverse} and in accordance with \citet{stevenson2016adalimumab}, we assume a rate of 0.035 (95\% CI: 0.027 to 0.046) infections per person-year with all bDMARDs and a rate of 0.026 (no CI reported) infections per person-year with cDMARDs. The rate of infection is assumed to be equal across bDMARDs because the published results for specific bDMARDs are estimated with very little precision. The standard error on the infection rate for bDMARDs is assumed to be the same as the standard error for cDMARDs since no standard error was reported for bDMARDs in \citet{singh2011adverse}.
 
-<<si, echo = FALSE, include = FALSE, cache = TRUE, cache.lazy = FALSE>>=
-# set.seed(100)
-# pat <- sample_pats(n = 1000)
-# input.dat <- input_data(patdata = pat)
-# parsamp <- sample_pars(n = 1000)
-# arm.snames <- c("cdmards", "adamtx")
-# arminds <- as.list(which(therapy.pars$info$sname %in% arm.snames))
-# arm.names <- c("MTX or non-biologic treatment", "Biologic treatment")
-# dur.dist <- c("exponential", "weibull", "gompertz", "gamma", "llogis", "lnorm", "gengamma")
-# dur.dist.l <- c("Exponential", "Weibull", "Gompertz", "Gamma", "Log-logistic", "Lognormal",
-#                    "Generalized gamma")
-# sim6 <- vector(length(dur.dist) * length(arminds), mode = "list")
-# counter <- 1
-# for (i in 1:length(arminds)){
-#   for(j in 1:length(dur.dist)){
-#     sim6[[counter]] <- sim_haq(arminds[[i]], input_data = input.dat, pars = parsamp,
-#                                max_months = 6, dur_dist = dur.dist[i])
-#     sim6[[counter]][, dur_dist := dur.dist.l[j]]
-#     sim6[[counter]][, arm := arm.names[i]]
-#     counter <- counter + 1
-#   }
-# }
-# sim6 <- rbindlist(sim6)
-# sim6[, si_ever := ifelse(ttsi <= ttd, 1, 0)]
-# si.prop <- sim6[, .(si = mean(si_ever)), by = c("dur_dist", "arm", "sim")]
-# si.prop <- si.prop[, .(si_mean = mean(si), si_lower = quantile(si, .025),
-#                        si_upper = quantile(si, .974)), by = c("dur_dist", "arm")]
-# 
-# # tables comparing serious infection rates by drugs
-# tab1 <- si.prop[dur_dist == "Generalized gamma", .(arm, si_mean, si_lower, si_upper)]
-# tab1[, si_mean := formatC(si_mean, format = "f", digits = 4)]
-# tab1[, si_lower := formatC(si_lower, format = "f", digits = 4)]
-# tab1[, si_upper := formatC(si_upper, format = "f", digits = 4)]
-# tex <- print(xtable(tab1),
-#       include.rownames = FALSE, include.colnames = FALSE,
-#       only.contents = TRUE, sanitize.text.function = identity,
-#       file = "tables/si-prop-gengamma.txt")
-# 
-# # tables comparing serious infection by distribution
-# tab2 <- si.prop[arm == arm.names[1], .(dur_dist, si_mean)]
-# tab2[, si_mean := formatC(si_mean, format = "f", digits = 4)]
-# tex <- print(xtable(tab2),
-#       include.rownames = FALSE, include.colnames = FALSE,
-#       only.contents = TRUE, sanitize.text.function = identity,
-#       file = "tables/si-prop-mtx-bydist.txt")
+<<si, echo = FALSE, include = FALSE, cache = FALSE, cache.lazy = TRUE>>=
+set.seed(100)
+pat <- sample_pats(n = 1000)
+input.dat <- input_data(patdata = pat)
+parsamp <- sample_pars(n = 1000)
+arm.snames <- c("cdmards", "adamtx")
+arminds <- as.list(which(therapy.pars$info$sname %in% arm.snames))
+arm.names <- c("MTX or non-biologic treatment", "Biologic treatment")
+dur.dist <- c("exponential", "weibull", "gompertz", "gamma", "llogis", "lnorm", "gengamma")
+dur.dist.l <- c("Exponential", "Weibull", "Gompertz", "Gamma", "Log-logistic", "Lognormal",
+                   "Generalized gamma")
+sim6 <- vector(length(dur.dist) * length(arminds), mode = "list")
+counter <- 1
+for (i in 1:length(arminds)){
+  for(j in 1:length(dur.dist)){
+    sim6[[counter]] <- sim_haq(arminds[[i]], input_data = input.dat, pars = parsamp,
+                               max_months = 6, dur_dist = dur.dist[i])
+    sim6[[counter]][, dur_dist := dur.dist.l[j]]
+    sim6[[counter]][, arm := arm.names[i]]
+    counter <- counter + 1
+  }
+}
+sim6 <- rbindlist(sim6)
+sim6[, si_ever := ifelse(ttsi <= ttd, 1, 0)]
+si.prop <- sim6[, .(si = mean(si_ever)), by = c("dur_dist", "arm", "sim")]
+si.prop <- si.prop[, .(si_mean = mean(si), si_lower = quantile(si, .025),
+                       si_upper = quantile(si, .974)), by = c("dur_dist", "arm")]
+
+# tables comparing serious infection rates by drugs
+tab1 <- si.prop[dur_dist == "Generalized gamma", .(arm, si_mean, si_lower, si_upper)]
+tab1[, si_mean := formatC(si_mean, format = "f", digits = 4)]
+tab1[, si_lower := formatC(si_lower, format = "f", digits = 4)]
+tab1[, si_upper := formatC(si_upper, format = "f", digits = 4)]
+tex <- print(xtable(tab1),
+      include.rownames = FALSE, include.colnames = FALSE,
+      only.contents = TRUE, sanitize.text.function = identity,
+      file = "tables/si-prop-gengamma.txt")
+
+# tables comparing serious infection by distribution
+tab2 <- si.prop[arm == arm.names[1], .(dur_dist, si_mean)]
+tab2[, si_mean := formatC(si_mean, format = "f", digits = 4)]
+tex <- print(xtable(tab2),
+      include.rownames = FALSE, include.colnames = FALSE,
+      only.contents = TRUE, sanitize.text.function = identity,
+      file = "tables/si-prop-mtx-bydist.txt")
 @
 
 \begin{table}[!ht]

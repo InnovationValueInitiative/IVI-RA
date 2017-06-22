@@ -1,4 +1,4 @@
-templates:
+template:
   params:
     bootswatch: simplex
     
@@ -18,7 +18,8 @@ reference:
       - mgmt.cost
       - pain
       - therapy.pars
-      - util.pars
+      - util.mixture.pars
+      - util.wailoo.pars
   - title: "Generate input data"
     contents:
       - sample_pats
@@ -52,7 +53,7 @@ navbar:
     href: reference/index.html
   - text: "Run the model"
     menu:
-      - text: "Introduction to IVI026"
+      - text: "Introduction to iviRA"
         href: articles/intro.html
   - text: "Collaborate"
     href: reference/index.html

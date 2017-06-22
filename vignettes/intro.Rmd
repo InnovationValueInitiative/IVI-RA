@@ -10,7 +10,7 @@ bibliography: vignettes.bib
 --- 
 
 # Overview
-`IVI026` is an R package that runs models within the IVI rheumatoid arthritis (RA) health-economic family of models. Each model is an individual patient simulation (IPS) that simulates individual patients one at a time. Probabilistic sensitivity analysis (PSA) is used to propagate uncertainty in the input parameters. The simulation is mostly written in `C++` to ensure that the simulation runs in a reasonable amount of time. 
+`iviRA` is an R package that runs models within the IVI rheumatoid arthritis (RA) health-economic family of models. Each model is an individual patient simulation (IPS) that simulates individual patients one at a time. Probabilistic sensitivity analysis (PSA) is used to propagate uncertainty in the input parameters. The simulation is mostly written in `C++` to ensure that the simulation runs in a reasonable amount of time. 
 
 The package is current available on GitHub and can be installed by typing the following commands into the `R` console.
 
@@ -22,7 +22,7 @@ library(devtools)
 Once installed, the package can be loaded into`R`.
 
 ```{r }
-library("IVI026")
+library("iviRA")
 ```
 
 # Parameters and data

@@ -23,14 +23,17 @@
 <link href="../pkgdown.css" rel="stylesheet">
 <script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-
+  
+  
 <!-- mathjax -->
-<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+<script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
+
+
   </head>
 
   <body>
@@ -59,7 +62,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/intro.html">Introduction to IVI026</a>
+      <a href="../articles/intro.html">Introduction to iviRA</a>
     </li>
   </ul>
 </li>
@@ -88,19 +91,26 @@
     <p>Posterior distribution of predicted probabilitities from an ordered logistic regression</p>
     
 
-    <pre><span class='fu'>ologit_prob</span>(<span class='no'>x</span>, <span class='no'>beta</span>, <span class='no'>cut</span>)</pre>
+    <pre class="usage"><span class='fu'>ologit_prob</span>(<span class='no'>x</span>, <span class='no'>beta</span>, <span class='no'>cut</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
-    <dl class="dl-horizontal">
-      <dt>x</dt>
-      <dd>Matrix containing variables in the model (i.e. the design matrix)</dd>
-      <dt>beta</dt>
-      <dd>Matrix of coefficients where each row contains random draws of the coefficients
-from their posterior distribution</dd>
-      <dt>cut</dt>
-      <dd>Matrix of cutpoints, one for each category, where each row contains random draws
-from their posterior distribution</dd>
-    </dl>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>x</th>
+      <td><p>Matrix containing variables in the model (i.e. the design matrix)</p></td>
+    </tr>
+    <tr>
+      <th>beta</th>
+      <td><p>Matrix of coefficients where each row contains random draws of the coefficients
+from their posterior distribution</p></td>
+    </tr>
+    <tr>
+      <th>cut</th>
+      <td><p>Matrix of cutpoints, one for each category, where each row contains random draws
+from their posterior distribution</p></td>
+    </tr>
+    </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 

@@ -456,13 +456,13 @@ sample_survpars <- function(nsims, x){
 #' 
 #' @export
 sample_pars_utility_mixture <- function(nsims){
-  samp <- MASS::mvrnorm(nsims, util.pars$coef$coef, util.pars$vcov)
+  samp <- MASS::mvrnorm(nsims, util.mixture.pars$coef$coef, util.mixture.pars$vcov)
   if (class(samp) == "numeric") samp <- t(as.matrix(samp)) 
   lsamp <- list()
-  names <- names(util.pars$index)
+  names <- names(util.mixture.pars$index)
   names <- names[!names %in% "delta"]
   for (n in names){
-    indx <- util.pars$index[[n]]
+    indx <- util.mixture.pars$index[[n]]
     if (n %in% c("beta1", "beta2", "beta3", "beta4")){
       lsamp[[n]] <- samp[, indx, drop = FALSE] 
     } else{
@@ -474,7 +474,7 @@ sample_pars_utility_mixture <- function(nsims){
     lsamp[[v]] <- ifelse(lsamp[[v]] <= 0, 0, lsamp[[v]])
     lsamp[[v]] <- sqrt(lsamp[[v]])
   }
-  indx.delta <- util.pars$index[["delta"]]
+  indx.delta <- util.mixture.pars$index[["delta"]]
   lsamp[["delta"]] <- aperm(array(c(t(samp[, indx.delta])),
                                   dim = c(4, 3, nsims)),
                             perm = c(2, 1, 3))

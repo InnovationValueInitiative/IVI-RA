@@ -23,14 +23,17 @@
 <link href="../pkgdown.css" rel="stylesheet">
 <script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-
+  
+  
 <!-- mathjax -->
-<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+<script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
+
+
   </head>
 
   <body>
@@ -59,7 +62,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/intro.html">Introduction to IVI026</a>
+      <a href="../articles/intro.html">Introduction to iviRA</a>
     </li>
   </ul>
 </li>
@@ -89,37 +92,35 @@
 includes parameters needed to estimate treatment costs.</p>
     
 
-    <pre><span class='no'>therapy.pars</span></pre>
+    <pre class="usage"><span class='no'>therapy.pars</span></pre>
         
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
-    <p>A list of the following lists
-<dl class='dl-horizontal'>
-  <dt>info</dt><dd>Basic information about therapies in model</dd>
-  <dt>icon_acr_nma</dt><dd>Effect of treatment on ACR response probability from the icon NMA.
+    <p>A list of the following lists</p><dl class='dl-horizontal'>
+  <dt>info</dt><dd><p>Basic information about therapies in model</p></dd>
+  <dt>icon_acr_nma</dt><dd><p>Effect of treatment on ACR response probability from the icon NMA.
   Contains mean/sd for parameters in the NMA (Baseline effect for cDMARDs A, cutpoints z, and
  treatment effects delta). Also contains predicted probability of ACR category with parameters
- at posterior means.</dd>
-  <dt>nice_acr_nma</dt><dd>Effect of treatment on ACR response probability from the NICE NMA.
+ at posterior means.</p></dd>
+  <dt>nice_acr_nma</dt><dd><p>Effect of treatment on ACR response probability from the NICE NMA.
   Contains probability of each ACR response category by therapy as well as estimated number
-  of observations needed to draw from a Dirichlet distribution. </dd>
-  <dt>haq_prog</dt><dd>Effect of treatment on HAQ progression rate. In particular, contains mean
-   and standard error of yearly change in HAQ progression by therapy</dd>
-  <dt>cost</dt><dd>Treatment cost by therapy.</dd>
-</dl></p>
+  of observations needed to draw from a Dirichlet distribution.</p></dd>
+  <dt>haq_prog</dt><dd><p>Effect of treatment on HAQ progression rate. In particular, contains mean
+   and standard error of yearly change in HAQ progression by therapy</p></dd>
+  <dt>cost</dt><dd><p>Treatment cost by therapy.</p></dd>
+</dl>
     
     <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
 
-    <p></p>
     <p><dl class='dl-horizontal'>
-  <dt>nice_acr_nma</dt><dd>Table 37, Stevenson, Matt, et al. &quot;Adalimumab, etanercept, infliximab, certolizumab pegol, 
+  <dt>nice_acr_nma</dt><dd><p>Table 37, Stevenson, Matt, et al. "Adalimumab, etanercept, infliximab, certolizumab pegol, 
  golimumab, tocilizumab and abatacept for the treatment of rheumatoid arthritis not previously
  treated with disease-modifying antirheumatic drugs and after the failure of conventional 
- disease-modifying antirheumatic drugs only: systematic review and economic evaluation.&quot; 
-Health Technology Assessment 20.35 (2016): 1-610.</dd>
-<dt>haq_prog</dt><dd>Wolfe, Frederick, and Kaleb Michaud. &quot;The loss of health status in rheumatoid 
-arthritis and the effect of biologic therapy: a longitudinal observational study.&quot; 
-Arthritis research &amp; therapy 12.2 (2010): 1.</dd>
+ disease-modifying antirheumatic drugs only: systematic review and economic evaluation." 
+Health Technology Assessment 20.35 (2016): 1-610.</p></dd>
+<dt>haq_prog</dt><dd><p>Wolfe, Frederick, and Kaleb Michaud. "The loss of health status in rheumatoid 
+arthritis and the effect of biologic therapy: a longitudinal observational study." 
+Arthritis research &amp; therapy 12.2 (2010): 1.</p></dd>
 </dl></p>
     
 

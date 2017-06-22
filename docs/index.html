@@ -9,7 +9,7 @@
 <!-- jquery --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/simplex/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 <!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
-<script src="jquery.sticky-kit.min.js"></script><script src="pkgdown.js"></script><!-- mathjax --><script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--[if lt IE 9]>
+<script src="jquery.sticky-kit.min.js"></script><script src="pkgdown.js"></script><!-- mathjax --><script src="https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
@@ -39,7 +39,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="articles/intro.html">Introduction to IVI026</a>
+      <a href="articles/intro.html">Introduction to iviRA</a>
     </li>
   </ul>
 </li>
@@ -61,32 +61,32 @@
     
 <div id="overview" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
-<a href="#overview" class="anchor"> </a>Overview</h1></div>
+<a href="#overview" class="anchor"></a>Overview</h1></div>
 <p><code>iviRA</code> is an R package that runs the Innovation and Value Initiative’s (IVIs) cost-effectiveness model for rheumatoid arthritis. The IVI-RA model is an individual patient simulation (IPS) written mostly in C++ so that it can be run in a reasonable amount of time. The model is flexible and reflects a range of plausible structural assumptions and perspectives (e.g. health care sector, societal). Parameter uncertainty is quantified using probabilistic sensitivity analysis (PSA).</p>
 </div>
 <div id="installation" class="section level1">
 <h1 class="hasAnchor">
-<a href="#installation" class="anchor"> </a>Installation</h1>
+<a href="#installation" class="anchor"></a>Installation</h1>
 <p><code>iviRA</code> can be installed from GitHub using <code>devtools</code>:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">"devtools"</span>)
 <span class="kw">library</span>(devtools)
-devtools::<span class="kw">install_github</span>(<span class="st">"InnovationValueInitiative/iviRA"</span>)</code></pre></div>
+devtools::<span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"InnovationValueInitiative/IVI-RA"</span>)</code></pre></div>
 <p>It can then be loaded into <code>R</code>:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(iviRA)</code></pre></div>
 </div>
 <div id="model-description" class="section level1">
 <h1 class="hasAnchor">
-<a href="#model-description" class="anchor"> </a>Model description</h1>
+<a href="#model-description" class="anchor"></a>Model description</h1>
 <p>A description of the model is available <a href="model-description/model-description.pdf">here</a>.</p>
 </div>
 <div id="documentation" class="section level1">
 <h1 class="hasAnchor">
-<a href="#documentation" class="anchor"> </a>Documentation</h1>
+<a href="#documentation" class="anchor"></a>Documentation</h1>
 <p>The R reference manual is available <a href="reference/index.html">here</a>.</p>
 </div>
 <div id="vignettes" class="section level1">
 <h1 class="hasAnchor">
-<a href="#vignettes" class="anchor"> </a>Vignettes</h1>
+<a href="#vignettes" class="anchor"></a>Vignettes</h1>
 <p>Package vignettes can be found <a href="articles/index.html">here</a>.</p>
 </div>
 
