@@ -62,7 +62,7 @@
       <h1>Introduction to IVI026</h1>
                         <h4 class="author">Devin Incerti</h4>
             
-            <h4 class="date">June 22, 2017</h4>
+            <h4 class="date">June 23, 2017</h4>
           </div>
 
     
@@ -89,13 +89,13 @@
 <p>The patient dataset can be generated using <code><a href="../reference/sample_pats.html">sample_pats()</a></code>. The <code>type</code> argument specifies whether the patient cohort is homogeneous or heterogeneous. If the cohort is homogeneous, then the cohort consists of male and female patients that are identical in all respects other than gender; if the cohort is heterogeneous, then all variables vary across patients.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pats &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pats.html">sample_pats</a></span>(<span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">type =</span> <span class="st">"heterog"</span>)
 <span class="kw">head</span>(pats)</code></pre></div>
-<pre><code>##           age male     haq0 weight    dis_dur prev_dmards
-## [1,] 44.99757    0 2.924261     75 19.9173981    2.723234
-## [2,] 64.24154    0 1.335964     75  2.4274238    5.179305
-## [3,] 50.13866    0 1.350697     75  4.7516266    2.747435
-## [4,] 45.57337    0 2.219887     75 -0.4476512    2.064016
-## [5,] 35.08624    0 1.308689     75 22.1615212    3.454468
-## [6,] 47.49105    0 1.728398     75 20.0362985    3.565075</code></pre>
+<pre><code>##           age male     haq0 weight   dis_dur prev_dmards
+## [1,] 54.60468    0 1.610270     75 15.762049    5.013137
+## [2,] 41.37909    0 2.185152     75 15.875359    1.032761
+## [3,] 55.12748    0 1.334484     75  5.318201    2.798897
+## [4,] 34.95153    1 1.121394     89 42.147096    2.933774
+## [5,] 68.89055    0 1.444705     75 13.873311    4.843706
+## [6,] 64.36313    0 0.873139     75 -3.240228    4.613921</code></pre>
 </div>
 <div id="sampling-parameters" class="section level2">
 <h2 class="hasAnchor">
@@ -116,18 +116,18 @@
 <pre><code>## , , 1
 ## 
 ##         eular_none eular_moderate eular_good
-## acr_sub 0.79491986      0.1492100 0.05587012
-## acr20   0.01757928      0.3855003 0.59692039
-## acr50   0.04571538      0.1068601 0.84742455
-## acr70   0.00000000      0.7933348 0.20666515
+## acr_sub 0.79142601      0.1366977  0.0718763
+## acr20   0.05597001      0.4610932  0.4829368
+## acr50   0.04942545      0.1859538  0.7646207
+## acr70   0.00000000      0.2724082  0.7275918
 ## 
 ## , , 2
 ## 
 ##         eular_none eular_moderate eular_good
-## acr_sub 0.80406792     0.13472191 0.06121017
-## acr20   0.08310821     0.43258216 0.48430963
-## acr50   0.50453276     0.01257943 0.48288781
-## acr70   0.00000000     0.35508419 0.64491581</code></pre>
+## acr_sub 0.79856599      0.1485620 0.05287202
+## acr20   0.04342452      0.4605263 0.49604920
+## acr50   0.16802451      0.1595809 0.67239455
+## acr70   0.00000000      0.5462051 0.45379485</code></pre>
 </div>
 <div id="input-data" class="section level2">
 <h2 class="hasAnchor">

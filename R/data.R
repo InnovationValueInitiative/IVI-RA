@@ -174,8 +174,8 @@
 #' @format List containing coefficient vector, variance-covariance matrix, and indices for
 #' parameters.
 #'
-#' @source Alava, Mónica Hernández, et al. "The relationship between EQ-5D, 
-#' HAQ and pain in patients with rheumatoid arthritis." Rheumatology 52.5 (2013): 944-950.
+#' @source Alava, Monica Hernandez, et al. "The relationship between EQ-5D, 
+#'  HAQ and pain in patients with rheumatoid arthritis." Rheumatology 52.5 (2013): 944-950.
 "util.mixture.pars"
 
 #' Wailoo (2006) utility mapping
