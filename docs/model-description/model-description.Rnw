@@ -117,6 +117,11 @@
 \usepackage{etoolbox}
 \usepackage{lipsum}
 
+% new commands
+\newcommand\CPP{{C\texttt{++}}}
+\newcommand\R{{\textsf{R}}}
+
+
 % title
 \title{A Description of the IVI-RA Model}
 \author{Devin Incerti\footnote{Innovation and Value Initiative} \and Jeroen P. Jansen\footnote{Innovation and Value Initiative}}
@@ -149,56 +154,25 @@ return(x)
 
 \section{Overview}\label{overview}
 
-This document describes version 1.0 of IVI's ``family'' of rheumatoid
-arthritis cost-effectiveness models. The family of models consists of a
-set of separate models with different underlying structural assumptions.
-Although the underlying modeling assumptions vary, each model is an
-individual patient simulation (IPS), which allows us to model treatment
-and disease progression as realistically as possible.
+This document describes version 1.0 of IVI's rheumatoid arthritis (RA) cost-effectiveness model. The IVI-RA model is an individual patient simulation (IPS) that simulates patients one at a time. The model reflects a range of perspectives (e.g., health care sector, societal) and structural assumptions. All told, there are 672 different model structures, which allows analysts to account for structural uncertainty. Parameter uncertainty is quantified with probabilistic sensitivity analysis (PSA).
 
-The IVI-RA model available as an R package, but the
-majority of the code for the IPS is written in C++ so that the models
-can be simulated in a reasonable time frame. Documentation is available \href{https://innovationvalueinitiative.github.io/IVI-RA/index.html}{online}.
+The model is available as an \href{https://cran.r-project.org/}{\R{}} package with documentation available \href{https://innovationvalueinitiative.github.io/IVI-RA/index.html}{online}. The source code can be viewed or downloaded at our \href{https://github.com/InnovationValueInitiative/IVI-RA}{GitHub repository}. The IPS was primarily written in \CPP{} so that PSA and analyses of structural uncertainty can be run in a reasonable amount of time. The model can either be run using \R{} or \href{http://www.shinyapps.io/}{online} with our user-friendly R Shiny web application. 
 
-This document is structured as follows. \autoref{sec:model-structures}
-outlines the competing model structures. \autoref{sec:data-parameters}
-describes the statistical techniques used to estimate the model
-parameters and the data sources used. \autoref{sec:sim-uncertainty}
-describes the simulation techniques used to implement the RA family of
-models and quantify uncertainty. Finally, \autoref{sec:model-validation}
-validates the different components of the models and examines the
-implications of the alternative structural assumptions.
+This document is structured as follows. We begin by discussing treatment strategies that can be modeled in \autoref{sec:treatments}. \autoref{sec:model-structures} outlines the competing model structures. \autoref{sec:data-parameters} describes the statistical techniques used to estimate the model parameters and the data sources used. \autoref{sec:populations} examines the data needed to define a population and run an analysis. Finally, \autoref{sec:sim-uncertainty} describes the simulation techniques used to implement the RA family of models and quantify uncertainty.
+
+\section{Treatment strategies}\label{sec:treatments}
+The primary purpose of the model is to evaluate the cost-effectiveness of treatments for RA. Since patients typically use multiple treatments over a lifetime, the model is capable of simulating a treatment sequence of any arbitrary length. Treatments that can be included in a sequence include conventional disease-modifying anti-rheumatic drugs (cDMARDs) such as methotrexate as well as the following biologic DMARDS (bDMARDs):
+
+\begin{itemize}
+\item \textbf{Tumor necrosis factor (TNF) inhibitors}: etanercept, adalimumab, certolizumab, golimumab
+\item \textbf{non-TNF inhibitors}: abatecept, tocilizumab, rituximab
+\item \textbf{Janus kinase/signal transducers and activators of transcription (JAK/STAT) inhibitors}: tofacitinib
+\end{itemize}
+
+At the end of a sequence, patient switch to non-biologic therapy (NBT), which encompasses a range of therapies that do not affect the rate of disease progression and are not associated with adverse events. 
 
 \section{Competing model structures}\label{sec:model-structures}
-
-The competing model structures are based on the Sheffield RA health
-economic model \citep{tosh2011sheffield} and
-the IPS model by \citet{stevenson2016adalimumab} recently used
-by NICE in the United Kingdom.
-
-The models simulate treatment sequence of arbitrary length. bDMARDS that
-can be included in the sequence include tumor necrosis factor (TNF)
-inhibitors (etanercept, adalimumab, certolizumab, golimumab), non-TNF
-inhibitors (abatecept, tocilizumab, rituximab), and Janus kinase/signal
-transducers and activators of transcription (JAK/STAT) inhibitors
-(tofacitinib). Conventional DMARDS (cDMARDs) such as methotrexate can
-also be included in a treatment sequence.
-
-At the start of the model each patient is assigned a baseline Health
-Assessment Questionnaire (HAQ) Disability Index score. Subsequently, the
-impact of the disease measured by the HAQ trajectory over time is
-modeled as a function of sequenced treatments
-(\autoref{fig:haq-structure}). In the absence of treatment, HAQ
-deteriorates at a certain rate as depicted by the dashed line in the
-figure. Treatment is separated into two distinct phases: an initial
-phase of up to 6 months, consistent with data reported from randomized
-controlled trials (RCTs), and a maintenance phase thereafter until
-discontinuation. During the initial treatment phase HAQ is modeled as a
-change from baseline. In the maintenance phase, statistical models are
-used to simulate the progression of HAQ over time. Two possibilities are
-considered: a scenario in which HAQ progression is linear and a second
-scenario where HAQ progression is simulated using a non-linear mixture
-model.
+The IVI-RA model is a discrete-time IPS with 6 month cycles that can be run using a number of different model structures. Like most RA cost-effectiveness models, the model measures changes in disease severity using the Health Assessment Questionnaire (HAQ) Disability Index score \citep{tosh2011sheffield, carlson2015economic, stephens2015modelling, stevenson2016adalimumab, icer2017tim, stevenson2017cost}. In particular, at the start of the simulation, each patient is assigned a baseline Health Assessment Questionnaire (HAQ) Disability Index score. Subsequently, the impact of the disease measured by the HAQ trajectory over time is modeled as a function of a sequence of treatments (\autoref{fig:haq-structure}). In the absence of treatment, HAQ deteriorates at a certain rate as depicted by the dashed line in the figure. Treatment is separated into two distinct phases: an initial phase of up to 6 months, consistent with data reported from randomized controlled trials (RCTs), and a maintenance phase thereafter until discontinuation. 
 
 \begin{figure}
 \centering
@@ -206,6 +180,49 @@ model.
 \caption{Model structure regarding development of HAQ with sequential
 biologic treatment}\label{fig:haq-structure}
 \end{figure}
+
+During the initial treatment phase HAQ is modeled as a change from baseline. Three possible model structures labeled \textbf{H1-H3} are possible. In \textbf{H1}, which is similar to other cost-effectiveness models in a US setting \citep[e.g.][]{carlson2015economic, icer2017tim}, treatment influences HAQ through its effect on the American College of Rheumatology (ACR) response criteria. ACR response is measures using four mututually exclusive categories: no response defined as less than 20\% improvement, ACR 20-50\% improvement, ACR 50-70\% improvement, and ACR 70\% improvement. The rationale for using ACR response rather than HAQ directly is that the evidence base related treatment to ACR response is larger than the evidence based relating treatment to HAQ. \textbf{H2} follows the National Institute for Health and Care Excellence (NICE) cost-effectiveness model \citep{stevenson2016adalimumab, stevenson2017cost} and models the effect of treatment on HAQ indirectly through its effect on ACR response and, in turn, the three categories of the European League Against Rheumatism (EULAR) response (No response, moderate response, or good response). Finally, since modeling the effect of treatment on HAQ through intermediary variables may mediate treatment response, in \textbf{H3}, treatment impacts HAQ directly. The three scenarios are summarized below: 
+
+\begin{itemize}
+\item \textbf{H1}: Treatment $\rightarrow$ ACR $\rightarrow$ HAQ
+\item \textbf{H2}: Treatment $\rightarrow$ ACR $\rightarrow$ EULAR $\rightarrow$ HAQ
+\item \textbf{H3}: Treatment $\rightarrow$ HAQ
+\end{itemize}
+
+The probability of switching treatment during the initital treatment phase is modeled using 6 possible structures labeled \textbf{S1-S6}. \textbf{S1} follows a common approach where ACR non-responders discontinue treatment \citep[e.g.][]{carlson2015economic, icer2017tim}. However, one drawback of this approach is that it is not consistent with current treat-to-target guidelines in the United States \citep{singh20162015}. \textbf{S2} and \textbf{S3} consequently model treatment switching as a function of disease activity (remission, low, moderate, high) \citep{anderson2012rheumatoid}. ACR response predicts the change in disease activity from baseline which, along with baseline disease activity, predicts absolute disease activity. The probability of switching treatment is increasing in the severity of disease (i.e., lowest in remission and greatest with high disease activity). In \textbf{S2} disease activity is measured using the Disease Activity Score with 28-joint counts (DAS28) \citep{prevoo1995modified} and in \textbf{S3} disease activity is measured using the Simplified Disease Activity Index (SDAI) \citep{smolen2003simplified, aletaha2005simplified}. 
+
+\textbf{S4} is based on guidelines in the UK
+
+\begin{itemize}
+\item \textbf{S1:} Treatment $\rightarrow$ ACR $\rightarrow$ Switch
+\item \textbf{S2:} Treatment $\rightarrow$ ACR $\rightarrow$ $\Delta$DAS28 $\rightarrow$ DAS28 $\rightarrow$ Switch 
+\item \textbf{S3:} Treatment $\rightarrow$ ACR $\rightarrow$ $\Delta$SDAI $\rightarrow$ SDAI $\rightarrow$ Switch 
+\item \textbf{S4:} Treatment $\rightarrow$ ACR $\rightarrow$ EULAR $\rightarrow$ Switch
+\item \textbf{S5:} Treatment $\rightarrow$ $\Delta$DAS28 $\rightarrow$ DAS28 $\rightarrow$ Switch 
+\item \textbf{S6:} Treatment  $\rightarrow$ $\Delta$SDAI $\rightarrow$ SDAI $\rightarrow$ Switch 
+\end{itemize}
+
+\begin{table}[!ht]
+\begin{center}
+\begin{threeparttable}
+\caption{Model structures for initial treatment phase} \label{tbl:initial-model-structure}
+\begin{tabularx}{\textwidth}{@{\extracolsep{\fill}}lcccccc}
+\hline
+\multicolumn{1}{l}{} & \multicolumn{1}{c}{S1} & \multicolumn{1}{c}{S2} & \multicolumn{1}{c}{S3} & \multicolumn{1}{c}{S4} & \multicolumn{1}{c}{S5} & \multicolumn{1}{c}{S6} \\
+\hline
+H1 & 1 & 2 & 3 & - & - & - \\
+H2 & 4 & 5 & 6 & 7 & 8 & 9 \\
+H3 & - & - & - & - & 10 & 11\\
+\hline
+\end{tabularx}
+\scriptsize
+Notes: Rows denote the model structure used to relate treatment to HAQ and columns denote the model structure used to predict treatment switching. Each number denotes a unique model structure (i.e. 1 corresponds to H1 and S1, 7 corresponds to H2 and S3) and the "-" denotes a model structure combination that is not possible. There are 11 possible model structures for the initial treatment phase. 
+\end{threeparttable}
+\end{center}
+\end{table}
+
+
+In the maintenance phase, statistical models are used to simulate the progression of HAQ over time. Two possibilities are considered: a scenario in which HAQ progression is linear and a second scenario where HAQ progression is simulated using a non-linear mixture model.
 
 Patients with insufficient response at the end of the initial 6-month
 period switch to the subsequent bDMARD, whereas those with a successful
@@ -351,8 +368,9 @@ For a given model, the outcomes of interest are:
 \item Net-monetary benefit (NMB)
 \end{itemize}
 
-\section{Source data and parameter
-estimation}\label{sec:data-parameters}
+\section{Populations}\label{sec:populations}
+
+\section{Source data and parameter estimation}\label{sec:data-parameters}
 
 \subsection{HAQ progression in the absence of bDMARD
 treatment}\label{haq-progression-in-the-absence-of-bdmard-treatment}
@@ -424,8 +442,7 @@ Treatment effects for bDMARD \emph{naive} patients at 6 months are
 estimated using a Bayesian network meta-analysis (NMA) of published
 randomized controlled trials (RCTs) (see \autoref{sec:tech-nma-initial}).
 Two primary endpoints were considered: ACR 20/50/70 response and HAQ.
-The rationale for using ACR response rather than HAQ directly is that
-the evidence base is larger than for HAQ. In one version of the model
+. In one version of the model
 structure, EULAR response categories are used to determine treatment
 continuation and duration. ACR responses from the NMA were translated
 into EULAR response probabilities based on evidence of their
@@ -690,50 +707,50 @@ Since no data exists on the size of the HAQ rebound post treatment, we vary its 
 Based on the NMA by \citet{singh2011adverse} and in accordance with \citet{stevenson2016adalimumab}, we assume a rate of 0.035 (95\% CI: 0.027 to 0.046) infections per person-year with all bDMARDs and a rate of 0.026 (no CI reported) infections per person-year with cDMARDs. The rate of infection is assumed to be equal across bDMARDs because the published results for specific bDMARDs are estimated with very little precision. The standard error on the infection rate for bDMARDs is assumed to be the same as the standard error for cDMARDs since no standard error was reported for bDMARDs in \citet{singh2011adverse}.
 
 <<si, echo = FALSE, include = FALSE, cache = FALSE, cache.lazy = TRUE>>=
-set.seed(100)
-pat <- sample_pats(n = 1000)
-input.dat <- input_data(patdata = pat)
-parsamp <- sample_pars(n = 1000)
-arm.snames <- c("cdmards", "adamtx")
-arminds <- as.list(which(therapy.pars$info$sname %in% arm.snames))
-arm.names <- c("MTX or non-biologic treatment", "Biologic treatment")
-dur.dist <- c("exponential", "weibull", "gompertz", "gamma", "llogis", "lnorm", "gengamma")
-dur.dist.l <- c("Exponential", "Weibull", "Gompertz", "Gamma", "Log-logistic", "Lognormal",
-                   "Generalized gamma")
-sim6 <- vector(length(dur.dist) * length(arminds), mode = "list")
-counter <- 1
-for (i in 1:length(arminds)){
-  for(j in 1:length(dur.dist)){
-    sim6[[counter]] <- sim_haq(arminds[[i]], input_data = input.dat, pars = parsamp,
-                               max_months = 6, dur_dist = dur.dist[i])
-    sim6[[counter]][, dur_dist := dur.dist.l[j]]
-    sim6[[counter]][, arm := arm.names[i]]
-    counter <- counter + 1
-  }
-}
-sim6 <- rbindlist(sim6)
-sim6[, si_ever := ifelse(ttsi <= ttd, 1, 0)]
-si.prop <- sim6[, .(si = mean(si_ever)), by = c("dur_dist", "arm", "sim")]
-si.prop <- si.prop[, .(si_mean = mean(si), si_lower = quantile(si, .025),
-                       si_upper = quantile(si, .974)), by = c("dur_dist", "arm")]
-
-# tables comparing serious infection rates by drugs
-tab1 <- si.prop[dur_dist == "Generalized gamma", .(arm, si_mean, si_lower, si_upper)]
-tab1[, si_mean := formatC(si_mean, format = "f", digits = 4)]
-tab1[, si_lower := formatC(si_lower, format = "f", digits = 4)]
-tab1[, si_upper := formatC(si_upper, format = "f", digits = 4)]
-tex <- print(xtable(tab1),
-      include.rownames = FALSE, include.colnames = FALSE,
-      only.contents = TRUE, sanitize.text.function = identity,
-      file = "tables/si-prop-gengamma.txt")
-
-# tables comparing serious infection by distribution
-tab2 <- si.prop[arm == arm.names[1], .(dur_dist, si_mean)]
-tab2[, si_mean := formatC(si_mean, format = "f", digits = 4)]
-tex <- print(xtable(tab2),
-      include.rownames = FALSE, include.colnames = FALSE,
-      only.contents = TRUE, sanitize.text.function = identity,
-      file = "tables/si-prop-mtx-bydist.txt")
+# set.seed(100)
+# pat <- sample_pats(n = 1000)
+# input.dat <- input_data(patdata = pat)
+# parsamp <- sample_pars(n = 1000)
+# arm.snames <- c("cdmards", "adamtx")
+# arminds <- as.list(which(therapy.pars$info$sname %in% arm.snames))
+# arm.names <- c("MTX or non-biologic treatment", "Biologic treatment")
+# dur.dist <- c("exponential", "weibull", "gompertz", "gamma", "llogis", "lnorm", "gengamma")
+# dur.dist.l <- c("Exponential", "Weibull", "Gompertz", "Gamma", "Log-logistic", "Lognormal",
+#                    "Generalized gamma")
+# sim6 <- vector(length(dur.dist) * length(arminds), mode = "list")
+# counter <- 1
+# for (i in 1:length(arminds)){
+#   for(j in 1:length(dur.dist)){
+#     sim6[[counter]] <- sim_haq(arminds[[i]], input_data = input.dat, pars = parsamp,
+#                                max_months = 6, dur_dist = dur.dist[i])
+#     sim6[[counter]][, dur_dist := dur.dist.l[j]]
+#     sim6[[counter]][, arm := arm.names[i]]
+#     counter <- counter + 1
+#   }
+# }
+# sim6 <- rbindlist(sim6)
+# sim6[, si_ever := ifelse(ttsi <= ttd, 1, 0)]
+# si.prop <- sim6[, .(si = mean(si_ever)), by = c("dur_dist", "arm", "sim")]
+# si.prop <- si.prop[, .(si_mean = mean(si), si_lower = quantile(si, .025),
+#                        si_upper = quantile(si, .974)), by = c("dur_dist", "arm")]
+# 
+# # tables comparing serious infection rates by drugs
+# tab1 <- si.prop[dur_dist == "Generalized gamma", .(arm, si_mean, si_lower, si_upper)]
+# tab1[, si_mean := formatC(si_mean, format = "f", digits = 4)]
+# tab1[, si_lower := formatC(si_lower, format = "f", digits = 4)]
+# tab1[, si_upper := formatC(si_upper, format = "f", digits = 4)]
+# tex <- print(xtable(tab1),
+#       include.rownames = FALSE, include.colnames = FALSE,
+#       only.contents = TRUE, sanitize.text.function = identity,
+#       file = "tables/si-prop-gengamma.txt")
+# 
+# # tables comparing serious infection by distribution
+# tab2 <- si.prop[arm == arm.names[1], .(dur_dist, si_mean)]
+# tab2[, si_mean := formatC(si_mean, format = "f", digits = 4)]
+# tex <- print(xtable(tab2),
+#       include.rownames = FALSE, include.colnames = FALSE,
+#       only.contents = TRUE, sanitize.text.function = identity,
+#       file = "tables/si-prop-mtx-bydist.txt")
 @
 
 \begin{table}[!ht]
@@ -1069,11 +1086,16 @@ The IPS is a discrete-time simulation that simulates individual patients one at 
 
 \subsection{Implementation}\label{implementation}
 
-\section{Model validation}\label{sec:model-validation}
-
 \begin{appendices}
 
 \section{Individual Patient Simulation}\label{appendix:IPS}
+\subsection{Non-linear HAQ trajectory}\label{non-linear-haq}
+\citet{norton2014health} model HAQ progression using a latent class growth model (LCGM). The probability that individual $i$ is a member of class $c$ at time $t$ is modeled using a multinomial logistic regression
+\begin{align}
+P(C_{it} = c) &= \frac{\exp(w_{it}^T\delta_c)}{\sum_{s=1}^{4}\exp(w_{it}^T\delta_s)},
+\end{align}
+where $\delta_s$ is the vector of regression coefficeints associated with class $s$ and $w_i$ is the corresponding design matrix for individual $i$. The variables included in $w_i$ are age, gender, baseline DAS28, symptom duration, rheumatoid factor, ACR criteria, and socieoeconomic status. 
+
 \subsection{Effect of age on linear HAQ
 progression}\label{effect-of-age-on-linear-haq-progression}
 
