@@ -1,0 +1,33 @@
+---
+title: Conducting a cost-effectiveness analysis
+output: 
+   html_document:
+    toc: true
+    toc_depth: 1
+---
+
+```{r include=FALSE}
+library("iviRA")
+load("output.RData")
+```
+
+# Cost-effectiveness analysis
+The `hesim` package contains a number of functions for conducting cost-effectiveness analyses. To prepare the data so that it can be analyzed with `hesim`, mean outcomes must be calculated for each simulation number and each treatment arm.
+
+```{r }
+n.inner <- max(sim.out$sim)
+ce <- sim.out[, .(grp = 1,
+             qalys = sum(qalys)/n.inner,
+                       dqalys = sum(qalys * .03)/n.inner,
+                       hc_cost = sum(hc_cost)/n.inner,
+                       dhc_cost = sum(hc_cost * .03)/n.inner),
+                   by = c("sim", "arm")]
+```
+
+The functions in `hesim` are designed for subgroup analyses so we must specify a group variable. The current analysis does not specify subgroups so we assume a single large group. Analysis from a health care sector perspective would compare clinical effectiveness as measured by discounted QALYs (`dqalys`) to costs as measured by discounted health care sector costs (`dhc_cost`). An analysis from a societal perspective would add productivity losses to health care sector costs. 
+
+<div>
+<ul class="pager">
+  <li class="previous"><a href="06-costs.html">Previous</a></li>
+</ul>
+</div>

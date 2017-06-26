@@ -1,0 +1,34 @@
+---
+title: Simulating Costs
+output: 
+   html_document:
+    toc: true
+    toc_depth: 1
+---
+
+```{r include=FALSE}
+library("iviRA")
+load("output.RData")
+```
+
+# Simulating costs
+The costs associated with each arm are simulated using the output from `sim_haq`. Health sector costs and productivity losses are simulated using the functions `sim_hc_cost` and `sim_prod_loss` respectively. 
+
+```{r, cache = TRUE }
+sim.out <- cbind(sim.out, sim_hc_cost(sim.out, pats[, "weight"], pars = parsamp))
+sim.out$prod_loss <- sim_prod_loss(sim.out, pl_haq = parsamp$prod.loss)
+head(sim.out[, .(sim, id, month, infusion_cost, rx_cost, treat_cost, hosp_cost, mgmt_cost, si_cost, hc_cost, prod_loss)])
+```
+
+An important component of health care sector costs (`hc_cost`) are the costs associated with treatment (`treat_cost`) with consist of infusion costs (`infusion_cost`) and drug acquisition costs (`rx_cost`). Other health care sector costs are hospital costs (`hosp_cost`), which increase with the HAQ score; general management costs (`mgmt_cost`); and the costs of caused by serious infections (`si_cost`). Higher HAQ scores also increase productivity losses measured as lost wages (`prod_loss`).
+
+<div>
+<ul class="pager">
+  <li class="previous"><a href="05-qalys.html">Previous</a></li>
+  <li class="next"><a href="07-cea.html">Next</a></li>
+</ul>
+</div>
+
+```{r include=FALSE}
+save.image("output.RData")
+```

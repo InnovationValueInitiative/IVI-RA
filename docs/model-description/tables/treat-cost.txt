@@ -1,5 +1,5 @@
 % latex table generated in R 3.4.0 by xtable 1.8-2 package
-% Mon Jun 26 12:42:10 2017
+% Mon Jun 26 14:45:41 2017
  Etanercept & 50 mg QW & 50 mg/0.98 mL syringe or pen injector & 26 & 52 & 1,110.50 & 0 & 28,873 & 57,746 \\ 
   Adalimumab & 40 mg EOW & 40 mg/0.8 mL syringe or pen injector & 13 & 26 & 2,220.62 & 0 & 28,868 & 57,736 \\ 
   Infliximab & 3 mg/kg at 0, 2, and 6 weeks, 3mg/kg Q8W, 6 mg/kg Q6W after 6 months & 100 mg vial & 5 & 8 & 1,113.27 & 164 & 17,519 & 51,853 \\ 

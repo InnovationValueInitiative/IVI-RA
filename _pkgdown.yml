@@ -3,9 +3,15 @@ template:
     bootswatch: simplex
     
 articles:
-  - title: "IVI026 vignettes"
+  - title: "How to run the model"
     contents:
-    - intro
+    - 01-intro
+    - 02-population
+    - 03-parameters
+    - 04-ips
+    - 05-qalys
+    - 06-costs
+    - 07-cea
 
 reference:
   - title: "Model inputs"
@@ -53,7 +59,19 @@ navbar:
     href: reference/index.html
   - text: "Run the model"
     menu:
-      - text: "Introduction to iviRA"
-        href: articles/intro.html
+      - text: "Introduction"
+        href: articles/01-intro.html
+      - text: "Population"
+        href: articles/02-population.html
+      - text: "Parameters"
+        href: articles/03-parameters.html
+      - text: "Simulate disease progression"
+        href: articles/04-ips.html
+      - text: "Utility and QALYs"
+        href: articles/05-qalys.html
+      - text: "Costs"
+        href: articles/06-costs.html
+      - text: "Cost-effectiveness analysis"
+        href: articles/07-cea.html
   - text: "Collaborate"
     href: reference/index.html

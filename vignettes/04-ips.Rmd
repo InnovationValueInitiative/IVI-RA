@@ -1,0 +1,62 @@
+---
+title: Simulate the model
+output: 
+   html_document:
+    toc: true
+    toc_depth: 1
+--- 
+
+```{r include=FALSE}
+library("iviRA")
+load("output.RData")
+```
+
+# Simulating disease progression
+Disease progression depends on the therapies used by patients. The list of potential therapies is available in the object `therapy.pars`, which contains all parameters in the model that vary across therapies.
+
+```{r }
+print(therapy.pars$info)
+```
+
+Therapies are specified within the simulation by providing the indices in `therapy.pars`. A treatment sequence of arbitrary length can be specified which consists of all the therapies used by a patient. Patients can either have same treatment sequence or different sequences. The treatment sequence (or set of treatment sequences) is referred to as an "arm". If the arm consists of a single treatment sequence, then it is specified as a single vector of indices; if each patient has their own treatment sequence, then the arm is specified as a matrix where each row contains the indices of the therapies used by a given patient
+
+In a cost-effectiveness analysis, we might want to compare a treatment arm of cDMARDs, etanercept + methotrexate, and adalimumab + methotrexate to a control arm of cDMARDs alone.
+
+```{r }
+arminds0 <- c(1)
+arminds1 <- c(1, 5, 2)
+```
+
+Disease progression is modeled using the function `sim_haq`, which simulates a patient's HAQ score over time. For example, we can simulate disease progression for patients on cDMARDs. 
+
+```{r, cache = TRUE }
+sim.out0 <- sim_haq(arminds0, input_dat = input.dat, pars = parsamp)
+head(sim.out0)
+
+```
+
+`sim_haq` returns a `data.table` which is an enhanced `data.frame` from the `data.table` package designed for fast data manipulation. For a given sampled parameter set (`sim`) a sampled patient (`id`) remains on a given `therapy` until time to treatment discontinuation (`ttd`) becomes less than zero in a given `month`. Treatment discontinuation is caused by a serious infection (`si` = 1) if the sampled time to serious infection at treatment initiation is less than the sampled time to discontinuation. After discontinuation, a patient switches to the next `therapy` and `therapy_seq` increments by one. Patient `age` increases in 6-month increments. The HAQ score (`haq`) during the initial 6-month period (`therapy_cycle = 1`) and `ttd` depend on ACR response (`acr`) and in turn, EULAR response (`eular`). The HAQ score (`haq`) progresses over time according to the treatment and the statistical method used to model the trajectory of the HAQ score. The simulation ends when a patient dies (`death = 1`).
+
+We might also want to simulate disease progression for the treatment arm. 
+```{r, cache = TRUE }
+sim.out1 <- sim_haq(arminds1, input_dat = input.dat, pars = parsamp)
+```
+
+Output from the simulations can be combined into a single `data.table`, which can be used to estimate cost and QALYs for each arm.  
+
+```{r, cache = TRUE }
+sim.out0$arm <- "arm0"
+sim.out1$arm <- "arm1"
+sim.out <- rbind(sim.out0, sim.out1)
+```
+
+<div>
+<ul class="pager">
+  <li class="previous"><a href="03-parameters.html">Previous</a></li>
+  <li class="next"><a href="05-qalys.html">Next</a></li>
+</ul>
+</div>
+
+```{r include=FALSE}
+save.image("output.RData")
+```

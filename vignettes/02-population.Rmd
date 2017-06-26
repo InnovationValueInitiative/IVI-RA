@@ -1,0 +1,43 @@
+---
+title: The patient population
+output: 
+   html_document:
+    toc: true
+    toc_depth: 1
+--- 
+
+```{r include=FALSE}
+library("iviRA")
+```
+
+# Loading the data
+Input parameters and data needed to run the simulation come preloaded with the package. To view the loaded data use the command `data(package = "IVI026")`.
+
+# Generating a patient cohort
+Before running the IPS, patient characteristics must be specified. The patient dataset must be a matrix containing information on at least patient age, baseline HAQ, gender, and weight. Additionally, if the @wailoo2006modeling [utility agorithm is used](#simulating-qalys), then disease duration and the number of previous DMARDs must be specified as well. 
+
+The patient dataset can be generated using `sample_pats()`. The `type` argument specifies whether the patient cohort is homogeneous or heterogeneous. If the cohort is homogeneous, then the cohort consists of male and female patients that are identical in all respects other than gender; if the cohort is heterogeneous, then all variables vary across patients.
+
+```{r }
+pats <- sample_pats(n = 100, type = "heterog")
+head(pats)
+```
+
+# Input data
+Model outcomes depend on both the parameters sampled using `sample_pars` and the characteristics of the patients. The `input_data` function generate the datasets needed to run the the simulation. 
+
+```{r }
+input.dat <- input_data(pats)
+names(input.dat)
+```
+
+<div>
+<ul class="pager">
+  <li class="previous"><a href="01-intro.html">Previous</a></li>
+  <li class="next"><a href="03-parameters.html">Next</a></li>
+</ul>
+</div>
+
+```{r include=FALSE}
+save.image("output.RData")
+```

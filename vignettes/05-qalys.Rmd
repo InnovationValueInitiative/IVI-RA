@@ -1,0 +1,46 @@
+---
+title: Simulating Utility and QALYs
+output: 
+   html_document:
+    toc: true
+    toc_depth: 1
+--- 
+
+```{r include=FALSE}
+library("iviRA")
+load("output.RData")
+```
+
+## Simulating QALYs
+Patient utility as a function of the HAQ score is determined using statistical algorithms that correlate HAQ to utility. The preferred algorithm is the mixture model by @alava2013relationship, which can be simulated using `sim_utility_mixture`. Since utility from the mixture model depends on both pain and HAQ, the algorithm simulates `pain` before simulating `utility`.  
+
+```{r, cache = TRUE }
+sim.out <- cbind(sim.out, sim_utility_mixture(sim.out, male = input.dat$male, 
+                                      pars = c(pain, parsamp$mixture.utility)))
+```
+
+The utility mapping algorithm of @wailoo2006modeling can be used as well. 
+
+```{r, cache = TRUE }
+util.wailoo <- sim_utility_wailoo(sim.out, input_data = input.dat, 
+                                      pars = parsamp$wailoo.utility)
+head(util.wailoo)
+```
+
+QALYs in a given 6-month period are calculated as a function of utility determined by the simulated HAQ score and whether a serious infection occurred (which creates a one-period loss in utility).
+
+```{r }
+sim.out$qalys <- sim_qalys(sim.out, sim.out$utility, si_ul = parsamp$si.ul)
+head(sim.out[, .(sim, id, month, pain, utility, qalys)])
+```
+
+<div>
+<ul class="pager">
+  <li class="previous"><a href="04-ips.html">Previous</a></li>
+  <li class="next"><a href="06-costs.html">Next</a></li>
+</ul>
+</div>
+
+```{r include=FALSE}
+save.image("output.RData")
+```

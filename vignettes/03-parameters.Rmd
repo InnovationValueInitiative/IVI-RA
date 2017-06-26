@@ -1,0 +1,37 @@
+---
+title: Sampling the model parameters
+output: 
+   html_document:
+    toc: true
+    toc_depth: 1
+--- 
+
+```{r include=FALSE}
+library("iviRA")
+load("output.RData")
+```
+
+# Sampling 
+PSA is conducted by sampling the parameters from their (joint) probability distribution and running the IPS for each randomly sampled parameter set. The parameters can be sampled using the function `sample_pars`, which generates a probability distribution for all parameters used within the family of models. 
+
+```{r }
+parsamp <- sample_pars(n = 100)
+names(parsamp)
+```
+
+`sample_pars` returns a list containing random draws of the different parameters used in the IPS. For example `parsamp$acr2eular` is an array containing two-way frequency matrices randomly sampled from a Dirichlet distribution that describe the probability of a EULAR response category conditional on ACR response.
+
+```{r }
+parsamp$acr2eular[,,1:2]
+```
+
+<div>
+<ul class="pager">
+  <li class="previous"><a href="02-population.html">Previous</a></li>
+  <li class="next"><a href="04-ips.html">Next</a></li>
+</ul>
+</div>
+
+```{r include=FALSE}
+save.image("output.RData")
+```
