@@ -192,7 +192,7 @@
 
 This document describes version 1.0 of IVI's rheumatoid arthritis (RA) cost-effectiveness model. The IVI-RA model is an individual patient simulation (IPS) that simulates patients one at a time. The model reflects a range of perspectives (e.g., health care sector, societal) and structural assumptions. All told, there are 672 different model structures, which allows analysts to account for structural uncertainty. Parameter uncertainty is quantified with probabilistic sensitivity analysis (PSA).
 
-The model is available as an \href{https://cran.r-project.org/}{\R{}} package with documentation available \href{https://innovationvalueinitiative.github.io/IVI-RA/index.html}{online}. The source code can be viewed or downloaded at our \href{https://github.com/InnovationValueInitiative/IVI-RA}{GitHub repository}. The IPS was primarily written in \CPP{} so that PSA and analyses of structural uncertainty can be run in a reasonable amount of time. The model can either be run using \R{} or \href{http://www.shinyapps.io/}{online} with our user-friendly R Shiny web application. 
+The model is available as an \href{https://cran.r-project.org/}{\R{}} package with documentation available \href{https://innovationvalueinitiative.github.io/IVI-RA/index.html}{online}. The source code can be viewed or downloaded at our \href{https://github.com/InnovationValueInitiative/IVI-RA}{GitHub repository}. The IPS was primarily written in \CPP{} so that PSA and analyses of structural uncertainty can be run in a reasonable amount of time. The model can either be run using \R{} (see \href{https://innovationvalueinitiative.github.io/IVI-RA/index.html}{documentation}) or \href{http://www.shinyapps.io/}{online} with our user-friendly R Shiny web application. 
 
 This document is structured as follows. We begin by discussing treatment strategies that can be modeled in \autoref{sec:treatments}. \autoref{sec:model-structures} outlines the competing model structures. \autoref{sec:data-parameters} describes the statistical techniques used to estimate the model parameters and the data sources used. \autoref{sec:populations} examines the data needed to define a population and run an analysis. Finally, \autoref{sec:sim-uncertainty} describes the simulation techniques used to implement the RA family of models and quantify uncertainty.
 
@@ -208,7 +208,7 @@ The primary purpose of the model is to evaluate the cost-effectiveness of treatm
 At the end of a sequence, patient switch to non-biologic therapy (NBT), which encompasses a range of therapies that do not affect the rate of disease progression and are not associated with adverse events. 
 
 \section{Competing model structures}\label{sec:model-structures}
-The IVI-RA model is a discrete-time IPS with 6 month cycles that can be run using a number of different model structures. Like most RA cost-effectiveness models, the model measures changes in disease severity using the Health Assessment Questionnaire (HAQ) Disability Index score \citep{tosh2011sheffield, carlson2015economic, stephens2015modelling, stevenson2016adalimumab, icer2017tim, stevenson2017cost}. In particular, at the start of the simulation, each patient is assigned a baseline Health Assessment Questionnaire (HAQ) Disability Index score. Subsequently, the impact of the disease measured by the HAQ trajectory over time is modeled as a function of a sequence of treatments (\autoref{fig:haq-structure}). In the absence of treatment, HAQ deteriorates at a certain rate as depicted by the dashed line in the figure. Treatment is separated into two distinct phases: an initial phase of up to 6 months, consistent with data reported from randomized controlled trials (RCTs), and a maintenance phase thereafter until discontinuation. 
+The IVI-RA model is a discrete-time IPS with 6 month cycles that can be run using a number of different model structures. Like most RA cost-effectiveness models, the model measures changes in disease severity using the Health Assessment Questionnaire (HAQ) Disability Index score \citep{tosh2011sheffield, carlson2015economic, stephens2015modelling, stevenson2016adalimumab, icer2017tim, stevenson2017cost}. In particular, at the start of the simulation, each patient is assigned a baseline HAQ score. Subsequently, the impact of the disease measured by the HAQ trajectory over time is modeled as a function of a sequence of treatments (\autoref{fig:haq-structure}). In the absence of treatment, HAQ deteriorates at a certain rate as depicted by the dashed line in the figure. Treatment is separated into two distinct phases: an initial phase of up to 6 months, consistent with data reported from randomized controlled trials (RCTs), and a maintenance phase thereafter until discontinuation. 
 
 \begin{figure}
 \centering
@@ -217,7 +217,7 @@ The IVI-RA model is a discrete-time IPS with 6 month cycles that can be run usin
 biologic treatment}\label{fig:haq-structure}
 \end{figure}
 
-During the initial treatment phase HAQ is modeled as a change from baseline. Three possible model structures labeled \textbf{H1-H3} are possible. In \textbf{H1}, which is similar to other cost-effectiveness models in a US setting \citep[e.g.][]{carlson2015economic, icer2017tim}, treatment influences HAQ through its effect on the American College of Rheumatology (ACR) response criteria. ACR response is measures using four mututually exclusive categories: no response defined as less than 20\% improvement, ACR 20-50\% improvement, ACR 50-70\% improvement, and ACR 70\% improvement. The rationale for using ACR response rather than HAQ directly is that the evidence base related treatment to ACR response is larger than the evidence based relating treatment to HAQ. \textbf{H2} follows the National Institute for Health and Care Excellence (NICE) cost-effectiveness model \citep{stevenson2016adalimumab, stevenson2017cost} and models the effect of treatment on HAQ indirectly through its effect on ACR response and, in turn, the three categories of the European League Against Rheumatism (EULAR) response (No response, moderate response, or good response). Finally, since modeling the effect of treatment on HAQ through intermediary variables may mediate treatment response, in \textbf{H3}, treatment impacts HAQ directly. The three scenarios are summarized below: 
+During the initial treatment phase HAQ is modeled as a change from baseline. Three possible model structures labeled \textbf{H1-H3} are possible. In \textbf{H1}, treatment influences HAQ through its effect on the American College of Rheumatology (ACR) response criteria, which is similar to the structure used in other US based cost-effectiveness models \citep[e.g.][]{carlson2015economic, icer2017tim}. ACR response is measured using four mutually exclusive categories: no response (defined as less than 20\% improvement), ACR 20-50\% improvement, ACR 50-70\% improvement, and ACR 70\% improvement or greater. The rationale for using ACR response rather than HAQ directly is that the evidence base relating treatment to ACR response is larger than the evidence based relating treatment to HAQ. \textbf{H2} follows the National Institute for Health and Care Excellence (NICE) cost-effectiveness model \citep{stevenson2016adalimumab, stevenson2017cost} and models the effect of treatment on HAQ indirectly through its effect on ACR response and, in turn, the three categories of the European League Against Rheumatism (EULAR) response (no response, moderate response, or good response). Finally, since modeling the effect of treatment on HAQ through intermediary variables may mediate treatment response, in \textbf{H3}, treatment impacts HAQ directly. The three scenarios are summarized below: 
 
 \begin{itemize}
 \item \textbf{H1}: Treatment $\rightarrow$ ACR $\rightarrow$ HAQ
@@ -225,18 +225,20 @@ During the initial treatment phase HAQ is modeled as a change from baseline. Thr
 \item \textbf{H3}: Treatment $\rightarrow$ HAQ
 \end{itemize}
 
-The probability of switching treatment during the initital treatment phase is modeled using 6 possible structures labeled \textbf{S1-S6}. \textbf{S1} follows a common approach where ACR non-responders discontinue treatment \citep[e.g.][]{carlson2015economic, icer2017tim}. However, one drawback of this approach is that it is not consistent with current treat-to-target guidelines in the United States \citep{singh20162015}. \textbf{S2} and \textbf{S3} consequently model treatment switching as a function of disease activity (remission, low, moderate, high) \citep{anderson2012rheumatoid}. ACR response predicts the change in disease activity from baseline which, along with baseline disease activity, predicts absolute disease activity. The probability of switching treatment increasing in the severity of disease (i.e., lowest in remission and greatest with high disease activity). In \textbf{S2} disease activity is measured using the Disease Activity Score with 28-joint counts (DAS28) \citep{prevoo1995modified} and in \textbf{S3} disease activity is measured using the Simplified Disease Activity Index (SDAI) \citep{smolen2003simplified, aletaha2005simplified}.     
+The probability of switching treatment during the initial treatment phase is modeled using 6 possible structures labeled \textbf{S1-S6}. \textbf{S1} follows a common approach where ACR non-responders discontinue treatment \citep[e.g.][]{carlson2015economic, icer2017tim}. One drawback of this approach is that it is not consistent with current treat-to-target guidelines in the United States \citep{singh20162015}. \textbf{S2} and \textbf{S3} consequently model treatment switching as a function of disease activity (remission, low, moderate, high) \citep{anderson2012rheumatoid}. ACR response predicts the change in disease activity from baseline which, along with baseline disease activity, predicts absolute disease activity. The probability of switching treatment is increasing in the severity of disease (i.e., the probability is lowest in remission and greatest with high disease activity). In \textbf{S2} disease activity is measured using the Disease Activity Score with 28-joint counts (DAS28) \citep{prevoo1995modified} and in \textbf{S3} disease activity is measured using the Simplified Disease Activity Index (SDAI) \citep{smolen2003simplified, aletaha2005simplified}. \textbf{S4} and \textbf{S5} are similar to \textbf{S2} and \textbf{S3}, but model the effect of treatment on changes in DAS28 and SDAI directly, rather than indirectly through ACR response. Finally, since in the UK, the EULAR response is recommended by the British Society for Rheumatology and the British Health Professionals in Rheumatology \citep{deighton2010bsr}, \textbf{S6} is based on EULAR response. In particular, following the NICE model, we assume that EULAR non-responders discontinue treatment while moderate and good responders continue treatment \citep{stevenson2016adalimumab}. The reasoning is that rules stipulated by NICE require a DAS28 improvement of more than 1.2 to continue treatment which is associated with moderate or good EULAR response. All 6 treatment switching scenarios are summarized below: 
 
 \begin{itemize}
 \item \textbf{S1:} Treatment $\rightarrow$ ACR $\rightarrow$ Switch
 \item \textbf{S2:} Treatment $\rightarrow$ ACR $\rightarrow$ $\Delta$DAS28 $\rightarrow$ DAS28 $\rightarrow$ Switch 
 \item \textbf{S3:} Treatment $\rightarrow$ ACR $\rightarrow$ $\Delta$SDAI $\rightarrow$ SDAI $\rightarrow$ Switch 
-\item \textbf{S4:} Treatment $\rightarrow$ ACR $\rightarrow$ EULAR $\rightarrow$ Switch
-\item \textbf{S5:} Treatment $\rightarrow$ $\Delta$DAS28 $\rightarrow$ DAS28 $\rightarrow$ Switch 
-\item \textbf{S6:} Treatment  $\rightarrow$ $\Delta$SDAI $\rightarrow$ SDAI $\rightarrow$ Switch 
+\item \textbf{S4:} Treatment $\rightarrow$ $\Delta$DAS28 $\rightarrow$ DAS28 $\rightarrow$ Switch 
+\item \textbf{S5:} Treatment  $\rightarrow$ $\Delta$SDAI $\rightarrow$ SDAI $\rightarrow$ Switch 
+\item \textbf{S6:} Treatment $\rightarrow$ ACR $\rightarrow$ EULAR $\rightarrow$ Switch
 \end{itemize}
 
-\begin{table}[!ht]
+Not all model structures \textbf{S1-S6} can be used with each of \textbf{H1-H3}. If \textbf{H1} is used, then \textbf{S1-S5} are available, but \textbf{S6} is not because EULAR response is not simulated. In \textbf{H2}, \textbf{S1-S6} are all available while in \textbf{H3} only \textbf{S4} and \textbf{S5} can be used since neither ACR or EULAR response are simulated. The 13 possible model structures and the number of each structure are outlined in \autoref{tbl:initial-model-structure}.  
+
+\begin{table}[!ht] 
 \begin{center}
 \begin{threeparttable}
 \caption{Model structures for initial treatment phase} \label{tbl:initial-model-structure}
@@ -244,91 +246,33 @@ The probability of switching treatment during the initital treatment phase is mo
 \hline
 \multicolumn{1}{l}{} & \multicolumn{1}{c}{S1} & \multicolumn{1}{c}{S2} & \multicolumn{1}{c}{S3} & \multicolumn{1}{c}{S4} & \multicolumn{1}{c}{S5} & \multicolumn{1}{c}{S6} \\
 \hline
-H1 & 1 & 2 & 3 & - & - & - \\
-H2 & 4 & 5 & 6 & 7 & 8 & 9 \\
-H3 & - & - & - & - & 10 & 11\\
+H1 & 1 & 2 & 3 & 4 & 5 & - \\
+H2 & 6 & 7 & 8 & 9 & 10 & 11 \\
+H3 & - & - & - & 12 & 13 & -\\
 \hline
 \end{tabularx}
 \scriptsize
-Notes: Rows denote the model structure used to relate treatment to HAQ and columns denote the model structure used to predict treatment switching. Each number denotes a unique model structure (i.e. 1 corresponds to H1 and S1, 7 corresponds to H2 and S3) and the "-" denotes a model structure combination that is not possible. There are 11 possible model structures for the initial treatment phase. 
+Notes: Rows denote the model structure used to relate treatment to HAQ and columns denote the model structure used to predict treatment switching. Each number denotes a unique model structure (i.e. 1 corresponds to H1 and S1 and 8 corresponds to H2 and S3) and the "-" denotes a model structure combination that is not possible. There are 13 possible model structures for the initial treatment phase. 
 \end{threeparttable}
 \end{center}
 \end{table}
 
 
-In the maintenance phase, statistical models are used to simulate the progression of HAQ over time. Two possibilities are considered: a scenario in which HAQ progression is linear and a second scenario where HAQ progression is simulated using a non-linear mixture model.
+In the maintenance phase, two model structures can be used to simulate the long-term progression of HAQ. First, as is common in cost-effectiveness analyses of therapies for RA, HAQ is assumed to progress at a constant linear rate over time \citep[see][]{tosh2011sheffield, wailoo2008biologic}. However, since emerging evidence suggests that the rate of HAQ progression is non-linear \citep{gibson2016haq}, our second scenario simulates HAQ progression using a non-linear mixture model \citep{norton2014health} with 4 distinct HAQ trajectories and a rate of HAQ progression that decreases over time within each trajectory. Upon discontinuation of treatment, the HAQ score rebounds by a proportion of the improvement experienced at the end of the initial 6-month period with that treatment.
 
-Patients with insufficient response at the end of the initial 6-month
-period switch to the subsequent bDMARD, whereas those with a successful
-response continue with the same treatment as maintenance regimen until
-efficacy is lost or treatment is discontinued for other reasons. Most
-clinical trials use the American College of Rheumatology (ACR) 20/50/70
-response criteria to assess efficacy. However, in routine practice ACR
-response criteria are not used; decisions regarding treatment switching
-are more likely to be informed by response criteria based on SDAI in the
-US and EULAR response in the UK. To capture differences in clinical
-practice in different settings we will model separate scenarios where
-treatment duration depends on either EULAR response or
-SDAI \citep{tosh2011sheffield, madan2015consensus}. In the SDAI scenario
-patients with a SDAI major or minor response continue with maintenance
-treatment and in the EULAR scenario patients with a good or moderate
-response continue with maintenance treatment. In both cases, patients
-without a response switch to the next bDMARD. Duration of the treatment
-maintenance phase is modeled from real-world data using time-to-event
-distributions conditional upon SDAI or EULAR responses at 6 months.
-Patients with a better treatment response according to SDAI or EULAR
-tend to stay on maintenance treatment longer.
+The duration of the maintenance phase (i.e., time to discontinuation of maintenance treatment) is simulated using parametric time-to-event distributions. When structure \textbf{S6} is used, the time-to-event distributions are stratified by EULAR response category. Patients with good response at the end of the initial treatment phase stay on treatment longer, on average, than patients with a moderate response. In contrast, when \textbf{S1} is used, time to treatment discontinuation is simulated using a single time-to-event curve because we have been unable to obtain curves stratified by ACR response categories. Likewise, when \textbf{S2-S5} we use a single time-to-event curve because we have not obtained curves stratified by disease activity level. In each case, time to discontinuation can be simulated using one of seven possible distributions (exponential, Weibull, Gompertz, normal, gamma, log-logistic, generalized gamma).
 
-The effect of treatment on HAQ during the initial treatment phase is
-modeled using two separate scenarios. In the first scenario, treatment
-has a direct effect on HAQ, and in the second scenario treatment has an
-indirect effect on HAQ through its effect on ACR response. In both
-scenarios, more effective treatments are associated with improvements
-(i.e. reductions) in HAQ relative to the score 6 months prior. In
-addition, these patients, who continue with the same bDMARD during the
-maintenance phase, experience an improvement in HAQ relative to patients
-without treatment. Upon discontinuation of treatment, the HAQ score
-rebounds by a proportion of the improvement experienced at the end of
-the initial 6-month period with that treatment. Given the more favorable
-HAQ progression rates with maintenance bDMARD than without treatment,
-the absolute HAQ score after rebound is at a more favorable level than
-what the HAQ would have been in the absence of treatment.
+In line with \citet{stevenson2016adalimumab} the adverse events included in the model are limited to serious infections; we assume that only serious infections have a significant cost impact and increased risk over background rates to be meaningful to include \citep{ramiro2017safety}. While on a treatment, a patient experiences a serious infection if the individual's sampled time to the adverse event is shorter than the sampled time to treatment discontinuat on.
 
-In line with \citet{stevenson2016adalimumab} the adverse
-events included in the model are limited to serious infections; we
-assume that only serious infections have a significant cost impact and
-increased risk over background rates to be meaningful to
-include \citep{ramiro2017safety}. While on a
-treatment, a patient experiences a serious infection if the individual's
-sampled time to the adverse event is shorter than the sampled time to
-treatment discontinuation.
+Baseline HAQ scores (and changes in HAQ scores from baseline) are used to determine mortality relative to age/sex specific rates for the US general population (assumed to have a HAQ score of 0). Treatment therefore has an indirect effect on mortality through its effect on HAQ. 
 
-Baseline HAQ scores and changes in HAQ over time determine mortality
-relative to age/sex specific rates for the US general population.
-Furthermore, the individual HAQ score in combination with matching pain
-levels and age/sex at a particular point in time is used to estimate the
-EQ-5D utility score (0-1 range). Utility is reduced for the duration of
-a month when a serious infection occurred. Accrued utility estimates
-among patients alive determine estimated QALYs. HAQ scores also
-determine annual hospitalization days and productivity loss. Health
-sector costs considered in the models are related to drug acquisition
-and administration, adverse events, general management of RA, and
-hospitalization. Non-health sector costs considered are limited to work
-related productivity loss.
+Individual HAQ scores at a particular point in time were also used to simulate EQ-5D utility scores (0-1 range), which, in turn, were used to simulate quality-adjusted life-years (QALYs). However, since a number of different methods have been used to convert HAQ into utility, our model contains two different possible mapping algorithms. Our preferred algorithm is the \citet{alava2013relationship} mixture model, which uses a much larger sample size than other statistical models and has been shown to have better predictive accuracy. Other algorithms are typically estimated using clinical trial data \citep[e.g.][]{carlson2015economic, stephens2015modelling} and consequently have limited generalizability. The second utility algorithm available within our model is based on a linear regression analyis of real-world data by \citet{wailoo2006modeling} that has been used in a few previous cost-effectiveness analyses \citep[e.g.][]{wailoo2008biologic, icer2017tim}. 
 
-Patient preferences for treatment attributes have a direct effect on
-long-term treatment duration and utility. Patients with treatments that
-more closely match their preferences have longer treatment duration and
-higher utility. Treatment attributes that are incorporated into the
-models include route of administration and frequency of administration.
+Annnual hospitalization days and productivity losses are simulated as a function of HAQ. Health sector costs considered in the models are related to drug acquisition and administration, adverse events, general management of RA, and hospitalization. Non-health sector costs considered are limited to work related productivity loss.
 
-The flow diagram in \autoref{fig:flow-diagram} describes the flow of a
-single patient through the simulation. Each patient begins the
-simulation by initiating treatment and ends the simulation with death.
-The rectangles in the figure represent ``processes'' determining the
-effect of treatment on disease progression and the diamonds represent
-``decisions'' that determine whether a patient will switch to a new
-treatment.
+Patient preferences for treatment attributes have a direct effect on long-term treatment duration and utility. Patients with treatments that more closely match their preferences have longer treatment duration and higher utility. Treatment attributes that are incorporated into the models include route of administration and frequency of administration.
+
+The flow diagram in \autoref{fig:flow-diagram} describes the flow of a single patient through the simulation. Each patient begins the simulation by initiating treatment and ends the simulation with death. The rectangles in the figure represent ``processes'' determining the effect of treatment on disease progression and the diamonds represent ``decisions'' that determine whether a patient will switch to a new treatment.
 
 \begin{figure}
 \centering
@@ -353,33 +297,22 @@ not.
 model parameters}\label{fig:influence-diagram}
 \end{figure}
 
-\autoref{tbl:competing-structures} summarizes the competing model
-structures, which are conditional on the perspective of the decision
-maker. First, the initial treatment response can either have a direct
-effect on HAQ or have an indirect effect on HAQ through its effect on
-ACR (and the association between ACR and the response criteria used).
-Second, the response criteria can either be based on SDAI or EULAR,
-which impacts treatment duration. Third, HAQ can either be linear or
-non-linear. Fourth, seven probability distributions (exponential,
-Weibull, Gompertz, gamma, log-logistic, lognormal, and generalized
-gamma) can be used to model treatment duration conditional on a positive
-treatment response at 6-months. All told, there are 2 x 2 x 2 x 7 = 56
-possible models.
+\autoref{tbl:competing-structures} summarizes the competing model structures, which are conditional on the perspective of the decision maker. In total, there are 13 x 2 x 7 x 3 = 364 possible model structures.
 
 \renewcommand{\arraystretch}{1.5}
 
 \begin{table}[!ht]
 \begin{center}
 \begin{threeparttable}
-\caption{Sets of models within the family of models} \label{tbl:competing-structures}
+\caption{Competing model structures} \label{tbl:competing-structures}
 \begin{tabular}{p{0.80\linewidth}p{0.20\linewidth}}
 \hline
 \multicolumn{1}{c}{Component of model structure} & \multicolumn{1}{c}{Possible combinations} \\
 \hline
-Initial treatment response based on indirect effect of treatment on HAQ through ACR or direct effect of treatment on HAQ  & 2  \\
-Treatment duration based on SDAI or EULAR & 2 \\
+Initial effect of treatment on HAQ (\textbf{H1-H3}) and switching (\textbf{S1-S6}) & 13  \\
 HAQ progression linear or non-linear & 2 \\
 Probability distribution for treatment duration & 7 \\
+Utility algorithm & 2 \\
 \hline
 \hline
 \end{tabular}
@@ -409,20 +342,12 @@ For a given model, the outcomes of interest are:
 \subsection{HAQ progression in the absence of bDMARD
 treatment}\label{haq-progression-in-the-absence-of-bdmard-treatment}
 
-The natural course of HAQ progression in the absence of bDMARDs is
-assumed to either be linear or non-linear. HAQ develops over time
-according to this estimated natural course for patients remaining on
-cDMARDs or following discontinuation of the last bDMARD of the sequence.
+The natural course of HAQ progression in the absence of bDMARDs develops over time according to an estimated natural course for patients remaining on cDMARDs or following discontinuation of the last bDMARD of the sequence. The natural course of HAQ can either be assumed to change at a constant linear rate or be modeled using a non-linear mixture model. 
 
+\subsubsection{Constant linear rate of progression} \label{sec:haq-linear-rate}
 The rate of progression in the linear case is based on the observational study by \citet{wolfe2010loss}. They assessed the development of HAQ over time at six month intervals for up to 11 years among 3,829 RA patients who switched from non-biologic treatment to biologic treatment and participated in the National Data Bank for Rheumatic Diseases (NDB) longitudinal study of RA outcomes. The annual HAQ progression rate prior to biologic therapy was 0.031 (95\% confidence interval (95\%CI): 0.026 to 0.036) and is assumed to reflect the course of progression of HAQ in the absence of bDMARD.
 
-Based on the same data, \citet{michaud2011treatment} reported overall
-and age-specific specific HAQ progression rates. The differences between
-the overall and age specific rates are as follows: \textless{}40: -0.020
-(95\%CI: -0.0223 to -0.0177); 40-64: -0.008 (95\%CI: -0.0101 to
--0.0059); \(\geq\) 65 0.017 (95\%CI: 0.0136 to 0.0204). These estimates
-are applied to the overall progression rate of 0.031 to obtain age
-specific HAQ progression rates.
+Based on the same data, \citet{michaud2011treatment} reported overall and age-specific specific HAQ progression rates. The differences between the overall and age specific rates are as follows: \textless{}40: -0.020 (95\%CI: -0.0223 to -0.0177); 40-64: -0.008 (95\%CI: -0.0101 to -0.0059); \(\geq\) 65 0.017 (95\%CI: 0.0136 to 0.0204). These estimates are applied to the overall progression rate of 0.031 to obtain age specific HAQ progression rates.
 
 
 
@@ -448,6 +373,8 @@ Notes: 95\% confidence intervals are calculated using a normal distribution. Con
 \end{threeparttable}
 \end{center}
 \end{table}
+
+\subsubsection{Non-linear mixture model} \label{sec:haq-mixture}
 
 The rate of progression in the non-linear case is based on a mixture model approach that has increasingly been used to model HAQ progression over time \citep{stevenson2016adalimumab, norton2013trajectories, norton2014health}. These models suggest that different subgroups have distinct HAQ trajectories and that the rate of worsening of HAQ progression decreases over time. Parameter estimates are based on We use the statistical model estimated on the Early Rheumatoid Arthritis Cohort Study (ERAS) cohort, which has a high percentage of patients receiving methotrexate and a very small percentage receiving biologics. Following \citet{stevenson2016adalimumab}, explanatory variables in the statistical model that are not used in the IPS will be set to their mean values in the ERAS cohort. Uncertainty in the parameters of the mixture model are based on standard errors since \citet{norton2013trajectories} did not report the full covariance matrix needed to model the covariance between the parameters.
 
@@ -523,7 +450,8 @@ In the direct case...
 Based on the NDB longitudinal study, \citet{wolfe2010loss} estimated the overall annual HAQ progression rate among RA patients who had switched to biologic treatment at -0.001 (95CI: -0.004 to 0.002). In a separate analysis, also based on NDB data, \citet{michaud2011treatment} reported annual HAQ progression rates by treatment adjusted for baseline HAQ score, age, sex, education, smoking, BMI, comorbidity, and RA onset. The average HAQ rate among patients on a biologic was -0.001 as well, which instills confidence that the reported HAQ progression rates for different bDMARDs as reported by \citet{michaud2011treatment} can be directly compared with the overall annual HAQ progression rate of 0.031 reported by \citet{wolfe2010loss}. Accordingly, bDMARD specific HAQ progression rates by \citet{michaud2011treatment} are used in the model. For bDMARD treatments evaluated in the model for which no HAQ progression rate was reported by \citet{michaud2011treatment}, the overall biologic rate of -0.001 is used. 
 
 \subsection{Duration of maintenance treatment}\label{duration-of-maintenance-treatment}
-\subsubsection{By EULAR response}\label{by-eular-response}
+\subsubsection{Corrona Database}\label{sec:ttd-corrona}
+\subsubsection{BSRBR Database}\label{sec:ttd-bsrbr}
 Treatment duration as a function of EULAR response is estimated from survival curves based on analyses of the British Society for Rheumatology Biologics Registers (BSRBR) database \citep{stevenson2016adalimumab}. Seven parametric survival models (exponential, Weibull, Gompertz, gamma, log-logistic, lognormal, and generalized gamma) were estimated on individual patient data reconstructed from the BSRBR survival curves using the algorithm developed in \citet{guyot2012enhanced}. The Akaike Information Criteria (AIK) and Bayesian Information Criteria (BIC) of each model by EULAR response category (moderate, good) are shown in \autoref{tbl:ic-dur-eular}.
 
 
@@ -609,9 +537,6 @@ et al. (2016) by EULAR response category}\label{fig:bsrbr-gg}
 \end{threeparttable}
 \end{center}
 \end{table}
-
-\subsubsection{By SDAI}\label{by-sdai}
-TBD
 
 \subsection{Rebound post treatment}
 Since no data exists on the size of the HAQ rebound post treatment, we vary its size as a proportion of the initial 6-month HAQ decline. 1 is used as an upper bound, which implies that the HAQ rebound is equal to the improvement experienced at the end of the initial 6-month period with that treatment. 0.5 is used as a lower bound based on expert opinion.
@@ -807,6 +732,7 @@ The IPS is a discrete-time simulation that simulates individual patients one at 
 \end{algorithm}
 
 \subsection{Parameter uncertainty}\label{parameter-uncertainty}
+Parameter uncertainty is quantified using PSA, which propagates uncertainty in the model input parameters throughout the model by randomly sampling the input parameters from their joint probability distribution. Probability distributions are determined according to the distributional properties of the statistical estimates, which, in turn, depend on the statistical techniques used and the distributions of the underlying data. The probability distribution used for each parameter in our model is shown in Table ?. In addition, the table summarizes the mean, standard deviation, and 2.5\% and 97.5\% quantiles from a random sample of size 1,000 from the joint probability distribution.   
 
 \subsection{Structural uncertainty}\label{stuctural-uncertainty}
 
