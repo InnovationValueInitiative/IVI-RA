@@ -11,7 +11,7 @@ library("iviRA")
 ```
 
 ## Loading the data
-Input parameters and data needed to run the simulation come preloaded with the package. To view the loaded data use the command `data(package = "IVI026")`.
+Input parameters and data needed to run the simulation come preloaded with the package. To view the loaded data use the command `data(package = "iviRA")`.
 
 ## Generating a patient cohort
 Before running the IPS, patient characteristics must be specified. The patient dataset must be a matrix containing information on at least patient age, baseline HAQ, gender, and weight. Additionally, if the [Wailoo (2006)](https://www.sheffield.ac.uk/polopoly_fs/1.43356!/file/AHRQ-final-report.pdf) [utility agorithm is used](05-qalys.html), then disease duration and the number of previous DMARDs must be specified as well. 

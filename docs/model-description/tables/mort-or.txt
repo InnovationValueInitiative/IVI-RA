@@ -1,4 +1,4 @@
 % latex table generated in R 3.4.0 by xtable 1.8-2 package
-% Mon Jun 26 14:45:41 2017
+% Tue Jun 27 14:27:05 2017
  \hspace{3mm}Log odds of mortality & 0.798 & 0.586 & 1.009 & \citet{wolfe2003predicting} \\ 
   

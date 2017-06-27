@@ -1,5 +1,5 @@
 % latex table generated in R 3.4.0 by xtable 1.8-2 package
-% Mon Jun 26 14:45:41 2017
+% Tue Jun 27 14:27:05 2017
  \hspace{3mm}HAQ: 0-<0.5 & 0.260 & 0.000 & 1.725 & \citet{carlson2015economic} \\ 
   \hspace{3mm}HAQ: 0.5-<1 & 0.130 & 0.000 & 1.409 & \citet{carlson2015economic} \\ 
   \hspace{3mm}HAQ: 1-<1.5 & 0.510 & 0.015 & 1.850 & \citet{carlson2015economic} \\ 
