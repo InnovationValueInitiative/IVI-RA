@@ -11,7 +11,7 @@ library("iviRA")
 load("output.RData")
 ```
 
-# Sampling 
+## Random sampling 
 PSA is conducted by sampling the parameters from their (joint) probability distribution and running the IPS for each randomly sampled parameter set. The parameters can be sampled using the function `sample_pars`, which generates a probability distribution for all parameters used within the family of models. 
 
 ```{r }

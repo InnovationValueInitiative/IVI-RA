@@ -1,5 +1,5 @@
 ---
-title: Simulate the model
+title: Using the IPS to simulate disease progression
 output: 
    html_document:
     toc: true
@@ -11,7 +11,7 @@ library("iviRA")
 load("output.RData")
 ```
 
-# Simulating disease progression
+## Treatment sequences
 Disease progression depends on the therapies used by patients. The list of potential therapies is available in the object `therapy.pars`, which contains all parameters in the model that vary across therapies.
 
 ```{r }
@@ -27,6 +27,7 @@ arminds0 <- c(1)
 arminds1 <- c(1, 5, 2)
 ```
 
+## Simulate disease progression
 Disease progression is modeled using the function `sim_haq`, which simulates a patient's HAQ score over time. For example, we can simulate disease progression for patients on cDMARDs. 
 
 ```{r, cache = TRUE }
@@ -42,6 +43,7 @@ We might also want to simulate disease progression for the treatment arm.
 sim.out1 <- sim_haq(arminds1, input_dat = input.dat, pars = parsamp)
 ```
 
+## Storing output
 Output from the simulations can be combined into a single `data.table`, which can be used to estimate cost and QALYs for each arm.  
 
 ```{r, cache = TRUE }

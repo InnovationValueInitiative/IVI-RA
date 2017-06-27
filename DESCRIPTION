@@ -9,7 +9,8 @@ Authors@R: c(
 Maintainer: <devin.incerti@pheconomics.com>
 Description: Rheumatoid arthritis individual patient simulation
 URL: https://github.com/InnovationValueInitiative/IVI-RA
-License: GPL (>= 3)
+BugReports: https://github.com/InnovationValueInitiative/IVI-RA/issues
+License: GPL-3
 LazyData: TRUE
 LinkingTo: Rcpp, RcppArmadillo, hesim
 Imports:

@@ -62,7 +62,7 @@
   </ul>
 </li>
 <li>
-  <a href="../reference/index.html">Collaborate</a>
+  <a href="../articles/collaborate.html">Collaborate</a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
@@ -91,25 +91,21 @@
     
     
 <div class="contents">
-<div id="overview" class="section level1">
-<h1 class="hasAnchor">
-<a href="#overview" class="anchor"></a>Overview</h1>
-<p><code>iviRA</code> is an R package that runs the . Each model is an individual patient simulation (IPS) that simulates individual patients one at a time. Probabilistic sensitivity analysis (PSA) is used to propagate uncertainty in the input parameters. The simulation is mostly written in <code>C++</code> to ensure that the simulation runs in a reasonable amount of time.</p>
-</div>
-<div id="installation" class="section level1">
-<h1 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h1>
-<p>The package is current available on GitHub and can be installed by typing the following commands into the <code>R</code> console.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">"devtools"</span>)
+<p>This “Run the model” tutorial described how to use the model to peform a cost-effectiveness analyis. To begin, install the package and load the library into R.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># install.packages("devtools")</span>
 <span class="kw">library</span>(devtools)
-devtools::<span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"InnovationValueInitiative/IVI-RA"</span>)</code></pre></div>
-<p>Once installed, the package can be loaded into<code>R</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">"iviRA"</span>)</code></pre></div>
-</div>
-<div id="how-to-run-the-model" class="section level1">
-<h1 class="hasAnchor">
-<a href="#how-to-run-the-model" class="anchor"></a>How to run the model</h1>
-<p>Given a sample of patients and parameters, the IPS is run in three steps. First, the progression of disease is simulated. Second, costs associated with the disease progression are simulated. Third, quality-adjusted life-years (QALYs) are simulated based on the relationship between disease progression and utility.</p>
+devtools::<span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"InnovationValueInitiative/IVI-RA"</span>)
+<span class="kw">library</span>(iviRA)</code></pre></div>
+<p>The model can then be used for cost-effectiveness analysis by following these 6 steps:</p>
+<ol style="list-style-type: decimal">
+<li>Generate patient population.</li>
+<li>Sample model parameters.</li>
+<li>Simulate disease progression using the IPS</li>
+<li>Simulate utility and quality-adjusted life-years (QALYs)</li>
+<li>Simulate health-care costs and productivity losses.</li>
+<li>Analyze the output and conduct a cost-effectiveness analysis.</li>
+</ol>
+<p>Click next to learn about step 1 and begin the tutorial.</p>
 <div>
 <ul class="pager">
 <li class="next">
@@ -118,19 +114,9 @@ devtools::<span class="kw"><a href="http://www.rdocumentation.org/packages/devto
 </ul>
 </div>
 </div>
-</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-        <div id="tocnav">
-      <h2 class="hasAnchor">
-<a href="#tocnav" class="anchor"></a>Contents</h2>
-      <ul class="nav nav-pills nav-stacked">
-<li><a href="#overview">Overview</a></li>
-      <li><a href="#installation">Installation</a></li>
-      <li><a href="#how-to-run-the-model">How to run the model</a></li>
-      </ul>
-</div>
       </div>
 
 </div>

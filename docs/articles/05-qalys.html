@@ -62,7 +62,7 @@
   </ul>
 </li>
 <li>
-  <a href="../reference/index.html">Collaborate</a>
+  <a href="../articles/collaborate.html">Collaborate</a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
@@ -91,17 +91,25 @@
     
     
 <div class="contents">
-<div id="simulating-qalys" class="section level2">
+<div id="alava-2013-mixture-model" class="section level2">
 <h2 class="hasAnchor">
-<a href="#simulating-qalys" class="anchor"></a>Simulating QALYs</h2>
-<p>Patient utility as a function of the HAQ score is determined using statistical algorithms that correlate HAQ to utility. The preferred algorithm is the mixture model by <span class="citation">@alava2013relationship</span>, which can be simulated using <code>sim_utility_mixture</code>. Since utility from the mixture model depends on both pain and HAQ, the algorithm simulates <code>pain</code> before simulating <code>utility</code>.</p>
+<a href="#alava-2013-mixture-model" class="anchor"></a>Alava (2013) Mixture model</h2>
+<p>Patient utility as a function of the HAQ score is determined using statistical algorithms that correlate HAQ to utility. The preferred algorithm is the mixture model by <a href="https://oup.silverchair-cdn.com/oup/backfile/Content_public/Journal/rheumatology/52/5/10.1093_rheumatology_kes400/2/kes400.pdf?Expires=1498633373&amp;Signature=fh0sA4ttg6BOov5xprEAH-BblN8l1DY6lV4LE27ktPAWqQEV2TYL~fY1OuFkvl13L2u8E3xwxaBdyX~zevjuoTdLrxaltGP2S9nbCxcabNDQDrgMDRc0Rk3kIMavbRusV1HEBXxEgXY3Yt7m2-ge5u1MG8okTOgmYR7vQb5oasaA0MxcONrbaIofa5fNi7xrKpIyOo2D50ti1g2aLOJtnzRb5gkI95VJvGUo0pEXglLUem837xCAdKEx~dbMnIecWcGJ8xDsh7xVsIxS72YM5vORh3w26EfXRIPnFzpcWoD3liTkHGXkMhnr4rDtyhsF8PIF3XGFHcQM7MVQHg8gjw__&amp;Key-Pair-Id=APKAIUCZBIA4LVPAVW3Q">Alava <em>et al.</em> 2013</a>, which is simulated using <code>sim_utility_mixture</code>. Since utility from the mixture model depends on both pain and HAQ, the algorithm simulates <code>pain</code> before simulating <code>utility</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sim.out &lt;-<span class="st"> </span><span class="kw">cbind</span>(sim.out, <span class="kw"><a href="../reference/sim_utility_mixture.html">sim_utility_mixture</a></span>(sim.out, <span class="dt">male =</span> input.dat$male, 
                                       <span class="dt">pars =</span> <span class="kw">c</span>(pain, parsamp$mixture.utility)))</code></pre></div>
-<p>The utility mapping algorithm of <span class="citation">@wailoo2006modeling</span> can be used as well.</p>
+</div>
+<div id="wailoo-2008-model" class="section level2">
+<h2 class="hasAnchor">
+<a href="#wailoo-2008-model" class="anchor"></a>Wailoo (2008) model</h2>
+<p>The utility mapping algorithm of <a href="https://www.sheffield.ac.uk/polopoly_fs/1.43356!/file/AHRQ-final-report.pdf">Wailoo (2006)</a> can be used as well.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">util.wailoo &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sim_utility_wailoo.html">sim_utility_wailoo</a></span>(sim.out, <span class="dt">input_data =</span> input.dat, 
                                       <span class="dt">pars =</span> parsamp$wailoo.utility)
 <span class="kw">head</span>(util.wailoo)</code></pre></div>
 <pre><code>## [1] 0.8574894 0.8578289 0.8571189 0.8564059 0.8556900 0.8549711</code></pre>
+</div>
+<div id="calculate-qalys" class="section level2">
+<h2 class="hasAnchor">
+<a href="#calculate-qalys" class="anchor"></a>Calculate QALYs</h2>
 <p>QALYs in a given 6-month period are calculated as a function of utility determined by the simulated HAQ score and whether a serious infection occurred (which creates a one-period loss in utility).</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sim.out$qalys &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sim_qalys.html">sim_qalys</a></span>(sim.out, sim.out$utility, <span class="dt">si_ul =</span> parsamp$si.ul)
 <span class="kw">head</span>(sim.out[, .(sim, id, month, pain, utility, qalys)])</code></pre></div>
@@ -131,7 +139,9 @@
       <h2 class="hasAnchor">
 <a href="#tocnav" class="anchor"></a>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
-<li><a href="#simulating-qalys">Simulating QALYs</a></li>
+<li><a href="#alava-2013-mixture-model">Alava (2013) Mixture model</a></li>
+      <li><a href="#wailoo-2008-model">Wailoo (2008) model</a></li>
+      <li><a href="#calculate-qalys">Calculate QALYs</a></li>
       </ul>
 </div>
       </div>

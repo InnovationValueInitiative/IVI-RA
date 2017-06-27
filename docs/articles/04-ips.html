@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Simulate the model • iviRA</title>
+<title>Using the IPS to simulate disease progression • iviRA</title>
 <!-- jquery --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/simplex/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 <!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
@@ -62,7 +62,7 @@
   </ul>
 </li>
 <li>
-  <a href="../reference/index.html">Collaborate</a>
+  <a href="../articles/collaborate.html">Collaborate</a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
@@ -84,16 +84,16 @@
       </header><div class="row">
   <div class="col-md-9">
     <div class="page-header toc-ignore">
-      <h1>Simulate the model</h1>
+      <h1>Using the IPS to simulate disease progression</h1>
             
           </div>
 
     
     
 <div class="contents">
-<div id="simulating-disease-progression" class="section level1">
-<h1 class="hasAnchor">
-<a href="#simulating-disease-progression" class="anchor"></a>Simulating disease progression</h1>
+<div id="treatment-sequences" class="section level2">
+<h2 class="hasAnchor">
+<a href="#treatment-sequences" class="anchor"></a>Treatment sequences</h2>
 <p>Disease progression depends on the therapies used by patients. The list of potential therapies is available in the object <code>therapy.pars</code>, which contains all parameters in the model that vary across therapies.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(therapy.pars$info)</code></pre></div>
 <pre><code>##                                   name          mname    sname biologic
@@ -123,6 +123,10 @@
 <p>In a cost-effectiveness analysis, we might want to compare a treatment arm of cDMARDs, etanercept + methotrexate, and adalimumab + methotrexate to a control arm of cDMARDs alone.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">arminds0 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>)
 arminds1 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">2</span>)</code></pre></div>
+</div>
+<div id="simulate-disease-progression" class="section level2">
+<h2 class="hasAnchor">
+<a href="#simulate-disease-progression" class="anchor"></a>Simulate disease progression</h2>
 <p>Disease progression is modeled using the function <code>sim_haq</code>, which simulates a patient’s HAQ score over time. For example, we can simulate disease progression for patients on cDMARDs.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sim.out0 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sim_haq.html">sim_haq</a></span>(arminds0, <span class="dt">input_dat =</span> input.dat, <span class="dt">pars =</span> parsamp)
 <span class="kw">head</span>(sim.out0)</code></pre></div>
@@ -143,6 +147,10 @@ arminds1 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv
 <p><code>sim_haq</code> returns a <code>data.table</code> which is an enhanced <code>data.frame</code> from the <code>data.table</code> package designed for fast data manipulation. For a given sampled parameter set (<code>sim</code>) a sampled patient (<code>id</code>) remains on a given <code>therapy</code> until time to treatment discontinuation (<code>ttd</code>) becomes less than zero in a given <code>month</code>. Treatment discontinuation is caused by a serious infection (<code>si</code> = 1) if the sampled time to serious infection at treatment initiation is less than the sampled time to discontinuation. After discontinuation, a patient switches to the next <code>therapy</code> and <code>therapy_seq</code> increments by one. Patient <code>age</code> increases in 6-month increments. The HAQ score (<code>haq</code>) during the initial 6-month period (<code>therapy_cycle = 1</code>) and <code>ttd</code> depend on ACR response (<code>acr</code>) and in turn, EULAR response (<code>eular</code>). The HAQ score (<code>haq</code>) progresses over time according to the treatment and the statistical method used to model the trajectory of the HAQ score. The simulation ends when a patient dies (<code>death = 1</code>).</p>
 <p>We might also want to simulate disease progression for the treatment arm.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sim.out1 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sim_haq.html">sim_haq</a></span>(arminds1, <span class="dt">input_dat =</span> input.dat, <span class="dt">pars =</span> parsamp)</code></pre></div>
+</div>
+<div id="storing-output" class="section level2">
+<h2 class="hasAnchor">
+<a href="#storing-output" class="anchor"></a>Storing output</h2>
 <p>Output from the simulations can be combined into a single <code>data.table</code>, which can be used to estimate cost and QALYs for each arm.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sim.out0$arm &lt;-<span class="st"> "arm0"</span>
 sim.out1$arm &lt;-<span class="st"> "arm1"</span>
@@ -166,7 +174,9 @@ sim.out &lt;-<span class="st"> </span><span class="kw">rbind</span>(sim.out0, si
       <h2 class="hasAnchor">
 <a href="#tocnav" class="anchor"></a>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
-<li><a href="#simulating-disease-progression">Simulating disease progression</a></li>
+<li><a href="#treatment-sequences">Treatment sequences</a></li>
+      <li><a href="#simulate-disease-progression">Simulate disease progression</a></li>
+      <li><a href="#storing-output">Storing output</a></li>
       </ul>
 </div>
       </div>

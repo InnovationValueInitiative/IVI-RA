@@ -74,4 +74,4 @@ navbar:
       - text: "Cost-effectiveness analysis"
         href: articles/07-cea.html
   - text: "Collaborate"
-    href: reference/index.html
+    href: articles/collaborate.html

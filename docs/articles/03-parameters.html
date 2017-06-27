@@ -62,7 +62,7 @@
   </ul>
 </li>
 <li>
-  <a href="../reference/index.html">Collaborate</a>
+  <a href="../articles/collaborate.html">Collaborate</a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
@@ -91,9 +91,9 @@
     
     
 <div class="contents">
-<div id="sampling" class="section level1">
-<h1 class="hasAnchor">
-<a href="#sampling" class="anchor"></a>Sampling</h1>
+<div id="random-sampling" class="section level2">
+<h2 class="hasAnchor">
+<a href="#random-sampling" class="anchor"></a>Random sampling</h2>
 <p>PSA is conducted by sampling the parameters from their (joint) probability distribution and running the IPS for each randomly sampled parameter set. The parameters can be sampled using the function <code>sample_pars</code>, which generates a probability distribution for all parameters used within the family of models.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">parsamp &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pars.html">sample_pars</a></span>(<span class="dt">n =</span> <span class="dv">100</span>)
 <span class="kw">names</span>(parsamp)</code></pre></div>
@@ -110,18 +110,18 @@
 <pre><code>## , , 1
 ## 
 ##         eular_none eular_moderate eular_good
-## acr_sub  0.7878428      0.1553906 0.05676656
-## acr20    0.0618050      0.5204444 0.41775058
-## acr50    0.0450027      0.3194926 0.63550466
-## acr70    0.0000000      0.3073099 0.69269008
+## acr_sub  0.7924444     0.14875602 0.05879958
+## acr20    0.1285776     0.52451598 0.34690645
+## acr50    0.3728555     0.02322128 0.60392321
+## acr70    0.0000000     0.29311229 0.70688771
 ## 
 ## , , 2
 ## 
 ##         eular_none eular_moderate eular_good
-## acr_sub 0.80756718      0.1266858 0.06574703
-## acr20   0.07718206      0.4144101 0.50840785
-## acr50   0.01580591      0.1366047 0.84758936
-## acr70   0.00000000      0.4320713 0.56792870</code></pre>
+## acr_sub 0.78014838      0.1731156 0.04673606
+## acr20   0.03008747      0.3616122 0.60830029
+## acr50   0.26295747      0.2003884 0.53665418
+## acr70   0.00000000      0.7350944 0.26490563</code></pre>
 <div>
 <ul class="pager">
 <li class="previous">
@@ -141,7 +141,7 @@
       <h2 class="hasAnchor">
 <a href="#tocnav" class="anchor"></a>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
-<li><a href="#sampling">Sampling</a></li>
+<li><a href="#random-sampling">Random sampling</a></li>
       </ul>
 </div>
       </div>

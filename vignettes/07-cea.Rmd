@@ -11,8 +11,8 @@ library("iviRA")
 load("output.RData")
 ```
 
-# Cost-effectiveness analysis
-The `hesim` package contains a number of functions for conducting cost-effectiveness analyses. To prepare the data so that it can be analyzed with `hesim`, mean outcomes must be calculated for each simulation number and each treatment arm.
+## hesim package
+The [hesim](http://devinincerti.com/hesim/) package contains a number of functions for conducting cost-effectiveness analyses. To prepare the data so that it can be analyzed with `hesim`, mean outcomes must be calculated for each simulation number and each treatment arm.
 
 ```{r }
 n.inner <- max(sim.out$sim)

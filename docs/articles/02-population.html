@@ -62,7 +62,7 @@
   </ul>
 </li>
 <li>
-  <a href="../reference/index.html">Collaborate</a>
+  <a href="../articles/collaborate.html">Collaborate</a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
@@ -91,30 +91,30 @@
     
     
 <div class="contents">
-<div id="loading-the-data" class="section level1">
-<h1 class="hasAnchor">
-<a href="#loading-the-data" class="anchor"></a>Loading the data</h1>
+<div id="loading-the-data" class="section level2">
+<h2 class="hasAnchor">
+<a href="#loading-the-data" class="anchor"></a>Loading the data</h2>
 <p>Input parameters and data needed to run the simulation come preloaded with the package. To view the loaded data use the command <code>data(package = "IVI026")</code>.</p>
 </div>
-<div id="generating-a-patient-cohort" class="section level1">
-<h1 class="hasAnchor">
-<a href="#generating-a-patient-cohort" class="anchor"></a>Generating a patient cohort</h1>
-<p>Before running the IPS, patient characteristics must be specified. The patient dataset must be a matrix containing information on at least patient age, baseline HAQ, gender, and weight. Additionally, if the <span class="citation">@wailoo2006modeling</span> <a href="#simulating-qalys">utility agorithm is used</a>, then disease duration and the number of previous DMARDs must be specified as well.</p>
+<div id="generating-a-patient-cohort" class="section level2">
+<h2 class="hasAnchor">
+<a href="#generating-a-patient-cohort" class="anchor"></a>Generating a patient cohort</h2>
+<p>Before running the IPS, patient characteristics must be specified. The patient dataset must be a matrix containing information on at least patient age, baseline HAQ, gender, and weight. Additionally, if the <a href="https://www.sheffield.ac.uk/polopoly_fs/1.43356!/file/AHRQ-final-report.pdf">Wailoo (2006)</a> <a href="05-qalys.html">utility agorithm is used</a>, then disease duration and the number of previous DMARDs must be specified as well.</p>
 <p>The patient dataset can be generated using <code><a href="../reference/sample_pats.html">sample_pats()</a></code>. The <code>type</code> argument specifies whether the patient cohort is homogeneous or heterogeneous. If the cohort is homogeneous, then the cohort consists of male and female patients that are identical in all respects other than gender; if the cohort is heterogeneous, then all variables vary across patients.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pats &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pats.html">sample_pats</a></span>(<span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">type =</span> <span class="st">"heterog"</span>)
 <span class="kw">head</span>(pats)</code></pre></div>
 <pre><code>##           age male      haq0 weight  dis_dur prev_dmards
-## [1,] 58.24976    1 1.0344113     89 12.02019    2.491970
-## [2,] 44.27602    0 1.4196014     75 23.92880    1.750124
-## [3,] 52.58084    0 0.5288022     75 22.21490    5.408864
-## [4,] 62.88984    0 2.4005438     75 17.85812    5.625422
-## [5,] 29.91835    0 0.6393190     75 24.54020    3.525752
-## [6,] 71.33998    0 1.3064376     75 27.60497    5.770143</code></pre>
+## [1,] 54.03111    0 1.2691029     75 43.35976  5.11622365
+## [2,] 75.73730    1 0.7931644     89 13.87764 -0.84213652
+## [3,] 52.94804    0 0.6768997     75 14.44951  3.59495279
+## [4,] 57.34591    0 1.2403054     75 24.97057  2.13563693
+## [5,] 35.13560    0 2.7562182     75 37.77157  1.35572185
+## [6,] 37.83742    0 1.5503710     75 12.00517  0.07682882</code></pre>
 </div>
-<div id="input-data" class="section level1">
-<h1 class="hasAnchor">
-<a href="#input-data" class="anchor"></a>Input data</h1>
-<p>Model outcomes depend on both the parameters sampled using <code>sample_pars</code> and the characteristics of the patients. The <code>input_data</code> function generate the datasets needed to run the the simulation.</p>
+<div id="input-data" class="section level2">
+<h2 class="hasAnchor">
+<a href="#input-data" class="anchor"></a>Input data</h2>
+<p>To transform the patient dataset into a format needed to run the simulation use the <code>input_data</code> function.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">input.dat &lt;-<span class="st"> </span><span class="kw"><a href="../reference/input_data.html">input_data</a></span>(pats)
 <span class="kw">names</span>(input.dat)</code></pre></div>
 <pre><code>## [1] "n"           "haq0"        "age"         "male"        "weight"     

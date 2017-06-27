@@ -6,26 +6,24 @@ output:
     toc_depth: 1
 --- 
 
-# Overview
-`iviRA` is an R package that runs the . Each model is an individual patient simulation (IPS) that simulates individual patients one at a time. Probabilistic sensitivity analysis (PSA) is used to propagate uncertainty in the input parameters. The simulation is mostly written in `C++` to ensure that the simulation runs in a reasonable amount of time. 
+This "Run the model" tutorial described how to use the model to peform a cost-effectiveness analyis. To begin, install the package and load it into R.
 
-# Installation 
-The package is current available on GitHub and can be installed by typing the following commands into the `R` console.
-
-```{r include=TRUE, eval=FALSE}
-install.packages("devtools")
+```r
+# install.packages("devtools")
 library(devtools)
 devtools::install_github("InnovationValueInitiative/IVI-RA")
+library(iviRA)
 ```
+The model can then be used for cost-effectiveness analysis by following these 6 steps:
 
-Once installed, the package can be loaded into`R`.
+1. Generate patient population.
+2. Sample model parameters.
+3. Simulate disease progression using the IPS
+4. Simulate utility and quality-adjusted life-years (QALYs)
+5. Simulate health-care costs and productivity losses.
+6. Analyze the output and conduct a cost-effectiveness analysis. 
 
-```{r }
-library("iviRA")
-```
-
-# How to run the model
-Given a sample of patients and parameters, the IPS is run in three steps. First, the progression of disease is simulated. Second, costs associated with the disease progression are simulated. Third, quality-adjusted life-years (QALYs) are simulated based on the relationship between disease progression and utility. 
+Click next to learn about step 1 and begin the tutorial.  
 
 <div>
 <ul class="pager">

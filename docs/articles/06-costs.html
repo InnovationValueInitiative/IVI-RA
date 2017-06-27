@@ -62,7 +62,7 @@
   </ul>
 </li>
 <li>
-  <a href="../reference/index.html">Collaborate</a>
+  <a href="../articles/collaborate.html">Collaborate</a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
@@ -91,28 +91,41 @@
     
     
 <div class="contents">
-<div id="simulating-costs" class="section level1">
-<h1 class="hasAnchor">
-<a href="#simulating-costs" class="anchor"></a>Simulating costs</h1>
-<p>The costs associated with each arm are simulated using the output from <code>sim_haq</code>. Health sector costs and productivity losses are simulated using the functions <code>sim_hc_cost</code> and <code>sim_prod_loss</code> respectively.</p>
+<div id="health-care-sector-costs" class="section level2">
+<h2 class="hasAnchor">
+<a href="#health-care-sector-costs" class="anchor"></a>Health care sector costs</h2>
+<p>The costs associated with each arm are simulated using the output from <code>sim_haq</code>. To conduct an analysis from a health care perspective, simulate health sector costs using <code>sim_hc_cost</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sim.out &lt;-<span class="st"> </span><span class="kw">cbind</span>(sim.out, <span class="kw"><a href="../reference/sim_hc_cost.html">sim_hc_cost</a></span>(sim.out, pats[, <span class="st">"weight"</span>], <span class="dt">pars =</span> parsamp))
-sim.out$prod_loss &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sim_prod_loss.html">sim_prod_loss</a></span>(sim.out, <span class="dt">pl_haq =</span> parsamp$prod.loss)
-<span class="kw">head</span>(sim.out[, .(sim, id, month, infusion_cost, rx_cost, treat_cost, hosp_cost, mgmt_cost, si_cost, hc_cost, prod_loss)])</code></pre></div>
+<span class="kw">head</span>(sim.out[, .(sim, id, month, infusion_cost, rx_cost, treat_cost, hosp_cost, mgmt_cost, si_cost, hc_cost)])</code></pre></div>
 <pre><code>##    sim id month infusion_cost  rx_cost treat_cost hosp_cost mgmt_cost
-## 1:   1  1     6             0 842.8875   842.8875 0.4707295  186.4934
-## 2:   1  1    12             0 842.8875   842.8875 0.4707295  186.4934
-## 3:   1  1    18             0 842.8875   842.8875 0.4707295  186.4934
-## 4:   1  1    24             0 842.8875   842.8875 0.4707295  186.4934
-## 5:   1  1    30             0 842.8875   842.8875 0.4707295  186.4934
-## 6:   1  1    36             0 842.8875   842.8875 0.4707295  186.4934
-##    si_cost  hc_cost prod_loss
-## 1:       0 1029.852  2368.546
-## 2:       0 1029.852  2368.546
-## 3:       0 1029.852  2401.136
-## 4:       0 1029.852  2433.726
-## 5:       0 1029.852  2466.316
-## 6:       0 1029.852  2498.906</code></pre>
-<p>An important component of health care sector costs (<code>hc_cost</code>) are the costs associated with treatment (<code>treat_cost</code>) with consist of infusion costs (<code>infusion_cost</code>) and drug acquisition costs (<code>rx_cost</code>). Other health care sector costs are hospital costs (<code>hosp_cost</code>), which increase with the HAQ score; general management costs (<code>mgmt_cost</code>); and the costs of caused by serious infections (<code>si_cost</code>). Higher HAQ scores also increase productivity losses measured as lost wages (<code>prod_loss</code>).</p>
+## 1:   1  1     6             0 842.8875   842.8875 0.0774233  210.1599
+## 2:   1  1    12             0 842.8875   842.8875 0.0774233  210.1599
+## 3:   1  1    18             0 842.8875   842.8875 0.0774233  210.1599
+## 4:   1  1    24             0 842.8875   842.8875 0.0774233  210.1599
+## 5:   1  1    30             0 842.8875   842.8875 0.0774233  210.1599
+## 6:   1  1    36             0 842.8875   842.8875 0.0774233  210.1599
+##    si_cost  hc_cost
+## 1:       0 1053.125
+## 2:       0 1053.125
+## 3:       0 1053.125
+## 4:       0 1053.125
+## 5:       0 1053.125
+## 6:       0 1053.125</code></pre>
+<p>An important component of health care sector costs (<code>hc_cost</code>) are the costs associated with treatment (<code>treat_cost</code>) with consist of infusion costs (<code>infusion_cost</code>) and drug acquisition costs (<code>rx_cost</code>). Other health care sector costs are hospital costs (<code>hosp_cost</code>), which increase with the HAQ score; general management costs (<code>mgmt_cost</code>); and the costs of caused by serious infections (<code>si_cost</code>).</p>
+</div>
+<div id="productivity-losses" class="section level2">
+<h2 class="hasAnchor">
+<a href="#productivity-losses" class="anchor"></a>Productivity losses</h2>
+<p>To model currently supports non-health care sector costs due to los wages. Analays performed from a societal perspective should include these productivity losses using the function <code>sim_prod_loss</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sim.out$prod_loss &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sim_prod_loss.html">sim_prod_loss</a></span>(sim.out, <span class="dt">pl_haq =</span> parsamp$prod.loss)
+<span class="kw">head</span>(sim.out[, .(sim, id, month, prod_loss)])</code></pre></div>
+<pre><code>##    sim id month prod_loss
+## 1:   1  1     6  2818.576
+## 2:   1  1    12  2818.576
+## 3:   1  1    18  2857.359
+## 4:   1  1    24  2896.141
+## 5:   1  1    30  2934.923
+## 6:   1  1    36  2973.705</code></pre>
 <div>
 <ul class="pager">
 <li class="previous">
@@ -132,7 +145,8 @@ sim.out$prod_loss &lt;-<span class="st"> </span><span class="kw"><a href="../ref
       <h2 class="hasAnchor">
 <a href="#tocnav" class="anchor"></a>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
-<li><a href="#simulating-costs">Simulating costs</a></li>
+<li><a href="#health-care-sector-costs">Health care sector costs</a></li>
+      <li><a href="#productivity-losses">Productivity losses</a></li>
       </ul>
 </div>
       </div>

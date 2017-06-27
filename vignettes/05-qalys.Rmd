@@ -11,15 +11,17 @@ library("iviRA")
 load("output.RData")
 ```
 
-## Simulating QALYs
-Patient utility as a function of the HAQ score is determined using statistical algorithms that correlate HAQ to utility. The preferred algorithm is the mixture model by @alava2013relationship, which can be simulated using `sim_utility_mixture`. Since utility from the mixture model depends on both pain and HAQ, the algorithm simulates `pain` before simulating `utility`.  
+## Alava (2013) Mixture model
+Patient utility as a function of the HAQ score is determined using statistical algorithms that correlate HAQ to utility. The preferred algorithm is the mixture model by [Alava *et al.* 2013](https://oup.silverchair-cdn.com/oup/backfile/Content_public/Journal/rheumatology/52/5/10.1093_rheumatology_kes400/2/kes400.pdf?Expires=1498633373&Signature=fh0sA4ttg6BOov5xprEAH-BblN8l1DY6lV4LE27ktPAWqQEV2TYL~fY1OuFkvl13L2u8E3xwxaBdyX~zevjuoTdLrxaltGP2S9nbCxcabNDQDrgMDRc0Rk3kIMavbRusV1HEBXxEgXY3Yt7m2-ge5u1MG8okTOgmYR7vQb5oasaA0MxcONrbaIofa5fNi7xrKpIyOo2D50ti1g2aLOJtnzRb5gkI95VJvGUo0pEXglLUem837xCAdKEx~dbMnIecWcGJ8xDsh7xVsIxS72YM5vORh3w26EfXRIPnFzpcWoD3liTkHGXkMhnr4rDtyhsF8PIF3XGFHcQM7MVQHg8gjw__&Key-Pair-Id=APKAIUCZBIA4LVPAVW3Q), which is simulated using `sim_utility_mixture`. Since utility from the mixture model depends on both pain and HAQ, the algorithm simulates `pain` before simulating `utility`.  
 
 ```{r, cache = TRUE }
 sim.out <- cbind(sim.out, sim_utility_mixture(sim.out, male = input.dat$male, 
                                       pars = c(pain, parsamp$mixture.utility)))
 ```
 
-The utility mapping algorithm of @wailoo2006modeling can be used as well. 
+
+## Wailoo (2008) model
+The utility mapping algorithm of [Wailoo (2006)](https://www.sheffield.ac.uk/polopoly_fs/1.43356!/file/AHRQ-final-report.pdf) can be used as well. 
 
 ```{r, cache = TRUE }
 util.wailoo <- sim_utility_wailoo(sim.out, input_data = input.dat, 
@@ -27,6 +29,7 @@ util.wailoo <- sim_utility_wailoo(sim.out, input_data = input.dat,
 head(util.wailoo)
 ```
 
+## Calculate QALYs
 QALYs in a given 6-month period are calculated as a function of utility determined by the simulated HAQ score and whether a serious infection occurred (which creates a one-period loss in utility).
 
 ```{r }
