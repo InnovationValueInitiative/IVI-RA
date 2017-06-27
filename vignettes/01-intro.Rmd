@@ -6,7 +6,7 @@ output:
     toc_depth: 1
 --- 
 
-This "Run the model" tutorial described how to use the model to peform a cost-effectiveness analyis. To begin, install the package and load it into R.
+This "Run the model" tutorial described how to use the model to peform a cost-effectiveness analyis. First, install the package and load it into R.
 
 ```r
 # install.packages("devtools")
