@@ -155,7 +155,7 @@ return(x)
 
 \section{Overview}\label{overview}
 
-This document describes version 1.0 of IVI's rheumatoid arthritis (RA) cost-effectiveness model. The IVI-RA model is an individual patient simulation (IPS) that simulates patients one at a time. The model reflects a range of perspectives (e.g., health care sector, societal) and structural assumptions. All told, there are 364 different model structures, which allows analysts to account for structural uncertainty. Parameter uncertainty is quantified with probabilistic sensitivity analysis (PSA).
+This document describes version 0.1 of IVI's rheumatoid arthritis (RA) cost-effectiveness model. The IVI-RA model is an individual patient simulation (IPS) that simulates patients one at a time. The model reflects a range of perspectives (e.g., health care sector, societal) and structural assumptions. All told, there are 280 different model structures, which allows analysts to account for structural uncertainty. Parameter uncertainty is quantified with probabilistic sensitivity analysis (PSA).
 
 The model is available as an \href{https://cran.r-project.org/}{\R{}} package with documentation available \href{https://innovationvalueinitiative.github.io/IVI-RA/index.html}{online}. The source code can be viewed or downloaded at our \href{https://github.com/InnovationValueInitiative/IVI-RA}{GitHub repository}. The IPS was primarily written in \CPP{} so that PSA and analyses of structural uncertainty can be run in a reasonable amount of time. The model can either be run using \R{} (see \href{https://innovationvalueinitiative.github.io/IVI-RA/index.html}{documentation}) or \href{http://www.shinyapps.io/}{online} with our user-friendly R Shiny web application. 
 
@@ -285,7 +285,6 @@ HAQ progression linear or non-linear & 2 \\
 Probability distribution for treatment duration & 7 \\
 Utility algorithm & 2 \\
 \hline
-\hline
 \end{tabular}
 \end{threeparttable}
 \end{center}
@@ -294,78 +293,42 @@ Utility algorithm & 2 \\
 \section{Populations}\label{sec:populations}
 
 \section{Source data and parameter estimation}\label{sec:data-parameters}
+\subsection{Change in HAQ during initial treatment phase}\label{initial-change-haq}
+\subsubsection{H1: Treatment $\rightarrow$ ACR $\rightarrow$ HAQ}
 
-\subsection{HAQ progression in the absence of bDMARD
-treatment}\label{haq-progression-in-the-absence-of-bdmard-treatment}
-
-The natural course of HAQ progression in the absence of bDMARDs develops over time according to an estimated natural course for patients remaining on cDMARDs or following discontinuation of the last bDMARD of the sequence. The natural course of HAQ can either be assumed to change at a constant linear rate or be modeled using a non-linear mixture model. 
-
-\subsubsection{Constant linear rate of progression} \label{sec:haq-linear-rate}
-The rate of progression in the linear case is based on the observational study by \citet{wolfe2010loss}. They assessed the development of HAQ over time at six month intervals for up to 11 years among 3,829 RA patients who switched from non-biologic treatment to biologic treatment and participated in the National Data Bank for Rheumatic Diseases (NDB) longitudinal study of RA outcomes. The annual HAQ progression rate prior to biologic therapy was 0.031 (95\% confidence interval (95\%CI): 0.026 to 0.036) and is assumed to reflect the course of progression of HAQ in the absence of bDMARD.
-
-Based on the same data, \citet{michaud2011treatment} reported overall and age-specific specific HAQ progression rates. The differences between the overall and age specific rates are as follows: \textless{}40: -0.020 (95\%CI: -0.0223 to -0.0177); 40-64: -0.008 (95\%CI: -0.0101 to -0.0059); \(\geq\) 65 0.017 (95\%CI: 0.0136 to 0.0204). These estimates are applied to the overall progression rate of 0.031 to obtain age specific HAQ progression rates.
-
-<<haq_lp, echo = FALSE, include = FALSE>>=
-tab1 <- therapy.pars$haq.lprog[sname == "cdmards", .(est, lower, upper)]
-tab1 <- formatC(as.matrix(tab1), format = "f", digits = 3)
-tab1 <- cbind(tab1, "\\citet{wolfe2010loss}")
-tab1 <- cbind("\\hspace{3mm}MTX or non-biologic treatment", tab1)
-tex1 <- print(xtable(tab1), 
-      include.rownames = FALSE, include.colnames = FALSE,
-      only.contents = TRUE, sanitize.text.function = identity, hline.after = NULL,
-      file = "tables/haq-lprog-cdmards.txt")
-
-tab2 <- haq.lprog.age[, .(est, lower, upper)] 
-tab2 <- formatC(as.matrix(tab2), format = "f", digits = 3)
-tab2 <- cbind(paste0("\\hspace{3mm}", c("<40", "40-64", "65+")), 
-                   tab2)
-tab2 <- cbind(tab2, "\\citet{michaud2011treatment}")
-tex2 <- print(xtable(tab2), 
-      include.rownames = FALSE, include.colnames = FALSE,
-      only.contents = TRUE, sanitize.text.function = identity, hline.after = NULL,
-      file = "tables/haq-lprog-diff-byage.txt")
+<<acr2haq, echo = FALSE, include = FALSE>>=
+tab <- formatC(as.matrix(acr2haq[, .(mean, se)]))
+rownames(tab) <- c("<20", "20-50", "50-70", "70+")
+tex <- print(xtable(tab), 
+      include.rownames = TRUE, include.colnames = FALSE,
+      only.contents = TRUE, sanitize.text.function = identity,
+      file = "tables/acr2haq.txt")
 @
 
 \begin{table}[!ht]
 \begin{center}
 \begin{threeparttable}
-\caption{Annual linear progression of HAQ in the absence of bDMARDs beyond 6 months} \label{tbl:haq-lprog}
-\footnotesize
-\begin{tabularx}{\textwidth}{@{\extracolsep{\fill}}lrrrl}
+\caption{Relationship between ACR response and change in HAQ at 6 months} \label{tbl:acr2haq}
+\begin{tabularx}{\textwidth}{@{\extracolsep{\fill}}lcc}
 \hline
-\multicolumn{2}{l}{} & \multicolumn{2}{c}{95\% CI} & \multicolumn{1}{l}{} \\
-\cmidrule{3-4} 
-\multicolumn{1}{l}{} & \multicolumn{1}{r}{Estimate} & \multicolumn{1}{r}{Lower} & \multicolumn{1}{r}{Upper} & \multicolumn{1}{l}{Reference} \\
+\multicolumn{1}{l}{} & \multicolumn{2}{c}{HAQ change} \\
+\cmidrule{2-3} 
+\multicolumn{1}{c}{ACR response} & \multicolumn{1}{c}{Mean} & \multicolumn{1}{c}{Standard error} \\
 \hline
-Overall progression rate \\
-\ExpandableInput{tables/haq-lprog-cdmards.txt}
-Change in overall progression rate by age \\
-\ExpandableInput{tables/haq-lprog-diff-byage.txt}
+\ExpandableInput{tables/acr2haq.txt}
 \hline
 \end{tabularx}
 \scriptsize
-Notes: 95\% confidence intervals are calculated using a normal distribution. Confidence intervals for changes in HAQ progression rates by age assume no covariance between the overall progression rate and the age-specific rates reported by \citet{michaud2011treatment}.
+Source: \citet{carlson2015economic}
 \end{threeparttable}
 \end{center}
 \end{table}
 
-\subsubsection{Non-linear mixture model} \label{sec:haq-mixture}
+\subsubsection{H2: Treatment $\rightarrow$ ACR $\rightarrow$ EULAR $\rightarrow$ HAQ}
 
-The rate of progression in the non-linear case is based on a mixture model approach that has increasingly been used to model HAQ progression over time \citep{stevenson2016adalimumab, norton2013trajectories, norton2014health}. These models suggest that different subgroups have distinct HAQ trajectories and that the rate of worsening of HAQ progression decreases over time. Parameter estimates are based on We use the statistical model estimated on the Early Rheumatoid Arthritis Cohort Study (ERAS) cohort, which has a high percentage of patients receiving methotrexate and a very small percentage receiving biologics. Following \citet{stevenson2016adalimumab}, explanatory variables in the statistical model that are not used in the IPS will be set to their mean values in the ERAS cohort. Uncertainty in the parameters of the mixture model are based on standard errors since \citet{norton2013trajectories} did not report the full covariance matrix needed to model the covariance between the parameters.
-
-\subsection{Initial treatment effect}\label{initial-treatment-effect}
-
-Treatment effects for bDMARD \emph{naive} patients at 6 months are
-estimated using a Bayesian network meta-analysis (NMA) of published
-randomized controlled trials (RCTs) (see \autoref{sec:tech-nma-initial}).
-Two primary endpoints were considered: ACR 20/50/70 response and HAQ.
-. In one version of the model
-structure, EULAR response categories are used to determine treatment
-continuation and duration. ACR responses from the NMA were translated
-into EULAR response probabilities based on evidence of their
-relationship reported in \citet{stevenson2016adalimumab} and obtained
-from the US Veterans Affairs Rheumatoid Arthritis (VARA) registry
-(\autoref{tbl:acr2eular}).
+Treatment effects for bDMARD \emph{naive} patients at 6 months are estimated using a Bayesian network meta-analysis (NMA) of published
+randomized controlled trials (RCTs) (see \autoref{sec:tech-nma-initial}). Two primary endpoints were considered: ACR 20/50/70 response and HAQ.
+. In one version of the model structure, EULAR response categories are used to determine treatment continuation and duration. ACR responses from the NMA were translated into EULAR response probabilities based on evidence of their relationship reported in \citet{stevenson2016adalimumab} and obtained from the US Veterans Affairs Rheumatoid Arthritis (VARA) registry (\autoref{tbl:acr2eular}).
 
 <<acr2eular, echo = FALSE, include = FALSE>>=
 tab <- acr2eular
@@ -501,9 +464,67 @@ Notes: 95\% credible intervals are in parentheses. Estimates are based on 6-mont
 \end{table}
 \end{landscape}
 
-The relationship between ACR response and SDAI...
+\subsubsection{H3: Treatment $\rightarrow$ HAQ}
 
-In the direct case...
+\subsection{Switching during the initial treatment phase}
+
+\subsection{HAQ progression in the absence of bDMARD
+treatment}\label{haq-progression-in-the-absence-of-bdmard-treatment}
+
+The natural course of HAQ progression in the absence of bDMARDs develops over time according to an estimated natural course for patients remaining on cDMARDs or following discontinuation of the last bDMARD of the sequence. The natural course of HAQ can either be assumed to change at a constant linear rate or be modeled using a non-linear mixture model. 
+
+\subsubsection{Constant linear rate of progression} \label{sec:haq-linear-rate}
+The rate of progression in the linear case is based on the observational study by \citet{wolfe2010loss}. They assessed the development of HAQ over time at six month intervals for up to 11 years among 3,829 RA patients who switched from non-biologic treatment to biologic treatment and participated in the National Data Bank for Rheumatic Diseases (NDB) longitudinal study of RA outcomes. The annual HAQ progression rate prior to biologic therapy was 0.031 (95\% confidence interval (95\%CI): 0.026 to 0.036) and is assumed to reflect the course of progression of HAQ in the absence of bDMARD.
+
+Based on the same data, \citet{michaud2011treatment} reported overall and age-specific specific HAQ progression rates. The differences between the overall and age specific rates are as follows: \textless{}40: -0.020 (95\%CI: -0.0223 to -0.0177); 40-64: -0.008 (95\%CI: -0.0101 to -0.0059); \(\geq\) 65 0.017 (95\%CI: 0.0136 to 0.0204). These estimates are applied to the overall progression rate of 0.031 to obtain age specific HAQ progression rates.
+
+<<haq_lp, echo = FALSE, include = FALSE>>=
+tab1 <- therapy.pars$haq.lprog[sname == "cdmards", .(est, lower, upper)]
+tab1 <- formatC(as.matrix(tab1), format = "f", digits = 3)
+tab1 <- cbind(tab1, "\\citet{wolfe2010loss}")
+tab1 <- cbind("\\hspace{3mm}MTX or non-biologic treatment", tab1)
+tex1 <- print(xtable(tab1), 
+      include.rownames = FALSE, include.colnames = FALSE,
+      only.contents = TRUE, sanitize.text.function = identity, hline.after = NULL,
+      file = "tables/haq-lprog-cdmards.txt")
+
+tab2 <- haq.lprog.age[, .(est, lower, upper)] 
+tab2 <- formatC(as.matrix(tab2), format = "f", digits = 3)
+tab2 <- cbind(paste0("\\hspace{3mm}", c("<40", "40-64", "65+")), 
+                   tab2)
+tab2 <- cbind(tab2, "\\citet{michaud2011treatment}")
+tex2 <- print(xtable(tab2), 
+      include.rownames = FALSE, include.colnames = FALSE,
+      only.contents = TRUE, sanitize.text.function = identity, hline.after = NULL,
+      file = "tables/haq-lprog-diff-byage.txt")
+@
+
+\begin{table}[!ht]
+\begin{center}
+\begin{threeparttable}
+\caption{Annual linear progression of HAQ in the absence of bDMARDs beyond 6 months} \label{tbl:haq-lprog}
+\footnotesize
+\begin{tabularx}{\textwidth}{@{\extracolsep{\fill}}lrrrl}
+\hline
+\multicolumn{2}{l}{} & \multicolumn{2}{c}{95\% CI} & \multicolumn{1}{l}{} \\
+\cmidrule{3-4} 
+\multicolumn{1}{l}{} & \multicolumn{1}{r}{Estimate} & \multicolumn{1}{r}{Lower} & \multicolumn{1}{r}{Upper} & \multicolumn{1}{l}{Reference} \\
+\hline
+Overall progression rate \\
+\ExpandableInput{tables/haq-lprog-cdmards.txt}
+Change in overall progression rate by age \\
+\ExpandableInput{tables/haq-lprog-diff-byage.txt}
+\hline
+\end{tabularx}
+\scriptsize
+Notes: 95\% confidence intervals are calculated using a normal distribution. Confidence intervals for changes in HAQ progression rates by age assume no covariance between the overall progression rate and the age-specific rates reported by \citet{michaud2011treatment}.
+\end{threeparttable}
+\end{center}
+\end{table}
+
+\subsubsection{Non-linear mixture model} \label{sec:haq-mixture}
+
+The rate of progression in the non-linear case is based on a mixture model approach that has increasingly been used to model HAQ progression over time \citep{stevenson2016adalimumab, norton2013trajectories, norton2014health}. These models suggest that different subgroups have distinct HAQ trajectories and that the rate of worsening of HAQ progression decreases over time. Parameter estimates are based on We use the statistical model estimated on the Early Rheumatoid Arthritis Cohort Study (ERAS) cohort, which has a high percentage of patients receiving methotrexate and a very small percentage receiving biologics. Following \citet{stevenson2016adalimumab}, explanatory variables in the statistical model that are not used in the IPS will be set to their mean values in the ERAS cohort. Uncertainty in the parameters of the mixture model are based on standard errors since \citet{norton2013trajectories} did not report the full covariance matrix needed to model the covariance between the parameters.
 
 \subsection{HAQ trajectory with bDMARD maintenance treatment}
 Based on the NDB longitudinal study, \citet{wolfe2010loss} estimated the overall annual HAQ progression rate among RA patients who had switched to biologic treatment at -0.001 (95CI: -0.004 to 0.002). In a separate analysis, also based on NDB data, \citet{michaud2011treatment} reported annual HAQ progression rates by treatment adjusted for baseline HAQ score, age, sex, education, smoking, BMI, comorbidity, and RA onset. The average HAQ rate among patients on a biologic was -0.001 as well, which instills confidence that the reported HAQ progression rates for different bDMARDs as reported by \citet{michaud2011treatment} can be directly compared with the overall annual HAQ progression rate of 0.031 reported by \citet{wolfe2010loss}. Accordingly, bDMARD specific HAQ progression rates by \citet{michaud2011treatment} are used in the model. For bDMARD treatments evaluated in the model for which no HAQ progression rate was reported by \citet{michaud2011treatment}, the overall biologic rate of -0.001 is used. 
@@ -893,7 +914,7 @@ Productivity loss \\
 \hline
 \end{tabularx}
 \scriptsize
-Notes: 95\% confidence intervals for hospital days per year by HAQ score and hospital cost per day are calculated by using the methods of moments to generate the parameters of the gamma distribution given a mean and standard error. The 95\% confidence intervals for general management costs are based on normal distributions as assumed in Claxton et al (2016). 95\% confidence interval for productivity loss are calculated using a normal distribution and inflated to 2016 dollars. 
+Notes: 95\% confidence intervals for hospital days per year by HAQ score and hospital cost per day are calculated by using the methods of moments to generate the parameters of the gamma distribution given a mean and standard error. The 95\% confidence intervals for general management costs are based on normal distributions as assumed in \citet{claxton2016economic}. 95\% confidence interval for productivity loss are calculated using a normal distribution and inflated to 2016 dollars. 
 \end{threeparttable}
 \end{center}
 \end{table}

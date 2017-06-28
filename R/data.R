@@ -124,8 +124,7 @@
 
 #' ACR to Eular Conversion
 #'
-#' Convert ACR response (ACR < 20, ACR20, ACR50, ACR70) to 
-#' Eular response (none, moderate, good)
+#' Convert ACR response (ACR < 20, ACR20, ACR50, ACR70) to Eular response (none, moderate, good).
 #'
 #' @format A list with two matrices. Each row in each matrix shows the probability that a 
 #' particualar responder in an ACR category will have a given Eular response. Probabilities in
@@ -143,7 +142,7 @@
 
 #' HAQ change by 6-month Eular Response
 #'
-#' HAQ change by 6-month Eular response
+#' Mean and standard deviation of HAQ change by 6-month Eular response category.
 #'
 #' @format A matrix with rows as Eular response categories. First column is mean and second 
 #' column is standard deviation.
@@ -153,6 +152,16 @@
 #'  disease-modifying antirheumatic drugs only: systematic review and economic evaluation." 
 #' Health Technology Assessment 20.35 (2016): 1-610.
 "eular2haq"
+
+#' HAQ change by 6-month ACR Response
+#'
+#' Mean and standard deviation of HAQ change by 6-month ACR response category.
+#'
+#' @format A data.table with rows as ACR response category. First column is mean and second 
+#' column is standard deviation.
+#' @source Carlson, Josh J., et al. "Economic evaluation of tocilizumab monotherapy compared to adalimumab monotherapy 
+#' in the treatment of severe active rheumatoid arthritis." Value in Health 18.2 (2015): 173-179.
+"acr2haq"
 
 #' Linear HAQ progression rate differences by age
 #'
@@ -180,8 +189,7 @@
 
 #' Wailoo (2006) utility mapping
 #'
-#' Coefficients and standard errors from Wailoo (2006) model
-#' used to map HAQ score to utilities.
+#' Coefficients and standard errors from Wailoo (2006) model used to map HAQ score to utilities.
 #'
 #' @format List containing vectors of coefficients and standard errors
 #'

@@ -14,7 +14,6 @@ anakinra compared to infliximab in the treatment of patients with rheumatoid art
 util.wailoo.pars
 }
 \description{
-Coefficients and standard errors from Wailoo (2006) model
-used to map HAQ score to utilities.
+Coefficients and standard errors from Wailoo (2006) model used to map HAQ score to utilities.
 }
 \keyword{datasets}

@@ -21,7 +21,6 @@ Health Technology Assessment 20.35 (2016): 1-610.
 acr2eular
 }
 \description{
-Convert ACR response (ACR < 20, ACR20, ACR50, ACR70) to 
-Eular response (none, moderate, good)
+Convert ACR response (ACR < 20, ACR20, ACR50, ACR70) to Eular response (none, moderate, good).
 }
 \keyword{datasets}

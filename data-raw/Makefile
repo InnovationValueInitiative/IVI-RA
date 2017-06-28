@@ -3,7 +3,7 @@ DATA=../data
 
 # all datasets for package
 all: $(DATA)/therapy-pars.rda $(DATA)/pain.rda $(DATA)/util-pars.rda $(DATA)/duration-eular-pars.rda
-all: $(DATA)/acr2eular.rda $(DATA)/eular2haq.rda $(DATA)/haq-lprog-age.rda 
+all: $(DATA)/acr2eular.rda $(DATA)/eular2haq.rda $(DATA)/acr2haq.rda $(DATA)/haq-lprog-age.rda 
 all: $(DATA)/mort-or.rda $(DATA)/mort-hr-haqdif.rda $(DATA)/lifetable-male.rda $(DATA)/lifetable-female.rda 
 all: $(DATA)/mgmt-cost.rda
 
@@ -32,6 +32,10 @@ $(DATA)/acr2eular.rda: acr2eular.R
 # HAQ change by EULAR response
 $(DATA)/eular2haq.rda: eular2haq.R
 	Rscript eular2haq.R
+	
+# HAQ change by ACR response
+$(DATA)/acr2haq.rda: acr2haq.R
+	Rscript acr2haq.R
 	
 # HAQ progression rates by age
 $(DATA)/haq-lprog-age.rda: haq-lprog-age.R

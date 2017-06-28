@@ -44,6 +44,8 @@
 #' @param haq_lprog_therapy_se Standard error of linear yearly HAQ progression rate by therapy.
 #' @param eular2haq_mean Mean HAQ change by Eular response category.
 #' @param eular2haq_se Standard error of mean HAQ change by Eular response category.
+#' @param acr2haq_mean Mean HAQ change by ACR response category.
+#' @param acr2haq_se Standard error of mean HAQ change by ACR response category.
 #' @param haq_lprog_age_mean Impact of age on annual linear haq progression rate.
 #' @param haq_lprog_age_se Standard error of impact of age on annual linear haq progression rate.
 #' @param hosp_days_mean Vector denoting average number of hospital days for HAQ < 0.5,
@@ -87,9 +89,11 @@
 #'   ACR 50-70, and ACR 70+) and the four columns in \code{po} are overlapping categories 
 #'   (ACR < 20, ACR 20, ACR 50, and ACR 70}.
 #'   \item{acr2}{Subject to change.}
-#'    \item{eular2haq}{A matrix of sampled HAQ changes by Eular response category. The matrix has
+#'   \item{eular2haq}{A matrix of sampled HAQ changes by Eular response category. The matrix has
 #'    three columns for no response, moderate response, and good response.}
-#'    \item{haq.lprog.therapy}{A matrix of sampled yearly linear change in HAQ by therapy. The matrix has one column
+#'    \item{acr2haq}{A matrix of sampled HAQ changes by ACR response category. The matrix has
+#'    four columns for ACR < 20, ACR 20-50, ACR 50-70, and ACR 70+.}
+#'   \item{haq.lprog.therapy}{A matrix of sampled yearly linear change in HAQ by therapy. The matrix has one column
 #'    for each therapy in \code{therapy.pars}.}
 #'    \item{haq.lprog.age}{A matrix of sampled yearly linear change in HAQ by age. The matrix
 #'    has three columns for age < 40, age 40-64, and age 65+.}
@@ -171,6 +175,8 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
                        haq_lprog_therapy_se = therapy.pars$haq.lprog$se,
                        eular2haq_mean = eular2haq$mean, 
                        eular2haq_se = eular2haq$se,
+                       acr2haq_mean = acr2haq$mean,
+                       acr2haq_se = acr2haq$se,
                        haq_lprog_age_mean = haq.lprog.age$est,
                        haq_lprog_age_se = haq.lprog.age$se,
                        hosp_days_mean = c(.26, .13, .51, .72, 1.86, 4.16),
@@ -208,6 +214,8 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
                                    basedif_sd, zdif_mean, zdif_sd)
   sim$eular2haq <- sample_normal(n, eular2haq_mean, eular2haq_se,
                                  col_names = c("no_response", "moderate_response", "good_response"))
+  sim$acr2haq <- sample_normal(n, acr2haq_mean, acr2haq_se,
+                                 col_names = c("ACR <20", "ACR 20-50", "ACR 50-70", "ACR 70+"))
   sim$haq.lprog.therapy <- sample_normal(n, haq_lprog_therapy_mean,
                                                   haq_lprog_therapy_se)
   sim$haq.lprog.age <- sample_normal(n, haq_lprog_age_mean, haq_lprog_age_se,
@@ -623,9 +631,9 @@ par_table <- function(x, pat){
                                       "ACR 50-70 to EULAR no response",
                                       "ACR 50-70 to EULAR moderate response",
                                       "ACR 50-70 to EULAR good response",
-                                      "ACR 70 to EULAR no response",
-                                      "ACR 70 to EULAR moderate response",
-                                      "ACR 70 to EULAR good response"),
+                                      "ACR 70+ to EULAR no response",
+                                      "ACR 70+ to EULAR moderate response",
+                                      "ACR 70+ to EULAR good response"),
                         Source = "Stevenson2016")
   acr2eular.dt <- cbind(acr2eular.dt, apply_summary(acr2eular.mat))
   

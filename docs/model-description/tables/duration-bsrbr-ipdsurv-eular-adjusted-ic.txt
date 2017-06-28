@@ -1,5 +1,5 @@
 % latex table generated in R 3.4.0 by xtable 1.8-2 package
-% Tue Jun 27 22:22:48 2017
+% Wed Jun 28 10:09:27 2017
   \hline
 Exponential & 42,304 & 42,310 & 18,098 & 18,103 \\ 
   Weibull & 41,946 & 41,959 & 18,051 & 18,062 \\ 

@@ -19,6 +19,7 @@ sample_pars(n = 100, rebound_lower = 0.7, rebound_upper = 1,
   haq_lprog_therapy_mean = therapy.pars$haq.lprog$est,
   haq_lprog_therapy_se = therapy.pars$haq.lprog$se,
   eular2haq_mean = eular2haq$mean, eular2haq_se = eular2haq$se,
+  acr2haq_mean = acr2haq$mean, acr2haq_se = acr2haq$se,
   haq_lprog_age_mean = haq.lprog.age$est,
   haq_lprog_age_se = haq.lprog.age$se, hosp_days_mean = c(0.26, 0.13, 0.51,
   0.72, 1.86, 4.16), hosp_days_se = c(0.5, 0.5, 0.5, 0.5, 0.5, 0.5),
@@ -96,6 +97,10 @@ experienced patients are using during 1st and subsequent lines.}
 
 \item{eular2haq_se}{Standard error of mean HAQ change by Eular response category.}
 
+\item{acr2haq_mean}{Mean HAQ change by ACR response category.}
+
+\item{acr2haq_se}{Standard error of mean HAQ change by ACR response category.}
+
 \item{haq_lprog_age_mean}{Impact of age on annual linear haq progression rate.}
 
 \item{haq_lprog_age_se}{Standard error of impact of age on annual linear haq progression rate.}
@@ -155,9 +160,11 @@ List containing samples for the following model parameters:
   ACR 50-70, and ACR 70+) and the four columns in \code{po} are overlapping categories 
   (ACR < 20, ACR 20, ACR 50, and ACR 70}.
   \item{acr2}{Subject to change.}
-   \item{eular2haq}{A matrix of sampled HAQ changes by Eular response category. The matrix has
+  \item{eular2haq}{A matrix of sampled HAQ changes by Eular response category. The matrix has
    three columns for no response, moderate response, and good response.}
-   \item{haq.lprog.therapy}{A matrix of sampled yearly linear change in HAQ by therapy. The matrix has one column
+   \item{acr2haq}{A matrix of sampled HAQ changes by ACR response category. The matrix has
+   four columns for ACR < 20, ACR 20-50, ACR 50-70, and ACR 70+.}
+  \item{haq.lprog.therapy}{A matrix of sampled yearly linear change in HAQ by therapy. The matrix has one column
    for each therapy in \code{therapy.pars}.}
    \item{haq.lprog.age}{A matrix of sampled yearly linear change in HAQ by age. The matrix
    has three columns for age < 40, age 40-64, and age 65+.}
