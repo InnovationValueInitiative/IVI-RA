@@ -43,6 +43,7 @@
 \renewcommand*{\sectionautorefname}{Section}
 \renewcommand*{\subsectionautorefname}{Section}
 \renewcommand*{\subsubsectionautorefname}{Section}
+\newcommand{\subfigureautorefname}{\figureautorefname}
 \newcommand{\aref}[1]{\hyperref[#1]{Appendix~\ref{#1}}}
 \newcommand{\algorithmautorefname}{Algorithm}
 
@@ -189,18 +190,19 @@ During the initial treatment phase HAQ is modeled as a change from baseline. Thr
 \item \textbf{H3}: Treatment $\rightarrow$ HAQ
 \end{itemize}
 
-The probability of switching treatment during the initial treatment phase is modeled using 6 possible structures labeled \textbf{S1-S6}. \textbf{S1} follows a common approach where ACR non-responders discontinue treatment \citep[e.g.][]{carlson2015economic, icer2017tim}. One drawback of this approach is that it is not consistent with current treat-to-target guidelines in the United States \citep{singh20162015}. \textbf{S2} and \textbf{S3} consequently model treatment switching as a function of disease activity (remission, low, moderate, high) \citep{anderson2012rheumatoid}. ACR response predicts the change in disease activity from baseline which, along with baseline disease activity, predicts absolute disease activity. The probability of switching treatment is increasing in the severity of disease (i.e., the probability is lowest in remission and greatest with high disease activity). In \textbf{S2} disease activity is measured using the Disease Activity Score with 28-joint counts (DAS28) \citep{prevoo1995modified} and in \textbf{S3} disease activity is measured using the Simplified Disease Activity Index (SDAI) \citep{smolen2003simplified, aletaha2005simplified}. \textbf{S4} and \textbf{S5} are similar to \textbf{S2} and \textbf{S3}, but model the effect of treatment on changes in DAS28 and SDAI directly, rather than indirectly through ACR response. Finally, since in the UK, the EULAR response is recommended by the British Society for Rheumatology and the British Health Professionals in Rheumatology \citep{deighton2010bsr}, \textbf{S6} is based on EULAR response. In particular, following the NICE model, we assume that EULAR non-responders discontinue treatment while moderate and good responders continue treatment \citep{stevenson2016adalimumab}. The reasoning is that rules stipulated by NICE require a DAS28 improvement of more than 1.2 to continue treatment which is associated with moderate or good EULAR response. All 6 treatment switching scenarios are summarized below: 
+The probability of switching treatment during the initial treatment phase is modeled using 6 possible structures labeled \textbf{S1-S5}. \textbf{S1} follows a common approach where ACR non-responders discontinue treatment \citep[e.g.][]{carlson2015economic, icer2017tim}. One drawback of this approach is that it is not consistent with current treat-to-target guidelines in the United States \citep{singh20162015}. \textbf{S2} and \textbf{S3} consequently model treatment switching as a function of disease activity (remission, low, moderate, high) \citep{anderson2012rheumatoid}. ACR response predicts the change in disease activity from baseline which, along with baseline disease activity, predicts absolute disease activity. The probability of switching treatment is increasing in the severity of disease (i.e., the probability is lowest in remission and greatest with high disease activity). In \textbf{S2} disease activity is measured using the Disease Activity Score with 28-joint counts (DAS28) \citep{prevoo1995modified} and in \textbf{S3} disease activity is measured using the Simplified Disease Activity Index (SDAI) \citep{smolen2003simplified, aletaha2005simplified}. We considered the Clinical Disease Activity Index (CDAI) as well, but do not have data linking ACR response to CDAI.
+
+\textbf{S4} is similar to \textbf{S2} and \textbf{S3}, but models the effect of treatment on changes in DAS28 directly, rather than indirectly through ACR response. We also aimed to model the direct effect of treatment on SDAI and CDAI, but sufficient clinical trial data is not available. Finally, since in the UK, the EULAR response is recommended by the British Society for Rheumatology and the British Health Professionals in Rheumatology \citep{deighton2010bsr}, \textbf{S5} is based on EULAR response. In particular, following the NICE model, we assume that EULAR non-responders discontinue treatment while moderate and good responders continue treatment \citep{stevenson2016adalimumab}. The reasoning is that rules stipulated by NICE require a DAS28 improvement of more than 1.2 to continue treatment which is associated with moderate or good EULAR response. All 5 treatment switching scenarios are summarized below: 
 
 \begin{itemize}
 \item \textbf{S1:} Treatment $\rightarrow$ ACR $\rightarrow$ Switch
 \item \textbf{S2:} Treatment $\rightarrow$ ACR $\rightarrow$ $\Delta$DAS28 $\rightarrow$ DAS28 $\rightarrow$ Switch 
 \item \textbf{S3:} Treatment $\rightarrow$ ACR $\rightarrow$ $\Delta$SDAI $\rightarrow$ SDAI $\rightarrow$ Switch 
 \item \textbf{S4:} Treatment $\rightarrow$ $\Delta$DAS28 $\rightarrow$ DAS28 $\rightarrow$ Switch 
-\item \textbf{S5:} Treatment  $\rightarrow$ $\Delta$SDAI $\rightarrow$ SDAI $\rightarrow$ Switch 
-\item \textbf{S6:} Treatment $\rightarrow$ ACR $\rightarrow$ EULAR $\rightarrow$ Switch
+\item \textbf{S5:} Treatment $\rightarrow$ ACR $\rightarrow$ EULAR $\rightarrow$ Switch
 \end{itemize}
 
-Not all model structures \textbf{S1-S6} can be used with each of \textbf{H1-H3}. If \textbf{H1} is used, then \textbf{S1-S5} are available, but \textbf{S6} is not because EULAR response is not simulated. In \textbf{H2}, \textbf{S1-S6} are all available while in \textbf{H3} only \textbf{S4} and \textbf{S5} can be used since neither ACR or EULAR response are simulated. The 13 possible model structures and the number of each structure are outlined in \autoref{tbl:initial-model-structure}.  
+Not all model structures \textbf{S1-S5} can be used with each of \textbf{H1-H3}. If \textbf{H1} is used, then \textbf{S1-S4} are available, but \textbf{S5} is not because EULAR response is not simulated. In \textbf{H2}, \textbf{S1-S5} are all available while in \textbf{H3} only \textbf{S4} can be used since neither ACR or EULAR response are simulated. The 10 possible model structures and the number of each structure are outlined in \autoref{tbl:initial-model-structure}.  
 
 \begin{table}[!ht] 
 \begin{center}
@@ -216,7 +218,7 @@ H3 & - & - & - & 10 & - \\
 \hline
 \end{tabularx}
 \scriptsize
-Notes: Rows denote the model structure used to relate treatment to HAQ and columns denote the model structure used to predict treatment switching. Each number denotes a unique model structure (i.e. 1 corresponds to H1 and S1 and 8 corresponds to H2 and S4) and the "-" denotes a model structure combination that is not possible. There are 13 possible model structures for the initial treatment phase. 
+Notes: Rows denote the model structure used to relate treatment to HAQ and columns denote the model structure used to predict treatment switching. Each number denotes a unique model structure (i.e. 1 corresponds to H1 and S1 and 8 corresponds to H2 and S4) and the "-" denotes a model structure combination that is not possible. There are 10 possible model structures for the initial treatment phase. 
 \end{threeparttable}
 \end{center}
 \end{table}
@@ -224,7 +226,7 @@ Notes: Rows denote the model structure used to relate treatment to HAQ and colum
 
 In the maintenance phase, two model structures can be used to simulate the long-term progression of HAQ. First, as is common in cost-effectiveness analyses of therapies for RA, HAQ is assumed to progress at a constant linear rate over time \citep[see][]{tosh2011sheffield, wailoo2008biologic}. However, since emerging evidence suggests that the rate of HAQ progression is non-linear \citep{gibson2016haq}, our second scenario simulates HAQ progression using a non-linear mixture model \citep{norton2014health} with 4 distinct HAQ trajectories and a rate of HAQ progression that decreases over time within each trajectory. Upon discontinuation of treatment, the HAQ score rebounds by a proportion of the improvement experienced at the end of the initial 6-month period with that treatment.
 
-The duration of the maintenance phase (i.e., time to discontinuation of maintenance treatment) is simulated using parametric time-to-event distributions. When structure \textbf{S6} is used, the time-to-event distributions are stratified by EULAR response category. Patients with good response at the end of the initial treatment phase stay on treatment longer, on average, than patients with a moderate response. In contrast, when \textbf{S1} is used, time to treatment discontinuation is simulated using a single time-to-event curve because we have been unable to obtain curves stratified by ACR response categories. Likewise, when \textbf{S2-S5} we use a single time-to-event curve because we have not obtained curves stratified by disease activity level. In each case, time to discontinuation can be simulated using one of seven possible distributions (exponential, Weibull, Gompertz, normal, gamma, log-logistic, generalized gamma).
+The duration of the maintenance phase (i.e., time to discontinuation of maintenance treatment) is simulated using parametric time-to-event distributions. When structure \textbf{S5} is used, the time-to-event distributions are stratified by EULAR response category. Patients with good response at the end of the initial treatment phase stay on treatment longer, on average, than patients with a moderate response. In contrast, when \textbf{S1} is used, time to treatment discontinuation is simulated using a single time-to-event curve because we have been unable to obtain curves stratified by ACR response categories. Likewise, when \textbf{S2-S4} we use a single time-to-event curve because we have not obtained curves stratified by disease activity level. In each case, time to discontinuation can be simulated using one of seven possible distributions (exponential, Weibull, Gompertz, normal, gamma, log-logistic, generalized gamma).
 
 In line with \citet{stevenson2016adalimumab} the adverse events included in the model are limited to serious infections; we assume that only serious infections have a significant cost impact and increased risk over background rates to be meaningful to include \citep{ramiro2017safety}. While on a treatment, a patient experiences a serious infection if the individual's sampled time to the adverse event is shorter than the sampled time to treatment discontinuat on.
 
@@ -245,29 +247,28 @@ The flow diagram in \autoref{fig:flow-diagram} describes the flow of a single pa
 patient}\label{fig:flow-diagram}
 \end{figure}
 
-The influence diagram in \autoref{fig:influence-diagram} summarizes the
-assumed structural relationships among the different parameters. Each
-arrow represents the direct effect of one parameter on another. Dashed
-lines represent relationships that depend on the structural modeling
-assumptions used. Different stakeholder perspectives can be considered
-based on whether productivity is included in the analysis: a societal
-perspective includes productivity and a health-sector perspective does
-not.
+The influence diagram in \autoref{fig:influence-diagram} summarizes the assumed structural relationships among different variables in the model. Each arrow represents the direct effect of one parameter on another. Dashed lines represent relationships that depend on the structural assumptions used. \autoref{subfig:treatment-effects} focuses on the effect of treatment on disease progression and adverse events while \autoref{subfig:model-outcomes} looks at the variables influencing the primary health and cost outcomes. 
+
+Model outcomes depend on patient characteristics, which have a direct effect on HAQ progression, mortality, and utility. The primary health outcome is the quality-adjusted life-year (QALY) which depends on mortality and utility. Total costs consist of health care sector costs and productivity losses. The components of health sector costs include drug acquisition and administration costs, general management and monitoring costs, adverse event costs, and hospitalization costs  Analyses from a societal perspective would include productivity losses while analyses from a health care sector perspective would not. The value of treatment is estimated using the net-monetary benefit (NMB), which is calculated by multiplying QALYs by a willingness to pay threshold and subtracting costs ($NMB = QALYS \cdot WTP - Costs$). 
 
 \begin{figure}
 \centering
 \begin{subfigure}{\textwidth}
 \includegraphics[width=\textwidth]{figs/influence-diagram-a.png}
-\caption{Treatment effects}
+\caption{Treatment effects} \label{subfig:treatment-effects}
 \end{subfigure}
 \begin{subfigure}{\textwidth}
 \includegraphics[width=\textwidth]{figs/influence-diagram-b.png}
-\caption{Model outcomes}
+\caption{Model outcomes} \label{subfig:model-outcomes}
 \end{subfigure}
 \caption{Influence diagram outlining structural relationships}\label{fig:influence-diagram}
+\begin{minipage}{\linewidth}
+\footnotesize
+Notes: ACR: American College of Rheumatology; EULAR: European League Against Rheumatism; HAQ: Health Assessment Questionnaire; QALY: AEs: adverse events; QALYs: quality-adjusted life-years; WTP: willingness to pay. Disease activity refers to the Disease Activity Score with 28-joint counts (DAS28) or the Simplified Disease Activity Index (SDAI).
+\end{minipage}
 \end{figure}
 
-\autoref{tbl:competing-structures} summarizes the competing model structures, which are conditional on the perspective of the decision maker. In total, there are 13 x 2 x 7 x 3 = 364 possible model structures.
+\autoref{tbl:competing-structures} summarizes the competing model structures, which are conditional on the perspective of the decision maker. In total, there are 10 x 2 x 7 x 2 = 280 possible model structures.
 
 \renewcommand{\arraystretch}{1.5}
 
@@ -279,7 +280,7 @@ not.
 \hline
 \multicolumn{1}{c}{Component of model structure} & \multicolumn{1}{c}{Possible combinations} \\
 \hline
-Initial effect of treatment on HAQ (\textbf{H1-H3}) and switching (\textbf{S1-S6}) & 13  \\
+Initial effect of treatment on HAQ (\textbf{H1-H3}) and switching (\textbf{S1-S6}) & 10  \\
 HAQ progression linear or non-linear & 2 \\
 Probability distribution for treatment duration & 7 \\
 Utility algorithm & 2 \\
@@ -289,21 +290,6 @@ Utility algorithm & 2 \\
 \end{threeparttable}
 \end{center}
 \end{table}\renewcommand{\arraystretch}{1}
-
-For a given model, the outcomes of interest are:
-
-\begin{itemize}
-\item HAQ over time
-\item Cumulative QALYs
-\item Total drug acquisition and administration costs
-\item General management and monitoring costs
-\item Adverse event costs
-\item Hospitalization costs
-\item Total health sector costs
-\item Productivity loss
-\item Total costs
-\item Net-monetary benefit (NMB)
-\end{itemize}
 
 \section{Populations}\label{sec:populations}
 
@@ -343,7 +329,7 @@ tex2 <- print(xtable(tab2),
 \begin{table}[!ht]
 \begin{center}
 \begin{threeparttable}
-\caption{Anuual linear progression of HAQ in the absense of bDMARDs beyond 6 months} \label{tbl:haq-lprog}
+\caption{Annual linear progression of HAQ in the absence of bDMARDs beyond 6 months} \label{tbl:haq-lprog}
 \footnotesize
 \begin{tabularx}{\textwidth}{@{\extracolsep{\fill}}lrrrl}
 \hline
@@ -358,7 +344,7 @@ Change in overall progression rate by age \\
 \hline
 \end{tabularx}
 \scriptsize
-Notes: 95\% confidence intervals are calculated using a normal distribution. Confidence intervals for changes in HAQ progression rates by age assume no covariance between the overall progression rate and the age-specific rates reported by Michaud et al (2011).
+Notes: 95\% confidence intervals are calculated using a normal distribution. Confidence intervals for changes in HAQ progression rates by age assume no covariance between the overall progression rate and the age-specific rates reported by \citet{michaud2011treatment}.
 \end{threeparttable}
 \end{center}
 \end{table}
@@ -405,7 +391,7 @@ tex <- print(xtable(tab),
 \hline
 \end{tabularx}
 \scriptsize
-Notes: The VARA registry is a multicentre, US databse of verterans age 19 and older. Each cell represents the number of patients in the 
+Notes: The VARA registry is a multicentre, US database of veterans age 19 and older. Each cell represents the number of patients in the 
 database in a given category. 
 \end{threeparttable}
 \end{center}
@@ -415,7 +401,7 @@ database in a given category.
 eular2haq.f <- formatC(as.matrix(eular2haq), format = "f", digits = 3)
 @
 
-The model structure allows treatment to impact HAQ either directly or indirerectly through its effect on ACR response. In the indirect case, ACR response first affects EULAR response or SDAI using the evidence reported in \autoref{tbl:acr2eular}, which, in turn, affects HAQ. The relationship between EULAR response and HAQ is based on analyses conducted by \citet{stevenson2016adalimumab} using the BSRBR databse. Their analysis is based on predictions from a mixture model with covariates set to sample means. Moderate and good EULAR response are associated with \Sexpr{eular2haq.f[2, "mean"]} (SE = \Sexpr{eular2haq.f[2, "se"]}) and \Sexpr{eular2haq.f[3, "mean"]} (SE = \Sexpr{eular2haq.f[3, "se"]}) changes in HAQ scores respectively. The impact of treatment on ACR response, EULAR response, and HAQ (given their ACR and EULAR responses) is shown in \autoref{tbl:initial-haq}.
+The model structure allows treatment to impact HAQ either directly or indirectly through its effect on ACR response. In the indirect case, ACR response first affects EULAR response or SDAI using the evidence reported in \autoref{tbl:acr2eular}, which, in turn, affects HAQ. The relationship between EULAR response and HAQ is based on analyses conducted by \citet{stevenson2016adalimumab} using the BSRBR database. Their analysis is based on predictions from a mixture model with covariates set to sample means. Moderate and good EULAR response are associated with \Sexpr{eular2haq.f[2, "mean"]} (SE = \Sexpr{eular2haq.f[2, "se"]}) and \Sexpr{eular2haq.f[3, "mean"]} (SE = \Sexpr{eular2haq.f[3, "se"]}) changes in HAQ scores respectively. The impact of treatment on ACR response, EULAR response, and HAQ (given their ACR and EULAR responses) is shown in \autoref{tbl:initial-haq}.
 
 <<initial_haq, cache=TRUE, echo=FALSE, include=FALSE>>=
 arm.snames <- c("cdmards", "abtivmtx", "adamtx", "etnmtx", "golmtx", "ifxmtx", "tczmtx", "czpmtx",
@@ -509,7 +495,7 @@ tex <- print(xtable(tab),
 \hline
 \end{tabular}
 \tiny
-Notes: 95\% credible intervals are in parentheses. Estimates are based on 6-month simulations of 1,000 patients and 1,000 parameters sets for each therapy. cDMARDs = conventional disease-modifying antiheumatic drugs; MTX = methotrexate; ABT IV = abatacept intravenous; ADA = adalimumab; ETN = etanercept; GOL = golimumab; IFX = infliximab; TCZ = tocilizumab; CZP = certolizumab pegol; ABT SC = abatacept subcutaneous; RTX = rituximab; TOF = tofacitinib. ACR = American College of Rheumatology; EULAR = European League Against Rheumatism; HAQ = Health Assessment Questionnaire. 
+Notes: 95\% credible intervals are in parentheses. Estimates are based on 6-month simulations of 1,000 patients and 1,000 parameters sets for each therapy. cDMARDs = conventional disease-modifying antirheumatic drugs; MTX = methotrexate; ABT IV = abatacept intravenous; ADA = adalimumab; ETN = etanercept; GOL = golimumab; IFX = infliximab; TCZ = tocilizumab; CZP = certolizumab pegol; ABT SC = abatacept subcutaneous; RTX = rituximab; TOF = tofacitinib. ACR = American College of Rheumatology; EULAR = European League Against Rheumatism; HAQ = Health Assessment Questionnaire. 
 \end{threeparttable}
 \end{center}
 \end{table}
