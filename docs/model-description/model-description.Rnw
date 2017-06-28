@@ -256,9 +256,15 @@ not.
 
 \begin{figure}
 \centering
-\includegraphics[max size={\textwidth}{\textheight}]{figs/influence-diagram.png}
-\caption{Influence diagram outlining structural relationships between
-model parameters}\label{fig:influence-diagram}
+\begin{subfigure}{\textwidth}
+\includegraphics[width=\textwidth]{figs/influence-diagram-a.png}
+\caption{Treatment effects}
+\end{subfigure}
+\begin{subfigure}{\textwidth}
+\includegraphics[width=\textwidth]{figs/influence-diagram-b.png}
+\caption{Model outcomes}
+\end{subfigure}
+\caption{Influence diagram outlining structural relationships}\label{fig:influence-diagram}
 \end{figure}
 
 \autoref{tbl:competing-structures} summarizes the competing model structures, which are conditional on the perspective of the decision maker. In total, there are 13 x 2 x 7 x 3 = 364 possible model structures.

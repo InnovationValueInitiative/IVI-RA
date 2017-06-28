@@ -94,7 +94,7 @@
 <div id="loading-the-data" class="section level2">
 <h2 class="hasAnchor">
 <a href="#loading-the-data" class="anchor"></a>Loading the data</h2>
-<p>Input parameters and data needed to run the simulation come preloaded with the package. To view the loaded data use the command <code>data(package = "IVI026")</code>.</p>
+<p>Input parameters and data needed to run the simulation come preloaded with the package. To view the loaded data use the command <code>data(package = "iviRA")</code>.</p>
 </div>
 <div id="generating-a-patient-cohort" class="section level2">
 <h2 class="hasAnchor">
@@ -103,13 +103,13 @@
 <p>The patient dataset can be generated using <code><a href="../reference/sample_pats.html">sample_pats()</a></code>. The <code>type</code> argument specifies whether the patient cohort is homogeneous or heterogeneous. If the cohort is homogeneous, then the cohort consists of male and female patients that are identical in all respects other than gender; if the cohort is heterogeneous, then all variables vary across patients.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pats &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pats.html">sample_pats</a></span>(<span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">type =</span> <span class="st">"heterog"</span>)
 <span class="kw">head</span>(pats)</code></pre></div>
-<pre><code>##           age male      haq0 weight   dis_dur prev_dmards
-## [1,] 62.20574    0 0.7206476     75 15.607496   2.3866140
-## [2,] 57.54540    0 0.1113617     75 22.565984   2.1425632
-## [3,] 53.25933    1 1.4111031     89 44.127660   4.2320889
-## [4,] 59.81885    0 1.4743084     75 18.965327   2.4206243
-## [5,] 44.31321    0 2.0842608     75 14.367662   0.4348716
-## [6,] 56.11911    0 2.4820363     75  5.998224   2.9453405</code></pre>
+<pre><code>##           age male      haq0 weight  dis_dur prev_dmards
+## [1,] 62.46975    1 1.3866113     89 35.70064   3.4597952
+## [2,] 77.60791    0 0.6736667     75 13.53787   4.5355893
+## [3,] 48.53931    0 2.3132523     75 17.33972   3.1749280
+## [4,] 42.05091    0 1.0862521     75 15.41215   4.2294128
+## [5,] 49.05218    1 1.7027732     89 29.16113   3.8966499
+## [6,] 33.79498    0 2.1508680     75 24.56534  -0.7414854</code></pre>
 </div>
 <div id="input-data" class="section level2">
 <h2 class="hasAnchor">
