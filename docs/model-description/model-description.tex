@@ -285,7 +285,7 @@ patient}\label{fig:flow-diagram}
 
 The influence diagram in \autoref{fig:influence-diagram} summarizes the assumed structural relationships among different variables in the model. Each arrow represents the direct effect of one parameter on another. Dashed lines represent relationships that depend on the structural assumptions used. \autoref{subfig:treatment-effects} focuses on the effect of treatment on disease progression and adverse events while \autoref{subfig:model-outcomes} looks at the variables influencing the primary health and cost outcomes. 
 
-Model outcomes depend on patient characteristics, which have a direct effect on HAQ progression, mortality, and utility. The primary health outcome is the quality-adjusted life-year (QALY) which depends on mortality and utility. Total costs consist of health care sector costs and productivity losses. The components of health sector costs include drug acquisition and administration costs, general management and monitoring costs, adverse event costs, and hospitalization costs  Analyses from a societal perspective would include productivity losses while analyses from a health care sector perspective would not. The value of treatment is estimated using the net-monetary benefit (NMB), which is calculated by multiplying QALYs by a willingness to pay threshold and subtracting costs ($NMB = QALYS \cdot WTP - Costs$). 
+Model outcomes depend on patient characteristics, which have a direct effect on HAQ progression, mortality, and utility. The primary health outcome is the quality-adjusted life-year (QALY) which depends on mortality and utility. Total costs consist of health care sector costs and productivity losses. The components of health sector costs include drug acquisition and administration costs, general management and monitoring costs, adverse event costs, and hospitalization costs  Analyses from a societal perspective would include productivity losses while analyses from a health care sector perspective would not. The value of treatment is estimated using the net-monetary benefit (NMB), which is calculated by multiplying QALYs by a willingness to pay threshold and subtracting costs ($NMB = QALYs \cdot WTP - Costs$). 
 
 \begin{figure}
 \centering
@@ -334,8 +334,34 @@ Utility algorithm & 2 \\
 The effect of treatment on ACR response, DAS28, and HAQ at 6 months are estimated using a using a Bayesian network meta-analysis (NMA) of published randomized controlled trials (RCTs) (see \autoref{sec:tech-nma-initial}). 
 
 \subsection{Treatment switching at 6 months}
-The relationship between ACR response and DAS28, SDAI, and CDAI are based on evidence reported in \citet{aletaha2005simplified}.
+\subsubsection{ACR response and change in disease activity}
+There are currently no established mappings between mutually exclusive ACR response categories and DAS28, SDAI, or CDAI \citep{madan2015consensus}. However, \citet{aletaha2005simplified} provides evidence on the relationship between overlapping ACR response categories (ACR 20/50/70) and mean changes in each of the three disease activity measures. Results are reported for three cohorts---the Leflunomide datasets, the inception cohort, and the routine cohort---with 1,839, 91, and 279 patients respectively. We transformed mean changes by overlapping ACR response categories to mean changes by mutually exclusive ACR response categories (ACR < 20, ACR 20-50, ACR 50-70, ACR 70+) by using the number of patients in each mututually exclusive ACR response category as described in \autoref{app-acr-da}. \citet{smolen2003simplified} provided the number of patients in each ACR response category in the Leflunomide dataset and \citet{aletaha2005acute} provided the number of patients in the inception cohort. Mean changes by the mututually exclusive ACR response categories are shown in \autoref{tbl:acr2da}.
 
+
+
+\begin{table}[!ht]
+\begin{center}
+\begin{threeparttable}
+\caption{Relationship between ACR response and change in disease activity measures} \label{tbl:acr2da}
+\begin{tabularx}{\textwidth}{@{\extracolsep{\fill}}lcccc}
+\hline
+\multicolumn{1}{l}{ACR response} &  \multicolumn{3}{c}{Mean change at 6 months}\\
+\cmidrule{2-5}
+\multicolumn{1}{l}{} & \multicolumn{1}{c}{Leflunomide dataset} & \multicolumn{3}{c}{Inception cohort}\\
+\cmidrule(lr){2-2}  \cmidrule(lr){3-5}
+\multicolumn{1}{c}{} & \multicolumn{1}{c}{SDAI} & \multicolumn{1}{c}{SDAI} &\multicolumn{1}{c}{CDAI} & \multicolumn{1}{c}{DAS28} \\
+\hline
+\ExpandableInput{tables/acr2da.txt}
+\hline
+\end{tabularx}
+\scriptsize
+\end{threeparttable}
+\end{center}
+\end{table}
+
+We did not include estimates from the routine cohort for two reasons. First, we were unable to find information on the number of patients in each ACR response category. Second, patients in the routine cohort had considerably lower disease activity levels \citep{aletaha2005simplified, aletaha2005acute} and our main population of interest (see \autoref{sec:populations}) consists of patients with high disease activity at baseline. Mean DAS28 in the inception cohort and routine cohort were 5.62, and 4.09 respectively, while the mean DAS 28 ranged from 6.3 to 7 accross the clinicial trials making up the Leflunomide dataset.
+
+\subsubsection{ACR response and change in EULAR response}
 ACR responses were translated into EULAR response probabilities based on evidence of their relationship reported in \citet{stevenson2016adalimumab} and obtained from the US Veterans Affairs Rheumatoid Arthritis (VARA) registry (\autoref{tbl:acr2eular}).
 
 
@@ -359,6 +385,8 @@ database in a given category.
 \end{threeparttable}
 \end{center}
 \end{table}
+
+\subsubsection{Probability of switching treatment}
 
 \subsection{Change in HAQ at 6 months}
 As in \citet{icer2017tim}, ACR responses from the NMA were translated into HAQ scores based on evidence from the ADACTA trial reported in \citet{carlson2015economic} (\autoref{tbl:acr2haq}).
@@ -764,6 +792,25 @@ Parameter uncertainty is quantified using PSA, which propagates uncertainty in t
 \begin{appendices}
 
 \section{Individual Patient Simulation}\label{appendix:IPS}
+\subsection{Mapping ACR response to changes in disease activity}\label{app-acr-da}
+Let $DA$ denote disease activity, $n_1$ the number of patients with ACR 20-50 response, $n_2$ the number of patients with ACR 50-70 response, $n_3$ the number of patients with ACR 70 response, and $N$ the number of patients with an ACR response greater than or equal to 20\%. Mean changes in SDAI, CDAI, and DAS28 by overlapping ACR response categories are converted to mean changes by mutually exclusive ACR response categories as follows:
+
+\begin{itemize}
+\item \textbf{ACR 70}: Mean changes by ACR 70 were reported directly in \citet{aletaha2005simplified}.
+\item \textbf{ACR 50-70}: Mean change in disease activity given ACR 50-70 response is calculated by solving for $\E[DA|50 \leq ACR < 70]$:
+
+\begin{align}
+\E[DA|ACR \geq 50] = \frac{n_2}{N} \cdot \E[DA|50 \leq ACR < 70]  + \frac{n_3}{N} \cdot \E[DA|ACR \geq 70]
+\end{align}
+
+\item Mean change in disease activity given ACR 20-50 response is calculated by solving for $\E[DA|20 \leq ACR < 50]$
+
+\begin{align}
+\E[DA|ACR \geq 20] = \frac{n_1}{N} \cdot \E[DA|20 \leq ACR < 50]  + \frac{n_2 + n_3}{N} \cdot \E[DA|ACR \geq 50]
+\end{align}
+
+\end{itemize}
+
 \subsection{Non-linear HAQ trajectory}\label{non-linear-haq}
 \citet{norton2014health} model HAQ progression using a latent class growth model (LCGM). The probability that individual $i$ is a member of class $c$ at time $t$ is modeled using a multinomial logistic regression
 \begin{align}

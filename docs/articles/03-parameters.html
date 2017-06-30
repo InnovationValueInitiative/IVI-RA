@@ -98,30 +98,31 @@
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">parsamp &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pars.html">sample_pars</a></span>(<span class="dt">n =</span> <span class="dv">100</span>)
 <span class="kw">names</span>(parsamp)</code></pre></div>
 <pre><code>##  [1] "n"                 "rebound"           "lt"               
-##  [4] "treat.cost"        "acr2eular"         "logor.mort"       
-##  [7] "mort.loghr.haqdif" "dur.eular.mod"     "dur.eular.good"   
-## [10] "acr1"              "acr2"              "eular2haq"        
-## [13] "haq.lprog.therapy" "haq.lprog.age"     "mixture.utility"  
-## [16] "wailoo.utility"    "hosp.cost"         "mgmt.cost"        
-## [19] "prod.loss"         "si.surv"           "si.cost"          
-## [22] "si.ul"</code></pre>
+##  [4] "treat.cost"        "acr2eular"         "acr2sdai"         
+##  [7] "acr2cdai"          "acr2das28"         "logor.mort"       
+## [10] "mort.loghr.haqdif" "dur.eular.mod"     "dur.eular.good"   
+## [13] "acr1"              "acr2"              "eular2haq"        
+## [16] "acr2haq"           "haq.lprog.therapy" "haq.lprog.age"    
+## [19] "mixture.utility"   "wailoo.utility"    "hosp.cost"        
+## [22] "mgmt.cost"         "prod.loss"         "si.surv"          
+## [25] "si.cost"           "si.ul"</code></pre>
 <p><code>sample_pars</code> returns a list containing random draws of the different parameters used in the IPS. For example <code>parsamp$acr2eular</code> is an array containing two-way frequency matrices randomly sampled from a Dirichlet distribution that describe the probability of a EULAR response category conditional on ACR response.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">parsamp$acr2eular[,,<span class="dv">1</span>:<span class="dv">2</span>]</code></pre></div>
 <pre><code>## , , 1
 ## 
-##         eular_none eular_moderate eular_good
-## acr_sub 0.80484801      0.1395117 0.05564024
-## acr20   0.03828893      0.5632583 0.39845275
-## acr50   0.18667749      0.1876064 0.62571609
-## acr70   0.00000000      0.7809053 0.21909469
+##           eular_none eular_moderate eular_good
+## ACR &lt; 20  0.78901860      0.1507609 0.06022051
+## ACR 20-50 0.04927838      0.4860945 0.46462710
+## ACR 50-70 0.19158294      0.1214531 0.68696394
+## ACR 70+   0.00000000      0.6665438 0.33345622
 ## 
 ## , , 2
 ## 
-##         eular_none eular_moderate eular_good
-## acr_sub  0.8106498      0.1350670 0.05428311
-## acr20    0.1001003      0.4598836 0.44001609
-## acr50    0.0646699      0.1314629 0.80386725
-## acr70    0.0000000      0.5260613 0.47393874</code></pre>
+##           eular_none eular_moderate eular_good
+## ACR &lt; 20  0.81069786      0.1348330 0.05446918
+## ACR 20-50 0.09378923      0.4673235 0.43888728
+## ACR 50-70 0.14332700      0.2596758 0.59699719
+## ACR 70+   0.00000000      0.2828818 0.71711817</code></pre>
 <div>
 <ul class="pager">
 <li class="previous">

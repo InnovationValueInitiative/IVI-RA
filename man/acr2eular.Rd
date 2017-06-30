@@ -4,12 +4,9 @@
 \name{acr2eular}
 \alias{acr2eular}
 \title{ACR to Eular Conversion}
-\format{A list with two matrices. Each row in each matrix shows the probability that a 
-particualar responder in an ACR category will have a given Eular response. Probabilities in
-the first matrix ("observed") are based on observed relationships in the VARA database. In
-the second matrix ("strict") the probabilities assume that patients with ACR < 20 have no
-Eular response, that patients with ACR20 and ACR50 have moderate Eular response, and that 
-patients with ACR70 have a good Eular response.}
+\format{A matrix where each row shows the probability that a particualar responder in an 
+ACR category will have a given Eular response. Probabilities are based on observed 
+relationships in the VARA database.}
 \source{
 Stevenson, Matt, et al. "Adalimumab, etanercept, infliximab, certolizumab pegol, 
 golimumab, tocilizumab and abatacept for the treatment of rheumatoid arthritis not previously

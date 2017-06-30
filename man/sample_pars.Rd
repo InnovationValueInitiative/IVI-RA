@@ -20,6 +20,12 @@ sample_pars(n = 100, rebound_lower = 0.7, rebound_upper = 1,
   haq_lprog_therapy_se = therapy.pars$haq.lprog$se,
   eular2haq_mean = eular2haq$mean, eular2haq_se = eular2haq$se,
   acr2haq_mean = acr2haq$mean, acr2haq_se = acr2haq$se,
+  acr2sdai_lower = acr2sdai$inception$lower,
+  acr2sdai_upper = acr2sdai$inception$upper,
+  acr2cdai_lower = acr2cdai$inception$lower,
+  acr2cdai_upper = acr2cdai$inception$upper,
+  acr2das28_lower = acr2das28$inception$lower,
+  acr2das28_upper = acr2das28$inception$upper,
   haq_lprog_age_mean = haq.lprog.age$est,
   haq_lprog_age_se = haq.lprog.age$se, hosp_days_mean = c(0.26, 0.13, 0.51,
   0.72, 1.86, 4.16), hosp_days_se = c(0.5, 0.5, 0.5, 0.5, 0.5, 0.5),
@@ -100,6 +106,18 @@ experienced patients are using during 1st and subsequent lines.}
 \item{acr2haq_mean}{Mean HAQ change by ACR response category.}
 
 \item{acr2haq_se}{Standard error of mean HAQ change by ACR response category.}
+
+\item{acr2sdai_lower}{Lower bound for change in SDAI by ACR response category.}
+
+\item{acr2sdai_upper}{Upper bound for change in SDAI by ACR response category.}
+
+\item{acr2cdai_lower}{Lower bound for change in CDAI by ACR response category.}
+
+\item{acr2cdai_upper}{Upper bound for change in CDAI by ACR response category.}
+
+\item{acr2das28_lower}{Lower bound for change in DAS28 by ACR response category.}
+
+\item{acr2das28_upper}{Upper bound for change in DAS28 by ACR response category.}
 
 \item{haq_lprog_age_mean}{Impact of age on annual linear haq progression rate.}
 

@@ -17,8 +17,12 @@ reference:
   - title: "Model inputs"
     contents:
       - acr2eular
-      - dur.eular
+      - acr2haq
+      - acr2sdai
+      - acr2cdai
+      - acr2das28
       - eular2haq
+      - dur.eular
       - haq.lprog.age
       - lifetable
       - mgmt.cost
@@ -34,10 +38,11 @@ reference:
     contents:
       - sample_pars
       - par_table
-      - sample_normal
+      - sample_uniforms
+      - sample_normals
       - sample_mvnorm
-      - sample_dirichlet
-      - sample_gamma
+      - sample_dirichlets
+      - sample_gammas
       - sample_survpars
       - sample_pars_utility_mixture
   - title: "Individual patient simulation"

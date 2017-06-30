@@ -46,6 +46,12 @@
 #' @param eular2haq_se Standard error of mean HAQ change by Eular response category.
 #' @param acr2haq_mean Mean HAQ change by ACR response category.
 #' @param acr2haq_se Standard error of mean HAQ change by ACR response category.
+#' @param acr2sdai_lower Lower bound for change in SDAI by ACR response category.
+#' @param acr2sdai_upper Upper bound for change in SDAI by ACR response category.
+#' @param acr2cdai_lower Lower bound for change in CDAI by ACR response category.
+#' @param acr2cdai_upper Upper bound for change in CDAI by ACR response category.
+#' @param acr2das28_lower Lower bound for change in DAS28 by ACR response category.
+#' @param acr2das28_upper Upper bound for change in DAS28 by ACR response category.
 #' @param haq_lprog_age_mean Impact of age on annual linear haq progression rate.
 #' @param haq_lprog_age_se Standard error of impact of age on annual linear haq progression rate.
 #' @param hosp_days_mean Vector denoting average number of hospital days for HAQ < 0.5,
@@ -177,6 +183,12 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
                        eular2haq_se = eular2haq$se,
                        acr2haq_mean = acr2haq$mean,
                        acr2haq_se = acr2haq$se,
+                       acr2sdai_lower = acr2sdai$inception$lower,
+                       acr2sdai_upper = acr2sdai$inception$upper,
+                       acr2cdai_lower = acr2cdai$inception$lower,
+                       acr2cdai_upper = acr2cdai$inception$upper,
+                       acr2das28_lower = acr2das28$inception$lower,
+                       acr2das28_upper = acr2das28$inception$upper,
                        haq_lprog_age_mean = haq.lprog.age$est,
                        haq_lprog_age_se = haq.lprog.age$se,
                        hosp_days_mean = c(.26, .13, .51, .72, 1.86, 4.16),
@@ -190,14 +202,18 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
                        si_cost = 5873, si_cost_range = .2,
                        si_ul = .156, si_ul_range = .2,
                        therapy_names = therapy.pars$info$sname){
+  acr.cats <- c("ACR <20", "ACR 20-50", "ACR 50-70", "ACR 70+")
   sim <- list()
   sim$n <- n
   sim$rebound <- runif(n, rebound_lower, rebound_upper)
   sim$lt <- lt_data(ltmale, ltfemale)
   sim$treat.cost <- calc_treat_cost(treat_cost)
-  sim$acr2eular <- sample_dirichlet(n, acr2eular_mat)
+  sim$acr2eular <- sample_dirichlets(n, acr2eular_mat)
+  sim$acr2sdai <- sample_uniforms(n, acr2sdai_lower, acr2sdai_upper, acr.cats)
+  sim$acr2cdai <- sample_uniforms(n, acr2cdai_lower, acr2cdai_upper, acr.cats)
+  sim$acr2das28 <- sample_uniforms(n, acr2das28_lower, acr2das28_upper, acr.cats)
   sim$logor.mort <- sample_mvnorm(n, mort_logor, mort_logor_se^2)
-  sim$mort.loghr.haqdif <- sample_normal(n, mort_loghr_haqdif, mort_loghr_se_haqdif,
+  sim$mort.loghr.haqdif <- sample_normals(n, mort_loghr_haqdif, mort_loghr_se_haqdif,
                                          col_names = paste0("month_", c("less6", "6to12", "12to24", "24to36", "36to48")))
   sim$dur.eular.mod <- sample_survpars(n, dur_eular_mod)
   sim$dur.eular.good <- sample_survpars(n, dur_eular_good)
@@ -212,23 +228,22 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
   }
   sim$acr2 <- acr_response_oprobit(n, nma1_mean, nma1_sd, basedif_mean,
                                    basedif_sd, zdif_mean, zdif_sd)
-  sim$eular2haq <- sample_normal(n, eular2haq_mean, eular2haq_se,
+  sim$eular2haq <- sample_normals(n, eular2haq_mean, eular2haq_se,
                                  col_names = c("no_response", "moderate_response", "good_response"))
-  sim$acr2haq <- sample_normal(n, acr2haq_mean, acr2haq_se,
-                                 col_names = c("ACR <20", "ACR 20-50", "ACR 50-70", "ACR 70+"))
-  sim$haq.lprog.therapy <- sample_normal(n, haq_lprog_therapy_mean,
+  sim$acr2haq <- sample_normals(n, acr2haq_mean, acr2haq_se, acr.cats)
+  sim$haq.lprog.therapy <- sample_normals(n, haq_lprog_therapy_mean,
                                                   haq_lprog_therapy_se)
-  sim$haq.lprog.age <- sample_normal(n, haq_lprog_age_mean, haq_lprog_age_se,
+  sim$haq.lprog.age <- sample_normals(n, haq_lprog_age_mean, haq_lprog_age_se,
                                      col_names =  c("age_less40", "age40to64", "age_65plus"))
   sim$mixture.utility <- sample_pars_utility_mixture(n)
-  sim$wailoo.utility <- sample_normal(n, util.wailoo.pars$coef, util.wailoo.pars$se,
+  sim$wailoo.utility <- sample_normals(n, util.wailoo.pars$coef, util.wailoo.pars$se,
                                       col_names = names(util.wailoo.pars$coef))
   hosp.cost.names <- c("haq_less0.5", "haq0.5to1", "haq1to1.5", "haq1.5to2", "haq2to2.5", "haq2.5plus")
-  sim$hosp.cost <- list(hosp.days = sample_gamma(n, hosp_days_mean, hosp_days_se,
+  sim$hosp.cost <- list(hosp.days = sample_gammas(n, hosp_days_mean, hosp_days_se,
                                                  col_names = hosp.cost.names),
-                     cost.pday = sample_gamma(n, mean = hosp_cost_mean, se = hosp_cost_se,
+                     cost.pday = sample_gammas(n, mean = hosp_cost_mean, se = hosp_cost_se,
                                               col_names = hosp.cost.names))
-  sim$mgmt.cost <- sample_gamma(n, mgmt_cost_mean, mgmt_cost_se,
+  sim$mgmt.cost <- sample_gammas(n, mgmt_cost_mean, mgmt_cost_se,
                                 col_names = c("chest_xray", "xray_visit", "outpatient_followup", "tuberculin_test"))
   sim$prod.loss <- rnorm(n, pl_mean, pl_se)
   sim$si.surv <- sample_survpars(n, si_surv)
@@ -318,7 +333,7 @@ calc_treat_cost <- function(x){
 #' @return An array of matrices representing a sample from the dirichlet distribution for each row.
 #' 
 #' @export
-sample_dirichlet <- function(n, mat){
+sample_dirichlets <- function(n, mat){
     samp <- hesim::rdirichlet_mat(n, mat)
     dimnames(samp) <- list(rownames(mat),
                         colnames(mat),
@@ -343,7 +358,7 @@ sample_mvnorm <- function(n, mu, Sigma){
   return(sim)
 }
 
-#' Sample from normal distributions. 
+#' Sample from normal distributions 
 #'
 #' Sample from multiple independent normal distributions. Produces a unique sample of size \code{n} using each element in 
 #' \code{mean} and \code{sd}. Equivalent to sampling from a multivariate normal distribution with no covariance. Each sample using \code{rnorm}. 
@@ -356,12 +371,33 @@ sample_mvnorm <- function(n, mu, Sigma){
 #' @return Matrix with each column a sample from a normal distribution. 
 #' 
 #' @export
-sample_normal <- function(n, mean, sd, col_names = NULL){
+sample_normals <- function(n, mean, sd, col_names = NULL){
   s <- matrix(rnorm(n * length(mean), mean, sd),
               nrow = n, ncol = length(mean), byrow = T)
   colnames(s) <- col_names
   return(s)
 }
+
+#' Sample from uniform distributions 
+#'
+#' Sample from multiple independent uniform distributions. Produces a unique sample of size \code{n} using each element in 
+#' \code{lower} and \code{upper}. Each sample using \code{runif}. 
+#' 
+#' @param n Number of observations.
+#' @param lower Vector of lower bounds.
+#' @param upper Vector of upper bounds. 
+#' @param col_names Column names to returned matrix.
+#' 
+#' @return Matrix with each column a sample from a uniform distribution. 
+#' 
+#' @export
+sample_uniforms <- function(n, lower, upper, col_names = NULL){
+  s <- matrix(runif(n * length(lower), lower, upper),
+              nrow = n, ncol = length(lower), byrow = T)
+  colnames(s) <- col_names
+  return(s)
+}
+
 
 #' Sample ACR response from ordered probit NMA
 #'
@@ -546,7 +582,7 @@ mom_beta <- function(mean, sd, quant = NULL){
 #' @return Matrix with each column a sample from a gamma distribution. 
 #' 
 #' @export
-sample_gamma <- function(n, mean, se, col_names = NULL){
+sample_gammas <- function(n, mean, se, col_names = NULL){
   which.fixed <- which(se == 0); which.gamma <- which(se > 0)
   gamma.pars <- mom_gamma(mean[which.gamma], se[which.gamma])
   samp.gamma <- rgamma(n * length(which.gamma), 

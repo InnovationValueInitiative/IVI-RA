@@ -4,8 +4,9 @@
 \name{acr2haq}
 \alias{acr2haq}
 \title{HAQ change by 6-month ACR Response}
-\format{A data.table with rows as ACR response category. First column is mean and second 
-column is standard deviation.}
+\format{A data.table with three columns. First column is ACR response category,
+second column is mean change in HAQ at 6 months, and  third column is the standard error
+of the mean change in HAQ.}
 \source{
 Carlson, Josh J., et al. "Economic evaluation of tocilizumab monotherapy compared to adalimumab monotherapy 
 in the treatment of severe active rheumatoid arthritis." Value in Health 18.2 (2015): 173-179.
@@ -14,6 +15,7 @@ in the treatment of severe active rheumatoid arthritis." Value in Health 18.2 (2
 acr2haq
 }
 \description{
-Mean and standard deviation of HAQ change by 6-month ACR response category.
+Mean and standard deviation of HAQ change by 6-month ACR response category 
+(ACR < 20, ACR20, ACR50, ACR70).
 }
 \keyword{datasets}

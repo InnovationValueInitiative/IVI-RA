@@ -129,6 +129,13 @@
   <span class='kw'>haq_lprog_therapy_mean</span> <span class='kw'>=</span> <span class='no'>therapy.pars</span>$<span class='no'>haq.lprog</span>$<span class='no'>est</span>,
   <span class='kw'>haq_lprog_therapy_se</span> <span class='kw'>=</span> <span class='no'>therapy.pars</span>$<span class='no'>haq.lprog</span>$<span class='no'>se</span>,
   <span class='kw'>eular2haq_mean</span> <span class='kw'>=</span> <span class='no'>eular2haq</span>$<span class='no'>mean</span>, <span class='kw'>eular2haq_se</span> <span class='kw'>=</span> <span class='no'>eular2haq</span>$<span class='no'>se</span>,
+  <span class='kw'>acr2haq_mean</span> <span class='kw'>=</span> <span class='no'>acr2haq</span>$<span class='no'>mean</span>, <span class='kw'>acr2haq_se</span> <span class='kw'>=</span> <span class='no'>acr2haq</span>$<span class='no'>se</span>,
+  <span class='kw'>acr2sdai_lower</span> <span class='kw'>=</span> <span class='no'>acr2sdai</span>$<span class='no'>inception</span>$<span class='no'>lower</span>,
+  <span class='kw'>acr2sdai_upper</span> <span class='kw'>=</span> <span class='no'>acr2sdai</span>$<span class='no'>inception</span>$<span class='no'>upper</span>,
+  <span class='kw'>acr2cdai_lower</span> <span class='kw'>=</span> <span class='no'>acr2cdai</span>$<span class='no'>inception</span>$<span class='no'>lower</span>,
+  <span class='kw'>acr2cdai_upper</span> <span class='kw'>=</span> <span class='no'>acr2cdai</span>$<span class='no'>inception</span>$<span class='no'>upper</span>,
+  <span class='kw'>acr2das28_lower</span> <span class='kw'>=</span> <span class='no'>acr2das28</span>$<span class='no'>inception</span>$<span class='no'>lower</span>,
+  <span class='kw'>acr2das28_upper</span> <span class='kw'>=</span> <span class='no'>acr2das28</span>$<span class='no'>inception</span>$<span class='no'>upper</span>,
   <span class='kw'>haq_lprog_age_mean</span> <span class='kw'>=</span> <span class='no'>haq.lprog.age</span>$<span class='no'>est</span>,
   <span class='kw'>haq_lprog_age_se</span> <span class='kw'>=</span> <span class='no'>haq.lprog.age</span>$<span class='no'>se</span>, <span class='kw'>hosp_days_mean</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>0.26</span>, <span class='fl'>0.13</span>, <span class='fl'>0.51</span>,
   <span class='fl'>0.72</span>, <span class='fl'>1.86</span>, <span class='fl'>4.16</span>), <span class='kw'>hosp_days_se</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>0.5</span>, <span class='fl'>0.5</span>, <span class='fl'>0.5</span>, <span class='fl'>0.5</span>, <span class='fl'>0.5</span>, <span class='fl'>0.5</span>),
@@ -259,6 +266,38 @@ experienced patients are using during 1st and subsequent lines.</p></td>
       <td><p>Standard error of mean HAQ change by Eular response category.</p></td>
     </tr>
     <tr>
+      <th>acr2haq_mean</th>
+      <td><p>Mean HAQ change by ACR response category.</p></td>
+    </tr>
+    <tr>
+      <th>acr2haq_se</th>
+      <td><p>Standard error of mean HAQ change by ACR response category.</p></td>
+    </tr>
+    <tr>
+      <th>acr2sdai_lower</th>
+      <td><p>Lower bound for change in SDAI by ACR response category.</p></td>
+    </tr>
+    <tr>
+      <th>acr2sdai_upper</th>
+      <td><p>Upper bound for change in SDAI by ACR response category.</p></td>
+    </tr>
+    <tr>
+      <th>acr2cdai_lower</th>
+      <td><p>Lower bound for change in CDAI by ACR response category.</p></td>
+    </tr>
+    <tr>
+      <th>acr2cdai_upper</th>
+      <td><p>Upper bound for change in CDAI by ACR response category.</p></td>
+    </tr>
+    <tr>
+      <th>acr2das28_lower</th>
+      <td><p>Lower bound for change in DAS28 by ACR response category.</p></td>
+    </tr>
+    <tr>
+      <th>acr2das28_upper</th>
+      <td><p>Upper bound for change in DAS28 by ACR response category.</p></td>
+    </tr>
+    <tr>
       <th>haq_lprog_age_mean</th>
       <td><p>Impact of age on annual linear haq progression rate.</p></td>
     </tr>
@@ -350,9 +389,11 @@ for general management of RA.</p></td>
   ACR 50-70, and ACR 70+) and the four columns in <code>po</code> are overlapping categories 
   (ACR &lt; 20, ACR 20, ACR 50, and ACR 70</p></dd>.
   <dt>acr2</dt><dd><p>Subject to change.</p></dd>
-   <dt>eular2haq</dt><dd><p>A matrix of sampled HAQ changes by Eular response category. The matrix has
+  <dt>eular2haq</dt><dd><p>A matrix of sampled HAQ changes by Eular response category. The matrix has
    three columns for no response, moderate response, and good response.</p></dd>
-   <dt>haq.lprog.therapy</dt><dd><p>A matrix of sampled yearly linear change in HAQ by therapy. The matrix has one column
+   <dt>acr2haq</dt><dd><p>A matrix of sampled HAQ changes by ACR response category. The matrix has
+   four columns for ACR &lt; 20, ACR 20-50, ACR 50-70, and ACR 70+.</p></dd>
+  <dt>haq.lprog.therapy</dt><dd><p>A matrix of sampled yearly linear change in HAQ by therapy. The matrix has one column
    for each therapy in <code>therapy.pars</code>.</p></dd>
    <dt>haq.lprog.age</dt><dd><p>A matrix of sampled yearly linear change in HAQ by age. The matrix
    has three columns for age &lt; 40, age 40-64, and age 65+.</p></dd>

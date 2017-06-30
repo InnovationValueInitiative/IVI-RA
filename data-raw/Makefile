@@ -25,17 +25,13 @@ TD_TARGET := $(DATA)/duration-eular-pars.rda
 $(TD_TARGET): $(TD_DEPS)
 	Rscript duration-eular.R
 		
-# ACR to EULAR conversion
-$(DATA)/acr2eular.rda: acr2eular.R
-	Rscript acr2eular.R
+# Mappings
+$(DATA)/acr2haq.rda $(DATA)/acr2eular.rda: mappings.R
+	Rscript mappings.R
 	
 # HAQ change by EULAR response
 $(DATA)/eular2haq.rda: eular2haq.R
 	Rscript eular2haq.R
-	
-# HAQ change by ACR response
-$(DATA)/acr2haq.rda: acr2haq.R
-	Rscript acr2haq.R
 	
 # HAQ progression rates by age
 $(DATA)/haq-lprog-age.rda: haq-lprog-age.R

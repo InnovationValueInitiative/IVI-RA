@@ -126,12 +126,9 @@
 #'
 #' Convert ACR response (ACR < 20, ACR20, ACR50, ACR70) to Eular response (none, moderate, good).
 #'
-#' @format A list with two matrices. Each row in each matrix shows the probability that a 
-#' particualar responder in an ACR category will have a given Eular response. Probabilities in
-#' the first matrix ("observed") are based on observed relationships in the VARA database. In
-#' the second matrix ("strict") the probabilities assume that patients with ACR < 20 have no
-#' Eular response, that patients with ACR20 and ACR50 have moderate Eular response, and that 
-#' patients with ACR70 have a good Eular response. 
+#' @format A matrix where each row shows the probability that a particualar responder in an 
+#' ACR category will have a given Eular response. Probabilities are based on observed 
+#' relationships in the VARA database.
 
 #' @source Stevenson, Matt, et al. "Adalimumab, etanercept, infliximab, certolizumab pegol, 
 #' golimumab, tocilizumab and abatacept for the treatment of rheumatoid arthritis not previously
@@ -140,9 +137,78 @@
 #' Health Technology Assessment 20.35 (2016): 1-610.
 "acr2eular"
 
+#' HAQ change by 6-month ACR Response
+#'
+#' Mean and standard deviation of HAQ change by 6-month ACR response category 
+#' (ACR < 20, ACR20, ACR50, ACR70).
+#'
+#' @format A data.table with three columns. First column is ACR response category,
+#' second column is mean change in HAQ at 6 months, and  third column is the standard error
+#' of the mean change in HAQ.  
+#' @source Carlson, Josh J., et al. "Economic evaluation of tocilizumab monotherapy compared to adalimumab monotherapy 
+#' in the treatment of severe active rheumatoid arthritis." Value in Health 18.2 (2015): 173-179.
+"acr2haq"
+
+#' Change in SDAI by 6-month ACR Response
+#'
+#' Mean of change in SDAI by 6-month ACR response category (ACR < 20, ACR20, ACR50, ACR70).
+#'
+#' @format A list of two data.tables each with four columns. Column 1 is ACR response category,
+#'  column 2 is the point estimate for the mean change in SDAI at 6 months, and columns 3/4 are 
+#'  lower/upper bounds on the mean change in SDAI. Current default is to set bounds to +/-20% of the
+#'   mean. The first list corresponds to evidence from the leflunomide dataset and the second list 
+#'   to evidence from an inception cohort. 
+#' @source Aletaha, Daniel, and Josef S. Smolen. "The simplified disease activity index (SDAI) and 
+#' clinical disease activity index (CDAI) to monitor patients in standard clinical care." 
+#' Best practice & research Clinical rheumatology 21.4 (2007): 663-675.
+#' 
+#' Smolen, J. S., et al. "A simplified disease activity index for rheumatoid arthritis for use in 
+#' clinical practice." Rheumatology 42.2 (2003): 244-257.
+#' 
+#' Aletaha, Daniel, et al. "Acute phase reactants add little to composite disease activity indices
+#' for rheumatoid arthritis: validation of a clinical activity score." Arthritis research & 
+#' therapy 7.4 (2005): R796.
+"acr2sdai"
+
+#' Change in CDAI by 6-month ACR Response
+#'
+#' Mean of change in CDAI by 6-month ACR response category (ACR < 20, ACR20, ACR50, ACR70).
+#'
+#' @format A list of one data.tables with four columns. Column 1 is ACR response category,
+#'  column 2 is the point estimate for the mean change in CDAI at 6 months, and columns 3/4 are 
+#'  lower/upper bounds on the mean change in CDAI. Current default is to set bounds to +/-20% of
+#'  the mean. Format is a list to facilitate inclusion of evidence from additional data sources 
+#'  with different patient populations.
+#' @source Aletaha, Daniel, and Josef S. Smolen. "The simplified disease activity index (SDAI) and 
+#' clinical disease activity index (CDAI) to monitor patients in standard clinical care." 
+#' Best practice & research Clinical rheumatology 21.4 (2007): 663-675.
+#' 
+#' Aletaha, Daniel, et al. "Acute phase reactants add little to composite disease activity indices
+#' for rheumatoid arthritis: validation of a clinical activity score." Arthritis research & 
+#' therapy 7.4 (2005): R796.
+"acr2cdai"
+
+#' Change in DAS28 by 6-month ACR Response
+#'
+#' Mean of change in DAS28 by 6-month ACR response category (ACR < 20, ACR20, ACR50, ACR70).
+#'
+#' @format A list of one data.table with four columns. Column 1 is ACR response category,
+#'  column 2 is the point estimate for the mean change in DAS28 at 6 months, and columns 3/4 are 
+#'  lower/upper bounds on the mean change in DAS28. Format is a list to facilitate inclusion of
+#'   evidence from additional data sources with different patient populations.  
+#' @source Aletaha, Daniel, and Josef S. Smolen. "The simplified disease activity index (SDAI) and 
+#' clinical disease activity index (CDAI) to monitor patients in standard clinical care." 
+#' Best practice & research Clinical rheumatology 21.4 (2007): 663-675.
+#' 
+#' Aletaha, Daniel, et al. "Acute phase reactants add little to composite disease activity indices
+#' for rheumatoid arthritis: validation of a clinical activity score." Arthritis research & 
+#' therapy 7.4 (2005): R796.
+"acr2das28"
+
 #' HAQ change by 6-month Eular Response
 #'
-#' Mean and standard deviation of HAQ change by 6-month Eular response category.
+#' Mean and standard deviation of HAQ change by 6-month Eular response category 
+#' (none, moderate, good).
 #'
 #' @format A matrix with rows as Eular response categories. First column is mean and second 
 #' column is standard deviation.
@@ -153,15 +219,6 @@
 #' Health Technology Assessment 20.35 (2016): 1-610.
 "eular2haq"
 
-#' HAQ change by 6-month ACR Response
-#'
-#' Mean and standard deviation of HAQ change by 6-month ACR response category.
-#'
-#' @format A data.table with rows as ACR response category. First column is mean and second 
-#' column is standard deviation.
-#' @source Carlson, Josh J., et al. "Economic evaluation of tocilizumab monotherapy compared to adalimumab monotherapy 
-#' in the treatment of severe active rheumatoid arthritis." Value in Health 18.2 (2015): 173-179.
-"acr2haq"
 
 #' Linear HAQ progression rate differences by age
 #'

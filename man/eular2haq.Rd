@@ -17,6 +17,7 @@ Health Technology Assessment 20.35 (2016): 1-610.
 eular2haq
 }
 \description{
-Mean and standard deviation of HAQ change by 6-month Eular response category.
+Mean and standard deviation of HAQ change by 6-month Eular response category 
+(none, moderate, good).
 }
 \keyword{datasets}
