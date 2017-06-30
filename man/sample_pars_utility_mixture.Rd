@@ -2,7 +2,7 @@
 % Please edit documentation in R/sample-pars.R
 \name{sample_pars_utility_mixture}
 \alias{sample_pars_utility_mixture}
-\title{Sample parameters for mixture model utility mapping.}
+\title{Sample parameters for mixture model utility mapping}
 \usage{
 sample_pars_utility_mixture(nsims)
 }

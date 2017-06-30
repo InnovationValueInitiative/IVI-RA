@@ -330,7 +330,7 @@ check_sim_utility_mixture <- function(simhaq, male, pars){
   }
 }
 
-#' Simulate utility from simulated HAQ score using Wailoo (2006) model.
+#' Simulate utility from simulated HAQ score using Wailoo (2006) model
 #'
 #' Simulate utility from HAQ score simulated using \code{sim_haq} using model from
 #' Wailoo (2006).

@@ -15,14 +15,19 @@
 #' @param ltmale Identical to \code{ltfemale} but for men.
 #' @param acr2eular_mat A two-way frequency matrix with columns denoting EULAR response
 #'  (none, moderate, good) and rows denoting ACR response  (<20, 20-50, 50-70, 70+).
+#' @param switch_logor Vector of log odds ratios describing the probability of switching treatment
+#' at 6 monhts. Should contain three elements corresponding to (in order) an intercept,
+#'  moderate disease activity, and high disease activity. 
+#' @param switch_logor_se Standard error of the log odds ratio or probability of switching
+#'treatment at 6 months
 #' @param treat_cost Treatment cost matrix in format of therapy.pars$cost.
 #' @param mort_logor Log odds ratio of impact of baseline HAQ on probability of mortality.
 #' @param mort_logor_se Standard error of log odds ratio of impact of baseline HAQ on probability of mortality.
 #' @param mort_loghr_haqdif Log hazard ratio of impact of change in HAQ from baseline on mortality rate. A vector with
 #' each element denoting (in order) hazard ratio for months 0-6, >6 - 12, >12 - 24, >24 -36, >36.
 #' @param mort_loghr_se_haqdif Standard error of log hazard ratio of impact of change in HAQ from baseline on mortality rate.
-#' @param dur_eular_mod A list containing treatment duration parameters for patientes with a moderate EULAR response. See 'Treatment duration'.
-#' @param dur_eular_good A list containing treatment duration parameters for patientes with a good EULAR response. See 'Treatment duration'.
+#' @param ttd_eular_mod A list containing treatment duration parameters for patientes with a moderate EULAR response. See 'Treatment duration'.
+#' @param ttd_eular_good A list containing treatment duration parameters for patientes with a good EULAR response. See 'Treatment duration'.
 #' @param nma1_mean Posterior means for NMA parameters on probit scale (1st line). 
 #' NMA estimtes impact of therapy on ACR response.
 #' @param nma1_sd Posterior sd for NMA paramters on probit scale (1st line). 
@@ -120,9 +125,10 @@
 #'    \item{si.ul}{Vector of the sampled values of the annualized utility loss from a serious infection.}
 #' }
 #'
-#' @section Treatment duration:
-#' Treatment duration parameters should be contained in a list of lists. The top-level list identifies the name of the probability distribution;
-#' the possible distributions are the exponential (\code{exponential}), Weibull (\code{weibull}), Gompertz (\code{gompertz}),
+#' @section Time to treatment discontinuation:
+#' Time to treatment discontinuation parameters should be contained in a list of lists. The top-level
+#'  list identifies the name of the probability distribution; the possible distributions are the 
+#'  exponential (\code{exponential}), Weibull (\code{weibull}), Gompertz (\code{gompertz}),
 #' gamma (\code{gamma}), log-logistic (\code{llogis}), lognormal (\code{lnorm}), and generalized gamma (\code{gengamma}). Each distribution 
 #' should also contain a list with five elements:
 #' \describe{
@@ -166,10 +172,12 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
                        ltfemale = lifetable.female, ltmale = lifetable.male,
                        acr2eular_mat = acr2eular,
                        treat_cost = therapy.pars$cost,
+                       switch_logor = treat.switch$logor,
+                       switch_logor_se = treat.switch$logor_se,
                        mort_logor = mort.or$logor, mort_logor_se = mort.or$logor_se,
                        mort_loghr_haqdif = mort.hr.haqdif$loghr,
                        mort_loghr_se_haqdif = mort.hr.haqdif$loghr_se,
-                       dur_eular_mod = ttd.eular.mod.adj, dur_eular_good = ttd.eular.good.adj,
+                       ttd_eular_mod = ttd.eular.mod.adj, ttd_eular_good = ttd.eular.good.adj,
                        nma1_mean = therapy.pars$icon_acr_nma_naive$mean,
                        nma1_sd = sqrt(diag(therapy.pars$icon_acr_nma_naive$vcov)),
                        nma2_mean = NULL, nma2_sd = NULL,
@@ -208,6 +216,7 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
   sim$rebound <- runif(n, rebound_lower, rebound_upper)
   sim$lt <- lt_data(ltmale, ltfemale)
   sim$treat.cost <- calc_treat_cost(treat_cost)
+  sim$switch.logor <- sample_normals(n, switch_logor, switch_logor_se)
   sim$acr2eular <- sample_dirichlets(n, acr2eular_mat)
   sim$acr2sdai <- sample_uniforms(n, acr2sdai_lower, acr2sdai_upper, acr.cats)
   sim$acr2cdai <- sample_uniforms(n, acr2cdai_lower, acr2cdai_upper, acr.cats)
@@ -215,8 +224,8 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
   sim$logor.mort <- sample_mvnorm(n, mort_logor, mort_logor_se^2)
   sim$mort.loghr.haqdif <- sample_normals(n, mort_loghr_haqdif, mort_loghr_se_haqdif,
                                          col_names = paste0("month_", c("less6", "6to12", "12to24", "24to36", "36to48")))
-  sim$ttd.eular.mod <- sample_survpars(n, dur_eular_mod)
-  sim$ttd.eular.good <- sample_survpars(n, dur_eular_good)
+  sim$ttd.eular.mod <- sample_survpars(n, ttd_eular_mod)
+  sim$ttd.eular.good <- sample_survpars(n, ttd_eular_good)
   treat_hist <- match.arg(treat_hist)
   if (treat_hist == "naive"){
     sim$acr1 <- acr_response_oprobit(n, nma1_mean, nma1_sd, 
@@ -466,13 +475,13 @@ acr_response_oprobit <- function(nsims, m, sd, basedif_mean, basedif_sd,
   return(list(p = p, po = po, pars = sim))
 }
 
-#' Sample treatment duration parameters
+#' Sample survival parameters
 #'
-#' Generate a random sample of parameters for each probability distribution used to model treatment duration. Parameters are
+#' Generate a random sample of parameters for each survival distribution. Parameters are
 #' sampled using a multivariate normal distribution.
 #' 
 #' @param nsims Size of the posterior sample.
-#' @param x A list of treatment duration parameters. See 'Treatment duration' in \link{sample_pars}.
+#' @param x A list of survival parameters. For example, see 'Treatment duration' in \link{sample_pars}.
 #' 
 #' @return A list of matrices containing random draws of the parameters of the survival distribution. One matrix
 #' for the location parameter and each of the ancillary parameters. 
@@ -491,7 +500,7 @@ sample_survpars <- function(nsims, x){
   return(l)
 }
 
-#' Sample parameters for mixture model utility mapping.
+#' Sample parameters for mixture model utility mapping
 #'
 #' Sample parameters for mixture model utility mapping. 
 #' 
@@ -672,6 +681,13 @@ par_table <- function(x, pat){
                                       "ACR 70+ to EULAR good response"),
                         Source = "Stevenson2016")
   acr2eular.dt <- cbind(acr2eular.dt, apply_summary(acr2eular.mat))
+  
+  ### treatment switching at 6 months
+  switch <- data.table(Group = "Logistic regression for treatment switch at 6 months",
+                    Distribution = "Normal",
+                    Parameter = c("Intercept", "Moderate disease activity", "High disease activity"),
+                    Source = "Zhang2011")
+  switch <- cbind(switch, apply_summary(x$switch.logor))
   
   ### treatment duration by eular response
   ttd.em.summary <- survival_summary(x$ttd.eular.mod)
@@ -909,7 +925,7 @@ par_table <- function(x, pat){
   util.wailoo <- cbind(util.wailoo, apply_summary(x$wailoo.utility)) 
                     
   # table 
-  table <- rbind(rebound, acr2eular.dt, ttd.em, ttd.eg, 
+  table <- rbind(rebound, acr2eular.dt, switch, ttd.em, ttd.eg, 
                  acr.naive, acr.exp, hce, hpt, hpa, lo.mort, lhr.mort, lt,
                  tc, hdays, hcost, mgmt, prod.loss, si.surv, si.cost, si.ul, util, util.wailoo)
   table <- table[, .(Group, Parameter, Mean, SD, Lower, Upper, Distribution, Source)]

@@ -7,10 +7,12 @@
 sample_pars(n = 100, rebound_lower = 0.7, rebound_upper = 1,
   ltfemale = lifetable.female, ltmale = lifetable.male,
   acr2eular_mat = acr2eular, treat_cost = therapy.pars$cost,
-  mort_logor = mort.or$logor, mort_logor_se = mort.or$logor_se,
+  switch_logor = treat.switch$logor,
+  switch_logor_se = treat.switch$logor_se, mort_logor = mort.or$logor,
+  mort_logor_se = mort.or$logor_se,
   mort_loghr_haqdif = mort.hr.haqdif$loghr,
   mort_loghr_se_haqdif = mort.hr.haqdif$loghr_se,
-  dur_eular_mod = ttd.eular.mod.adj, dur_eular_good = ttd.eular.good.adj,
+  ttd_eular_mod = ttd.eular.mod.adj, ttd_eular_good = ttd.eular.good.adj,
   nma1_mean = therapy.pars$icon_acr_nma_naive$mean,
   nma1_sd = sqrt(diag(therapy.pars$icon_acr_nma_naive$vcov)),
   nma2_mean = NULL, nma2_sd = NULL, basedif_mean = 0.25,
@@ -57,6 +59,13 @@ the probability of death at a given age.}
 
 \item{treat_cost}{Treatment cost matrix in format of therapy.pars$cost.}
 
+\item{switch_logor}{Vector of log odds ratios describing the probability of switching treatment
+at 6 monhts. Should contain three elements corresponding to (in order) an intercept,
+ moderate disease activity, and high disease activity.}
+
+\item{switch_logor_se}{Standard error of the log odds ratio or probability of switching
+treatment at 6 months}
+
 \item{mort_logor}{Log odds ratio of impact of baseline HAQ on probability of mortality.}
 
 \item{mort_logor_se}{Standard error of log odds ratio of impact of baseline HAQ on probability of mortality.}
@@ -66,9 +75,9 @@ each element denoting (in order) hazard ratio for months 0-6, >6 - 12, >12 - 24,
 
 \item{mort_loghr_se_haqdif}{Standard error of log hazard ratio of impact of change in HAQ from baseline on mortality rate.}
 
-\item{dur_eular_mod}{A list containing treatment duration parameters for patientes with a moderate EULAR response. See 'Treatment duration'.}
+\item{ttd_eular_mod}{A list containing treatment duration parameters for patientes with a moderate EULAR response. See 'Treatment duration'.}
 
-\item{dur_eular_good}{A list containing treatment duration parameters for patientes with a good EULAR response. See 'Treatment duration'.}
+\item{ttd_eular_good}{A list containing treatment duration parameters for patientes with a good EULAR response. See 'Treatment duration'.}
 
 \item{nma1_mean}{Posterior means for NMA parameters on probit scale (1st line). 
 NMA estimtes impact of therapy on ACR response.}
@@ -206,10 +215,11 @@ List containing samples for the following model parameters:
 \description{
 Randomly draw parameters from their (joint) probability distribution.
 }
-\section{Treatment duration}{
+\section{Time to treatment discontinuation}{
 
-Treatment duration parameters should be contained in a list of lists. The top-level list identifies the name of the probability distribution;
-the possible distributions are the exponential (\code{exponential}), Weibull (\code{weibull}), Gompertz (\code{gompertz}),
+Time to treatment discontinuation parameters should be contained in a list of lists. The top-level
+ list identifies the name of the probability distribution; the possible distributions are the 
+ exponential (\code{exponential}), Weibull (\code{weibull}), Gompertz (\code{gompertz}),
 gamma (\code{gamma}), log-logistic (\code{llogis}), lognormal (\code{lnorm}), and generalized gamma (\code{gengamma}). Each distribution 
 should also contain a list with five elements:
 \describe{

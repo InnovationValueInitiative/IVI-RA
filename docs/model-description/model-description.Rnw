@@ -100,6 +100,7 @@
 \newcommand\SD{{\rm SD}}
 \newcommand\bone{\mathbf{1}}
 \newcommand\bzero{\mathbf{0}}
+\newcommand\logit{{\rm logit}}
 
 % file paths and definitions
 \makeatletter
@@ -226,7 +227,7 @@ Notes: Rows denote the model structure used to relate treatment to HAQ and colum
 
 In the maintenance phase, two model structures can be used to simulate the long-term progression of HAQ. First, as is common in cost-effectiveness analyses of therapies for RA, HAQ is assumed to progress at a constant linear rate over time \citep[see][]{tosh2011sheffield, wailoo2008biologic}. However, since emerging evidence suggests that the rate of HAQ progression is non-linear \citep{gibson2016haq}, our second scenario simulates HAQ progression using a non-linear mixture model \citep{norton2014health} with 4 distinct HAQ trajectories and a rate of HAQ progression that decreases over time within each trajectory. Upon discontinuation of treatment, the HAQ score rebounds by a proportion of the improvement experienced at the end of the initial 6-month period with that treatment.
 
-The duration of the maintenance phase (i.e., time to discontinuation of maintenance treatment) is simulated using parametric time-to-event distributions. When structure \textbf{S6} is used, the time-to-event distributions are stratified by EULAR response category. Patients with good response at the end of the initial treatment phase stay on treatment longer, on average, than patients with a moderate response. In contrast, when \textbf{S1} is used, time to treatment discontinuation is simulated using a single time-to-event curve because we have been unable to obtain curves stratified by ACR response categories. Likewise, when \textbf{S2-S5} we use a single time-to-event curve because we have not obtained curves stratified by disease activity level. In each case, time to discontinuation can be simulated using one of seven possible distributions (exponential, Weibull, Gompertz, normal, gamma, log-logistic, generalized gamma).
+The duration of the maintenance phase (i.e., time to discontinuation of maintenance treatment) is simulated using parametric time-to-event distributions. When structure \textbf{S6} is used, the time-to-event distributions are stratified by EULAR response category. Patients with good response at the end of the initial treatment phase stay on treatment longer, on average, than patients with a moderate response. In contrast, when \textbf{S1} is used, time to treatment discontinuation is simulated using a single time-to-event curve because we have been unable to obtain curves stratified by ACR response categories. Likewise, when \textbf{S2-S5} we use a single time-to-event curve because we have not obtained curves stratified by disease activity level. In each case, time to discontinuation can be simulated using one of 7 possible distributions (exponential, Weibull, Gompertz, normal, gamma, log-logistic, generalized gamma).
 
 In line with \citet{stevenson2016adalimumab} the adverse events included in the model are limited to serious infections; we assume that only serious infections have a significant cost impact and increased risk over background rates to be meaningful to include \citep{ramiro2017safety}. While on a treatment, a patient experiences a serious infection if the individual's sampled time to the adverse event is shorter than the sampled time to treatment discontinuation.
 
@@ -368,7 +369,49 @@ database in a given category.
 \end{table}
 
 \subsubsection{Probability of switching treatment}
-The probability of stopping treatment depends on the model structure used. If \textbf{S1} or \textbf{S6} is used, then patients stop treatment when there is no ACR response or no EULAR response, and continue treatment otherwise. On the other hand, if switching depends on SDAI, CDAI, or DAS28, then we model the probability of treatment switching using the coefficients from the logistic regression equation reported in \citet{zhang2011thresholds} and analyzed using patients in the Consortium of Rheumatology Researchers of North America (CORRONA) database. The probability of switching is modeled as a function of disease activity at followup (CDAI < 10 (low), CDAI 10-22 (moderate), and CDAI $\geq$ 22 (high)). Since the model is estimated using  baseline probability of switching at 6 monts  
+<<treat-switch, echo = FALSE, include = FALSE>>=
+tab <- treat.switch[, .(variable, logor, logor_lower, logor_upper)]
+p.low <- 1/(1 + exp(-(tab[variable == "intercept", logor])))
+p.moderate <- 1/(1 + exp(-(tab[variable == "intercept", logor] +
+                             tab[variable == "da_moderate", logor])))
+tab <- tab[, .(logor, logor_lower, logor_upper)]
+tab <- rbind(tab[1],
+             data.table(logor = 0, logor_lower = 0, logor_upper = 0),
+             tab[2:3])
+tab <- cbind(c("Intercept", "CDAI <10 (low)", "CDAI 10-22 (moderate)", "CDAI $\\geq 22$"), 
+             formatC(as.matrix(tab), format = "f", digits = 3))
+tex <- print(xtable(tab), 
+      include.rownames = FALSE, include.colnames = FALSE,
+      only.contents = TRUE, sanitize.text.function = identity,
+      file = "tables/treat-switch.txt")
+@
+
+The probability of stopping treatment depends on the model structure used. If \textbf{S1} or \textbf{S6} is used, then patients stop treatment when there is no ACR response or no EULAR response, and continue treatment otherwise. If switching depends on SDAI, CDAI, or DAS28, then we model the probability of treatment switching and adjust it according to the level of disease activity. We estimated a baseline probability of treatment switching at 6 months using a Kaplan-Meier curve from an analysis from the Consortium of Rheumatology Researchers of North America (CORRONA) database (see \autoref{sec:ttd-corrona} for more details). The patient population tended to have moderate disease activity (mean CDAI = 16.0) and at 6 months, \Sexpr{p.moderate*100}\% of patients were found to discontinue treatment, which is consistent with ranges from the literature \citep{souto2015rate}. 
+
+Differences in discontinuation by disease activity level were estimated from the logistic regression reported in \citet{zhang2011thresholds} (which also analyzed  patients from  the CORRONA database). Disease activity was measured using the CDAI (<10 (low), 10-22 (moderate), $\geq$ 22 (high)). One issue is that the probability of discontinuation estimated from the CORRONA database (\Sexpr{p.moderate*100}\%) reflects outcomes for patients that, on average, have moderate disease activity, while \citet{zhang2011thresholds} use low disease activity as the reference group.  We therefore adjusted the probability of discontinuation downwards to reflect low diseasee activity using the inverse of the odds ratio for moderate disease activity from \citet{zhang2011thresholds} (see \autoref{app:odds-ratio-prob} for an explanation of how we adjust probabilities using odds ratios). This resulted in a probability of discontinuation of \Sexpr{formatC(p.low*100, format = "f", digits = 2)}\% at 6 months. 
+
+We used the probability of discontinuation for patients with low disease activity and the odds ratios from \citet{zhang2011thresholds} to form a logistic regression equation. The intercept was set so that the probability of discontinuation for patients with low disease activity was \Sexpr{formatC(p.low*100, format = "f", digits = 2)}\% and the odds ratios from \citet{zhang2011thresholds} were converted to log odds ratios. The coefficients are shown in \autoref{tbl:logistic-treat-switch}.
+
+\begin{table}[!ht]
+\begin{center}
+\begin{threeparttable}
+\caption{Coefficients from a logistic regression of the probability of switching treatment at 6 months} \label{tbl:logistic-treat-switch}
+\begin{tabularx}{\textwidth}{@{\extracolsep{\fill}}lccc}
+\hline
+\multicolumn{2}{l}{} & \multicolumn{2}{c}{95\% CI} \\
+\cmidrule{3-4} 
+\multicolumn{1}{c}{Variable} & \multicolumn{1}{c}{Estimate} & \multicolumn{1}{c}{Lower} & \multicolumn{1}{c}{Upper} \\
+\hline
+\ExpandableInput{tables/treat-switch.txt}
+\hline
+\end{tabularx}
+\scriptsize
+Notes: Coefficients are log odds ratios. CDAI <10 (low) is a reference category. 
+\end{threeparttable}
+\end{center}
+\end{table}
+
+In our simulation, we use the absolute level of disease activity at 6 months (not at baseline) to make predictions. We define low, moderate, and high disease activity when using DAS28 and SDAI as in \citet{anderson2012rheumatoid}. 
 
 \subsection{Change in HAQ at 6 months}
 As in \citet{icer2017tim}, ACR responses from the NMA were translated into HAQ scores based on evidence from the ADACTA trial reported in \citet{carlson2015economic} (\autoref{tbl:acr2haq}).
@@ -504,7 +547,7 @@ tab <- ir_table(sim.ir)
 tex <- print(xtable(tab),
       include.rownames = TRUE, include.colnames = FALSE,
       only.contents = TRUE, sanitize.text.function = identity,
-      file = "tables/initital_response.txt")
+      file = "tables/initial_response.txt")
 @
 
 \begin{landscape}
@@ -519,7 +562,7 @@ tex <- print(xtable(tab),
 \cmidrule(lr){2-5} \cmidrule(lr){6-8}
 \multicolumn{1}{l}{Treatment} & \multicolumn{1}{c}{$<$20} & \multicolumn{1}{c}{20-50} & \multicolumn{1}{c}{50-70}  & \multicolumn{1}{c}{70+}   & \multicolumn{1}{c}{None} & \multicolumn{1}{c}{Moderate}  & \multicolumn{1}{c}{Good}  & \multicolumn{1}{c}{decrease}\\
 \hline
-\ExpandableInput{tables/initital_response.txt}
+\ExpandableInput{tables/initial_response.txt}
 \hline
 \end{tabular}
 \tiny
@@ -590,12 +633,52 @@ The rate of progression in the non-linear case is based on a mixture model appro
 Based on the NDB longitudinal study, \citet{wolfe2010loss} estimated the overall annual HAQ progression rate among RA patients who had switched to biologic treatment at -0.001 (95CI: -0.004 to 0.002). In a separate analysis, also based on NDB data, \citet{michaud2011treatment} reported annual HAQ progression rates by treatment adjusted for baseline HAQ score, age, sex, education, smoking, BMI, comorbidity, and RA onset. The average HAQ rate among patients on a biologic was -0.001 as well, which instills confidence that the reported HAQ progression rates for different bDMARDs as reported by \citet{michaud2011treatment} can be directly compared with the overall annual HAQ progression rate of 0.031 reported by \citet{wolfe2010loss}. Accordingly, bDMARD specific HAQ progression rates by \citet{michaud2011treatment} are used in the model. For bDMARD treatments evaluated in the model for which no HAQ progression rate was reported by \citet{michaud2011treatment}, the overall biologic rate of -0.001 is used. 
 
 \subsection{Duration of maintenance treatment}\label{duration-of-maintenance-treatment}
-\subsubsection{Corrona Database}\label{sec:ttd-corrona}
+\subsubsection{CORRONA Database}\label{sec:ttd-corrona}
+Time to treatment discontinuation for patients on maintenance treatment for model structures \textbf{S1-S5} is based on analyses from the CORRONA database \citep{strand2013op0064}. The analysis sample consisted of 6,209 patients age 18 or older treated between 2002 and 2011 receiving either TNF inhibitors or other bDMARDs. The mean age was 57.6 years, 43\% of patients were biologic naive, the mean CDAI was 16, and just over 26\% of patients had high disease activity (CDAI $\geq$ 22). 
+
+7 parametric survival models (exponential, Weibull, Gompertz, gamma, log-logistic, lognormal, and generalized gamma) were estimated on individual patient data reconstructed from a Kaplan-Meier curve from the CORRONA analysis using the algorithm developed in \citet{guyot2012enhanced}. We compared fit using the Akaike Information Criteria (AIK) and Bayesian Information Criteria (BIC) (\autoref{tbl:ic-ttd-corrona}). The generalized gamma had the lowest AIC and BIC, so we consider it to be the preferred model. A plot of of the generalized gamma distribution against the Kaplan-Meier curve is shown in \autoref{fig:corrona-gg}. As can be seen in the plot, the shape of the survival curve estimated using a generalized gamma distribution tracks the Kaplan-Meier curve closely.  
+
+<<ipdsurv-corrona, echo = FALSE, resutls = 'tex'>>=
+tab <- read.csv("../../data-raw/tables/ttd-corrona-ipdsurv-ic.csv")
+tab <- cbind(as.matrix(tab[, 1]), formatC(as.matrix(tab[, -1]), format = "d", big.mark = ","))
+tex <- print(xtable(tab), 
+      include.rownames = FALSE, include.colnames = FALSE,
+      only.contents = TRUE, sanitize.text.function = identity,
+      file = "tables/ttd-corrona-ipdsurv-ic.txt")
+@
+
+\begin{table}[!ht]
+\begin{center}
+\begin{threeparttable}
+\caption{AIC and BIC for parametric models of treatment duration from the CORRONA database} \label{tbl:ic-ttd-corrona}
+\begin{tabularx}{\textwidth}{@{\extracolsep{\fill}}lcccc}
+\hline
+\multicolumn{1}{l}{Distribution} & \multicolumn{1}{c}{AIC} & \multicolumn{1}{c}{BIC}  \\
+\hline
+\ExpandableInput{tables/ttd-corrona-ipdsurv-ic.txt}
+\hline
+\end{tabularx}
+\end{threeparttable}
+\end{center}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[max size={.7\textwidth}{.7\textheight}]{../../data-raw/figs/ttd-corrona-ipdsurv-gengamma.pdf}
+\caption{Generalized gamma and Kaplan-Meier time to treatment discontinuation curves using reconstructed individual patient data from the CORRONA database}\label{fig:corrona-gg}
+\end{figure}
+
+We considered estimating separate time to discontinuation curves for each therapy, but did not for a number of the reasons cited in \citet{stevenson2016adalimumab}. The majority of the literature focuses on anti-TNFs (e.g., infliximab, etanercept, and adalimumab) \citep[e.g.][]{gomez2006switching, yazici2009changing, pan2009comparison}, which makes it difficult to estimate discontinuation curves for the other therapies. Furthermore, studies comparing rates of discontinuation across therapies tend to be observational because clinical trials are of short duration and do not reflect real-world patient populations. However, although observational studies provide accurate predictions on time to discontinuation, it is difficult to avoid bias from confounding when estimating differences across treatments because patients are not randomized into treatment and control groups \citep{souto2015rate} .   
+
+Unlike during the initial treatment phase, we do not condition rates of treatment discontinuation on the level of disease activity. The reason for this is that we could not find studies stratifying treatment duration curves by DAS28, SDAI, or CDAI. As a result, model structures \textbf{S1-S5} assume that conditional on continuing treatment beyond the first 6 months, duration does not depend on baseline disease activity, the change in disease activity from baseline, or whether the patient was biologic naive or experienced. 
+
+We also lack data on treatment duration for patients on cDMARDs. Following \citet{stevenson2016adalimumab}, we assume that, conditional on continuing treatment at 6 months, treatment duration for bDMARDs is applicable to treatment duration for cDMARDs. This is, in turn, based on the assumption that cDMARDs are not likely to be more toxic than biologics used in combination with cDMARDs. 
+
 \subsubsection{BSRBR Database}\label{sec:ttd-bsrbr}
-Treatment duration as a function of EULAR response is estimated from survival curves based on analyses of the British Society for Rheumatology Biologics Registers (BSRBR) database \citep{stevenson2016adalimumab}. Seven parametric survival models (exponential, Weibull, Gompertz, gamma, log-logistic, lognormal, and generalized gamma) were estimated on individual patient data reconstructed from the BSRBR survival curves using the algorithm developed in \citet{guyot2012enhanced}. The Akaike Information Criteria (AIK) and Bayesian Information Criteria (BIC) of each model by EULAR response category (moderate, good) are shown in \autoref{tbl:ic-dur-eular}.
+In model structure \textbf{S6}, we stratify our time to treatment discontinuation by EULAR response based on analyses of the British Society for Rheumatology Biologics Registers (BSRBR) database \citep{stevenson2016adalimumab}. As with the CORRONA based estimates, we fit 7 parametric survival models using individual patient data reconstructed from survival curves using the \citet{guyot2012enhanced} algorithm. We used the survival curves reported in \citet{stevenson2016adalimumab} to create the patient data. The Akaike Information Criteria (AIK) and Bayesian Information Criteria (BIC) of each model by EULAR response category (moderate, good) are shown in \autoref{tbl:ic-dur-eular}.
 
 <<ipdsurv, echo = FALSE, resutls = 'tex'>>=
-tab <- read.csv("../../data-raw/tables/duration-bsrbr-ipdsurv-eular-ic.csv")
+tab <- read.csv("../../data-raw/tables/ttd-bsrbr-ipdsurv-eular-ic.csv")
 tab <- cbind(as.matrix(tab[, 1]), formatC(as.matrix(tab[, -1]), format = "d", big.mark = ","))
 # colnames(tab) <- c("Distribution", "AIC (moderate)", "BIC (moderate)", "AIC (good)", "BIC (good)")
 # ptab <- pandoc.table(tab)
@@ -622,15 +705,12 @@ tex <- print(xtable(tab),
 \end{center}
 \end{table}
 
-One concern is that the BSRBR is representative of the UK but not the
-US. As a result, we also estimate ``adjusted'' survival models that are
-more representative of the US. The adjustment is made in six steps based
-on an analysis of the CORRONA database. 
+One concern is that the BSRBR is representative of the UK but not the US. As a result, we also estimate ``adjusted'' survival models appropriate for US based analyses. The adjustment is made in six steps using the analyses from the CORRONA database described in \autoref{sec:ttd-corrona}. 
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \item Calculate a hazard function based on a survival curve from an analysis
-  of the Corrona database. In particular, reconstruct individual patient
+  of the CORRONA database. In particular, reconstruct individual patient
   data from the survival curve \citet{guyot2012enhanced} and fit a
   spline-based survival model. Then use the spline-based model to
   estimate the hazard function $h(t)_{corrona}$.
@@ -641,7 +721,7 @@ on an analysis of the CORRONA database.
   the BSRBR analysis. Given that the number of moderate responders is
   \(5,492\) and the number of good responders is $2,417$ the overall
   hazard function is $h(t)_{bsrbr} = \frac{5,492}{7,909}h(t)_{bsrbr, moderate} + \frac{2,417}{7,909}h(t)_{bbsrbr, good}$.
-\item At each point in time, calculate the ratio of the Corrona and BSRBR
+\item At each point in time, calculate the ratio of the CORRONA and BSRBR
   hazard functions: $HR(t) = h(t)_{corrona}/h(t)_{bbsrbr}$.
 \item Apply the hazard ratio in step 3 to the BSRBR hazard functions for
   each EULAR response category. That is $h(t)_{bsrbr, moderate, adj} = h(t)_{bsrbr, moderate} \cdot HR(t)$ and $h(t)_{bsrbr, good, adj} = h(t)_{bsrbr, good} \cdot HR(t)$.
@@ -654,10 +734,7 @@ on an analysis of the CORRONA database.
   generated in step 5.
 \end{enumerate}
 
-Both adjusted and unadjusted survival curves by EULAR response fit using
-a generalized gamma distribution are shown in \autoref{fig:bsrbr-gg}. AIC
-and BIC for the parametric models fit in step 6 do the adjusted
-individual patient data are shwon in \autoref{tbl:ic-dur-adj-eular}.
+Both adjusted and unadjusted survival curves by EULAR response fit using a generalized gamma distribution are shown in \autoref{fig:bsrbr-gg}. AIC and BIC for the parametric models fit in step 6 do the adjusted individual patient data are shown in \autoref{tbl:ic-dur-adj-eular}.
 
 \begin{figure}
 \centering
@@ -681,7 +758,7 @@ tex <- print(xtable(tab),
 \begin{table}[!ht]
 \begin{center}
 \begin{threeparttable}
-\caption{AIC and BIC for Corrona adjusted parametric models of treatment duration by EULAR response} \label{tbl:ic-dur-adj-eular}
+\caption{AIC and BIC for CORRONA adjusted parametric models of treatment duration by EULAR response} \label{tbl:ic-dur-adj-eular}
 \begin{tabularx}{\textwidth}{@{\extracolsep{\fill}}lcccc}
 \hline
 \multicolumn{1}{l}{} & \multicolumn{2}{c}{Moderate EULAR response} & \multicolumn{2}{c}{Good EULAR response} \\
@@ -764,7 +841,7 @@ Based on the NMA by \citet{singh2011adverse} and in accordance with \citet{steve
 \hline
 \end{tabularx}
 \scriptsize
-Notes: Probabilities are estimated by simulating 1,000 patients and 1,000 parameter sets. Treatment duration is simulated using a generalized gamma disribution. 
+Notes: Probabilities are estimated by simulating 1,000 patients and 1,000 parameter sets. Treatment duration is simulated using a generalized gamma distribution. 
 \end{threeparttable}
 \end{center}
 \end{table}
@@ -885,7 +962,7 @@ surv <- data.table(surv = surv, lab = lab, gender = gender)
 surv[, ecdf := ecdf(surv)(surv), by = c("lab", "gender")]
 p <- ggplot(surv, aes(x = surv, y = 1 - ecdf, col = lab)) + geom_line() + xlab("Age") + ylab("Proportion surviving") + facet_wrap(~gender) +
   scale_colour_discrete("") + theme(legend.position = "bottom")
-ggsave("figs/surv.png", p)
+ggsave("figs/surv.png", p, width = 7, height = 5)
 @
 
 \begin{figure}
@@ -1084,6 +1161,22 @@ Parameter uncertainty is quantified using PSA, which propagates uncertainty in t
 
 \begin{appendices}
 
+\section{Mathematical methods}\label{app:math}
+\subsection{Using odds ratios to adjust probabilities}\label{app:odds-ratio-prob}
+Let $p_1$ be a baseline probability, $\beta$ be a vector of log odds ratios, and $x$ be a vector of regressors. We apply the log odds ratios to $p_1$ to generate a new probability $p_2$ with the logistic equation,
+
+\begin{align}
+p_2 &= \frac{1}{1 + \exp\left[-\left(\logit(p_1) + x^T\beta \right)\right]},
+\end{align}
+
+where,
+
+\begin{align}
+\logit(p) = \log\left(\frac{p}{1-p}\right)
+\end{align}
+
+\subsection{Converting rates and probabilities}\label{app:rate-prob}
+
 \section{Individual Patient Simulation}\label{appendix:IPS}
 \subsection{Mapping ACR response to changes in disease activity}\label{app-acr-da}
 Let $DA$ denote disease activity, $n_1$ the number of patients with ACR 20-50 response, $n_2$ the number of patients with ACR 50-70 response, $n_3$ the number of patients with ACR 70 response, and $N$ the number of patients with an ACR response greater than or equal to 20\%. Mean changes in SDAI, CDAI, and DAS28 by overlapping ACR response categories are converted to mean changes by mutually exclusive ACR response categories as follows:
@@ -1109,7 +1202,7 @@ Let $DA$ denote disease activity, $n_1$ the number of patients with ACR 20-50 re
 \begin{align}
 P(C_{it} = c) &= \frac{\exp(w_{it}^T\delta_c)}{\sum_{s=1}^{4}\exp(w_{it}^T\delta_s)},
 \end{align}
-where $\delta_s$ is the vector of regression coefficeints associated with class $s$ and $w_i$ is the corresponding design matrix for individual $i$. The variables included in $w_i$ are age, gender, baseline DAS28, symptom duration, rheumatoid factor, ACR criteria, and socieoeconomic status. 
+where $\delta_s$ is the vector of regression coefficients associated with class $s$ and $w_i$ is the corresponding design matrix for individual $i$. The variables included in $w_i$ are age, gender, baseline DAS28, symptom duration, rheumatoid factor, ACR criteria, and socioeconomic status. 
 
 \subsection{Effect of age on linear HAQ
 progression}\label{effect-of-age-on-linear-haq-progression}
@@ -1120,7 +1213,7 @@ Death is simulated for each patient during each model cycle based on age, gender
 \item Use the annual probability of death ($q_x$) from lifetables based on patient age and gender.
 \item Adjust the probability of mortality, $p_m$, using odds of mortality, $OR$, of a change in baseline HAQ.
 \begin{align}
-p_m = \frac{1}{1 + \exp{\left[-(\log(q_x) + HAQ \cdot \log(OR))\right]}}
+p_m = \frac{1}{1 + \exp{\left[-(\text{logit}(q_x) + HAQ \cdot \log(OR))\right]}}
 \end{align}
 \item Convert the mortality probability, $p_m$, into a mortality rate, $r_m$.
 \begin{align}
@@ -1142,7 +1235,7 @@ d \sim \text{Bin}(1, p_m)
 
 \subsection{Simulating utility}\label{simulating-utility}
 \subsubsection{Mixture model}
-Utiliy was simulated in a two stages using the mixture model estimated by \citet{alava2013relationship}. In the first stage, we sampled pain for a given individual in a particular model cycle based on the HAQ score. In the second stage, we simulated utility as a function of HAQ, pain and age/sex.
+Utility was simulated in a two stages using the mixture model estimated by \citet{alava2013relationship}. In the first stage, we sampled pain for a given individual in a particular model cycle based on the HAQ score. In the second stage, we simulated utility as a function of HAQ, pain and age/sex.
 
 \textbf{Simulating pain}\\
 To simulate pain from HAQ, we used the summary statistics for pain and HAQ reported in \citet{sarzi2002correlation}. Pain was measured with the visual analog scale (VAS) with mean  $\mu_{pain} =$ \Sexpr{pain$pain.mean} and standard deviation $\sigma_{pain} =$ \Sexpr{formatC(sqrt(pain$pain.var), format = "f", digits = 2)}, while HAQ was reported to have mean $\mu_{haq} =$ \Sexpr{pain$haq.mean} and standard deviation $\sigma_{haq} =$ \Sexpr{formatC(sqrt(pain$haq.var), format = "f", digits = 2)}. 

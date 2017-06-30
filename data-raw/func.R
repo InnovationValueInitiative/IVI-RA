@@ -3,6 +3,11 @@ se_normal <- function(l, u, p = .975){
   return((u - l)/(2 * qnorm(p)))
 }
 
+# LOGIT FUNCTION ---------------------------------------------------------------
+logit <- function(p){
+  return(log(p/(1-p)))
+}
+
 # FIND BEST PARAMETRIC FIT TO SURVIVAL CURVE -----------------------------------
 # Loop over distributions fitting parametric survival model
 parametric_fit <- function(dists, data){

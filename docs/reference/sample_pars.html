@@ -117,10 +117,12 @@
     <pre class="usage"><span class='fu'>sample_pars</span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>rebound_lower</span> <span class='kw'>=</span> <span class='fl'>0.7</span>, <span class='kw'>rebound_upper</span> <span class='kw'>=</span> <span class='fl'>1</span>,
   <span class='kw'>ltfemale</span> <span class='kw'>=</span> <span class='no'>lifetable.female</span>, <span class='kw'>ltmale</span> <span class='kw'>=</span> <span class='no'>lifetable.male</span>,
   <span class='kw'>acr2eular_mat</span> <span class='kw'>=</span> <span class='no'>acr2eular</span>, <span class='kw'>treat_cost</span> <span class='kw'>=</span> <span class='no'>therapy.pars</span>$<span class='no'>cost</span>,
-  <span class='kw'>mort_logor</span> <span class='kw'>=</span> <span class='no'>mort.or</span>$<span class='no'>logor</span>, <span class='kw'>mort_logor_se</span> <span class='kw'>=</span> <span class='no'>mort.or</span>$<span class='no'>logor_se</span>,
+  <span class='kw'>switch_logor</span> <span class='kw'>=</span> <span class='no'>treat.switch</span>$<span class='no'>logor</span>,
+  <span class='kw'>switch_logor_se</span> <span class='kw'>=</span> <span class='no'>treat.switch</span>$<span class='no'>logor_se</span>, <span class='kw'>mort_logor</span> <span class='kw'>=</span> <span class='no'>mort.or</span>$<span class='no'>logor</span>,
+  <span class='kw'>mort_logor_se</span> <span class='kw'>=</span> <span class='no'>mort.or</span>$<span class='no'>logor_se</span>,
   <span class='kw'>mort_loghr_haqdif</span> <span class='kw'>=</span> <span class='no'>mort.hr.haqdif</span>$<span class='no'>loghr</span>,
   <span class='kw'>mort_loghr_se_haqdif</span> <span class='kw'>=</span> <span class='no'>mort.hr.haqdif</span>$<span class='no'>loghr_se</span>,
-  <span class='kw'>dur_eular_mod</span> <span class='kw'>=</span> <span class='no'>ttd.eular.mod.adj</span>, <span class='kw'>dur_eular_good</span> <span class='kw'>=</span> <span class='no'>ttd.eular.good.adj</span>,
+  <span class='kw'>ttd_eular_mod</span> <span class='kw'>=</span> <span class='no'>ttd.eular.mod.adj</span>, <span class='kw'>ttd_eular_good</span> <span class='kw'>=</span> <span class='no'>ttd.eular.good.adj</span>,
   <span class='kw'>nma1_mean</span> <span class='kw'>=</span> <span class='no'>therapy.pars</span>$<span class='no'>icon_acr_nma_naive</span>$<span class='no'>mean</span>,
   <span class='kw'>nma1_sd</span> <span class='kw'>=</span> <span class='fu'>sqrt</span>(<span class='fu'>diag</span>(<span class='no'>therapy.pars</span>$<span class='no'>icon_acr_nma_naive</span>$<span class='no'>vcov</span>)),
   <span class='kw'>nma2_mean</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>nma2_sd</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>basedif_mean</span> <span class='kw'>=</span> <span class='fl'>0.25</span>,
@@ -184,6 +186,17 @@ the probability of death at a given age.</p></td>
       <td><p>Treatment cost matrix in format of therapy.pars$cost.</p></td>
     </tr>
     <tr>
+      <th>switch_logor</th>
+      <td><p>Vector of log odds ratios describing the probability of switching treatment
+at 6 monhts. Should contain three elements corresponding to (in order) an intercept,
+ moderate disease activity, and high disease activity.</p></td>
+    </tr>
+    <tr>
+      <th>switch_logor_se</th>
+      <td><p>Standard error of the log odds ratio or probability of switching
+treatment at 6 months</p></td>
+    </tr>
+    <tr>
       <th>mort_logor</th>
       <td><p>Log odds ratio of impact of baseline HAQ on probability of mortality.</p></td>
     </tr>
@@ -201,11 +214,11 @@ each element denoting (in order) hazard ratio for months 0-6, &gt;6 - 12, &gt;12
       <td><p>Standard error of log hazard ratio of impact of change in HAQ from baseline on mortality rate.</p></td>
     </tr>
     <tr>
-      <th>dur_eular_mod</th>
+      <th>ttd_eular_mod</th>
       <td><p>A list containing treatment duration parameters for patientes with a moderate EULAR response. See 'Treatment duration'.</p></td>
     </tr>
     <tr>
-      <th>dur_eular_good</th>
+      <th>ttd_eular_good</th>
       <td><p>A list containing treatment duration parameters for patientes with a good EULAR response. See 'Treatment duration'.</p></td>
     </tr>
     <tr>
@@ -415,11 +428,12 @@ for general management of RA.</p></td>
 </dl>
 
     
-    <h2 class="hasAnchor" id="treatment-duration"><a class="anchor" href="#treatment-duration"></a>Treatment duration</h2>
+    <h2 class="hasAnchor" id="time-to-treatment-discontinuation"><a class="anchor" href="#time-to-treatment-discontinuation"></a>Time to treatment discontinuation</h2>
 
     
-    <p>Treatment duration parameters should be contained in a list of lists. The top-level list identifies the name of the probability distribution;
-the possible distributions are the exponential (<code>exponential</code>), Weibull (<code>weibull</code>), Gompertz (<code>gompertz</code>),
+    <p>Time to treatment discontinuation parameters should be contained in a list of lists. The top-level
+ list identifies the name of the probability distribution; the possible distributions are the 
+ exponential (<code>exponential</code>), Weibull (<code>weibull</code>), Gompertz (<code>gompertz</code>),
 gamma (<code>gamma</code>), log-logistic (<code>llogis</code>), lognormal (<code>lnorm</code>), and generalized gamma (<code>gengamma</code>). Each distribution 
 should also contain a list with five elements:</p><dl class='dl-horizontal'>
 <dt>est</dt><dd><p>A vector of the maximum likelihood estimates of the parameters.</p></dd>
@@ -466,7 +480,7 @@ four columns (one for each explanatory variable).</p></dd>
       
       <li><a href="#value">Value</a></li>
 
-      <li><a href="#treatment-duration">Treatment duration</a></li>
+      <li><a href="#time-to-treatment-discontinuation">Time to treatment discontinuation</a></li>
 
       <li><a href="#sampled-mixture-model-parameters">Sampled mixture model parameters</a></li>
           </ul>

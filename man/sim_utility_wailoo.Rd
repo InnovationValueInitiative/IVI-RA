@@ -2,7 +2,7 @@
 % Please edit documentation in R/ips.R
 \name{sim_utility_wailoo}
 \alias{sim_utility_wailoo}
-\title{Simulate utility from simulated HAQ score using Wailoo (2006) model.}
+\title{Simulate utility from simulated HAQ score using Wailoo (2006) model}
 \usage{
 sim_utility_wailoo(simhaq, input_data, pars, check = TRUE)
 }

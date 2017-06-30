@@ -2,20 +2,20 @@
 % Please edit documentation in R/sample-pars.R
 \name{sample_survpars}
 \alias{sample_survpars}
-\title{Sample treatment duration parameters}
+\title{Sample survival parameters}
 \usage{
 sample_survpars(nsims, x)
 }
 \arguments{
 \item{nsims}{Size of the posterior sample.}
 
-\item{x}{A list of treatment duration parameters. See 'Treatment duration' in \link{sample_pars}.}
+\item{x}{A list of survival parameters. For example, see 'Treatment duration' in \link{sample_pars}.}
 }
 \value{
 A list of matrices containing random draws of the parameters of the survival distribution. One matrix
 for the location parameter and each of the ancillary parameters.
 }
 \description{
-Generate a random sample of parameters for each probability distribution used to model treatment duration. Parameters are
+Generate a random sample of parameters for each survival distribution. Parameters are
 sampled using a multivariate normal distribution.
 }

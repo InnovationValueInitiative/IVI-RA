@@ -39,13 +39,12 @@ ggsave("figs/ttd-bsrbr-ipdsurv-eular-good-km.pdf",
        p.km.b.g, height = 5, width = 7)
 
 # corona registry (all patients)
-km.c <- survfit(Surv(t, event) ~1,
-                     data = ipd.c)
+km.c <- survfit(Surv(t, event) ~1, data = ipd.c)
 p.km.c <- km_plot(km.c)
-ggsave("figs/ttd-bsrbr-ipdsurv-corrona-km.pdf",
+ggsave("figs/ttd-corrona-ipdsurv-km.pdf",
        p.km.c, height = 5, width = 7)
 
-# ADJUSTED SURVIVAL CURVES -----------------------------------------------------
+# ADJUST BSRBR SURVIVAL CURVES -------------------------------------------------
 ## cumulative hazard functions
 spline.c <- surv_splines(ipd.c, time = seq(0, 120, 1))
 spline.b.m <- surv_splines(ipd.b.m, time = seq(0, 120, 1))
@@ -119,6 +118,34 @@ mods <- c("exponential", "weibull", "gompertz", "gamma",
 modlabs <- c("Exponential", "Weibull", "Gompertz", "Gamma",
              "Log-logistic", "Lognormal", "Generalized gamma")
 
+### CORRONA
+fits.c <- parametric_fit(mods, ipd.c)
+ic.c <- ic_mat(fits.c, modlabs)
+fits.c.diag <- parametric_fits_diag(km.c, fits.c, modlabs)
+survfit.data.c <- survfit_data(km.c, fits.c, modlabs, long = FALSE)
+surv.gg.c <-  summary(fits.c[["gengamma"]], type = "surv", t = seq(1, 36))[[1]]
+p.survfits.c <- ggplot(survfit.data.c[mod %in% c("Kaplan-Meier", "Exponential",
+                                                 "Generalized gamma")],
+                        aes(x = time/12, y = surv, col = mod)) + geom_line() +
+  xlab("Years") + ylab("Survival") + scale_colour_discrete("") +
+  theme(legend.position="bottom")
+p.gengamma.c <- ggplot(survfit.data.c[mod %in% c("Kaplan-Meier","Generalized gamma")],
+                       aes(x = time/12, y = surv, col = mod)) + geom_line() +
+  xlab("Years") + ylab("Survival") + scale_colour_discrete("") +
+  theme(legend.position="bottom")
+write.csv(surv.gg.c, file = "tables/ttd-corrona-gengamma-surv.csv",
+          row.names = FALSE)
+write.csv(ic.c, "tables/ttd-corrona-ipdsurv-ic.csv")
+ggsave("figs/ttd-corrona-ipdsurv-gengamma.pdf",
+       p.gengamma.c, height = 5, width = 7)
+ggsave("figs/ttd-corrona-ipdsurv-parametric.pdf",
+       fits.c.diag$p.survfits, height = 7, width = 10)
+ggsave("figs/ttd-corrona-ipdcumhaz-parametric.pdf",
+       fits.c.diag$p.cumhazfits, height = 7, width = 10)
+ggsave("figs/ttd-corrona-ipdsurv-gengamma-exponential.pdf", p.survfits.c,
+       height = 5, width = 7)
+
+### BSRBR
 ## unadjusted
 # moderate 
 fits.b.m <- parametric_fit(mods, ipd.b.m)

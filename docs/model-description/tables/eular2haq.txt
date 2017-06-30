@@ -1,7 +1,0 @@
-% latex table generated in R 3.4.0 by xtable 1.8-2 package
-% Thu Jun 29 22:13:45 2017
-  \hline
-None & 0.000 & 0.000 \\ 
-  Moderate & -0.317 & 0.048 \\ 
-  Good & -0.672 & 0.112 \\ 
-   \hline

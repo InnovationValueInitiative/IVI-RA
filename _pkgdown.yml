@@ -22,6 +22,7 @@ reference:
       - acr2cdai
       - acr2das28
       - eular2haq
+      - treat.switch
       - ttd
       - haq.lprog.age
       - lifetable

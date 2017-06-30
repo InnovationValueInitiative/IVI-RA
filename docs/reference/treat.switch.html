@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Sample survival parameters — sample_survpars • iviRA</title>
+<title>Treatment switching at 6 months — treat.switch • iviRA</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -107,42 +107,45 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Sample survival parameters</h1>
+    <h1>Treatment switching at 6 months</h1>
     </div>
 
     
-    <p>Generate a random sample of parameters for each survival distribution. Parameters are
-sampled using a multivariate normal distribution.</p>
+    <p>Regression coefficients from a logistic regression equation predicting the probability of 
+switching treatment at 6 months by disease activity level.</p>
     
 
-    <pre class="usage"><span class='fu'>sample_survpars</span>(<span class='no'>nsims</span>, <span class='no'>x</span>)</pre>
-    
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>nsims</th>
-      <td><p>Size of the posterior sample.</p></td>
-    </tr>
-    <tr>
-      <th>x</th>
-      <td><p>A list of survival parameters. For example, see 'Treatment duration' in <a href='sample_pars.html'>sample_pars</a>.</p></td>
-    </tr>
-    </table>
-    
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    <pre class="usage"><span class='no'>treat.switch</span></pre>
+        
+    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
-    <p>A list of matrices containing random draws of the parameters of the survival distribution. One matrix
-for the location parameter and each of the ancillary parameters.</p>
+    <p>A data.table containing the following columns:</p><dl class='dl-horizontal'>
+  <dt>variable</dt><dd><p>Name of variable. Includes the intercept, an indicator variable for whether
+  disease activity is moderate (CDAI 10-22), and an indicator variable for 
+  whether disease activity is high (CDAI greater than 22).</p></dd>
+  <dt>or</dt><dd><p>The odds ratio of the coefficients.</p></dd>
+  <dt>or_lower</dt><dd><p>Lower 95 percent confidence interval for the odds ratio.</p></dd>
+  <dt>or_upper</dt><dd><p>Upper 95 percent confidence interval for the odds ratio.</p></dd>
+  <dt>logor</dt><dd><p>Log odds ratio of the coefficents.</p></dd>
+  <dt>logor_lower</dt><dd><p>Lower 95 percent confidence interval for the log of the odds ratio.</p></dd>
+  <dt>logor_upper</dt><dd><p>Upper 95 percent confidence interval for the log of the odds ratio.</p></dd>
+</dl>
+    
+    <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
+
+    <p>Zhang, Jie, et al. "Thresholds in disease activity for switching biologics in rheumatoid 
+arthritis patients: experience from a large US cohort." 
+Arthritis care &amp; research 63.12 (2011): 1672-1679.</p>
     
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
       
-      <li><a href="#value">Value</a></li>
+      <li><a href="#format">Format</a></li>
+
+      <li><a href="#source">Source</a></li>
           </ul>
 
   </div>

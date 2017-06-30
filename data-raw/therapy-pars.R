@@ -1,14 +1,9 @@
 rm(list = ls())
-library("AMG2682")
+library("iviRA")
 library("MCMCpack")
 library("readxl")
-library("survival")
-library("flexsurv")
-library("ggplot2")
 library("data.table")
-library("pracma")
 source("func.R")
-theme_set(theme_bw())
 therapy.names <- c("cDMARDs", "abatacept IV + methotrexate", "adalimumab + methotrexate",
                "adalimumab", "Triple therapy", "etanercept + methotrexate", "etanercept", 
                "golimumab + methotrexate", "infliximab + methotrexate", "placebo",

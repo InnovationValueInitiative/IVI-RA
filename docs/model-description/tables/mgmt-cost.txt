@@ -1,7 +1,0 @@
-% latex table generated in R 3.4.0 by xtable 1.8-2 package
-% Thu Jun 29 22:13:45 2017
- \hspace{3mm}Chest x-ray & 109 & 97 & 121 & \citet{claxton2016economic} \\ 
-  \hspace{3mm}X-ray visit & 53 & 45 & 61 & \citet{claxton2016economic} \\ 
-  \hspace{3mm}Outpatient follow-up & 187 & 159 & 215 & \citet{claxton2016economic} \\ 
-  \hspace{3mm}Mantoux tuberculin skin test & 30 & 30 & 30 & \citet{claxton2016economic} \\ 
-  

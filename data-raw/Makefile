@@ -5,7 +5,8 @@ DATA=../data
 all: $(DATA)/therapy-pars.rda $(DATA)/pain.rda $(DATA)/util-pars.rda $(DATA)/ttd-pars.rda
 all: $(DATA)/acr2eular.rda $(DATA)/eular2haq.rda $(DATA)/acr2haq.rda $(DATA)/haq-lprog-age.rda 
 all: $(DATA)/mort-or.rda $(DATA)/mort-hr-haqdif.rda $(DATA)/lifetable-male.rda $(DATA)/lifetable-female.rda 
-all: $(DATA)/mgmt-cost.rda
+all: $(DATA)/mgmt-cost.rda $(DATA)/treat-switch.rda
+
 
 # parameters that vary by treatment
 TP_DEPS := therapy-pars.R func.R cost.xlsx 
@@ -16,6 +17,10 @@ $(TP_TARGET): $(TP_DEPS)
 # utility
 $(DATA)/pain.rda $(DATA)/util-pars.rda $(DATA)/util-wailoo-pars.rda: utility.R coef-alava-2013.csv vcov-alava-2013.csv
 	Rscript utility.R 
+
+# treatment switching at 6 months
+$(DATA)/treat-switch.rda: treat-switch.R
+	Rscript treat-switch.R
 
 # treatment duration
 TD_DEPS := ttd.R func.R ttd-bsrbr-eular-good-ggamma.csv ttd-bsrbr-eular-good-risk.csv 
