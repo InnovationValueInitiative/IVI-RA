@@ -91,10 +91,10 @@
 #' }}
 "therapy.pars"
 
-#' Survival analysis parameters for therapy duration by Eular response category
+#' Time to treatment discontinuation parameters
 #'
-#' A list of parameters estimated in a parametric survival analysis of treatment duration.
-#' Models were fit using \emph{flexsurv}. Survival curves were scanned from the 2016 NICE  
+#' A list of parameters estimated in a parametric survival analysis of time to treatment 
+#' discontinuation. Models were fit using \emph{flexsurv}. Survival curves were scanned from the 2016 NICE  
 #' HTA and then converted to individual-level patient dat using the \code{reconstruct_ipd}
 #' function. Survival curves are stratified by patients with moderate and good responses 
 #' to treatment according to Eular response categories.
@@ -113,14 +113,14 @@
 #'  treated with disease-modifying antirheumatic drugs and after the failure of conventional 
 #'  disease-modifying antirheumatic drugs only: systematic review and economic evaluation." 
 #' Health Technology Assessment 20.35 (2016): 1-610.
-#' @name dur.eular
-"dur.eular.mod"
-#' @rdname dur.eular
-"dur.eular.good"
-#' @rdname dur.eular
-"dur.eular.mod.adj"
-#' @rdname dur.eular
-"dur.eular.good.adj"
+#' @name ttd
+"ttd.eular.mod"
+#' @rdname ttd
+"ttd.eular.good"
+#' @rdname ttd
+"ttd.eular.mod.adj"
+#' @rdname ttd
+"ttd.eular.good.adj"
 
 #' ACR to Eular Conversion
 #'

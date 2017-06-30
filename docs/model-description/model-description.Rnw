@@ -368,6 +368,7 @@ database in a given category.
 \end{table}
 
 \subsubsection{Probability of switching treatment}
+The probability of stopping treatment depends on the model structure used. If \textbf{S1} or \textbf{S6} is used, then patients stop treatment when there is no ACR response or no EULAR response, and continue treatment otherwise. On the other hand, if switching depends on SDAI, CDAI, or DAS28, then we model the probability of treatment switching using the coefficients from the logistic regression equation reported in \citet{zhang2011thresholds} and analyzed using patients in the Consortium of Rheumatology Researchers of North America (CORRONA) database. The probability of switching is modeled as a function of disease activity at followup (CDAI < 10 (low), CDAI 10-22 (moderate), and CDAI $\geq$ 22 (high)). Since the model is estimated using  baseline probability of switching at 6 monts  
 
 \subsection{Change in HAQ at 6 months}
 As in \citet{icer2017tim}, ACR responses from the NMA were translated into HAQ scores based on evidence from the ADACTA trial reported in \citet{carlson2015economic} (\autoref{tbl:acr2haq}).
@@ -601,7 +602,7 @@ tab <- cbind(as.matrix(tab[, 1]), formatC(as.matrix(tab[, -1]), format = "d", bi
 tex <- print(xtable(tab), 
       include.rownames = FALSE, include.colnames = FALSE,
       only.contents = TRUE, sanitize.text.function = identity,
-      file = "tables/duration-bsrbr-ipdsurv-eular-ic.txt")
+      file = "tables/ttd-bsrbr-ipdsurv-eular-ic.txt")
 @
 
 \begin{table}[!ht]
@@ -614,7 +615,7 @@ tex <- print(xtable(tab),
 \cmidrule{2-3} \cmidrule{4-5}
 \multicolumn{1}{l}{Distribution} & \multicolumn{1}{c}{AIC} & \multicolumn{1}{c}{BIC} & \multicolumn{1}{c}{AIC}  & \multicolumn{1}{c}{BIC}   \\
 \hline
-\ExpandableInput{tables/duration-bsrbr-ipdsurv-eular-ic.txt}
+\ExpandableInput{tables/ttd-bsrbr-ipdsurv-eular-ic.txt}
 \hline
 \end{tabularx}
 \end{threeparttable}
@@ -624,8 +625,7 @@ tex <- print(xtable(tab),
 One concern is that the BSRBR is representative of the UK but not the
 US. As a result, we also estimate ``adjusted'' survival models that are
 more representative of the US. The adjustment is made in six steps based
-on an analysis of the Consortium of Rheumatology Researchers of North
-America (Corrona) database.
+on an analysis of the CORRONA database. 
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -661,21 +661,21 @@ individual patient data are shwon in \autoref{tbl:ic-dur-adj-eular}.
 
 \begin{figure}
 \centering
-\includegraphics[max size={\textwidth}{\textheight}]{../../data-raw/figs/duration-bsrbr-ipdsurv-comp-gengamma-by-eular.pdf}
+\includegraphics[max size={\textwidth}{\textheight}]{../../data-raw/figs/ttd-bsrbr-ipdsurv-comp-gengamma-by-eular.pdf}
 \caption{Generalized gamma survival curve of treatment duration using
 reconstructed individual patient data based on analyses from Stevenson
 et al. (2016) by EULAR response category}\label{fig:bsrbr-gg}
 \end{figure}
 
 <<bsrbr-eular-surv, echo = FALSE>>=
-tab <- read.csv("../../data-raw/tables/duration-bsrbr-ipdsurv-eular-adjusted-ic.csv")
+tab <- read.csv("../../data-raw/tables/ttd-bsrbr-ipdsurv-eular-adjusted-ic.csv")
 tab <- cbind(as.matrix(tab[, 1]), formatC(as.matrix(tab[, -1]), format = "d", big.mark = ","))
 # colnames(tab) <- c("Distribution", "AIC (moderate)", "BIC (moderate)", "AIC (good)", "BIC (good)")
 # ptab <- pandoc.table(tab)
 tex <- print(xtable(tab), 
       include.rownames = FALSE, include.colnames = FALSE,
       only.contents = TRUE, sanitize.text.function = identity,
-      file = "tables/duration-bsrbr-ipdsurv-eular-adjusted-ic.txt")
+      file = "tables/ttd-bsrbr-ipdsurv-eular-adjusted-ic.txt")
 @
 
 \begin{table}[!ht]
@@ -688,7 +688,7 @@ tex <- print(xtable(tab),
 \cmidrule{2-3} \cmidrule{4-5}
 \multicolumn{1}{l}{Distribution} & \multicolumn{1}{c}{AIC} & \multicolumn{1}{c}{BIC} & \multicolumn{1}{c}{AIC}  & \multicolumn{1}{c}{BIC}   \\
 \hline
-\ExpandableInput{tables/duration-bsrbr-ipdsurv-eular-adjusted-ic.txt}
+\ExpandableInput{tables/ttd-bsrbr-ipdsurv-eular-adjusted-ic.txt}
 \hline
 \end{tabularx}
 \end{threeparttable}

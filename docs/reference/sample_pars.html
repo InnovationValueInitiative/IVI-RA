@@ -120,7 +120,7 @@
   <span class='kw'>mort_logor</span> <span class='kw'>=</span> <span class='no'>mort.or</span>$<span class='no'>logor</span>, <span class='kw'>mort_logor_se</span> <span class='kw'>=</span> <span class='no'>mort.or</span>$<span class='no'>logor_se</span>,
   <span class='kw'>mort_loghr_haqdif</span> <span class='kw'>=</span> <span class='no'>mort.hr.haqdif</span>$<span class='no'>loghr</span>,
   <span class='kw'>mort_loghr_se_haqdif</span> <span class='kw'>=</span> <span class='no'>mort.hr.haqdif</span>$<span class='no'>loghr_se</span>,
-  <span class='kw'>dur_eular_mod</span> <span class='kw'>=</span> <span class='no'>dur.eular.mod.adj</span>, <span class='kw'>dur_eular_good</span> <span class='kw'>=</span> <span class='no'>dur.eular.good.adj</span>,
+  <span class='kw'>dur_eular_mod</span> <span class='kw'>=</span> <span class='no'>ttd.eular.mod.adj</span>, <span class='kw'>dur_eular_good</span> <span class='kw'>=</span> <span class='no'>ttd.eular.good.adj</span>,
   <span class='kw'>nma1_mean</span> <span class='kw'>=</span> <span class='no'>therapy.pars</span>$<span class='no'>icon_acr_nma_naive</span>$<span class='no'>mean</span>,
   <span class='kw'>nma1_sd</span> <span class='kw'>=</span> <span class='fu'>sqrt</span>(<span class='fu'>diag</span>(<span class='no'>therapy.pars</span>$<span class='no'>icon_acr_nma_naive</span>$<span class='no'>vcov</span>)),
   <span class='kw'>nma2_mean</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>nma2_sd</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>basedif_mean</span> <span class='kw'>=</span> <span class='fl'>0.25</span>,
@@ -381,8 +381,8 @@ for general management of RA.</p></td>
   and one column for each variable used to adjust mortality.</p></dd>
   <dt>mort.loghr.haqdif</dt><dd><p>Matrix of the log hazard ratio of the impact of a change in HAQ from baseline on mortality. Columns denote
   hazard ratios at times &lt; 6 months, months 6 - &lt;12, months 12 - &lt;24, months 24 - &lt;36, and months 36+.</p></dd>
-  <dt>dur.eular.mod</dt><dd><p>Matrix of coefficients from a survival model. From a survival model for moderate Eular responders</p></dd>
-  <dt>dur.eular.good</dt><dd><p>Matrix of coefficients for the location parameter and a vector
+  <dt>ttd.eular.mod</dt><dd><p>Matrix of coefficients from a survival model. From a survival model for moderate Eular responders</p></dd>
+  <dt>ttd.eular.good</dt><dd><p>Matrix of coefficients for the location parameter and a vector
    of sampled values of the ancillary parameter. From a survival model for good Eular responders.</p></dd>
   <dt>acr1</dt><dd><p>List of two matrices <code>p</code> and <code>po</code> with each row a sampled parameter 
   value. The four columns in <code>p</code> are mutually exclusive categories (ACR &lt;20, ACR 20-50, 

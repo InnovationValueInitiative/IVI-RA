@@ -2,7 +2,7 @@
 DATA=../data
 
 # all datasets for package
-all: $(DATA)/therapy-pars.rda $(DATA)/pain.rda $(DATA)/util-pars.rda $(DATA)/duration-eular-pars.rda
+all: $(DATA)/therapy-pars.rda $(DATA)/pain.rda $(DATA)/util-pars.rda $(DATA)/ttd-pars.rda
 all: $(DATA)/acr2eular.rda $(DATA)/eular2haq.rda $(DATA)/acr2haq.rda $(DATA)/haq-lprog-age.rda 
 all: $(DATA)/mort-or.rda $(DATA)/mort-hr-haqdif.rda $(DATA)/lifetable-male.rda $(DATA)/lifetable-female.rda 
 all: $(DATA)/mgmt-cost.rda
@@ -18,12 +18,12 @@ $(DATA)/pain.rda $(DATA)/util-pars.rda $(DATA)/util-wailoo-pars.rda: utility.R c
 	Rscript utility.R 
 
 # treatment duration
-TD_DEPS := duration-eular.R func.R duration-bsrbr-eular-good-ggamma.csv duration-bsrbr-eular-good-risk.csv 
-TD_DEPS += duration-bsrbr-eular-moderate-ggamma.csv duration-bsrbr-eular-moderate-risk.csv
-TD_DEPS += duration-corrona-allpat.csv duration-corrona-allpat-risk.csv
-TD_TARGET := $(DATA)/duration-eular-pars.rda 
+TD_DEPS := ttd.R func.R ttd-bsrbr-eular-good-ggamma.csv ttd-bsrbr-eular-good-risk.csv 
+TD_DEPS += ttd-bsrbr-eular-moderate-ggamma.csv ttd-bsrbr-eular-moderate-risk.csv
+TD_DEPS += ttd-corrona-allpat.csv ttd-corrona-allpat-risk.csv
+TD_TARGET := $(DATA)/ttd-pars.rda 
 $(TD_TARGET): $(TD_DEPS)
-	Rscript duration-eular.R
+	Rscript ttd.R
 		
 # Mappings
 $(DATA)/acr2haq.rda $(DATA)/acr2eular.rda: mappings.R

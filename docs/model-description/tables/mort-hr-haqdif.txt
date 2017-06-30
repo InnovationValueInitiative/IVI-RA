@@ -1,5 +1,5 @@
 % latex table generated in R 3.4.0 by xtable 1.8-2 package
-% Thu Jun 29 16:42:40 2017
+% Thu Jun 29 22:13:45 2017
  \hspace{3mm}Log hazard ratio 0-6 months & 0.113 & 0.077 & 0.157 & \citet{michaud2012mortality} \\ 
   \hspace{3mm}Log hazard ratio >6-12 months & 0.148 & 0.104 & 0.191 & \citet{michaud2012mortality} \\ 
   \hspace{3mm}Log hazard ratio >12-24 months & 0.148 & 0.095 & 0.191 & \citet{michaud2012mortality} \\ 

@@ -10,7 +10,7 @@ sample_pars(n = 100, rebound_lower = 0.7, rebound_upper = 1,
   mort_logor = mort.or$logor, mort_logor_se = mort.or$logor_se,
   mort_loghr_haqdif = mort.hr.haqdif$loghr,
   mort_loghr_se_haqdif = mort.hr.haqdif$loghr_se,
-  dur_eular_mod = dur.eular.mod.adj, dur_eular_good = dur.eular.good.adj,
+  dur_eular_mod = ttd.eular.mod.adj, dur_eular_good = ttd.eular.good.adj,
   nma1_mean = therapy.pars$icon_acr_nma_naive$mean,
   nma1_sd = sqrt(diag(therapy.pars$icon_acr_nma_naive$vcov)),
   nma2_mean = NULL, nma2_sd = NULL, basedif_mean = 0.25,
@@ -170,8 +170,8 @@ List containing samples for the following model parameters:
   and one column for each variable used to adjust mortality.}
   \item{mort.loghr.haqdif}{Matrix of the log hazard ratio of the impact of a change in HAQ from baseline on mortality. Columns denote
   hazard ratios at times < 6 months, months 6 - <12, months 12 - <24, months 24 - <36, and months 36+.}
-  \item{dur.eular.mod}{Matrix of coefficients from a survival model. From a survival model for moderate Eular responders}
-  \item{dur.eular.good}{Matrix of coefficients for the location parameter and a vector
+  \item{ttd.eular.mod}{Matrix of coefficients from a survival model. From a survival model for moderate Eular responders}
+  \item{ttd.eular.good}{Matrix of coefficients for the location parameter and a vector
    of sampled values of the ancillary parameter. From a survival model for good Eular responders.}
   \item{acr1}{List of two matrices \code{p} and \code{po} with each row a sampled parameter 
   value. The four columns in \code{p} are mutually exclusive categories (ACR <20, ACR 20-50, 

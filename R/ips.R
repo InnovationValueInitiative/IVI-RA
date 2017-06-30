@@ -11,7 +11,7 @@
 #' and \code{x.dur} as generated from \link{input_data}.
 #' @param pars List of parameters. Required parameters are \code{rebound}, \code{acr1}, \code{acr2}, \code{acr2eular}, \code{eular2haq}, 
 #' \code{haq.lprog.therapy}, \code{haq.lprog.age}, \code{logor.mort}, \code{mort.loghr.haqdif}, \code{si.surv},
-#' \code{dur.eular.mod}, \code{dur.eular.good
+#' \code{ttd.eular.mod}, \code{ttd.eular.good
 #' }, and \code{lt} as
 #' generated from \link{sample_pars}.
 #' @param dur_dist Survival distribution for treatment duration.
@@ -64,8 +64,8 @@ sim_haq <- function(arminds, input_data, pars, dur_dist = "lnorm", si_dist = "ex
   if (is.null(max_months)){
     max_months <- 12 * 150
   }
-  pars.dur.em <- pars$dur.eular.mod[[dur_dist]]
-  pars.dur.eg <- pars$dur.eular.good[[dur_dist]] 
+  pars.ttd.em <- pars$ttd.eular.mod[[dur_dist]]
+  pars.ttd.eg <- pars$ttd.eular.good[[dur_dist]] 
   pars.si <- pars$si.surv[[si_dist]]
   simout <- sim_haqC(arminds, input_data$haq0, input_data$age, 
                   input_data$male,
@@ -73,12 +73,12 @@ sim_haq <- function(arminds, input_data, pars, dur_dist = "lnorm", si_dist = "ex
                   pars$haq.lprog.therapy, pars$haq.lprog.age,
                   pars$rebound, pars$lt$male, pars$lt$female,
                  input_data$x.mort, pars$logor, dur_dist, input_data$x.dur, 
-                 pars.dur.em$sample[, pars.dur.em$loc.index, drop = FALSE], 
-                 pars.dur.em$sample[, pars.dur.em$anc1.index, drop = FALSE],
-                 pars.dur.em$sample[, pars.dur.em$anc2.index, drop = FALSE], 
-                 pars.dur.eg$sample[, pars.dur.eg$loc.index, drop = FALSE], 
-                 pars.dur.eg$sample[, pars.dur.eg$anc1.index, drop = FALSE],
-                 pars.dur.eg$sample[, pars.dur.eg$anc2.index, drop = FALSE],
+                 pars.ttd.em$sample[, pars.ttd.em$loc.index, drop = FALSE], 
+                 pars.ttd.em$sample[, pars.ttd.em$anc1.index, drop = FALSE],
+                 pars.ttd.em$sample[, pars.ttd.em$anc2.index, drop = FALSE], 
+                 pars.ttd.eg$sample[, pars.ttd.eg$loc.index, drop = FALSE], 
+                 pars.ttd.eg$sample[, pars.ttd.eg$anc1.index, drop = FALSE],
+                 pars.ttd.eg$sample[, pars.ttd.eg$anc2.index, drop = FALSE],
                  cycle_length, treat_gap, nbt.ind,
                  pars.si$sample[, pars.si$loc.index, drop = FALSE], 
                  pars.si$sample[, pars.si$anc1.index, drop = FALSE],
@@ -192,25 +192,25 @@ check_sim_haq <- function(input_data, pars){
                 "one of the following distributions: "), paste(names.dist, collapse = ", "))
   } 
   
-  # dur.eular.mod
-  if(is.null(pars$dur.eular.mod)) stop("'dur.eular.mod' element of pars list not given")
-  if(!is.list(pars$dur.eular.mod))  stop("'dur.eular.mod' element of pars list must be a list")
-  if(all(!names(pars$dur.eular.mod) %in% names.dist)) {
-    dists.bad <- names(pars$dur.eular.mod)[which(!names(pars$dur.eular.mod) %in% names.dist)]
+  # ttd.eular.mod
+  if(is.null(pars$ttd.eular.mod)) stop("'ttd.eular.mod' element of pars list not given")
+  if(!is.list(pars$ttd.eular.mod))  stop("'ttd.eular.mod' element of pars list must be a list")
+  if(all(!names(pars$ttd.eular.mod) %in% names.dist)) {
+    dists.bad <- names(pars$ttd.eular.mod)[which(!names(pars$ttd.eular.mod) %in% names.dist)]
     stop(paste0("sim_haq does not support at least 1 of the survival distributions (",
                 dists.bad,
-                ") that are contained in the 'dur.eular.mod'",
+                ") that are contained in the 'ttd.eular.mod'",
                 " element of pars"))
   }  
   
-  # dur.eular.good
-  if(is.null(pars$dur.eular.good)) stop("'dur.eular.good' element of pars list not given")
-  if(!is.list(pars$dur.eular.good))  stop("'dur.eular.good' element of pars list must be a list")
-  if(all(!names(pars$dur.eular.good) %in% names.dist)) {
-    dists.bad <- names(pars$dur.eular.good)[which(!names(pars$dur.eular.good) %in% names.dist)]
+  # ttd.eular.good
+  if(is.null(pars$ttd.eular.good)) stop("'ttd.eular.good' element of pars list not given")
+  if(!is.list(pars$ttd.eular.good))  stop("'ttd.eular.good' element of pars list must be a list")
+  if(all(!names(pars$ttd.eular.good) %in% names.dist)) {
+    dists.bad <- names(pars$ttd.eular.good)[which(!names(pars$ttd.eular.good) %in% names.dist)]
     stop(paste0("sim_haq does not support at least 1 of the survival distributions (",
                 dists.bad,
-                ") that are contained in the 'dur.eular.good'",
+                ") that are contained in the 'ttd.eular.good'",
                 " element of pars"))
   }  
   

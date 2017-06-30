@@ -87,8 +87,8 @@
 #'   and one column for each variable used to adjust mortality.}
 #'   \item{mort.loghr.haqdif}{Matrix of the log hazard ratio of the impact of a change in HAQ from baseline on mortality. Columns denote
 #'   hazard ratios at times < 6 months, months 6 - <12, months 12 - <24, months 24 - <36, and months 36+.}
-#'   \item{dur.eular.mod}{Matrix of coefficients from a survival model. From a survival model for moderate Eular responders}
-#'   \item{dur.eular.good}{Matrix of coefficients for the location parameter and a vector
+#'   \item{ttd.eular.mod}{Matrix of coefficients from a survival model. From a survival model for moderate Eular responders}
+#'   \item{ttd.eular.good}{Matrix of coefficients for the location parameter and a vector
 #'    of sampled values of the ancillary parameter. From a survival model for good Eular responders.}
 #'   \item{acr1}{List of two matrices \code{p} and \code{po} with each row a sampled parameter 
 #'   value. The four columns in \code{p} are mutually exclusive categories (ACR <20, ACR 20-50, 
@@ -169,7 +169,7 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
                        mort_logor = mort.or$logor, mort_logor_se = mort.or$logor_se,
                        mort_loghr_haqdif = mort.hr.haqdif$loghr,
                        mort_loghr_se_haqdif = mort.hr.haqdif$loghr_se,
-                       dur_eular_mod = dur.eular.mod.adj, dur_eular_good = dur.eular.good.adj,
+                       dur_eular_mod = ttd.eular.mod.adj, dur_eular_good = ttd.eular.good.adj,
                        nma1_mean = therapy.pars$icon_acr_nma_naive$mean,
                        nma1_sd = sqrt(diag(therapy.pars$icon_acr_nma_naive$vcov)),
                        nma2_mean = NULL, nma2_sd = NULL,
@@ -215,8 +215,8 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
   sim$logor.mort <- sample_mvnorm(n, mort_logor, mort_logor_se^2)
   sim$mort.loghr.haqdif <- sample_normals(n, mort_loghr_haqdif, mort_loghr_se_haqdif,
                                          col_names = paste0("month_", c("less6", "6to12", "12to24", "24to36", "36to48")))
-  sim$dur.eular.mod <- sample_survpars(n, dur_eular_mod)
-  sim$dur.eular.good <- sample_survpars(n, dur_eular_good)
+  sim$ttd.eular.mod <- sample_survpars(n, dur_eular_mod)
+  sim$ttd.eular.good <- sample_survpars(n, dur_eular_good)
   treat_hist <- match.arg(treat_hist)
   if (treat_hist == "naive"){
     sim$acr1 <- acr_response_oprobit(n, nma1_mean, nma1_sd, 
@@ -674,19 +674,19 @@ par_table <- function(x, pat){
   acr2eular.dt <- cbind(acr2eular.dt, apply_summary(acr2eular.mat))
   
   ### treatment duration by eular response
-  dur.em.summary <- survival_summary(x$dur.eular.mod)
-  dur.em <- data.table(Group = "Treatment duration - moderate EULAR response",
+  ttd.em.summary <- survival_summary(x$ttd.eular.mod)
+  ttd.em <- data.table(Group = "Treatment duration - moderate EULAR response",
                              Distribution = "Multivariate normal",
-                             Parameter = dur.em.summary$par.names,
+                             Parameter = ttd.em.summary$par.names,
                              Source = "Stevenson2016")
-  dur.em <- cbind(dur.em, dur.em.summary$par.summry)
+  ttd.em <- cbind(ttd.em, ttd.em.summary$par.summry)
   
-  dur.eg.summary <- survival_summary(x$dur.eular.good)
-  dur.eg <- data.table(Group = "Treatment duration - good EULAR response",
+  ttd.eg.summary <- survival_summary(x$ttd.eular.good)
+  ttd.eg <- data.table(Group = "Treatment duration - good EULAR response",
                          Distribution = "Multivariate normal",
-                         Parameter = dur.eg.summary$par.names,
+                         Parameter = ttd.eg.summary$par.names,
                          Source = "Stevenson2016")
-  dur.eg <- cbind(dur.eg, dur.eg.summary$par.summry)
+  ttd.eg <- cbind(ttd.eg, ttd.eg.summary$par.summry)
   
   ### nma 1st line - acr response probabilities
   acr.pars <- apply_summary(x$acr1$pars)
@@ -909,7 +909,7 @@ par_table <- function(x, pat){
   util.wailoo <- cbind(util.wailoo, apply_summary(x$wailoo.utility)) 
                     
   # table 
-  table <- rbind(rebound, acr2eular.dt, dur.em, dur.eg, 
+  table <- rbind(rebound, acr2eular.dt, ttd.em, ttd.eg, 
                  acr.naive, acr.exp, hce, hpt, hpa, lo.mort, lhr.mort, lt,
                  tc, hdays, hcost, mgmt, prod.loss, si.surv, si.cost, si.ul, util, util.wailoo)
   table <- table[, .(Group, Parameter, Mean, SD, Lower, Upper, Distribution, Source)]
