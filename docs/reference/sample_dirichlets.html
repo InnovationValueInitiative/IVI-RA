@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Sample from normal distributions. — sample_normal • iviRA</title>
+<title>Sample matrices using a Dirichlet distribution — sample_dirichlets • iviRA</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -107,40 +107,31 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Sample from normal distributions.</h1>
+    <h1>Sample matrices using a Dirichlet distribution</h1>
     </div>
 
     
-    <p>Sample from multiple independent normal distributions. Produces a unique sample of size <code>n</code> using each element in 
-<code>mean</code> and <code>sd</code>. Equivalent to sampling from a multivariate normal distribution with no covariance. Each sample using <code>rnorm</code>.</p>
+    <p>A wrapper using the function <code>hesim::rdiricihlet_mat</code>. Maintains the row and column names of <code>mat</code>.</p>
     
 
-    <pre class="usage"><span class='fu'>sample_normal</span>(<span class='no'>n</span>, <span class='no'>mean</span>, <span class='no'>sd</span>, <span class='kw'>col_names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>sample_dirichlets</span>(<span class='no'>n</span>, <span class='no'>mat</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>n</th>
-      <td><p>Number of observations.</p></td>
+      <td><p>Number of samples to draw.</p></td>
     </tr>
     <tr>
-      <th>mean</th>
-      <td><p>Vector of means.</p></td>
-    </tr>
-    <tr>
-      <th>sd</th>
-      <td><p>Vector of stadnard deviations.</p></td>
-    </tr>
-    <tr>
-      <th>col_names</th>
-      <td><p>Column names to returned matrix.</p></td>
+      <th>mat</th>
+      <td><p>A matrix where each row is a separte vector of shape parameters.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Matrix with each column a sample from a normal distribution.</p>
+    <p>An array of matrices representing a sample from the dirichlet distribution for each row.</p>
     
 
   </div>

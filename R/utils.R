@@ -16,20 +16,6 @@ list2array <- function(l){
   return(x)
 }
 
-#' Modify argument defaults
-#'
-#' Modify argument default values generated from \code{formals} with user controlled argument values.
-#' 
-#' @param args
-#' @export
-modify_defaults <- function(default_args, control_args){
-  use.args <- modifyList(default_args, control_args)
-  sel <- names(use.args) %in% names(default_args) 
-  final.args <- use.args[sel] 
-  return(final.args)
-}
-
-
 #' ACR response from NMA
 #'
 #' Calculate ACR response probability from ordered probit NMA
