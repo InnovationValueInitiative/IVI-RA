@@ -22,7 +22,6 @@ or.int.u <- exp(logor.int.u)
 logor.int.se <- se_normal(logor.int.l, logor.int.u)
 p.low <- 1/(1 + exp(-logor.int))
 
-
 # save
 treat.switch <- data.table(variable = c("intercept", "da_moderate", "da_high"), 
                            or = c(or.int, or), 
