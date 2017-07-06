@@ -7,7 +7,11 @@
 sample_pats(n = 1, type = c("homog", "heterog"), age_mean = 55,
   age_sd = 13, male_prop = 0.21, bhaq0_mean = 1.5, bhaq0_sd = 0.7,
   wtmale = 89, wtfemale = 75, dis_dur_mean = 18.65, dis_dur_sd = 12.25,
-  prev_dmards_mean = 3.28, prev_dmards_sd = 1.72)
+  prev_dmards_mean = 3.28, prev_dmards_sd = 1.72, das28_mean = 6,
+  das28_sd = 1.2, sdai_mean = 43, sdai_sd = 13, cdai_mean = 41,
+  cdai_sd = 13, cor_das28_sdai = 0.86, cor_das28_cdai = 0.86,
+  cor_das28_haq = 0.38, cor_sdai_cdai = 0.94, cor_sdai_haq = 0.34,
+  cor_cdai_haq = 0.34)
 }
 \arguments{
 \item{n}{Number of samples.}
@@ -28,13 +32,37 @@ sample_pats(n = 1, type = c("homog", "heterog"), age_mean = 55,
 
 \item{wtfemale}{Female weight.}
 
-\item{dis_dur_mean}{Mean disease duration}
+\item{dis_dur_mean}{Mean disease duration.}
 
-\item{dis_dur_sd}{Standard deviation of disease duration}
+\item{dis_dur_sd}{Standard deviation of disease duration.}
 
-\item{prev_dmards_mean}{Mean number of previous DMARDs}
+\item{prev_dmards_mean}{Mean number of previous DMARDs.}
 
-\item{prev_dmards_sd}{Standard deviation of number of previous DMARDs}
+\item{prev_dmards_sd}{Standard deviation of number of previous DMARDs.}
+
+\item{das28_mean}{Mean of DAS28.}
+
+\item{das28_sd}{Standard deviation of DAS28.}
+
+\item{sdai_mean}{Mean of SDAI.}
+
+\item{sdai_sd}{Standard deviation of SDAI.}
+
+\item{cdai_mean}{Mean of CDAI.}
+
+\item{cdai_sd}{Standard deviation of CDAI.}
+
+\item{cor_das28_sdai}{Correlation between DAS28 and SDAI.}
+
+\item{cor_das28_cdai}{Correlation between DAS28 and CDAI.}
+
+\item{cor_das28_haq}{Correlation between DAS28 and baseline HAQ.}
+
+\item{cor_sdai_cdai}{Correlation between SDAI and CDAI.}
+
+\item{cor_sdai_haq}{Correlation between SDAI and HAQ.}
+
+\item{cor_cdai_haq}{Correlation between CDAI and HAQ.}
 }
 \value{
 Matrix of patient characteristics. One row for each patient and one column

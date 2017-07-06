@@ -11,10 +11,22 @@
 #' @param bhaq0_sd Standard deviation of baseline HAQ score.
 #' @param wtmale Male weight.
 #' @param wtfemale Female weight.
-#' @param dis_dur_mean Mean disease duration
-#' @param dis_dur_sd Standard deviation of disease duration
-#' @param prev_dmards_mean Mean number of previous DMARDs
-#' @param prev_dmards_sd Standard deviation of number of previous DMARDs
+#' @param dis_dur_mean Mean disease duration.
+#' @param dis_dur_sd Standard deviation of disease duration.
+#' @param prev_dmards_mean Mean number of previous DMARDs.
+#' @param prev_dmards_sd Standard deviation of number of previous DMARDs.
+#' @param das28_mean Mean of DAS28.
+#' @param das28_sd Standard deviation of DAS28.
+#' @param sdai_mean Mean of SDAI.
+#' @param sdai_sd Standard deviation of SDAI.
+#' @param cdai_mean Mean of CDAI.
+#' @param cdai_sd Standard deviation of CDAI.
+#' @param cor_das28_sdai Correlation between DAS28 and SDAI.
+#' @param cor_das28_cdai Correlation between DAS28 and CDAI.
+#' @param cor_das28_haq Correlation between DAS28 and baseline HAQ.
+#' @param cor_sdai_cdai Correlation between SDAI and CDAI.
+#' @param cor_sdai_haq Correlation between SDAI and HAQ.
+#' @param cor_cdai_haq Correlation between CDAI and HAQ.
 #' @return Matrix of patient characteristics. One row for each patient and one column
 #' for each variable. Current variables are:
 #' \describe{
@@ -27,7 +39,13 @@
 sample_pats <- function(n = 1, type = c("homog", "heterog"), age_mean = 55, age_sd = 13, male_prop = .21,
                       bhaq0_mean = 1.5, bhaq0_sd = 0.7, wtmale = 89, wtfemale = 75,
                       dis_dur_mean = 18.65, dis_dur_sd = 12.25, 
-                      prev_dmards_mean = 3.28, prev_dmards_sd = 1.72){
+                      prev_dmards_mean = 3.28, prev_dmards_sd = 1.72,
+                      das28_mean = 6, das28_sd = 1.2, 
+                      sdai_mean = 43, sdai_sd = 13,
+                      cdai_mean = 41, cdai_sd = 13,
+                      cor_das28_sdai = .86, cor_das28_cdai = .86, cor_das28_haq = .38,
+                      cor_sdai_cdai = .94, cor_sdai_haq = .34,
+                      cor_cdai_haq = .34){
   if (age_mean > 85 | age_mean < 18){
     stop("Patients age must be between 18 and 85")
   }
@@ -39,14 +57,33 @@ sample_pats <- function(n = 1, type = c("homog", "heterog"), age_mean = 55, age_
       haq0 <- rep(bhaq0_mean, n)
       dis_dur <- rep(dis_dur_mean, n)
       prev_dmards <- rep(prev_dmards_mean, n)
+      das28 <- rep(das28_mean, n)
+      sdai <- rep(sdai_mean, n)
+      cdai <- rep(cdai_mean, n)
+      da <- matrix(c(das28, sdai, cdai, haq0), ncol = 4)
   } else if (type == "heterog"){
       age <- msm::rtnorm(n, age_mean, age_sd, lower = 18, upper = 85) 
       haq0 <- msm::rtnorm(n, bhaq0_mean, bhaq0_sd, lower = 0, upper = 3)
-      dis_dur <- rnorm(n, dis_dur_mean, dis_dur_sd)
-      prev_dmards <- rnorm(n, prev_dmards_mean, prev_dmards_sd)
+      dis_dur <- msm::rtnorm(n, dis_dur_mean, dis_dur_sd, lower = 0)
+      prev_dmards <- round(msm::rtnorm(n, prev_dmards_mean, prev_dmards_sd, lower = 0), 0)
+      covmat <- matrix(0, nrow = 4, ncol = 4)
+      diag(covmat) <- c(das28_sd^2, sdai_sd^2, cdai_sd^2, bhaq0_sd^2)
+      covmat[1, 2] <- covmat[2, 1] <- cor_das28_sdai * das28_sd * sdai_sd
+      covmat[1, 3] <- covmat[3, 1] <- cor_das28_cdai * das28_sd * cdai_sd
+      covmat[1, 4] <- covmat[4, 1] <- cor_das28_haq * das28_sd * bhaq0_sd
+      covmat[2, 3] <- covmat[3, 2] <- cor_sdai_cdai * sdai_sd * cdai_sd
+      covmat[2, 4] <- covmat[4, 2] <- cor_sdai_haq * sdai_sd * bhaq0_sd
+      covmat[3, 4] <- covmat[4, 3] <- cor_cdai_haq * cdai_sd * bhaq0_sd
+      mu <- c(das28_mean, sdai_mean, cdai_mean, bhaq0_mean)
+      da <- tmvtnorm::rtmvnorm(n, mean = mu, sigma = covmat,
+                               lower = rep(0, length(mu)),
+                               upper = c(9.4, 86, 76, 3))
   }
-  x <- matrix(c(age, male, haq0, weight, dis_dur, prev_dmards), nrow = n, ncol = 6, byrow = F)
-  colnames(x) <- c("age", "male", "haq0", "weight", "dis_dur", "prev_dmards")
+  x <- matrix(c(age, male, weight, dis_dur, prev_dmards, 
+                da[, 1], da[, 2], da[, 3], da[, 4]), 
+              nrow = n, ncol = 9, byrow = F)
+  colnames(x) <- c("age", "male", "weight", "dis_dur", "prev_dmards", 
+                   "das28", "sdai", "cdai", "haq0")
   return(x)
 }
 

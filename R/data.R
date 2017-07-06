@@ -30,15 +30,17 @@
 #'   \item{var}{Name of variable}
 #'   \item{or}{Odds ratio without radiographic data}
 #'   \item{or_se}{Standard error of odds ratio without radiographic data}
+#'   \item{or_lower}{Lower bound of 95 percent CI of odds ratio without radiographic data}
+#'   \item{or_upper}{Upper bound of 95 percent CI of odds ratio without radiographic data}
 #'   \item{logor}{Log odds ratio without radiographic data}
+#'   \item{logor_lower}{Lower bound of 95 percent CI of log odds ratio without radiographic data}
+#'   \item{logor_upper}{Upper bound of 95 percent CI of log odds ratio without radiographic data}
 #'   \item{logor_se}{Standard error of log odds ratio without radiographic data}
 #' }
 #' 
-#' @details The standard errors of the log odds ratios are derived from the standard error of the 
-#' odds ratios. By the delta method, \eqn{var(OR) = exp(\beta)var(\beta)exp(\beta)} where 
-#' \eqn{\beta} is the regression coefficient of the logistic regression. Since \eqn{var(\beta)} 
-#' is the variance of the log odds ratio, it follows that
-#'  \eqn{var[log(OR)] = [var(OR)/exp(\beta)}]^2.
+#' @details The standard errors of the log odds ratios are derived from the 95 percent confidence 
+#' interval for the log odds ratio, which is, in turn, calculated by taking the log of the lower and upper
+#' bounds of the 95 perent confidence interval for the odds ratio. 
 #' 
 #' @source {Wolfe, Frederick, et al. "Predicting mortality in patients with rheumatoid arthritis." 
 #' Arthritis & Rheumatism 48.6 (2003): 1530-1542.}
