@@ -5,7 +5,7 @@
 \title{Sample patients}
 \usage{
 sample_pats(n = 1, type = c("homog", "heterog"), age_mean = 55,
-  age_sd = 13, male_prop = 0.21, bhaq0_mean = 1.5, bhaq0_sd = 0.7,
+  age_sd = 13, male_prop = 0.21, haq0_mean = 1.5, haq0_sd = 0.7,
   wtmale = 89, wtfemale = 75, dis_dur_mean = 18.65, dis_dur_sd = 12.25,
   prev_dmards_mean = 3.28, prev_dmards_sd = 1.72, das28_mean = 6,
   das28_sd = 1.2, sdai_mean = 43, sdai_sd = 13, cdai_mean = 41,
@@ -24,9 +24,9 @@ sample_pats(n = 1, type = c("homog", "heterog"), age_mean = 55,
 
 \item{male_prop}{Proportion male.}
 
-\item{bhaq0_mean}{Mean baseline HAQ score.}
+\item{haq0_mean}{Mean baseline HAQ score.}
 
-\item{bhaq0_sd}{Standard deviation of baseline HAQ score.}
+\item{haq0_sd}{Standard deviation of baseline HAQ score.}
 
 \item{wtmale}{Male weight.}
 
@@ -70,8 +70,13 @@ for each variable. Current variables are:
 \describe{
   \item{age}{age in years}
   \item{male}{1 = male, 0 = female}
-  \item{haq0}{Baseline HAQ score}
   \item{weight}{Patient weight}
+  \item{dis_dur}{Disease duration in years}
+  \item{prev_dmards}{Number of previous DMARDs}
+  \item{das28}{DAS28 score}
+  \item{sdai}{SDAI score}
+  \item{cdai}{CDAI score}
+  \item{haq0}{Baseline HAQ score}
 }
 }
 \description{

@@ -7,8 +7,8 @@
 #' @param age_mean Mean age.
 #' @param age_sd Standard deviation of age.
 #' @param male_prop Proportion male.
-#' @param bhaq0_mean Mean baseline HAQ score.
-#' @param bhaq0_sd Standard deviation of baseline HAQ score.
+#' @param haq0_mean Mean baseline HAQ score.
+#' @param haq0_sd Standard deviation of baseline HAQ score.
 #' @param wtmale Male weight.
 #' @param wtfemale Female weight.
 #' @param dis_dur_mean Mean disease duration.
@@ -32,12 +32,17 @@
 #' \describe{
 #'   \item{age}{age in years}
 #'   \item{male}{1 = male, 0 = female}
-#'   \item{haq0}{Baseline HAQ score}
 #'   \item{weight}{Patient weight}
+#'   \item{dis_dur}{Disease duration in years}
+#'   \item{prev_dmards}{Number of previous DMARDs}
+#'   \item{das28}{DAS28 score}
+#'   \item{sdai}{SDAI score}
+#'   \item{cdai}{CDAI score}
+#'   \item{haq0}{Baseline HAQ score}
 #' }
 #' @export
 sample_pats <- function(n = 1, type = c("homog", "heterog"), age_mean = 55, age_sd = 13, male_prop = .21,
-                      bhaq0_mean = 1.5, bhaq0_sd = 0.7, wtmale = 89, wtfemale = 75,
+                      haq0_mean = 1.5, haq0_sd = 0.7, wtmale = 89, wtfemale = 75,
                       dis_dur_mean = 18.65, dis_dur_sd = 12.25, 
                       prev_dmards_mean = 3.28, prev_dmards_sd = 1.72,
                       das28_mean = 6, das28_sd = 1.2, 
@@ -54,7 +59,7 @@ sample_pats <- function(n = 1, type = c("homog", "heterog"), age_mean = 55, age_
   weight <- ifelse(male == 1, wtmale, wtfemale)
   if (type == "homog"){
       age <- rep(age_mean, n)
-      haq0 <- rep(bhaq0_mean, n)
+      haq0 <- rep(haq0_mean, n)
       dis_dur <- rep(dis_dur_mean, n)
       prev_dmards <- rep(prev_dmards_mean, n)
       das28 <- rep(das28_mean, n)
@@ -63,18 +68,18 @@ sample_pats <- function(n = 1, type = c("homog", "heterog"), age_mean = 55, age_
       da <- matrix(c(das28, sdai, cdai, haq0), ncol = 4)
   } else if (type == "heterog"){
       age <- msm::rtnorm(n, age_mean, age_sd, lower = 18, upper = 85) 
-      haq0 <- msm::rtnorm(n, bhaq0_mean, bhaq0_sd, lower = 0, upper = 3)
+      haq0 <- msm::rtnorm(n, haq0_mean, haq0_sd, lower = 0, upper = 3)
       dis_dur <- msm::rtnorm(n, dis_dur_mean, dis_dur_sd, lower = 0)
       prev_dmards <- round(msm::rtnorm(n, prev_dmards_mean, prev_dmards_sd, lower = 0), 0)
       covmat <- matrix(0, nrow = 4, ncol = 4)
-      diag(covmat) <- c(das28_sd^2, sdai_sd^2, cdai_sd^2, bhaq0_sd^2)
+      diag(covmat) <- c(das28_sd^2, sdai_sd^2, cdai_sd^2, haq0_sd^2)
       covmat[1, 2] <- covmat[2, 1] <- cor_das28_sdai * das28_sd * sdai_sd
       covmat[1, 3] <- covmat[3, 1] <- cor_das28_cdai * das28_sd * cdai_sd
-      covmat[1, 4] <- covmat[4, 1] <- cor_das28_haq * das28_sd * bhaq0_sd
+      covmat[1, 4] <- covmat[4, 1] <- cor_das28_haq * das28_sd * haq0_sd
       covmat[2, 3] <- covmat[3, 2] <- cor_sdai_cdai * sdai_sd * cdai_sd
-      covmat[2, 4] <- covmat[4, 2] <- cor_sdai_haq * sdai_sd * bhaq0_sd
-      covmat[3, 4] <- covmat[4, 3] <- cor_cdai_haq * cdai_sd * bhaq0_sd
-      mu <- c(das28_mean, sdai_mean, cdai_mean, bhaq0_mean)
+      covmat[2, 4] <- covmat[4, 2] <- cor_sdai_haq * sdai_sd * haq0_sd
+      covmat[3, 4] <- covmat[4, 3] <- cor_cdai_haq * cdai_sd * haq0_sd
+      mu <- c(das28_mean, sdai_mean, cdai_mean, haq0_mean)
       da <- tmvtnorm::rtmvnorm(n, mean = mu, sigma = covmat,
                                lower = rep(0, length(mu)),
                                upper = c(9.4, 86, 76, 3))
