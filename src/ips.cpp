@@ -250,6 +250,16 @@ List sim_haqC(arma::mat therapies,
                       haq_vec, ttsi_vec, si_vec, yrlen_vec);
 }
 
+// Simulation change in HAQ using Norton non-linear mixture model
+//' @export
+// [[Rcpp::export]]
+int sim_dhaq_norton1C(arma::mat delta, arma::mat w){
+  arma::rowvec latclass_prob = mlogit_probC(w, delta);
+  int latclass = hesim::rcat1C(latclass_prob); 
+  return(latclass);
+}
+
+
 // Sample from Hernandez Alva (2013) Mixture Model
 //' @export
 // [[Rcpp::export]]

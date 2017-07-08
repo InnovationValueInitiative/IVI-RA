@@ -12,6 +12,11 @@ sim_haqC <- function(therapies, haq0, age0, male, acr1, acr2, acr2eular, haq_cha
 }
 
 #' @export
+sim_dhaq_norton1C <- function(delta, w) {
+    .Call('iviRA_sim_dhaq_norton1C', PACKAGE = 'iviRA', delta, w)
+}
+
+#' @export
 sim_utility_mixture1C <- function(beta1, beta2, beta3, beta4, alpha1, alpha2, alpha3, alpha4, alpha, epsilon1_sd, epsilon2_sd, epsilon3_sd, epsilon4_sd, mu, delta, w, x, male) {
     .Call('iviRA_sim_utility_mixture1C', PACKAGE = 'iviRA', beta1, beta2, beta3, beta4, alpha1, alpha2, alpha3, alpha4, alpha, epsilon1_sd, epsilon2_sd, epsilon3_sd, epsilon4_sd, mu, delta, w, x, male)
 }

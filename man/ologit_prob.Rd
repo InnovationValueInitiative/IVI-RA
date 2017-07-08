@@ -2,22 +2,21 @@
 % Please edit documentation in R/logit-prob.R
 \name{ologit_prob}
 \alias{ologit_prob}
-\title{Bayesian predicted probabilities for ordered logistic regression}
+\title{Predicted probabilities for ordered logistic regression}
 \usage{
 ologit_prob(x, beta, cut)
 }
 \arguments{
-\item{x}{Matrix containing variables in the model (i.e. the design matrix)}
+\item{x}{Row vector containing variables in the model for a single individual.}
 
-\item{beta}{Matrix of coefficients where each row contains random draws of the coefficients
-from their posterior distribution}
+\item{beta}{Vector of coefficients.}
 
-\item{cut}{Matrix of cutpoints, one for each category, where each row contains random draws
-from their posterior distribution}
+\item{cut}{Vector of cutpoints, one for each category.}
 }
 \value{
-Matrix of predicted probabilities for each individual and simulation.
+Vector of predicted probabilities for the individual.
 }
 \description{
-Posterior distribution of predicted probabilitities from an ordered logistic regression
+Predicted probabilitities from an ordered logistic regression for a single individual. This function
+is currently not vectorized.
 }

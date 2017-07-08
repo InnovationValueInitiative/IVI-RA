@@ -69,6 +69,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// sim_dhaq_norton1C
+int sim_dhaq_norton1C(arma::mat delta, arma::mat w);
+RcppExport SEXP iviRA_sim_dhaq_norton1C(SEXP deltaSEXP, SEXP wSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type delta(deltaSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type w(wSEXP);
+    rcpp_result_gen = Rcpp::wrap(sim_dhaq_norton1C(delta, w));
+    return rcpp_result_gen;
+END_RCPP
+}
 // sim_utility_mixture1C
 double sim_utility_mixture1C(arma::rowvec beta1, arma::rowvec beta2, arma::rowvec beta3, arma::rowvec beta4, double alpha1, double alpha2, double alpha3, double alpha4, double alpha, double epsilon1_sd, double& epsilon2_sd, double epsilon3_sd, double& epsilon4_sd, double mu, arma::mat delta, arma::rowvec w, arma::rowvec x, int male);
 RcppExport SEXP iviRA_sim_utility_mixture1C(SEXP beta1SEXP, SEXP beta2SEXP, SEXP beta3SEXP, SEXP beta4SEXP, SEXP alpha1SEXP, SEXP alpha2SEXP, SEXP alpha3SEXP, SEXP alpha4SEXP, SEXP alphaSEXP, SEXP epsilon1_sdSEXP, SEXP epsilon2_sdSEXP, SEXP epsilon3_sdSEXP, SEXP epsilon4_sdSEXP, SEXP muSEXP, SEXP deltaSEXP, SEXP wSEXP, SEXP xSEXP, SEXP maleSEXP) {
@@ -454,6 +466,7 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"iviRA_durationC", (DL_FUNC) &iviRA_durationC, 11},
     {"iviRA_sim_haqC", (DL_FUNC) &iviRA_sim_haqC, 32},
+    {"iviRA_sim_dhaq_norton1C", (DL_FUNC) &iviRA_sim_dhaq_norton1C, 2},
     {"iviRA_sim_utility_mixture1C", (DL_FUNC) &iviRA_sim_utility_mixture1C, 18},
     {"iviRA_sim_utility_mixtureC", (DL_FUNC) &iviRA_sim_utility_mixtureC, 25},
     {"iviRA_testfun", (DL_FUNC) &iviRA_testfun, 0},

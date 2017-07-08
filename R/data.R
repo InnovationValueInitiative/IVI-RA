@@ -257,6 +257,17 @@
 #'  Arthritis care & research 63.3 (2011): 366-372.
 "haq.lprog.age"
 
+#' Parameters for Latent Class Growth Model (LCGM)
+#'
+#' Parameters for Norton (2014) LCGM used to simulate non-linear HAQ trajectories for
+#' 4 latent classes.
+#'
+#' @format List containing coefficient vector and indices for parameters.
+#' @source Norton, Sam, et al. "Health Assessment Questionnaire disability progression in early
+#'  rheumatoid arthritis: systematic review and analysis of two inception cohorts." 
+#'  Seminars in arthritis and rheumatism. Vol. 44. No. 2. WB Saunders, 2014.
+"haq.lcgm.pars"
+
 #' Mixture model utility mapping
 #'
 #' Coefficients and variance-covariance matrix from the Alava (2013) mixture model

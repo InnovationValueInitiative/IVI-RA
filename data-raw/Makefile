@@ -5,14 +5,17 @@ DATA=../data
 all: $(DATA)/therapy-pars.rda $(DATA)/pain.rda $(DATA)/util-pars.rda $(DATA)/ttd-pars.rda
 all: $(DATA)/acr2eular.rda $(DATA)/eular2haq.rda $(DATA)/acr2haq.rda $(DATA)/haq-lprog-age.rda 
 all: $(DATA)/mort-or.rda $(DATA)/mort-hr-haqdif.rda $(DATA)/lifetable-male.rda $(DATA)/lifetable-female.rda 
-all: $(DATA)/mgmt-cost.rda $(DATA)/treat-switch.rda
-
+all: $(DATA)/mgmt-cost.rda $(DATA)/treat-switch.rda $(DATA)/haq-lcgm-pars.rda
 
 # parameters that vary by treatment
 TP_DEPS := therapy-pars.R func.R cost.xlsx 
 TP_TARGET := $(DATA)/therapy-pars.rda figs/infections-grijalva-cumhaz.pdf figs/infections-van-dartel-cumhaz.pdf
 $(TP_TARGET): $(TP_DEPS)
 	Rscript therapy-pars.R
+
+# HAQ LCGM
+$(DATA)/haq-lcgm-pars.rda: haq-lcgm.R coef-norton-2014.csv
+	Rscript haq-lcgm.R
 
 # utility
 $(DATA)/pain.rda $(DATA)/util-pars.rda $(DATA)/util-wailoo-pars.rda: utility.R coef-alava-2013.csv vcov-alava-2013.csv

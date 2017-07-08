@@ -1,18 +1,33 @@
-#' Bayesian predicted probabilities for ordered logistic regression
+#' Predicted probabilities for ordered logistic regression
 #'
-#' Posterior distribution of predicted probabilitities from an ordered logistic regression 
+#' Predicted probabilitities from an ordered logistic regression for a single individual. This function
+#' is currently not vectorized. 
 #' 
-#' @param x Matrix containing variables in the model (i.e. the design matrix)
+#' @param x Row vector containing variables in the model for a single individual. 
 #'
-#' @param beta Matrix of coefficients where each row contains random draws of the coefficients
-#' from their posterior distribution
+#' @param beta Vector of coefficients.
 #'
-#' @param cut Matrix of cutpoints, one for each category, where each row contains random draws
-#' from their posterior distribution
+#' @param cut Vector of cutpoints, one for each category. 
 #'
-#' @return Matrix of predicted probabilities for each individual and simulation.
+#' @return Vector of predicted probabilities for the individual. 
 #'
 #' @export
 ologit_prob <- function(x, beta, cut){
   return(ologit_probC(x, beta, cut))
+}
+
+#' Predicted probabilities for multinomial logistic regression
+#'
+#' Predicted probabilitities from a multinomial logistic regression for a single individual. This function
+#' is currently not vectorized. 
+#' 
+#' @param x Row vector containing variables in the model for a single individual. 
+#'
+#' @param beta Matrix of coefficients; one for each outcome other than the reference outcome.
+#'
+#' @return Vector of predicted probabilities for the individual. 
+#'
+#' @export
+mlogit_prob <- function(x, beta){
+  return(mlogit_probC(x, beta))
 }

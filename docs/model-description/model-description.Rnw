@@ -220,12 +220,12 @@ H3 & - & - & - & - & 12  & -\\
 \hline
 \end{tabularx}
 \scriptsize
-Notes: Rows denote the model structure used to relate treatment to HAQ and columns denote the model structure used to predict treatment switching. Each number denotes a unique model structure (i.e. 1 corresponds to H1 and S1 and 8 corresponds to H2 and S3) and the "-" denotes a model structure combination that is not possible. There are 12 possible model structures for the initial treatment phase. 
+Notes: Rows denote the model structure used to relate treatment to HAQ and columns denote the model structure used to predict treatment switching. Each number denotes a unique model structure (i.e. 1 corresponds to H1 and S1 and 8 corresponds to H2 and S3) and the ``-'' denotes a model structure combination that is not possible. There are 12 possible model structures for the initial treatment phase. 
 \end{threeparttable}
 \end{center}
 \end{table}
 
-In the maintenance phase, two model structures can be used to simulate the long-term progression of HAQ. First, as is common in cost-effectiveness analyses (CEAs) of therapies for RA, HAQ is assumed to progress at a constant linear rate over time \citep[see][]{tosh2011sheffield, wailoo2008biologic}. However, since emerging evidence suggests that the rate of HAQ progression is non-linear \citep{gibson2016haq}, our second scenario simulates HAQ progression using a non-linear mixture model \citep{norton2014health} with 4 distinct HAQ trajectories and a rate of HAQ progression that decreases over time within each trajectory. Upon discontinuation of treatment, the HAQ score rebounds by a proportion of the improvement experienced at the end of the initial 6-month period with that treatment.
+In the maintenance phase, two model structures can be used to simulate the long-term progression of HAQ. First, as is common in cost-effectiveness analyses (CEAs) of therapies for RA, HAQ is assumed to progress at a constant linear rate over time \citep[see][]{tosh2011sheffield, wailoo2008biologic}. However, since emerging evidence suggests that the rate of HAQ progression is non-linear \citep{gibson2016haq}, our second scenario simulates HAQ progression using a latent class growth model (LCGM) \citep{norton2014health} with 4 distinct HAQ trajectories and a rate of HAQ progression that decreases over time within each trajectory. Upon discontinuation of treatment, the HAQ score rebounds by a proportion of the improvement experienced at the end of the initial 6-month period with that treatment.
 
 The duration of the maintenance phase (i.e., time to discontinuation of maintenance treatment) is simulated using parametric time-to-event distributions. When structure \textbf{S6} is used, the time-to-event distributions are stratified by EULAR response category. Patients with good response at the end of the initial treatment phase stay on treatment longer, on average, than patients with a moderate response. In contrast, when \textbf{S1} is used, time to treatment discontinuation is simulated using a single time-to-event curve because we have been unable to obtain curves stratified by ACR response categories. Likewise, when \textbf{S2-S5} are selected, we use a single time-to-event curve because we have not obtained curves stratified by disease activity level. In each case, time to discontinuation can be simulated using one of 7 possible distributions (exponential, Weibull, Gompertz, normal, gamma, log-logistic, generalized gamma).
 
@@ -282,7 +282,7 @@ Notes: ACR: American College of Rheumatology; EULAR: European League Against Rhe
 \multicolumn{1}{c}{Component of model structure} & \multicolumn{1}{c}{Possible combinations} \\
 \hline
 Initial effect of treatment on HAQ (\textbf{H1-H3}) and switching (\textbf{S1-S6}) & 12  \\
-HAQ progression linear or non-linear & 2 \\
+HAQ trajectory & 2 \\
 Probability distribution for treatment duration & 7 \\
 Utility algorithm & 2 \\
 \hline
@@ -666,8 +666,74 @@ Notes: 95\% confidence intervals are calculated using a normal distribution. Con
 \end{center}
 \end{table}
 
-\subsubsection{Non-linear mixture model} \label{sec:haq-mixture}
-The rate of progression in the non-linear case is based on a mixture model approach that has increasingly been used to model HAQ progression over time \citep{stevenson2016adalimumab, norton2013trajectories, norton2014health}. These models suggest that different subgroups have distinct HAQ trajectories and that the rate of worsening of HAQ progression decreases over time. We use the statistical model estimated on the Early Rheumatoid Arthritis Cohort Study (ERAS) cohort, which has a high percentage of patients receiving methotrexate and a very small percentage receiving biologics. Complete details of the mixture model are provided in \autoref{non-linear-haq}. 
+\subsubsection{Latent class growth model} \label{sec:haq-lcgm}
+We also model the rate of HAQ progression using a mixture model approach that has increasingly been used to model HAQ progression over time \citep{stevenson2016adalimumab, norton2013trajectories, norton2014health}. These models suggest that different subgroups have distinct HAQ trajectories and that the rate of worsening of HAQ progression decreases over time. We use the LCGM estimated by \citet{norton2014health} and since we aim to model trajectories for cDMARDs and NBTs we chose the specification based on data from the Early Rheumatoid Arthritis Cohort Study (ERAS) cohort, which has a high percentage of patients receiving methotrexate and a very small percentage receiving biologics. Complete details of the LCGM are provided in \autoref{app:lcgm-haq}. 
+
+<<haq_lcgm_probs, echo = FALSE, include = FALSE>>=
+# latent class probabilities 
+args <- formals(sample_pats)
+rf <- .73
+acr.criteria <- 1 
+imdq <- 0
+x <- c(1, args$age_mean, 0, args$das28_mean, 8.2, rf, acr.criteria, imdq)
+indx.delta <- unlist(haq.lcgm.pars$index[c("delta2", "delta3", "delta4")])
+delta <- matrix(haq.lcgm.pars$coef$coef[indx.delta], nrow = 3, byrow = TRUE)
+probs <- mlogit_prob(x, delta)
+@
+
+The \citet{norton2014health} LCGM determined that there are four classes of patients and thus four distinct HAQ trajectories. The probability of class membership depends on 7 variables: age, gender, DAS28, disease duration, rheumatoid factor, the ACR 1987 criteria for RA, and a measure of socioeconomic status. Age, gender, and the DAS28 are relevant to the way the population is defined within our model (see \autoref{sec:populations}) and are therefore important determinants of the HAQ trajectory. Other variables (disease duration, rheumatoid factor, ACR criteria, and socioeconomic status) are not defined within our population. We consequently set disease duration (8.2 months), rheumatoid factor (0.73), and the socioeconomic status variable (0.73) equal to their mean values with the ERAS cohort. The ACR criteria was set to 1. 
+
+HAQ trajectores (in levels) by class are shown \autoref{fig:lcgm-haq-prog}. The dotted lines plot observed mean values. There are clear distinguishable classes as both the level of the HAQ score and its slope vary between groups. \citet{norton2014health} refer to the groups as ``low'', ``moderate'', ``high'', and ``severe'' groups, in order from the lowest HAQ scores to the highest. The observed trends for the low, medium, and high groups follow a J-shaped pattern with a sharp drop following treatment initiation and an upward slope thereafter, while the severe group experiences persistently high HAQ scores. Since our model separates the initial treatment phase from the maintenance phase, we are only concerned with HAQ progression following the iniital drop. As in \citet{stevenson2016adalimumab}, we consequently only predict values from year 2 onward. The fitted values are the solid upward sloping lines in the plot.  
+\begin{figure}[H]
+\centering
+\includegraphics[max size={.8\textwidth}{.8\textheight}]{../../data-raw/figs/haq-lcgm-obsexp.pdf}
+\caption{Observed and predicted HAQ trajectories in the ERAS dataset from the latent class growth model}\label{fig:lcgm-haq-prog}
+\end{figure}
+
+<<haq_lcgm, echo = FALSE, include = FALSE>>=
+# haq trajectories
+t <- seq(2, 30)
+xt <- 1 - (1/(1 + t))
+haq_lcgm <- function(beta){
+  return(beta[1] + beta[2] * xt + beta[3] * xt^2 + beta[4] * xt^3)
+}
+beta1 <- haq.lcgm.pars$coef[parameter == "beta1", coef]
+beta2 <- haq.lcgm.pars$coef[parameter == "beta2", coef]
+beta3 <- haq.lcgm.pars$coef[parameter == "beta3", coef]
+beta4 <- haq.lcgm.pars$coef[parameter == "beta4", coef]
+haq.lcgm1 <- haq_lcgm(beta1)
+haq.lcgm2 <- haq_lcgm(beta2)
+haq.lcgm3 <- haq_lcgm(beta3)
+haq.lcgm4 <- haq_lcgm(beta4)
+haq.lprog <- therapy.pars$haq.lprog[sname == "cdmards", est]
+haq.dt <- data.table(t = t[-1], dhaq_lcgm1 = diff(haq.lcgm1), dhaq_lcgm2 = diff(haq.lcgm2),
+                     dhaq_lcgm3 = diff(haq.lcgm3), dhaq_lcgm4 = diff(haq.lcgm4),
+                     dhaq_lp1 = haq.lprog, dhaq_lp2 = haq.lprog,
+                     dhaq_lp3 = haq.lprog, dhaq_lp4 = haq.lprog)
+
+# plot
+p.dat <- melt(haq.dt, id.vars = "t")
+p.dat[, type := ifelse(grepl("dhaq_lp", variable) == TRUE, "Constant linear progression", "LCGM")]
+p.dat[, class := ifelse(variable %in% c("dhaq_lcgm1", "dhaq_lp1"), "Class 1", NA)]
+p.dat[, class := ifelse(variable %in% c("dhaq_lcgm2", "dhaq_lp2"), "Class 2", class)]
+p.dat[, class := ifelse(variable %in% c("dhaq_lcgm3", "dhaq_lp3"), "Class 3", class)]
+p.dat[, class := ifelse(variable %in% c("dhaq_lcgm4", "dhaq_lp4"), "Class 4", class)]
+p <- ggplot(p.dat, aes(x = t, y = value, col = factor(type))) + geom_line() + geom_point(size = .75) +
+  facet_wrap(~class) +  xlab("Follow-up in years") + ylab("Yearly change in HAQ") +  
+  scale_color_discrete("") + theme(legend.position = "bottom")
+ggsave("figs/haq-lcgm-vs-linear.png", p, height = 5, width = 7)
+@
+
+
+An important question for cost-effectiveness modeling in RA is how the rate of progression within each class in the LCGM compares to a constant linear trajectory. We examine this question in \autoref{fig:lcgm-vs-linear}, which compares yearly rates of changes in HAQ using the LCGM and with constant annual rates of change (\Sexpr{haq.lprog} per year) based on the \citet{wolfe2010loss} analysis. The LCGM was simulated over 30 years and differences between year $t$ and year $t-1$ were used to assess changes in HAQ score from one year to the next.  
+
+\begin{figure}[H]
+\centering
+\includegraphics[max size={.7\textwidth}{.7\textheight}]{figs/haq-lcgm-vs-linear.png}
+\caption{A comparison of predicted yearly changes in HAQ between a latent class growth model and constant linear progression }\label{fig:lcgm-vs-linear}
+\end{figure}
+
+In the moderate, high, and severe groups the rate of HAQ progression is higher initialy in the LCGM than in the \citet{wolfe2010loss} analysis; however, the LCGM modeled rate of HAQ progression declines over time and eventually begins to approach zero. In the low group, HAQ increases at a rate less than \Sexpr{haq.lprog} per year and the rate of increase declines over time. 
 
 \subsection{HAQ trajectory with bDMARD maintenance treatment}
 Based on the NDB longitudinal study, \citet{wolfe2010loss} estimated the overall annual HAQ progression rate among RA patients who had switched to biologic treatment at -0.001 (95CI: -0.004 to 0.002). In a separate analysis, also based on NDB data, \citet{michaud2011treatment} reported annual HAQ progression rates by treatment adjusted for baseline HAQ score, age, sex, education, smoking, BMI, comorbidity, and RA onset. The average HAQ rate among patients on a biologic was -0.001 as well, which instills confidence that the reported HAQ progression rates for different bDMARDs as reported by \citet{michaud2011treatment} can be directly compared with the overall annual HAQ progression rate of 0.031 reported by \citet{wolfe2010loss}. Accordingly, bDMARD specific HAQ progression rates by \citet{michaud2011treatment} are used in the model. For bDMARD treatments evaluated in the model for which no HAQ progression rate was reported by \citet{michaud2011treatment}, the overall biologic rate of -0.001 is used. 
@@ -1063,7 +1129,7 @@ Mean survival for females without RA was \Sexpr{formatC(surv.mean.nora, format =
 \caption{Simulated survival curve for a patient age 55}\label{fig:surv}
 \begin{minipage}{\linewidth}
 \footnotesize
-Notes: Baseline HAQ is 1 for the "Constant HAQ" and "HAQ increase of 0.03 per year" scenarios; baseline HAQ is 0 for the "No RA" scenario.
+Notes: Baseline HAQ is 1 for the ``Constant HAQ'' and ``HAQ increase of 0.03 per year'' scenarios; baseline HAQ is 0 for the ``No RA'' scenario.
 \end{minipage}
 \end{figure}
 
@@ -1277,7 +1343,7 @@ ACR response to HAQ mapping & Normal \\
 EULAR response to HAQ mapping & Normal \\
 Linear HAQ progression - by therapy & Normal \\
 Linear HAQ progression - by age & Normal \\
-Non-linear mixture model for HAQ progression & Normal \\
+Latent class growth model for HAQ progression & Normal \\
 Utility model - \cite{alava2013relationship} mixture model & Multivariate normal \\
 Utility model - \citet{wailoo2006modeling} & Normal \\
 Hospital costs - hospital days by HAQ & Gamma \\
@@ -1473,26 +1539,180 @@ SE(\delta_a) = \sqrt{SE(\beta)^2 + SE(\beta_a)^2}.
 \end{align}
 
 
-\subsection{Non-linear HAQ trajectory}\label{non-linear-haq}
+\subsection{HAQ trajectory with a latent class growth model}\label{app:lcgm-haq}
 \citet{norton2014health} model HAQ progression using a latent class growth model (LCGM). The probability that individual $i$ is a member of class $c$ at time $t$ is modeled using a multinomial logistic regression,
 
 \begin{align}
 P(C_{it} = c) &= \frac{\exp(w_{it}^T\delta_c)}{\sum_{s=1}^{4}\exp(w_{it}^T\delta_s)},
 \end{align}
 
-where $\delta_s$ is the vector of regression coefficients associated with class $s$ and $w_{it}$ is the corresponding vector of regressors. The variables included in $w_{it}$ are age, gender, baseline DAS28, symptom duration, rheumatoid factor, ACR criteria, and socioeconomic status. Since some of these variables are not used to define populations in the cost-effectiveness model, we follow \citet{stevenson2016adalimumab} and set continuous and categorical variables to mean and modal values in the ERAS cohort respectively; that is, we set the rheumatoid factor to .727, the ACR criteria to 1, and assumed that patients were not in the 4th quartile of the socioeconomic deprivation index. 
+where $\delta_s$ is the vector of regression coefficients associated with class $s$ and $w_{it}$ is the corresponding vector of regressors. The variables included in $w_{it}$ are age, gender, baseline DAS28, symptom duration, rheumatoid factor, ACR criteria, and socioeconomic status. Regression coefficients for classes 2-4 relative to class 1 are shown in \autoref{tbl:lcmm-class-coefs}. Older age and female gender are especially important predictors of membership in higher risk classes; a worse DAS28 score, rheumatoid factor positivity, fullfilment of the 1987 ACR criteria, lower socioeconomic status, and longer disease duration are also predictors of membership in classes with worse HAQ progression. 
+
+<<app-lcgm-class, echo = FALSE, include = FALSE>>=
+coefs = copy(haq.lcgm.pars$coef)
+coefs[, lower := coef - qnorm(.975) * se]
+coefs[, upper := coef + qnorm(.975) * se]
+
+## class membership
+coefs.c <- coefs[parameter %in% c("delta2", "delta3", "delta4")]
+varnames <- c("Intercept", "Age at onset", "Female gender", "Disease duration (months)",
+                 "DAS28 score", "Rheumatoid factor positive", "ACR criteria for RA",
+                 "Socioeconomic status")
+coefs.c <- coefs.c[, .(parameter, coef, lower, upper)]
+
+# class 2
+tab <- coefs.c[parameter == "delta2", !"parameter", with = FALSE]
+tab <- formatC(as.matrix(tab), format = "f", digits = 3)
+tab <- cbind(paste0("\\;", varnames), tab)
+tex <- print(xtable(tab), 
+      include.rownames = FALSE, include.colnames = FALSE,
+      only.contents = TRUE, sanitize.text.function = identity,
+      hline.after = NULL,
+      file = "tables/lcgm-coef-class2.txt")
+
+# class 3
+tab <- coefs.c[parameter == "delta3", !"parameter", with = FALSE]
+tab <- formatC(as.matrix(tab), format = "f", digits = 3)
+tab <- cbind(paste0("\\;", varnames), tab)
+tex <- print(xtable(tab), 
+      include.rownames = FALSE, include.colnames = FALSE,
+      only.contents = TRUE, sanitize.text.function = identity,
+      hline.after = NULL,
+      file = "tables/lcgm-coef-class3.txt")
+
+# class 4
+tab <- coefs.c[parameter == "delta4", !"parameter", with = FALSE]
+tab <- formatC(as.matrix(tab), format = "f", digits = 3)
+tab <- cbind(paste0("\\;", varnames), tab)
+tex <- print(xtable(tab), 
+      include.rownames = FALSE, include.colnames = FALSE,
+      only.contents = TRUE, sanitize.text.function = identity,
+      hline.after = NULL,
+      file = "tables/lcgm-coef-class4.txt")
+
+## trajectory
+coefs.t <- coefs[parameter %in% c("beta1", "beta2", "beta3", "beta4")]
+varnames <- c("Intercept", "Linear", "Quadratic", "Cubic")
+coefs.t <- coefs.t[, .(parameter, coef, se)]
+
+# class 1
+tab <- coefs.t[parameter == "beta1", !"parameter", with = FALSE]
+tab <- formatC(as.matrix(tab), format = "f", digits = 3)
+tab <- cbind(paste0("\\;", varnames), tab)
+tex <- print(xtable(tab), 
+      include.rownames = FALSE, include.colnames = FALSE,
+      only.contents = TRUE, sanitize.text.function = identity,
+      hline.after = NULL,
+      file = "tables/lcgm-coef-growth-class1.txt")
+
+# class 2
+tab <- coefs.t[parameter == "beta2", !"parameter", with = FALSE]
+tab <- formatC(as.matrix(tab), format = "f", digits = 3)
+tab <- cbind(paste0("\\;", varnames), tab)
+tex <- print(xtable(tab), 
+      include.rownames = FALSE, include.colnames = FALSE,
+      only.contents = TRUE, sanitize.text.function = identity,
+      hline.after = NULL,
+      file = "tables/lcgm-coef-growth-class2.txt")
+
+# class 3
+tab <- coefs.t[parameter == "beta3", !"parameter", with = FALSE]
+tab <- formatC(as.matrix(tab), format = "f", digits = 3)
+tab <- cbind(paste0("\\;", varnames), tab)
+tex <- print(xtable(tab), 
+      include.rownames = FALSE, include.colnames = FALSE,
+      only.contents = TRUE, sanitize.text.function = identity,
+      hline.after = NULL,
+      file = "tables/lcgm-coef-growth-class3.txt")
+
+# class 4
+tab <- coefs.t[parameter == "beta4", !"parameter", with = FALSE]
+tab <- formatC(as.matrix(tab), format = "f", digits = 3)
+tab <- cbind(paste0("\\;", varnames), tab)
+tex <- print(xtable(tab), 
+      include.rownames = FALSE, include.colnames = FALSE,
+      only.contents = TRUE, sanitize.text.function = identity,
+      hline.after = NULL,
+      file = "tables/lcgm-coef-growth-class4.txt")
+
+@
+
+\begin{table}[!ht] 
+\begin{center}
+\begin{threeparttable}
+\caption{Determinants of class membership in the ERAS cohort} \label{tbl:lcmm-class-coefs}
+\begin{tabularx}{\textwidth}{@{\extracolsep{\fill}}lccc}
+\hline
+\multicolumn{2}{l}{} & \multicolumn{2}{c}{95\% CI} \\
+\cmidrule{3-4} 
+\multicolumn{1}{l}{} & \multicolumn{1}{c}{Coefficient} & \multicolumn{1}{c}{Lower} & \multicolumn{1}{c}{Upper}  \\
+\hline
+\multicolumn{4}{@{}l}{\textbf{Class 2: moderate}} \\
+\ExpandableInput{tables/lcgm-coef-class2.txt} \\
+\multicolumn{4}{@{}l}{\textbf{Class 3: high}} \\
+\ExpandableInput{tables/lcgm-coef-class3.txt} \\
+\multicolumn{4}{@{}l}{\textbf{Class 4: severe}} \\
+\ExpandableInput{tables/lcgm-coef-class4.txt}
+\hline
+\end{tabularx}
+\scriptsize
+Notes: Class 1, or the "low" group, is the reference category.
+\end{threeparttable}
+\end{center}
+\end{table}
 
 The HAQ trajectory for a given class can be written as,
 
-\begin{align}
+\begin{align}\label{eqn:lcgm-haq}
 y_{itc}^{*} &= \beta_{0c} + \beta_{1c}x_t + \beta_{2c}x_t^2 + \beta_{3c}x_t^3 + \epsilon_{it} \\
 y_{itc} &= 
 \begin{cases}
   0 & \text{if}\  y_{itc}^{*} < 0 \\
   y_{itc}^{*}& \text{if}\  0 \leq y_{itc}^{*} \leq 3 \\
-   3 & \text{if}\  y_{itc}^{*} > 3 
-\end{cases}\\
+   3 & \text{if}\  y_{itc}^{*} > 3 ,
+\end{cases}
 \end{align}
+
+where $y_{itc}$ is the HAQ score, $x_t$ is a variable that is a function of time, the $\beta_{jc}$ are polynomial regression coefficients for members of class c, and $\epsilon_{it}$ is an error term.
+
+Sam Norton generously provided us with statistical estimates of the 4 class LCGM used in \citet{norton2014health} from \href{https://www.statmodel.com}{MPlus}. Like \citet{stevenson2016adalimumab}, we noted that the coefficient estimates the MPlus resulted in large fluctuations in the predicted HAQ scores, likely because three decimal places was not precise enough for the cubic term in \autoref{eqn:lcgm-haq}. We consequently used the coefficient estimates to predict the probability of class membership---which are less likely to be influenced by the number of reported decimal places---but estimated \autoref{eqn:lcgm-haq} using the observed HAQ values reported in Figure 2 in \citet{norton2014health}. Morevoer, since we are only interested in the HAQ trajectory following the HAQ decline during the initial treatment phase, we limited our analyis to HAQ values from year 2 and onwards. Using the post year 2 data, we estimated {eqn:lcgm-haq} using separate linear regressions with cubic polynomials for each class (\autoref{tbl:lcmm-growth-coefs}). Like \citet{norton2014health}, we set $x_t$ equal to a reciprocal transformation of time,
+
+\begin{align}
+x_t &= 1 - \frac{1}{t+1}
+\end{align}
+
+\begin{table}[!ht] 
+\begin{center}
+\begin{threeparttable}
+\caption{LCGM HAQ trajectory coefficients} \label{tbl:lcmm-growth-coefs}
+\begin{tabularx}{\textwidth}{@{\extracolsep{\fill}}lccc}
+\hline
+\multicolumn{1}{l}{} & \multicolumn{1}{c}{Coefficient} & \multicolumn{1}{c}{Standard error}  \\
+\hline
+\multicolumn{3}{@{}l}{\textbf{Class 1: low}} \\
+\ExpandableInput{tables/lcgm-coef-growth-class1.txt} \\
+\multicolumn{3}{@{}l}{\textbf{Class 2: moderate}} \\
+\ExpandableInput{tables/lcgm-coef-growth-class2.txt} \\
+\multicolumn{3}{@{}l}{\textbf{Class 3: high}} \\
+\ExpandableInput{tables/lcgm-coef-growth-class3.txt} \\
+\multicolumn{3}{@{}l}{\textbf{Class 4: severe}} \\
+\ExpandableInput{tables/lcgm-coef-growth-class4.txt}
+\hline
+\end{tabularx}
+\scriptsize
+Notes: Class 1, or the ``low'' group, is the reference category.
+\end{threeparttable}
+\end{center}
+\end{table}
+
+In the cost-effectiveness model, we simulate the HAQ score at 6 months as a function of the baseline HAQ score and the change in HAQ during the initial treatmment phase. Since the \citet{norton2014health} model is not conditional on the initial HAQ score (i.e., the simulated HAQ score at 6 months), we use it to predict changes in HAQ rather than the level of the HAQ score. More preciseley, for a patient in a given class, we model the change in HAQ as,  
+
+\begin{align}\label{eqn:lcgm-dhaq}
+\Delta y_{itc}^{*} &= y_{i,t,c}^{*} - y_{i,t-1,c}^{*} \\
+&= \beta_{1c}(x_t - x_{t-1}) + \beta_{2c}(x_t^2 - x_{t-1}^2) + \beta_{3c}(x_t^3-x_{t-1}^3) + (\epsilon_{i,t} - \epsilon_{i,t-1}). \nonumber
+\end{align}
+
+Since \autoref{eqn:lcgm-haq} was estimated on aggregated data, we did not have reliable estimates of $\epsilon_{it}$. We consequently set $\epsilon_{i,t} - \epsilon_{i,t-1}$ equal to 0, which implies that we are generating a mean resopnse rather than a predicted response. In other words, we are not simulating the random variation associated with each individual, but are still accurately simulating mean outcomes accross populations or subpopulations. 
 
 \section{Simulating death}\label{ssec:simulating-death}
 Death is simulated for each patient during each model cycle based on age, gender, baseline HAQ, and change in HAQ from baseline. A 0/1 death indicator is randomly drawn using the following procedure: 
