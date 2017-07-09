@@ -28,19 +28,14 @@
 #' @param mort_loghr_se_haqdif Standard error of log hazard ratio of impact of change in HAQ from baseline on mortality rate.
 #' @param ttd_eular_mod A list containing treatment duration parameters for patientes with a moderate EULAR response. See 'Treatment duration'.
 #' @param ttd_eular_good A list containing treatment duration parameters for patientes with a good EULAR response. See 'Treatment duration'.
-#' @param nma1_mean Posterior means for NMA parameters on probit scale (1st line). 
-#' NMA estimtes impact of therapy on ACR response.
-#' @param nma1_sd Posterior sd for NMA paramters on probit scale (1st line). 
-#' Used as diagonal for variance-covariance matrix. 
-#' @param nma2_mean Posterior means for NMA parameters on probit scale (2+ lines).
-#' NMA estimtes impact of therapy on ACR response.
-#' @param nma2_sd Posterior sd for NMA paramters on probit scale (2+ lines). 
-#' Used as diagonal for variance-covariance matrix.
-#' @param basedif_mean Difference of mean effect of baseline treatment on probit scale
-#' between 2nd line and 1st line. Used if there are no 2nd line NMA results.
-#' @param basedif_sd Standard deviation of \code{basedif_mean}
-#' @param zdif_mean Difference of ACR 50 and ACR 70 cutpoints on probit scale
-#' between 2nd line and 1st line.
+#' @param nma1_mean Posterior means for NMA parameters on probit scale for biologic naive 
+#' patients (i.e., 1st line). NMA is an ordered probit model of ACR response.
+#' @param nma1_vcov Variance-covariance matrix for NMA paramters on probit scale for biologic naive
+#' patients (i.e., 1st line). 
+#' @param nma_rr_lower Lower bound for reduction (i.e., relative risk) in overlapping ACR response 
+#' probabilities (ACR20/50/70) for biologic experienced patients (i.e., lines 2 and later)
+#' @param nma_rr_upper Upper bound for reduction (i.e., relative risk) in overlapping ACR response 
+#' probabilities (ACR20/50/70) for biologic experienced patients (i.e., lines 2 and later)
 #' @param treat_hist Is patient TIM naive or experienced. If naive NMA results for TIM 
 #' naive patients are used during 1st line and TIM experienced NMA results are used
 #' for subsequent lines. If experienced, NMA results for TIM
@@ -178,12 +173,9 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
                        mort_loghr_haqdif = mort.hr.haqdif$loghr,
                        mort_loghr_se_haqdif = mort.hr.haqdif$loghr_se,
                        ttd_eular_mod = ttd.eular.mod.adj, ttd_eular_good = ttd.eular.good.adj,
-                       nma1_mean = therapy.pars$icon_acr_nma_naive$mean,
-                       nma1_sd = sqrt(diag(therapy.pars$icon_acr_nma_naive$vcov)),
-                       nma2_mean = NULL, nma2_sd = NULL,
-                       basedif_mean = .25, basedif_sd = .05,
-                       zdif_mean = c(.01, .09),
-                       zdif_sd = c(.05, .05),
+                       nma1_mean = therapy.pars$nma.acr.naive$mean,
+                       nma1_vcov = therapy.pars$nma.acr.naive$vcov,
+                       nma_rr_lower = .75, nma_rr_upper = .92,
                        treat_hist = c("naive", "exp"),
                        haq_lprog_therapy_mean = therapy.pars$haq.lprog$est,
                        haq_lprog_therapy_se = therapy.pars$haq.lprog$se,
@@ -228,15 +220,13 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
   sim$ttd.eular.good <- sample_survpars(n, ttd_eular_good)
   treat_hist <- match.arg(treat_hist)
   if (treat_hist == "naive"){
-    sim$acr1 <- acr_response_oprobit(n, nma1_mean, nma1_sd, 
-                                     basedif_mean = NULL, basedif_sd = NULL,
-                                     zdif_mean = NULL, zdif_sd = NULL)
+    sim$acr1 <- sample_acr_oprobit(n, nma1_mean, nma1_vcov, rr_lower = 1, rr_upper = 1)
   } else if (treat_hist == "exp"){
-    sim$acr1 <- acr_response_oprobit(n, nma1_mean, nma1_sd, basedif_mean,
-                                     basedif_sd, zdif_mean, zdif_sd)
+    sim$acr1 <- sample_acr_oprobit(n, nma1_mean, nma1_vcov, 
+                                   rr_lower = nma_rr_lower, rr_upper = nma_rr_upper)
   }
-  sim$acr2 <- acr_response_oprobit(n, nma1_mean, nma1_sd, basedif_mean,
-                                   basedif_sd, zdif_mean, zdif_sd)
+  sim$acr2 <- sample_acr_oprobit(n, nma1_mean, nma1_vcov, rr_lower = nma_rr_lower, 
+                                 rr_upper = nma_rr_upper)
   sim$eular2haq <- sample_normals(n, eular2haq_mean, eular2haq_se,
                                  col_names = c("no_response", "moderate_response", "good_response"))
   sim$acr2haq <- sample_normals(n, acr2haq_mean, acr2haq_se, acr.cats)
@@ -352,7 +342,8 @@ sample_dirichlets <- function(n, mat){
 
 #' Sample from a multivariate normal distribution
 #'
-#' A wrapper for \code{MASS::mvrnorm} that returns a matrix (rather than a vector) if n = 1.
+#' A wrapper for \code{MASS::mvrnorm} that returns a matrix (rather than a vector) if n = 1. Also,
+#' elements in which the mean vector has missing values.   
 #' 
 #' @param n The number of samples required.
 #' @param mu A vector giving the means of the variables.
@@ -362,8 +353,31 @@ sample_dirichlets <- function(n, mat){
 #' 
 #' @export
 sample_mvnorm <- function(n, mu, Sigma){
-  sim <- MASS::mvrnorm(n, mu, Sigma)
-  if (class(sim) == "numeric") sim <- t(as.matrix(sim)) 
+  mu.na.pos <- which(is.na(mu))
+  if (length(mu.na.pos) == 0){
+      sim <- MASS::mvrnorm(n, mu, Sigma)
+      if (class(sim) == "numeric") sim <- t(as.matrix(sim)) 
+  } else{
+      if (length(mu) == 1){
+        stop("mu is missing and of length 1.")
+      }
+      mu.na.names <- names(mu)[mu.na.pos]
+      mu.complete.pos <- which(!is.na(mu))
+      mu <- mu[mu.complete.pos]
+      Sigma <- Sigma[mu.complete.pos, mu.complete.pos]
+      if (sum(is.na(Sigma)) > 0){
+        stop("Variance-covariance matrix used to draw from the multivariate normal distribution
+         contains missing values.")
+      }
+      sim <- MASS::mvrnorm(n, mu, Sigma)
+      if (class(sim) == "numeric") sim <- t(as.matrix(sim)) 
+      sim.na <- matrix(NA, nrow = n, ncol = length(mu.na.pos))
+      colnames(sim.na) <- mu.na.names
+      sim <- cbind(sim, sim.na)
+      pos.sim <- c(mu.complete.pos, mu.na.pos)
+      pos <- seq(1, ncol(sim))
+      sim <- sim[, match(pos, pos.sim), drop = FALSE]
+  }
   return(sim)
 }
 
@@ -418,61 +432,15 @@ sample_uniforms <- function(n, lower, upper, col_names = NULL){
 #' @return List containing posterior sample of ACR response for each therapy
 #' 
 #' @export
-acr_response_oprobit <- function(nsims, m, sd, basedif_mean, basedif_sd,
-                                 zdif_mean, zdif_sd){
-  # simulate nma parameters
-  nther <- nrow(therapy.pars$info)
-  V <- therapy.pars$icon_acr_nma$vcov
-  diag(V) <- sd^2
-  sim <- MASS::mvrnorm(nsims, m, V)
-  colnames(sim) <- names(therapy.pars$icon_acr_nma$mean)
-  if (class(sim) == "numeric"){
-    sim <- t(as.matrix(sim)) 
-  }
-  
-  # reduce efficacy at 2nd line by increasing baseline mean and 
-  # reducing cutpoints z2 and z3
-  if (!is.null(basedif_mean) & !is.null(basedif_sd) & 
-      !is.null(zdif_mean) & !is.null(zdif_sd)){
-    sim.dif <-  rnorm(nsims * 3, c(basedif_mean, zdif_mean), 
-                      c(basedif_sd, zdif_sd))
-    sim.dif <- matrix(sim.dif, nrow = nsims, ncol = 3,
-                       byrow = TRUE)
-    sim[, "A"] <- sim[, "A"] + sim.dif[, 1]
-    sim[, "z2"] <- sim[, "z2"] + sim.dif[, 2]
-    sim[, "z3"] <- sim[, "z3"] + sim.dif[, 3]
-    if(sum(sim[, "z2"] > sim[, "z3"]) > 0){
-      stop("Reduction in cutpoints results in situation where z3 < z2. Either
-           reduce SDs or change means")
-    }
-  }
-  
-  # convert nma parameters to non-overlapping acr response probabilities
-  p <- array(NA, dim = c(nsims, 4, nther))
-  pl <- matrix(NA, nrow = nsims, ncol = 3)
-  po <- array(NA, dim = c(nsims, 4, nther))
-  if (is.numeric(pl)) pl <- t(as.matrix(pl))
-  for (i in 1:nther){
-    # probability less than category
-    pl[, 3] <- pnorm(sim[, "A"] + sim[, "z3"] + sim[, 3 + i])
-    pl[, 2] <- pnorm(sim[, "A"] + sim[, "z2"] + sim[, 3 + i])
-    pl[, 1] <- pnorm(sim[, "A"] + sim[, 3 + i])
-    
-    # probability in overlapping categories
-    po[, 1, i] <- pl[, 1]
-    po[, 2, i] <- 1 - pl[, 1]
-    po[, 3, i] <- 1 - pl[, 2]
-    po[, 4, i] <- 1 - pl[, 3]
-    
-    # probability in category
-    p[, 1, i] <- pl[, 1]
-    p[, 2, i] <- pl[, 2] - pl[, 1]
-    p[, 3, i] <- pl[, 3] - pl[, 2]
-    p[, 4, i] <- 1 - pl[, 3]
-  }
-  dimnames(p)[[3]] <- therapy.pars$info$sname
-  dimnames(po)[[3]] <- therapy.pars$info$sname
-  return(list(p = p, po = po, pars = sim))
+sample_acr_oprobit <- function(nsims, m, vcov, rr_lower, rr_upper){
+  rr.sim <- runif(nsims, rr_lower, rr_upper)
+  sim <- sample_mvnorm(nsims, m, vcov)
+  p <- acr_nma2prob(A = sim[, "A"], z2 = sim[, "z2"], z3 = sim[, "z3"],
+                delta = sim[, 5:ncol(sim), drop = FALSE],
+                rr = rr.sim)
+  dimnames(p$non.overlap)[[3]] <- therapy.pars$info$sname
+  dimnames(p$overlap)[[3]] <- therapy.pars$info$sname
+  return(list(p = p$non.overlap, p.overlap = p$overlap, pars = sim))
 }
 
 #' Sample survival parameters
@@ -614,11 +582,11 @@ sample_gammas <- function(n, mean, se, col_names = NULL){
 #' @export
 apply_summary <- function(x){
   if (is.matrix(x)){
-    y <- cbind(apply(x, 2, mean), apply(x, 2, sd),
-               apply(x, 2, quantile, .025),
-               apply(x, 2, quantile, .975))
+    y <- cbind(apply(x, 2, mean, na.rm = TRUE), apply(x, 2, sd, na.rm = TRUE),
+               apply(x, 2, quantile, .025, na.rm = TRUE),
+               apply(x, 2, quantile, .975, na.rm = TRUE))
   } else if (is.vector(x)) {
-    y <- c(mean(x), sd(x), quantile(x, .025), quantile(x, .975))
+    y <- c(mean(x), sd(x), quantile(x, .025, na.rm = TRUE), quantile(x, .975, na.rm = TRUE))
     y <- t(matrix(y))
   }
   colnames(y) <- c("Mean", "SD", "Lower", "Upper")
@@ -706,12 +674,13 @@ par_table <- function(x, pat){
   
   ### nma 1st line - acr response probabilities
   acr.pars <- apply_summary(x$acr1$pars)
-  indx <- which(rownames(acr.pars) %in% c("placebo", "nbt"))
+  indx <- which(rownames(acr.pars) %in% c("d_placebo", "d_nbt"))
   acr.pars[indx, ] <- NA
   colnames(acr.pars) <- c("Mean", "SD", "Lower", "Upper")
   acr.naive <- data.table(Group = "NMA ACR response (probit scale) 1st line",
                     Distribution = "Posterior distribution",
-                    Parameter = c("cDMARDs mean", "Cutpoint ACR50", "Cutpoint ACR70",
+                    Parameter = c("cDMARDs mean", "Cutpoint ACR20", 
+                                  "Cutpoint ACR50", "Cutpoint ACR70",
                                   therapy.pars$info$mname),
                     Source = "NMA")
   acr.naive <- cbind(acr.naive, acr.pars)
@@ -723,9 +692,10 @@ par_table <- function(x, pat){
   colnames(acr.pars) <- c("Mean", "SD", "Lower", "Upper")
   acr.exp <- data.table(Group = "ACR response (probit scale) 2+ lines",
                           Distribution = "Posterior distribution",
-                          Parameter = c("cDMARDs mean", "Cutpoint ACR50", "Cutpoint ACR70",
+                          Parameter = c("cDMARDs mean", "Cutpoint ACR20",
+                                        "Cutpoint ACR50", "Cutpoint ACR70",
                                         therapy.pars$info$mname),
-                          Source = "TBD")
+                          Source = "NMA")
   acr.exp <- cbind(acr.exp, acr.pars)
   
   ### haq change eular response

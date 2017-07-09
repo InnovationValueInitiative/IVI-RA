@@ -13,10 +13,10 @@ sample_pars(n = 100, rebound_lower = 0.7, rebound_upper = 1,
   mort_loghr_haqdif = mort.hr.haqdif$loghr,
   mort_loghr_se_haqdif = mort.hr.haqdif$loghr_se,
   ttd_eular_mod = ttd.eular.mod.adj, ttd_eular_good = ttd.eular.good.adj,
-  nma1_mean = therapy.pars$icon_acr_nma_naive$mean,
-  nma1_sd = sqrt(diag(therapy.pars$icon_acr_nma_naive$vcov)),
-  nma2_mean = NULL, nma2_sd = NULL, basedif_mean = 0.25,
-  basedif_sd = 0.05, zdif_mean = c(0.01, 0.09), zdif_sd = c(0.05, 0.05),
+  nma1_mean = therapy.pars$nma.acr.naive$mean,
+  nma1_vcov = therapy.pars$nma.acr.naive$vcov, nma2_mean = NULL,
+  nma2_sd = NULL, basedif_mean = 0.25, basedif_sd = 0.05,
+  zdif_mean = c(0.01, 0.09), zdif_sd = c(0.05, 0.05),
   treat_hist = c("naive", "exp"),
   haq_lprog_therapy_mean = therapy.pars$haq.lprog$est,
   haq_lprog_therapy_se = therapy.pars$haq.lprog$se,
@@ -82,14 +82,10 @@ each element denoting (in order) hazard ratio for months 0-6, >6 - 12, >12 - 24,
 \item{nma1_mean}{Posterior means for NMA parameters on probit scale (1st line). 
 NMA estimtes impact of therapy on ACR response.}
 
-\item{nma1_sd}{Posterior sd for NMA paramters on probit scale (1st line). 
-Used as diagonal for variance-covariance matrix.}
+\item{nma1_vcov}{Variance-covariance matrix for NMA paramters on probit scale (1st line).}
 
 \item{nma2_mean}{Posterior means for NMA parameters on probit scale (2+ lines).
 NMA estimtes impact of therapy on ACR response.}
-
-\item{nma2_sd}{Posterior sd for NMA paramters on probit scale (2+ lines). 
-Used as diagonal for variance-covariance matrix.}
 
 \item{basedif_mean}{Difference of mean effect of baseline treatment on probit scale
 between 2nd line and 1st line. Used if there are no 2nd line NMA results.}
@@ -165,6 +161,8 @@ for general management of RA.}
 \code{si_ul} by 1 +/- 0.2 (i.e. a 20\% change).}
 
 \item{therapy_names}{Vector of therapy names.}
+
+\item{nma2_vcov}{Variance-covariance matrix for NMA paramters on probit scale (2+ lines).}
 }
 \value{
 List containing samples for the following model parameters:

@@ -1,0 +1,1 @@
+Raw NMA output goes in this directory. The script nma-clean.R cleans files from this directory and converts them to a form suitable for the model.

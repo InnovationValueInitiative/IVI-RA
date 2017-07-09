@@ -17,5 +17,6 @@ sample_mvnorm(n, mu, Sigma)
 Matrix of samples from the multivariate distribution.
 }
 \description{
-A wrapper for \code{MASS::mvrnorm} that returns a matrix (rather than a vector) if n = 1.
+A wrapper for \code{MASS::mvrnorm} that returns a matrix (rather than a vector) if n = 1. Also,
+elements in which the mean vector has missing values.
 }

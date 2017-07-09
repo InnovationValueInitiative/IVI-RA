@@ -16,35 +16,44 @@ list2array <- function(l){
   return(x)
 }
 
-#' ACR response from NMA
+#' NMA parameters to ACR response probabilities
 #'
-#' Calculate ACR response probability from ordered probit NMA
+#' Calculate ACR response probabilities from NMA ordered probit parameters. 
 #' 
-#' @param A Mean probability that ACR response < 20 from cDMARDS 
-#' @param z2 Mean for ACR 50 cutpoint
-#' @param z3 Mean for ACR 70 cutpoint
-#' @param delta Vector of regression coefficient means (on probit scale) for therapies
+#' @param A A vector from the posterior distribution of the probability that ACR response < 20 
+#' from cDMARDS.
+#' @param z2 A vector from the posterior distribution for the ACR 50 cutpoint.
+#' @param z3 A vector from the posterior distribution for the ACR 70 cutpoint.
+#' @param delta A matrix from the posterior distribution of regression coefficient means 
+#' (on probit scale) for each therapy in the NMA.
 #' @export
-acr_prob <- function(A, z2, z3, delta){
-  p <- matrix(NA, nrow = length(delta), ncol = 4)
-  pl <- rep(NA, 3)
-  for (i in 1:length(delta)){
+acr_nma2prob <- function(A, z2, z3, delta, rr = 1){
+  nther <- ncol(delta)
+  nsims <- length(A)
+  p <- array(NA, dim = c(nsims, 4, nther))
+  pl <- matrix(NA, nrow = nsims, ncol = 3)
+  po <- array(NA, dim = c(nsims, 4, nther))
+  if (is.numeric(pl)) pl <- t(as.matrix(pl))
+  for (i in 1:nther){
     # probability less than category
-    pl[3] <- pnorm(A + z3 + delta[i])
-    pl[2] <- pnorm(A + z2 + delta[i])
-    pl[1] <- pnorm(A + delta[i])
+    pl[, 3] <- pnorm(A + z3 + delta[, i]) # less than ACR 70
+    pl[, 2] <- pnorm(A + z2 + delta[, i]) # less than ACR 50
+    pl[, 1] <- pnorm(A + delta[, i]) # less than ACR 20
     
-    # probability in category
-    p[i, 1] <- pl[1]
-    p[i, 2] <- pl[2] - pl[1]
-    p[i, 3] <- pl[3] - pl[2]
-    p[i, 4] <- 1 - pl[3]
+    # probability in overlapping categories
+    po[, 4, i] <- rr * (1 - pl[, 3]) # greater than ACR 70
+    po[, 3, i] <- rr * (1 - pl[, 2])  # greater than ACR 50
+    po[, 2, i] <- rr * (1 - pl[, 1]) # greater than ACR 20
+    po[, 1, i] <- 1 - po[, 2, i] # less than ACR 20
+    
+    # probability in mutually exclusive categories
+    p[, 1, i] <- po[, 1, i] # less than ACR 20
+    p[, 2, i] <- po[, 2, i] - po[, 3, i] # ACR 20-50
+    p[, 3, i] <- po[, 3, i] - po[, 4, i]  # ACR 50-70
+    p[, 4, i] <- po[, 4, i] # ACR 70
   }
-  rownames(p) <- names(delta)
-  p[which(row.names(p) == "placebo"), ] <- c(1, 0, 0, 0)
-  p[which(row.names(p) == "nbt"), ] <- c(1, 0, 0, 0)
-  return(p)
-}
+  return(list(non.overlap = p, overlap = po))
+} 
 
 #' Simulate survival time for RA patients
 #'

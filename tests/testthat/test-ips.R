@@ -85,7 +85,7 @@ test_that("sim_utility_wailoo", {
 
 
 # small integration test ------------------------------------------------------
-arms <- c(5, 14)
+arms <- c(6, 1)
 pat <- sample_pats(n = 10)
 input.dat <- input_data(patdata = pat)
 parsamp <- sample_pars(n = 100)
