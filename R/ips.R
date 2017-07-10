@@ -69,7 +69,7 @@ sim_haq <- function(arminds, input_data, pars, dur_dist = "lnorm", si_dist = "ex
   pars.si <- pars$si.surv[[si_dist]]
   simout <- sim_haqC(arminds, input_data$haq0, input_data$age, 
                   input_data$male,
-                  pars$acr1$p, pars$acr2$p, pars$acr2eular, pars$eular2haq, 
+                  pars$acr$p1, pars$acr$p2, pars$acr2eular, pars$eular2haq, 
                   pars$haq.lprog.therapy, pars$haq.lprog.age,
                   pars$rebound, pars$lt$male, pars$lt$female,
                  input_data$x.mort, pars$logor, dur_dist, input_data$x.dur, 

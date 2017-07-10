@@ -13,11 +13,15 @@ sample_pars(n = 100, rebound_lower = 0.7, rebound_upper = 1,
   mort_loghr_haqdif = mort.hr.haqdif$loghr,
   mort_loghr_se_haqdif = mort.hr.haqdif$loghr_se,
   ttd_eular_mod = ttd.eular.mod.adj, ttd_eular_good = ttd.eular.good.adj,
-  nma1_mean = therapy.pars$nma.acr.naive$mean,
-  nma1_vcov = therapy.pars$nma.acr.naive$vcov, nma2_mean = NULL,
-  nma2_sd = NULL, basedif_mean = 0.25, basedif_sd = 0.05,
-  zdif_mean = c(0.01, 0.09), zdif_sd = c(0.05, 0.05),
-  treat_hist = c("naive", "exp"),
+  nma_acr_mean = therapy.pars$nma.acr.naive$mean,
+  nma_acr_vcov = therapy.pars$nma.acr.naive$vcov, nma_acr_rr_lower = 0.75,
+  nma_acr_rr_upper = 0.92,
+  nma_das28_mean = therapy.pars$nma.das28.naive$mean,
+  nma_das28_vcov = therapy.pars$nma.das28.naive$vcov,
+  nma_das28_rr_lower = 0.75, nma_das28_rr_upper = 0.92,
+  nma_haq_mean = therapy.pars$nma.haq.naive$mean,
+  nma_haq_vcov = therapy.pars$nma.haq.naive$vcov, nma_haq_rr_lower = 0.75,
+  nma_haq_rr_upper = 0.92, treat_hist = c("naive", "exp"),
   haq_lprog_therapy_mean = therapy.pars$haq.lprog$est,
   haq_lprog_therapy_se = therapy.pars$haq.lprog$se,
   eular2haq_mean = eular2haq$mean, eular2haq_se = eular2haq$se,
@@ -79,25 +83,47 @@ each element denoting (in order) hazard ratio for months 0-6, >6 - 12, >12 - 24,
 
 \item{ttd_eular_good}{A list containing treatment duration parameters for patientes with a good EULAR response. See 'Treatment duration'.}
 
-\item{nma1_mean}{Posterior means for NMA parameters on probit scale (1st line). 
-NMA estimtes impact of therapy on ACR response.}
+\item{nma_acr_mean}{Posterior means for ACR response NMA parameters on probit scale for 
+biologic naive patients (i.e., 1st line). ACR response is modeled using an ordered probit model.}
 
-\item{nma1_vcov}{Variance-covariance matrix for NMA paramters on probit scale (1st line).}
+\item{nma_acr_vcov}{Variance-covariance matrix for ACR response NMA parameters on probit scale for 
+biologic naive patients (i.e., 1st line). ACR response is modeled using an ordered probit model.}
 
-\item{nma2_mean}{Posterior means for NMA parameters on probit scale (2+ lines).
-NMA estimtes impact of therapy on ACR response.}
+\item{nma_acr_rr_lower}{Lower bound for proportion reduction (i.e., relative risk) in 
+overlapping ACR response probabilities (ACR20/50/70) for biologic experienced patients 
+(i.e., lines 2 and later).}
 
-\item{basedif_mean}{Difference of mean effect of baseline treatment on probit scale
-between 2nd line and 1st line. Used if there are no 2nd line NMA results.}
+\item{nma_acr_rr_upper}{Upper bound for proportion reduction (i.e., relative risk) in
+overlapping ACR response probabilities (ACR20/50/70) for biologic experienced patients 
+(i.e., lines 2 and later).}
 
-\item{basedif_sd}{Standard deviation of \code{basedif_mean}}
+\item{nma_das28_mean}{Posterior means for DAS28 NMA parameters for biologic naive 
+patients (i.e., 1st line). Change in DAS28 from baseline is modeled using a linear model.}
 
-\item{zdif_mean}{Difference of ACR 50 and ACR 70 cutpoints on probit scale
-between 2nd line and 1st line.}
+\item{nma_das28_vcov}{Variance-covariance matrix for DAS28 NMA paramters for biologic naive
+patients (i.e., 1st line). Change in DAS28 from baseline is modeled using a linear model.}
 
-\item{treat_hist}{Is patient TIM naive or experienced. If naive NMA results for TIM 
-naive patients are used during 1st line and TIM experienced NMA results are used
-for subsequent lines. If experienced, NMA results for TIM
+\item{nma_das28_rr_lower}{Lower bound for proportion reduction (i.e., relative risk) in DAS28
+for biologic experienced patients (i.e., lines 2 and later).}
+
+\item{nma_das28_rr_upper}{Upper bound for proportion reduction (i.e., relative risk) in DAS28
+for biologic experienced patients (i.e., lines 2 and later).}
+
+\item{nma_haq_mean}{Posterior means for HAQ NMA parameters for biologic naive 
+patients (i.e., 1st line). Change in HAQ from baseline is modeled using a linear model.}
+
+\item{nma_haq_vcov}{Variance-covariance matrix for HAQ NMA paramters for biologic naive
+patients (i.e., 1st line). Change in HAQ from baseline is modeled using a linear model.}
+
+\item{nma_haq_rr_lower}{Lower bound for proportion reduction (i.e., relative risk) in HAQ
+for biologic experienced patients (i.e., lines 2 and later).}
+
+\item{nma_haq_rr_upper}{Upper bound for proportion reduction (i.e., relative risk) in HAQ
+for biologic experienced patients (i.e., lines 2 and later).}
+
+\item{treat_hist}{Is patient biologic naive or experienced. If naive NMA results for biologic 
+naive patients are used during 1st line and biologic experienced NMA results are used
+for subsequent lines. If experienced, NMA results for biologic
 experienced patients are using during 1st and subsequent lines.}
 
 \item{haq_lprog_therapy_mean}{Point estimate of linear yearly HAQ progression rate by therapy.}
@@ -161,8 +187,6 @@ for general management of RA.}
 \code{si_ul} by 1 +/- 0.2 (i.e. a 20\% change).}
 
 \item{therapy_names}{Vector of therapy names.}
-
-\item{nma2_vcov}{Variance-covariance matrix for NMA paramters on probit scale (2+ lines).}
 }
 \value{
 List containing samples for the following model parameters:
@@ -180,11 +204,12 @@ List containing samples for the following model parameters:
   \item{ttd.eular.mod}{Matrix of coefficients from a survival model. From a survival model for moderate Eular responders}
   \item{ttd.eular.good}{Matrix of coefficients for the location parameter and a vector
    of sampled values of the ancillary parameter. From a survival model for good Eular responders.}
-  \item{acr1}{List of two matrices \code{p} and \code{po} with each row a sampled parameter 
+  \item{acr}{List of two matrices \code{p} and \code{po} with each row a sampled parameter 
   value. The four columns in \code{p} are mutually exclusive categories (ACR <20, ACR 20-50, 
   ACR 50-70, and ACR 70+) and the four columns in \code{po} are overlapping categories 
   (ACR < 20, ACR 20, ACR 50, and ACR 70}.
-  \item{acr2}{Subject to change.}
+  \item{das28}{}
+  \item{haq}{}
   \item{eular2haq}{A matrix of sampled HAQ changes by Eular response category. The matrix has
    three columns for no response, moderate response, and good response.}
    \item{acr2haq}{A matrix of sampled HAQ changes by ACR response category. The matrix has

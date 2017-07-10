@@ -28,6 +28,10 @@ nther <- nrow(therapy.info)
 # LOAD DATA --------------------------------------------------------------------
 nma.acr.naive.coda <- fread("nma-acr-naive-re-coda.csv")
 nma.acr.naive.crosswalk <- fread("nma-acr-naive-re-crosswalk.csv")
+nma.haq.naive.coda <- fread("nma-haq-naive-re-coda.csv")
+nma.haq.naive.crosswalk <- fread("nma-haq-naive-re-crosswalk.csv")
+nma.das28.naive.coda <- fread("nma-das28-naive-re-coda.csv")
+nma.das28.naive.crosswalk <- fread("nma-das28-naive-re-crosswalk.csv")
 
 # ACR RESPONSE PROBABILITIES ---------------------------------------------------
 #### NMA FROM NICE
@@ -88,14 +92,16 @@ nice.nma.acr.naive <- list(p = p, p.overlap = po, nobs = nobs)
 
 #### IVI NMA
 ### bio naive
-nma.acr.naive.coda[["d[36]"]] <- nma.acr.naive.coda[["d[1]"]]
-nma.acr.naive.coda[["d[37]"]] <- NA 
-nma.acr.naive.coda[["d[38]"]] <- NA 
+## missing trials
+nma.acr.naive.coda <- nma_add_missing(nma.acr.naive.coda, nma.acr.naive.crosswalk)
 nma.acr.naive.crosswalk[, coda_num := paste0("d[", num, "]")]
 nma.acr.naive.crosswalk <- nma.acr.naive.crosswalk[sname != ""]
-pos <- match(therapy.snames, nma.acr.naive.crosswalk$sname)
-pos <- pos[!is.na(pos)]
-nma.acr.naive.crosswalk <- nma.acr.naive.crosswalk[pos]
+
+# match nma therapies with model therapies
+nma.acr.naive.crosswalk <- dt_reorder(nma.acr.naive.crosswalk, "sname",
+                                      therapy.snames)
+
+# reorder coda 
 coda.num <- nma.acr.naive.crosswalk$coda_num
 nma.acr.naive.coda <- nma.acr.naive.coda[, c("A", "z[1]", "z[2]", "z[3]", coda.num), with = FALSE]
 setnames(nma.acr.naive.coda, colnames(nma.acr.naive.coda),
@@ -103,154 +109,44 @@ setnames(nma.acr.naive.coda, colnames(nma.acr.naive.coda),
 nma.acr.naive <- list(mean = apply(nma.acr.naive.coda, 2, mean),
                       vcov = cov(nma.acr.naive.coda))
 
-### bio experienced
-# hr assumed to have lower bound of .75 and upper bound of 0.92
+# CHANGE IN HAQ ----------------------------------------------------------------
+#### IVI NMA
+### bio naive
+## missing trials
+nma.haq.naive.coda <- nma_add_missing(nma.haq.naive.coda, nma.haq.naive.crosswalk)
+nma.haq.naive.crosswalk[, coda_num := paste0("d[", num, "]")]
+nma.haq.naive.crosswalk <- nma.haq.naive.crosswalk[sname != ""]
 
+# match nma therapies with model therapies
+nma.haq.naive.crosswalk <- dt_reorder(nma.haq.naive.crosswalk, "sname",
+                                      therapy.snames)
 
-# #### NMA FROM ICON
-# ### Overall
-# ## parameters
-# A <- 0.563091333129146
-# z2 <- list(mean = 0.62193993520384, sd = 0.00721932018954759)
-# z3 <- list(mean = 1.20738138209854, sd = 0.0100302799769332)
-# delta <- list(mean =  rep(NA, nther), sd = rep(NA, nther))
-# names(delta$mean) <- names(delta$sd) <- therapy.snames 
-# delta$mean["cdmards"] <- 0
-# delta$sd["cdmards"] <- 0
-# delta$mean["abtivmtx"] <- -0.810586730442689
-# delta$sd["abtivmtx"] <- 0.102399606960613
-# delta$mean["adamtx"] <- -0.773424375324315
-# delta$sd["adamtx"] <- 0.0998397767894423
-# delta$mean["ada"] <- -0.348079540649955
-# delta$sd["ada"] <- 0.233183736623691
-# delta$mean["tt"] <- -0.703516704090787
-# delta$sd["tt"] <- 0.277000941871632
-# delta$mean["etnmtx"] <- -0.87329542983495
-# delta$sd["etnmtx"] <- 0.130169676974215
-# delta$mean["etn"] <- -0.528787773611509
-# delta$sd["etn"] <- 0.151360422595065
-# delta$mean["golmtx"] <- -0.777575893107503
-# delta$sd["golmtx"] <- 0.12321948919039
-# delta$mean["ifxmtx"] <- -0.71150417108933
-# delta$sd["ifxmtx"] <- 0.126373150537479
-# delta$mean["placebo"] <- 100    # dummy value, set so that ACR < 20 with probability 1 
-# delta$sd["placebo"] <- 0
-# delta$mean["tczmtx"] <- -0.849976396987633
-# delta$sd["tczmtx"] <- 0.242289152342482
-# delta$mean["tcz"] <- -0.873409071106643
-# delta$sd["tcz"] <- 0.283288795703314
-# delta$mean["czpmtx"] <- -1.18034219680414
-# delta$sd["czpmtx"] <- 0.110622277385538
-# delta$mean["abtscmtx"] <- -0.810586730442689 # NOTE ASSUMED TO BE SAME AS IV!!!!!
-# delta$sd["abtscmtx"] <- 0.102399606960613
-# delta$mean["nbt"] <- 100 # dummy value, set so that ACR < 20 with probability 1
-# delta$sd["nbt"] <- 0
-# delta$mean["rtxmtx"] <- -0.794692693812092
-# delta$sd["rtxmtx"] <- 0.114214486861968
-# delta$mean["tofmtx"] <- -0.754649219587801
-# delta$sd["tofmtx"] <- 0.12753876539542
-# delta$mean["rtx"] <- -0.602894127529288
-# delta$sd["rtx"] <- 0.209130659264918
-# delta$mean["tof"] <- -0.147774537169544
-# delta$sd["tof"] <- 0.398774886986443
-# delta$mean["czp"] <- -0.540154951487203
-# delta$sd["czp"] <- 0.37893269604465
-# delta$mean["gol"] <- 0.210217681646764
-# delta$sd["gol"] <- 0.348248823065528
-# 
-# ## probability at means
-# p <- acr_prob(A, z2$mean, z3$mean, delta$mean)
-# 
-# ## store results in list
-# icon_acr_nma <- list(mean = c(A, z2$mean, z3$mean, delta$mean),
-#                      vcov = diag(c(0, z2$sd^2, z3$sd^2, delta$sd^2)),
-#                      p = p)
-# names(icon_acr_nma$mean) <- c("A", "z2", "z3", names(delta$mean))
-# 
-# ### TIM naive
-# ## parameters
-# A <- .5385
-# z2 <- list(mean = 0.62171464, sd = 0.0075446477739013)
-# z3 <- list(mean = 1.20949933333333, sd = 0.0105001763691831)
-# delta <- list(mean =  rep(NA, nther), sd = rep(NA, nther))
-# names(delta$mean) <- names(delta$sd) <- therapy.snames 
-# delta$mean["cdmards"] <- 0
-# delta$sd["cdmards"] <- 0
-# delta$mean["abtivmtx"] <- -0.809142111666667
-# delta$sd["abtivmtx"] <- 0.123000025214947
-# delta$mean["adamtx"] <- -0.769457638333333
-# delta$sd["adamtx"] <- 0.1078885028064
-# delta$mean["ada"] <- -0.348079540649955
-# delta$sd["ada"] <- 0.233183736623691
-# delta$mean["tt"] <- -0.703516704090787
-# delta$sd["tt"] <- 0.277000941871632
-# delta$mean["etnmtx"] <- -0.872833673333333
-# delta$sd["etnmtx"] <- 0.121932640740375
-# delta$mean["etn"] <- -0.535766297733333
-# delta$sd["etn"] <- 0.155748940193373
-# delta$mean["golmtx"] <- -0.8133894416666673
-# delta$sd["golmtx"] <- 0.147094404471251
-# delta$mean["ifxmtx"] <- -0.762230790666667
-# delta$sd["ifxmtx"] <- 0.143644467849748
-# delta$mean["placebo"] <- 100    # dummy value, set so that ACR < 20 with probability 1 
-# delta$sd["placebo"] <- 0
-# delta$mean["tczmtx"] <- -0.791568189083333
-# delta$sd["tczmtx"] <- 0.265996916175679
-# delta$mean["tcz"] <- -0.837710285040667
-# delta$sd["tcz"] <- 0.310588145282049
-# delta$mean["czpmtx"] <- -1.19416948833333
-# delta$sd["czpmtx"] <- 0.119851834884759
-# delta$mean["abtscmtx"] <- -0.809142111666667 # NOTE ASSUMED TO BE SAME AS IV!!!!!
-# delta$sd["abtscmtx"] <- 0.123000025214947
-# delta$mean["nbt"] <- 100 # dummy value, set so that ACR < 20 with probability 1
-# delta$sd["nbt"] <- 0
-# delta$mean["rtxmtx"] <- -0.680662496166667
-# delta$sd["rtxmtx"] <- 0.169679667357375
-# delta$mean["tofmtx"] <- -0.748702311666667
-# delta$sd["tofmtx"] <- 0.138277342355426
-# delta$mean["rtx"] <- -0.602894127529288 # NOTE ASSUMED TO BE SAME AS IN COMBINED CASE
-# delta$sd["rtx"] <- 0.209130659264918
-# delta$mean["tof"] <- -0.114165030696333
-# delta$sd["tof"] <- 0.401271826028596
-# delta$mean["czp"] <- -0.488228497576
-# delta$sd["czp"] <- 0.396949683345864
-# delta$mean["gol"] <- 0.210217681646764 # NOTE ASSUMED TO BE SAME AS IN COMBINED CASE
-# delta$sd["gol"] <- 0.348248823065528
-# 
-# ## probability at means
-# p <- acr_prob(A, z2$mean, z3$mean, delta$mean)
-# 
-# ## store results in list
-# icon_acr_nma_naive <- list(mean = c(A, z2$mean, z3$mean, delta$mean),
-#                      vcov = diag(c(0, z2$sd^2, z3$sd^2, delta$sd^2)),
-#                      p = p)
-# names(icon_acr_nma_naive$mean) <- c("A", "z2", "z3", names(delta$mean))
-# 
-# ### TIM experienced
-# ## parameters
-# A <- .7454
-# z2 <- list(mean = 0.616629345, sd = 0.025710244721687)
-# z3 <- list(mean = 1.11857970333333, sd = 0.036565591741695)
-# delta <- list(mean =  icon_acr_nma_naive$mean[-c(1:3)], 
-#               sd = sqrt(diag(icon_acr_nma_naive$vcov))[-c(1:3)])
-# names(delta$sd) <- names(delta$mean)
-# delta$mean["abtivmtx"] <- 0.68978946169
-# delta$sd["abtivmtx"] <- 2.28054078395492
-# delta$mean["abtscmtx"] <- 0.68978946169
-# delta$sd["abtscmtx"] <- 2.28054078395492
-# delta$mean["golmtx"] <- -1.238279128404
-# delta$sd["golmtx"] <- 2.69756416402609
-# delta$mean["rtxmtx"] <- -1.16267591078228
-# delta$sd["rtxmtx"] <- 2.98659459316976
-# 
-# ## probability at means
-# p <- acr_prob(A, z2$mean, z3$mean, delta$mean)
-# 
-# ## store results in list
-# icon_acr_nma_exp <- list(mean = c(A, z2$mean, z3$mean, delta$mean),
-#                            vcov = diag(c(0, z2$sd^2, z3$sd^2, delta$sd^2)),
-#                            p = p)
-# names(icon_acr_nma_exp$mean) <- c("A", "z2", "z3", names(delta$mean))
+# reorder coda
+coda.num <- nma.haq.naive.crosswalk$coda_num
+nma.haq.naive.coda <- nma.haq.naive.coda[, c("A", coda.num), with = FALSE]
+setnames(nma.haq.naive.coda, colnames(nma.haq.naive.coda),
+         c("A", paste0("d_", nma.haq.naive.crosswalk$sname)))
+nma.haq.naive <- list(mean = apply(nma.haq.naive.coda, 2, mean),
+                      vcov = cov(nma.haq.naive.coda))
+
+# CHANGE IN DAS28 --------------------------------------------------------------
+### bio naive
+## missing trials
+nma.das28.naive.coda <- nma_add_missing(nma.das28.naive.coda, nma.das28.naive.crosswalk)
+nma.das28.naive.crosswalk[, coda_num := paste0("d[", num, "]")]
+nma.das28.naive.crosswalk <- nma.das28.naive.crosswalk[sname != ""]
+
+# match nma therapies with model therapies
+nma.das28.naive.crosswalk <- dt_reorder(nma.das28.naive.crosswalk, "sname",
+                                      therapy.snames)
+
+# reorder coda
+coda.num <- nma.das28.naive.crosswalk$coda_num
+nma.das28.naive.coda <- nma.das28.naive.coda[, c("A", coda.num), with = FALSE]
+setnames(nma.das28.naive.coda, colnames(nma.das28.naive.coda),
+         c("A", paste0("d_", nma.das28.naive.crosswalk$sname)))
+nma.das28.naive <- list(mean = apply(nma.das28.naive.coda, 2, mean),
+                      vcov = cov(nma.das28.naive.coda))
 
 # HAQ PROGRESSION RATE ---------------------------------------------------------
 # progression rate with and without biologics from Wolfe & Michaud (2010)
@@ -316,6 +212,8 @@ si$exp$anc1.index <- si$exp$anc2.index <- NA
 # SAVE PARAMETERS --------------------------------------------------------------
 therapy.pars <- list(info = therapy.info,
                     nma.acr.naive = nma.acr.naive,
+                    nma.haq.naive = nma.haq.naive,
+                    nma.das28.naive = nma.das28.naive,
                     nice.nma.acr.naive = nice.nma.acr.naive,
                     haq.lprog = haq.lprog, cost = cost,
                     si = si)

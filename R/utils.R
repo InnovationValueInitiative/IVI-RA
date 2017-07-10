@@ -16,6 +16,29 @@ list2array <- function(l){
   return(x)
 }
 
+#' NMA parameters to change in continuous outcome
+#'
+#' Calculate change in continuous outcome from linear model used for NMA.
+#' 
+#' @param A A vector from the posterior distribution of the probability that ACR response < 20 
+#' from cDMARDS.
+#' @param delta A matrix from the posterior distribution of regression coefficients 
+#' for each therapy in the NMA.
+#' 
+#' @return Matrix of change in continuous outcome variable for each therapy. 
+#' 
+#' @export
+nma_lm2prob <- function(A, delta){
+  nther <- ncol(delta)
+  nsims <- length(A)
+  dy <- matrix(NA, nrow = nsims, ncol = nther)
+  for (i in 1:nther){
+    dy[, i] <- A +  delta[, i]
+    #dy[, i] <- ifelse(dy[, i] < 0, rr * dy[, i], 1/rr * dy[, i])
+  }
+  return(dy)
+} 
+
 #' NMA parameters to ACR response probabilities
 #'
 #' Calculate ACR response probabilities from NMA ordered probit parameters. 
@@ -24,10 +47,15 @@ list2array <- function(l){
 #' from cDMARDS.
 #' @param z2 A vector from the posterior distribution for the ACR 50 cutpoint.
 #' @param z3 A vector from the posterior distribution for the ACR 70 cutpoint.
-#' @param delta A matrix from the posterior distribution of regression coefficient means 
-#' (on probit scale) for each therapy in the NMA.
+#' @param delta A matrix from the posterior distribution of regression coefficients 
+#' (on the probit scale) for each therapy in the NMA.
+#' @param rr Sampled value of elative risk.
+#' 
+#' @return List containing an array \code{non.overlap} (the probability of ACR < 20, ACR 20-50,
+#' ACR 50-70, and ACR 70+) and \code{overlap} (the probability of ACR20/50/70).
+#' 
 #' @export
-acr_nma2prob <- function(A, z2, z3, delta, rr = 1){
+nma_acrprob <- function(A, z2, z3, delta, rr = 1){
   nther <- ncol(delta)
   nsims <- length(A)
   p <- array(NA, dim = c(nsims, 4, nther))

@@ -8,6 +8,39 @@ logit <- function(p){
   return(log(p/(1-p)))
 }
 
+# NMA MISSING TRIALS -----------------------------------------------------------
+# Add NA data when missing trials for NMA; set nbt equal to cDMARSs/MTX
+#
+# Args: 
+#   coda Bayesian posterior distribution from NMA.
+#   cw Crosswalk from NMA to model. 
+nma_add_missing <- function(coda, cw){
+  dcols <- colnames(coda)[grep("d\\[", colnames(coda))]
+  ncols.complete <- length(dcols)
+  ncols.all <- nrow(cw)
+  newcols <- paste0("d[", seq(ncols.complete + 1, ncols.all), "]")
+  coda[[newcols[1]]] <- coda[[dcols[1]]]
+  for (i in 2:(ncols.all - ncols.complete)){
+    coda[[newcols[i]]] <- NA
+  }
+  return(coda)
+}
+
+# REORDER DATA.TABLE -----------------------------------------------------------
+# Reorder names in data.table column var based on list of names in y_vec
+#
+# Args: 
+#   x Name of data.table
+#   var Name of data.table variable to use to reorder
+#   y_vec Vector of names to match var to
+dt_reorder <- function(x, var, y_vec){
+  pos <- match(y_vec, x[[var]])
+  pos <- pos[!is.na(pos)]
+  x <- x[pos]
+  return(x)
+}
+
+
 # FIND BEST PARAMETRIC FIT TO SURVIVAL CURVE -----------------------------------
 # Loop over distributions fitting parametric survival model
 parametric_fit <- function(dists, data){
@@ -39,7 +72,7 @@ ic_mat <- function(fits, modnames){
 }
 
 # SAMPLE FROM CUMULATIVE HAZARD ------------------------------------------------
-#Sample survival data from a distribution given by a cumulative hazard 
+# Sample survival data from a distribution given by a cumulative hazard 
 #
 # Args: 
 #   time Vector containing time points to sample from.

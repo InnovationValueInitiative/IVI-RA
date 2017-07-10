@@ -28,17 +28,35 @@
 #' @param mort_loghr_se_haqdif Standard error of log hazard ratio of impact of change in HAQ from baseline on mortality rate.
 #' @param ttd_eular_mod A list containing treatment duration parameters for patientes with a moderate EULAR response. See 'Treatment duration'.
 #' @param ttd_eular_good A list containing treatment duration parameters for patientes with a good EULAR response. See 'Treatment duration'.
-#' @param nma1_mean Posterior means for NMA parameters on probit scale for biologic naive 
-#' patients (i.e., 1st line). NMA is an ordered probit model of ACR response.
-#' @param nma1_vcov Variance-covariance matrix for NMA paramters on probit scale for biologic naive
-#' patients (i.e., 1st line). 
-#' @param nma_rr_lower Lower bound for reduction (i.e., relative risk) in overlapping ACR response 
-#' probabilities (ACR20/50/70) for biologic experienced patients (i.e., lines 2 and later)
-#' @param nma_rr_upper Upper bound for reduction (i.e., relative risk) in overlapping ACR response 
-#' probabilities (ACR20/50/70) for biologic experienced patients (i.e., lines 2 and later)
-#' @param treat_hist Is patient TIM naive or experienced. If naive NMA results for TIM 
-#' naive patients are used during 1st line and TIM experienced NMA results are used
-#' for subsequent lines. If experienced, NMA results for TIM
+#' @param nma_acr_mean Posterior means for ACR response NMA parameters on probit scale for 
+#' biologic naive patients (i.e., 1st line). ACR response is modeled using an ordered probit model.
+#' @param nma_acr_vcov Variance-covariance matrix for ACR response NMA parameters on probit scale for 
+#' biologic naive patients (i.e., 1st line). ACR response is modeled using an ordered probit model.
+#' @param nma_acr_rr_lower Lower bound for proportion reduction (i.e., relative risk) in 
+#' overlapping ACR response probabilities (ACR20/50/70) for biologic experienced patients 
+#' (i.e., lines 2 and later).
+#' @param nma_acr_rr_upper Upper bound for proportion reduction (i.e., relative risk) in
+#'  overlapping ACR response probabilities (ACR20/50/70) for biologic experienced patients 
+#'  (i.e., lines 2 and later).
+#' @param nma_das28_mean Posterior means for DAS28 NMA parameters for biologic naive 
+#' patients (i.e., 1st line). Change in DAS28 from baseline is modeled using a linear model.
+#' @param nma_das28_vcov Variance-covariance matrix for DAS28 NMA paramters for biologic naive
+#' patients (i.e., 1st line). Change in DAS28 from baseline is modeled using a linear model.
+#' @param nma_das28_rr_lower Lower bound for proportion reduction (i.e., relative risk) in DAS28
+#' for biologic experienced patients (i.e., lines 2 and later).
+#' @param nma_das28_rr_upper Upper bound for proportion reduction (i.e., relative risk) in DAS28
+#' for biologic experienced patients (i.e., lines 2 and later).
+#' @param nma_haq_mean Posterior means for HAQ NMA parameters for biologic naive 
+#' patients (i.e., 1st line). Change in HAQ from baseline is modeled using a linear model.
+#' @param nma_haq_vcov Variance-covariance matrix for HAQ NMA paramters for biologic naive
+#' patients (i.e., 1st line). Change in HAQ from baseline is modeled using a linear model.
+#' @param nma_haq_rr_lower Lower bound for proportion reduction (i.e., relative risk) in HAQ
+#' for biologic experienced patients (i.e., lines 2 and later).
+#' @param nma_haq_rr_upper Upper bound for proportion reduction (i.e., relative risk) in HAQ
+#' for biologic experienced patients (i.e., lines 2 and later).
+#' @param treat_hist Is patient biologic naive or experienced. If naive NMA results for biologic 
+#' naive patients are used during 1st line and biologic experienced NMA results are used
+#' for subsequent lines. If experienced, NMA results for biologic
 #' experienced patients are using during 1st and subsequent lines.
 #' @param haq_lprog_therapy_mean Point estimate of linear yearly HAQ progression rate by therapy.
 #' @param haq_lprog_therapy_se Standard error of linear yearly HAQ progression rate by therapy.
@@ -90,11 +108,12 @@
 #'   \item{ttd.eular.mod}{Matrix of coefficients from a survival model. From a survival model for moderate Eular responders}
 #'   \item{ttd.eular.good}{Matrix of coefficients for the location parameter and a vector
 #'    of sampled values of the ancillary parameter. From a survival model for good Eular responders.}
-#'   \item{acr1}{List of two matrices \code{p} and \code{po} with each row a sampled parameter 
+#'   \item{acr}{List of two matrices \code{p} and \code{po} with each row a sampled parameter 
 #'   value. The four columns in \code{p} are mutually exclusive categories (ACR <20, ACR 20-50, 
 #'   ACR 50-70, and ACR 70+) and the four columns in \code{po} are overlapping categories 
 #'   (ACR < 20, ACR 20, ACR 50, and ACR 70}.
-#'   \item{acr2}{Subject to change.}
+#'   \item{das28}{}
+#'   \item{haq}{}
 #'   \item{eular2haq}{A matrix of sampled HAQ changes by Eular response category. The matrix has
 #'    three columns for no response, moderate response, and good response.}
 #'    \item{acr2haq}{A matrix of sampled HAQ changes by ACR response category. The matrix has
@@ -173,9 +192,15 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
                        mort_loghr_haqdif = mort.hr.haqdif$loghr,
                        mort_loghr_se_haqdif = mort.hr.haqdif$loghr_se,
                        ttd_eular_mod = ttd.eular.mod.adj, ttd_eular_good = ttd.eular.good.adj,
-                       nma1_mean = therapy.pars$nma.acr.naive$mean,
-                       nma1_vcov = therapy.pars$nma.acr.naive$vcov,
-                       nma_rr_lower = .75, nma_rr_upper = .92,
+                       nma_acr_mean = therapy.pars$nma.acr.naive$mean,
+                       nma_acr_vcov = therapy.pars$nma.acr.naive$vcov,
+                       nma_acr_rr_lower = .75, nma_acr_rr_upper = .92,
+                       nma_das28_mean = therapy.pars$nma.das28.naive$mean,
+                       nma_das28_vcov = therapy.pars$nma.das28.naive$vcov,
+                       nma_das28_rr_lower = .75, nma_das28_rr_upper = .92,
+                       nma_haq_mean = therapy.pars$nma.haq.naive$mean,
+                       nma_haq_vcov = therapy.pars$nma.haq.naive$vcov,
+                       nma_haq_rr_lower = .75, nma_haq_rr_upper = .92,
                        treat_hist = c("naive", "exp"),
                        haq_lprog_therapy_mean = therapy.pars$haq.lprog$est,
                        haq_lprog_therapy_se = therapy.pars$haq.lprog$se,
@@ -219,14 +244,12 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
   sim$ttd.eular.mod <- sample_survpars(n, ttd_eular_mod)
   sim$ttd.eular.good <- sample_survpars(n, ttd_eular_good)
   treat_hist <- match.arg(treat_hist)
-  if (treat_hist == "naive"){
-    sim$acr1 <- sample_acr_oprobit(n, nma1_mean, nma1_vcov, rr_lower = 1, rr_upper = 1)
-  } else if (treat_hist == "exp"){
-    sim$acr1 <- sample_acr_oprobit(n, nma1_mean, nma1_vcov, 
-                                   rr_lower = nma_rr_lower, rr_upper = nma_rr_upper)
-  }
-  sim$acr2 <- sample_acr_oprobit(n, nma1_mean, nma1_vcov, rr_lower = nma_rr_lower, 
-                                 rr_upper = nma_rr_upper)
+  sim$acr <- sample_nma_acr(n, nma_acr_mean, nma_acr_vcov, rr_lower = nma_acr_rr_lower,
+                              rr_upper = nma_acr_rr_upper, hist = treat_hist)
+  sim$das28 <- sample_nma_lm(n, nma_das28_mean, nma_das28_vcov, rr_lower = nma_das28_rr_lower,
+                                 rr_upper = nma_das28_rr_upper, hist = treat_hist)
+  sim$haq <- sample_nma_lm(n, nma_haq_mean, nma_haq_vcov, rr_lower = nma_haq_rr_lower,
+                            rr_upper = nma_haq_rr_upper, hist = treat_hist)
   sim$eular2haq <- sample_normals(n, eular2haq_mean, eular2haq_se,
                                  col_names = c("no_response", "moderate_response", "good_response"))
   sim$acr2haq <- sample_normals(n, acr2haq_mean, acr2haq_se, acr.cats)
@@ -421,6 +444,31 @@ sample_uniforms <- function(n, lower, upper, col_names = NULL){
   return(s)
 }
 
+#' Sample from Bayesian linear model
+#'
+#' Sample change in outcomes from Bayesian linear model for NMA.
+#' 
+#' @param nsims Number of observations.
+#' @param m Mean for each coefficient.
+#' @param vcov Variance-covariance matrix of coefficients.
+#' @param rr_lower Lower bound for relative risk.
+#' @param rr_upper Upper bound for relative risk.
+#' @param hist Patient history equivalent to treat_hist in \link{sample_pars}
+#' @return List containing posterior samples of changes in outcomes.
+#' 
+#' @export
+sample_nma_lm <- function(nsims, m, vcov, rr_lower, rr_upper, hist){
+  rr.sim <- runif(nsims, rr_lower, rr_upper)
+  sim <- sample_mvnorm(nsims, m, vcov)
+  if (hist == "naive"){
+    dy1 <- nma_lm2prob(A = sim[, "A"], delta = sim[, 2:ncol(sim), drop = FALSE])
+    dy2 <- dy1 * rr.sim
+  } else if (hist == "exp"){
+    dy1 <- dy2 <- nma_lm2prob(A = sim[, "A"], delta = sim[, 2:ncol(sim), drop = FALSE]) * rr.sim
+  }
+  colnames(dy1) <- colnames(dy2) <- therapy.pars$info$sname
+  return(list(dy1 = dy1, dy2 = dy2, pars = sim, rr = rr.sim))
+}
 
 #' Sample ACR response from ordered probit NMA
 #'
@@ -429,18 +477,34 @@ sample_uniforms <- function(n, lower, upper, col_names = NULL){
 #' A Generalized Linear Modeling Framework for Pairwise and Network Meta-Analysis of
 #' Randomized Controlled Trials"
 #' 
+#' @param nsims Number of observations.
+#' @param m Mean for each coefficient.
+#' @param vcov Variance-covariance matrix of coefficients.
+#' @param rr_lower Lower bound for relative risk.
+#' @param rr_upper Upper bound for relative risk.
+#' @param hist Patient history equivalent to treat_hist in \link{sample_pars}.
 #' @return List containing posterior sample of ACR response for each therapy
 #' 
 #' @export
-sample_acr_oprobit <- function(nsims, m, vcov, rr_lower, rr_upper){
-  rr.sim <- runif(nsims, rr_lower, rr_upper)
+sample_nma_acr <- function(nsims, m, vcov, rr_lower, rr_upper, hist){
+  rr2.sim <- runif(nsims, rr_lower, rr_upper)
+  if (hist == "naive"){
+      rr1.sim <- 1
+  } else if (hist == "exp"){
+      rr1.sim <- rr2.sim
+  }
   sim <- sample_mvnorm(nsims, m, vcov)
-  p <- acr_nma2prob(A = sim[, "A"], z2 = sim[, "z2"], z3 = sim[, "z3"],
-                delta = sim[, 5:ncol(sim), drop = FALSE],
-                rr = rr.sim)
-  dimnames(p$non.overlap)[[3]] <- therapy.pars$info$sname
-  dimnames(p$overlap)[[3]] <- therapy.pars$info$sname
-  return(list(p = p$non.overlap, p.overlap = p$overlap, pars = sim))
+  p1 <- nma_acrprob(A = sim[, "A"], z2 = sim[, "z2"], z3 = sim[, "z3"],
+                      delta = sim[, 5:ncol(sim), drop = FALSE],
+                      rr = rr1.sim)
+  p2 <- nma_acrprob(A = sim[, "A"], z2 = sim[, "z2"], z3 = sim[, "z3"],
+                    delta = sim[, 5:ncol(sim), drop = FALSE],
+                    rr = rr2.sim) 
+  dimnames(p1$non.overlap)[[3]] <- dimnames(p2$non.overlap)[[3]] <- therapy.pars$info$sname
+  dimnames(p1$overlap)[[3]] <- dimnames(p2$overlap)[[3]] <-  therapy.pars$info$sname
+  return(list(p1 = p1$non.overlap, p1.overlap = p1$overlap,
+              p2 = p2$non.overlap, p2.overlap = p2$overlap,
+              rr = rr2.sim, pars = sim))
 }
 
 #' Sample survival parameters
@@ -672,31 +736,60 @@ par_table <- function(x, pat){
                          Source = "Stevenson2016")
   ttd.eg <- cbind(ttd.eg, ttd.eg.summary$par.summry)
   
-  ### nma 1st line - acr response probabilities
-  acr.pars <- apply_summary(x$acr1$pars)
-  indx <- which(rownames(acr.pars) %in% c("d_placebo", "d_nbt"))
-  acr.pars[indx, ] <- NA
+  ### NMA ACR parameters
+  ## coefficients
+  acr.pars <- apply_summary(x$acr$pars)
   colnames(acr.pars) <- c("Mean", "SD", "Lower", "Upper")
-  acr.naive <- data.table(Group = "NMA ACR response (probit scale) 1st line",
-                    Distribution = "Posterior distribution",
+  acr <- data.table(Group = "NMA ACR response",
+                    Distribution = "Multivariate normal",
                     Parameter = c("cDMARDs mean", "Cutpoint ACR20", 
                                   "Cutpoint ACR50", "Cutpoint ACR70",
                                   therapy.pars$info$mname),
                     Source = "NMA")
-  acr.naive <- cbind(acr.naive, acr.pars)
+  acr <- cbind(acr, acr.pars)
   
-  ### nma 2+ line - acr response probabilities
-  acr.pars <- apply_summary(x$acr2$pars)
-  indx <- which(rownames(acr.pars) %in% c("placebo", "nbt"))
-  acr.pars[indx, ] <- NA
-  colnames(acr.pars) <- c("Mean", "SD", "Lower", "Upper")
-  acr.exp <- data.table(Group = "ACR response (probit scale) 2+ lines",
-                          Distribution = "Posterior distribution",
-                          Parameter = c("cDMARDs mean", "Cutpoint ACR20",
-                                        "Cutpoint ACR50", "Cutpoint ACR70",
-                                        therapy.pars$info$mname),
-                          Source = "NMA")
-  acr.exp <- cbind(acr.exp, acr.pars)
+  ## relative risk reduction
+  acr.rr <- data.table(Group = "NMA ACR response", 
+                        Distribution = "Uniform",
+                        Parameter = "Reduction in ACR response probabilities",
+                        Source = "Carlson2015")
+  acr.rr <- cbind(acr.rr, apply_summary(x$acr$rr))
+  
+  ### NMA DAS28 parameters
+  ## coefficients
+  das28.pars <- apply_summary(x$das28$pars)
+  colnames(das28.pars) <- c("Mean", "SD", "Lower", "Upper")
+  das28 <- data.table(Group = "NMA DAS28",
+                    Distribution = "Multivariate normal",
+                    Parameter = c("cDMARDs mean",
+                                  therapy.pars$info$mname),
+                    Source = "NMA")
+  das28 <- cbind(das28, das28.pars)
+  
+  ## relative risk reduction
+  das28.rr <- data.table(Group = "NMA DAS28", 
+                       Distribution = "Uniform",
+                       Parameter = "Reduction in DAS28 response",
+                       Source = "Carlson2015")
+  das28.rr <- cbind(das28.rr, apply_summary(x$das28$rr))
+  
+  ### NMA haq parameters
+  ## coefficients
+  haq.pars <- apply_summary(x$haq$pars)
+  colnames(haq.pars) <- c("Mean", "SD", "Lower", "Upper")
+  haq <- data.table(Group = "NMA HAQ",
+                      Distribution = "Multivariate normal",
+                      Parameter = c("cDMARDs mean",
+                                    therapy.pars$info$mname),
+                      Source = "NMA")
+  haq <- cbind(haq, haq.pars)
+  
+  ## relative risk reduction
+  haq.rr <- data.table(Group = "NMA HAQ", 
+                         Distribution = "Uniform",
+                         Parameter = "Reduction in HAQ response",
+                         Source = "Carlson2015")
+  haq.rr <- cbind(haq.rr, apply_summary(x$haq$rr))
   
   ### haq change eular response
   hce <- data.table(Group = "HAQ change by Eular response",
@@ -896,7 +989,8 @@ par_table <- function(x, pat){
                     
   # table 
   table <- rbind(rebound, acr2eular.dt, switch, ttd.em, ttd.eg, 
-                 acr.naive, acr.exp, hce, hpt, hpa, lo.mort, lhr.mort, lt,
+                 acr, acr.rr, das28, das28.rr, haq, haq.rr,
+                 hce, hpt, hpa, lo.mort, lhr.mort, lt,
                  tc, hdays, hcost, mgmt, prod.loss, si.surv, si.cost, si.ul, util, util.wailoo)
   table <- table[, .(Group, Parameter, Mean, SD, Lower, Upper, Distribution, Source)]
   setnames(table, colnames(table), c("Group", "Parameter", "Posterior mean", "Posterior SD", 
