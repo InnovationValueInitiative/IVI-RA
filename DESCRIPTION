@@ -16,7 +16,8 @@ LinkingTo: Rcpp, RcppArmadillo, hesim
 Imports:
     Rcpp,
     data.table,
-    MASS
+    MASS,
+    tmvtnorm
 Suggests:
     testthat,
     flexsurv,
