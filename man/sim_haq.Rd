@@ -4,7 +4,7 @@
 \alias{sim_haq}
 \title{Simulate HAQ over time}
 \usage{
-sim_haq(arminds, input_data, pars, cdmards_haq_model = c("linear", "lcgm"),
+sim_haq(arminds, input_data, pars, cdmards_haq_model = c("lcgm", "linear"),
   dur_dist = "lnorm", si_dist = "exp", max_months = NULL,
   cdmards_ind = which(therapy.pars$info$sname == "cdmards"),
   nbt_ind = which(therapy.pars$info$sname == "nbt"), check = TRUE)
@@ -37,8 +37,9 @@ after the last biologic in a treatment sequence).}
 
 \item{check}{Should the function check parameters and input data passed to the model? Default is TRUE.}
 
-\item{haq_prog_model}{Model used to simulate the progression of HAQ. Options are "linear" and "lcgm". If "lcgm" is chosen than a 
-latent class growth model is used for cDMARDs and NBT but a constant annual rate is is assumed for all other therapies; otherwise 
+\item{haq_prog_model}{Model used to simulate the progression of HAQ. Options are "lcgm" and "linear", with
+"lcgm" as the default. If "lcgm" is chosen, then a latent class growth model is used for cDMARDs
+and NBT but a constant annual rate is is assumed for all other therapies; otherwise 
 a constant linear HAQ progression is assumed for all therapies including cDMARDs and NBT.}
 }
 \value{
