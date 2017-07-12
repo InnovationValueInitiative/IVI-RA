@@ -146,7 +146,9 @@ input_data <- function(patdata, vars_mort = "haq0", vars_dur = "1"){
   x.mort <- patdata[, vars_mort, drop = FALSE]
   x.dur <- patdata[, vars_dur, drop = FALSE]
   return(list(n = nrow(patdata), haq0 = patdata[, "haq0"], age = patdata[, "age"],
-              male = patdata[, "male"], weight = patdata[, "weight"],
+              male = patdata[, "male"], das28 = patdata[, "das28"],
+              sdai = patdata[, "sdai"], cdai = patdata[, "cdai"],
+              weight = patdata[, "weight"],
               dis.dur = patdata[, "dis_dur"], prev.dmards = patdata[, "prev_dmards"],
               x.mort = x.mort, x.dur = x.dur))
 }

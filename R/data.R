@@ -262,7 +262,8 @@
 #' Parameters for Norton (2014) LCGM used to simulate non-linear HAQ trajectories for
 #' 4 latent classes.
 #'
-#' @format List containing coefficient vector and indices for parameters.
+#' @format List containing coefficient vector, variance-covariance matrix, and indices for 
+#' parameters.
 #' @source Norton, Sam, et al. "Health Assessment Questionnaire disability progression in early
 #'  rheumatoid arthritis: systematic review and analysis of two inception cohorts." 
 #'  Seminars in arthritis and rheumatism. Vol. 44. No. 2. WB Saunders, 2014.

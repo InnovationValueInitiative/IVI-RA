@@ -108,12 +108,26 @@
 #'   \item{ttd.eular.mod}{Matrix of coefficients from a survival model. From a survival model for moderate Eular responders}
 #'   \item{ttd.eular.good}{Matrix of coefficients for the location parameter and a vector
 #'    of sampled values of the ancillary parameter. From a survival model for good Eular responders.}
-#'   \item{acr}{List of two matrices \code{p} and \code{po} with each row a sampled parameter 
-#'   value. The four columns in \code{p} are mutually exclusive categories (ACR <20, ACR 20-50, 
-#'   ACR 50-70, and ACR 70+) and the four columns in \code{po} are overlapping categories 
-#'   (ACR < 20, ACR 20, ACR 50, and ACR 70}.
-#'   \item{das28}{}
-#'   \item{haq}{}
+#'   \item{acr}{A list containing six objects. \code{p1} is an array containing information on the
+#'   probability of achieving the four mutually exclusive ACR categories (ACR<20, ACR 20-50,
+#'   ACR 50-70, ACR70+). The array stores matrices with each row each row a sampled parameter value
+#'   and columns denoting the mutuaully exclusive ACR categories. Therapies are indexed using
+#'   the third dimension. \code{p1.overalap} is identical to \code{p1} but for overlapping ACR
+#'   response categories (ACR <20, ACR 20+, ACR 50+, ACR 70+). \code{p1} and \code{p1.overlap} are
+#'   for the first treatment line. \code{p2} and \code{p2.overlap} are the same as 
+#'   \code{p1} and \code{p1.overlap} but for treatments second line and later. \code{rr} is the 
+#'   sampled values of the probabilility of overalapping ACR response categories for biologic
+#'   experienced patients relative to the probability for biologic naive patients (i.e., 
+#'   the relative risk). Finally, \code{pars} is a matrix of sampled values of model coefficients 
+#'   from the ordered logistic regression used for the NMA.} 
+#'   \item{das28}{A list of four elements. \code{dy1} and \code{dy2} are matrices with each row 
+#'   a sampled parameter value and columns denoting the mean change in DAS28 for each
+#'   therapy. \code{dy1} is for first line treatment and \code{dy2} is for second line treatment
+#'   and later. \code{pars} is a matrix of sampled values of model coefficients from the linear
+#'  model used for the NMA. Finally, \code{rr} is the sampled values of the mean change in
+#'    DAS28 from baseline for biologic experienced patients as a fraction of the mean change for
+#'    biologic naive patients.}
+#'   \item{haq}{Identical to DAS28 but for the HAQ score.}
 #'   \item{eular2haq}{A matrix of sampled HAQ changes by Eular response category. The matrix has
 #'    three columns for no response, moderate response, and good response.}
 #'    \item{acr2haq}{A matrix of sampled HAQ changes by ACR response category. The matrix has
@@ -122,6 +136,12 @@
 #'    for each therapy in \code{therapy.pars}.}
 #'    \item{haq.lprog.age}{A matrix of sampled yearly linear change in HAQ by age. The matrix
 #'    has three columns for age < 40, age 40-64, and age 65+.}
+#'    \item{haq.lcgm}{A list of two elements containing parameters from the latent class growth
+#'     model. The first element is \code{delta} which is a an array of sampled matrices with
+#'      each matrix containing coefficients predicting class membership. Rows are classes and columns index
+#'     variables. \code{beta} is similar to \code{delta}, but each matrix contains coefficients 
+#'     predicting HAQ as a function of time using a quadratic polynomial model.
+#'    }
 #'    \item{mixture.utility}{A list containing samples of all parameters in the Hernandez Alva (2013) mixture model. See 'Sampled mixture model parameters'
 #'    for details.}
 #'    \item{wailoo.utility}{A matrix of sampled regression coefficients from the model mapping HAQ to EQ5D utility in Wailoo (2006). Variables are
@@ -257,6 +277,7 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
                                                   haq_lprog_therapy_se)
   sim$haq.lprog.age <- sample_normals(n, haq_lprog_age_mean, haq_lprog_age_se,
                                      col_names =  c("age_less40", "age40to64", "age_65plus"))
+  sim$haq.lcgm <- sample_pars_haq_lcgm(n)
   sim$mixture.utility <- sample_pars_utility_mixture(n)
   sim$wailoo.utility <- sample_normals(n, util.wailoo.pars$coef, util.wailoo.pars$se,
                                       col_names = names(util.wailoo.pars$coef))
@@ -532,6 +553,31 @@ sample_survpars <- function(nsims, x){
   return(l)
 }
 
+#' Sample parameters for the LCGM
+#'
+#' Sample parameters for the latent class growth model used to simulate the progression
+#' of HAQ over time developed by Norton (2014).
+#' 
+#' @return List containing posterior sample of paramaters from the Norton(2014)
+#' LCGM.
+#' 
+#' @export
+sample_pars_haq_lcgm <- function(nsims){
+  samp <- MASS::mvrnorm(nsims, haq.lcgm.pars$coef$coef, haq.lcgm.pars$vcov)
+  if (class(samp) == "numeric") samp <- t(as.matrix(samp)) 
+  lsamp <- list()
+  indx.beta <- c()
+  indx.delta <- unlist(haq.lcgm.pars$index[c("delta2", "delta3", "delta4")])
+  indx.beta <- unlist(haq.lcgm.pars$index[paste0("beta", seq(1, 4))])
+  lsamp[["delta"]] <- aperm(array(c(t(samp[, indx.delta])),
+                                 dim = c(8, 3, nsims)),
+                           perm = c(2, 1, 3))
+  lsamp[["beta"]] <- aperm(array(c(t(samp[, indx.beta])),
+                                  dim = c(4, 4, nsims)),
+                            perm = c(2, 1, 3))
+  return(lsamp)
+}
+
 #' Sample parameters for mixture model utility mapping
 #'
 #' Sample parameters for mixture model utility mapping. 
@@ -652,6 +698,11 @@ apply_summary <- function(x){
   } else if (is.vector(x)) {
     y <- c(mean(x), sd(x), quantile(x, .025, na.rm = TRUE), quantile(x, .975, na.rm = TRUE))
     y <- t(matrix(y))
+  } else if (is.array(x)){
+     y <- cbind(c(t(apply(x, c(1, 2), mean))),
+                c(t(apply(x, c(1, 2), sd))),
+                c(t(apply(x, c(1, 2), quantile, .025))),
+                c(t(apply(x, c(1, 2), quantile, .975))))
   }
   colnames(y) <- c("Mean", "SD", "Lower", "Upper")
   return(y)
@@ -798,19 +849,45 @@ par_table <- function(x, pat){
                     Source = "Stevenson2016")
   hce <- cbind(hce, apply_summary(x$eular2haq))
   
-  ### haq progression by therapy
-  hpt <- data.table(Group = "Yearly HAQ progression by therapy",
+  ### constant linear haq progression by therapy
+  lhpt <- data.table(Group = "Yearly HAQ progression by therapy",
                     Distribution = "Normal",
                     Parameter = therapy.pars$info$mname,
                     Source = "Wolfe2010")
-  hpt <- cbind(hpt, apply_summary(x$haq.lprog.therapy))
+  lhpt <- cbind(lhpt, apply_summary(x$haq.lprog.therapy))
   
-  ### haq progression by age
-  hpa <- data.table(Group = "Yearly HAQ progression by age relative to overall",
+  ### constant linear haq progression by age
+  lhpa <- data.table(Group = "Yearly HAQ progression by age relative to overall",
                     Distribution = "Normal",
                     Parameter = rownames(haq.lprog.age),
                     Source = "Michaud2011")
-  hpa <- cbind(hpa, apply_summary(x$haq.lprog.age))
+  lhpa <- cbind(lhpa, apply_summary(x$haq.lprog.age))
+  
+  
+  ### haq progression latent class growth model
+  # delta
+  haq.lcgm.delta <- apply_summary(x$haq.lcgm$delta)
+  delta.names <- list()
+  delta.vars <- c("Intercept", "Age", "Female", "DAS28", "Disease duration", "Rheumatoid factor", "ACR criteria", "IMDQ4")
+  for (i in 2:4){
+    delta.names[[i]] <- paste0("Probability of class ", i, " membership - ", delta.vars)
+  }
+  
+  # beta
+  haq.lcgm.beta <- apply_summary(x$haq.lcgm$beta)
+  beta.names <- list()
+  beta.vars <- c("Intercept", "Linear", "Quadratic", "Cubic")
+  for (i in 1:4){
+      beta.names[[i]] <- paste0("Class ", i, " predictors - ", beta.vars)
+  }
+  
+  ## labels
+  haq.lcgm <- data.table(Group = "HAQ progression LCGM",
+                     Distribution = "Normal",
+                     Parameter = c(do.call("c", delta.names),
+                                   do.call("c", beta.names)),
+                     Source = "Norton2014")
+  haq.lcgm <- cbind(haq.lcgm, rbind(haq.lcgm.delta, haq.lcgm.beta))
   
   ### mortality - coefficient baseline HAQ (logit scale)
   lo.mort <- data.table(Group = "Log odds mortality", 
@@ -969,11 +1046,7 @@ par_table <- function(x, pat){
   v <- rbind(v, apply_summary(x$mixture.utility$mu))
   
   # probability - class membership
-  d.mean <- c(t(apply(x$mixture.utility$delta, c(1, 2), mean)))
-  d.sd <- c(t(apply(x$mixture.utility$delta, c(1, 2), sd)))
-  d.l <- c(t(apply(x$mixture.utility$delta, c(1, 2), quantile, .025)))
-  d.u <- c(t(apply(x$mixture.utility$delta, c(1, 2), quantile, .975)))
-  d <- cbind(d.mean, d.sd, d.l, d.u)
+  d <- apply_summary(x$mixture.utility$delta)
   
   ## combine labels and parameters
   util.parsum <- rbind(b, alpha.male, v, d)
@@ -990,7 +1063,7 @@ par_table <- function(x, pat){
   # table 
   table <- rbind(rebound, acr2eular.dt, switch, ttd.em, ttd.eg, 
                  acr, acr.rr, das28, das28.rr, haq, haq.rr,
-                 hce, hpt, hpa, lo.mort, lhr.mort, lt,
+                 hce, lhpt, lhpa, haq.lcgm, lo.mort, lhr.mort, lt,
                  tc, hdays, hcost, mgmt, prod.loss, si.surv, si.cost, si.ul, util, util.wailoo)
   table <- table[, .(Group, Parameter, Mean, SD, Lower, Upper, Distribution, Source)]
   setnames(table, colnames(table), c("Group", "Parameter", "Posterior mean", "Posterior SD", 

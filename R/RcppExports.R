@@ -7,13 +7,23 @@ durationC <- function(x, loc_mod, anc1_mod, loc_good, anc1_good, type, dist, cyc
 }
 
 #' @export
-sim_haqC <- function(therapies, haq0, age0, male, acr1, acr2, acr2eular, haq_change, haq_prog_therapy, haq_prog_age, rebound_factor, lifetable_male, lifetable_female, x_mort, logor, dur_dist, x_dur, dur_loc_mod, dur_anc1_mod, dur_anc2_mod, dur_loc_good, dur_anc1_good, dur_anc2_good, cycle_length, treat_gap, nbt, si_loc, si_anc1, si_anc2, si_dist, haqdelta_loghr, max_months) {
-    .Call('iviRA_sim_haqC', PACKAGE = 'iviRA', therapies, haq0, age0, male, acr1, acr2, acr2eular, haq_change, haq_prog_therapy, haq_prog_age, rebound_factor, lifetable_male, lifetable_female, x_mort, logor, dur_dist, x_dur, dur_loc_mod, dur_anc1_mod, dur_anc2_mod, dur_loc_good, dur_anc1_good, dur_anc2_good, cycle_length, treat_gap, nbt, si_loc, si_anc1, si_anc2, si_dist, haqdelta_loghr, max_months)
+sim_mlogit_classC <- function(w, delta) {
+    .Call('iviRA_sim_mlogit_classC', PACKAGE = 'iviRA', w, delta)
 }
 
 #' @export
-sim_dhaq_norton1C <- function(delta, w) {
-    .Call('iviRA_sim_dhaq_norton1C', PACKAGE = 'iviRA', delta, w)
+sim_dhaq_class_lcgm1C <- function(year, cycle_length, beta) {
+    .Call('iviRA_sim_dhaq_class_lcgm1C', PACKAGE = 'iviRA', year, cycle_length, beta)
+}
+
+#' @export
+sim_dhaq_lcgm1C <- function(year, cycle_length, age, female, das28, delta, beta) {
+    .Call('iviRA_sim_dhaq_lcgm1C', PACKAGE = 'iviRA', year, cycle_length, age, female, das28, delta, beta)
+}
+
+#' @export
+sim_haqC <- function(therapies, haq0, das28_0, sdai, cdai, age0, male, prev_dmards, acr1, acr2, acr2eular, haq_change, haq_lprog_therapy, haq_lprog_age, haq_lcgm_delta, haq_lcgm_beta, cdmards_haq_model, rebound_factor, lifetable_male, lifetable_female, x_mort, logor, dur_dist, x_dur, dur_loc_mod, dur_anc1_mod, dur_anc2_mod, dur_loc_good, dur_anc1_good, dur_anc2_good, cycle_length, treat_gap, cdmards, nbt, si_loc, si_anc1, si_anc2, si_dist, haqdelta_loghr, max_months) {
+    .Call('iviRA_sim_haqC', PACKAGE = 'iviRA', therapies, haq0, das28_0, sdai, cdai, age0, male, prev_dmards, acr1, acr2, acr2eular, haq_change, haq_lprog_therapy, haq_lprog_age, haq_lcgm_delta, haq_lcgm_beta, cdmards_haq_model, rebound_factor, lifetable_male, lifetable_female, x_mort, logor, dur_dist, x_dur, dur_loc_mod, dur_anc1_mod, dur_anc2_mod, dur_loc_good, dur_anc1_good, dur_anc2_good, cycle_length, treat_gap, cdmards, nbt, si_loc, si_anc1, si_anc2, si_dist, haqdelta_loghr, max_months)
 }
 
 #' @export
@@ -24,11 +34,6 @@ sim_utility_mixture1C <- function(beta1, beta2, beta3, beta4, alpha1, alpha2, al
 #' @export
 sim_utility_mixtureC <- function(id, sim, haq, pain_mean, haq_mean, pain_var, haq_var, painhaq_cor, age, male, beta1, beta2, beta3, beta4, alpha1, alpha2, alpha3, alpha4, alpha, epsilon1_sd, epsilon2_sd, epsilon3_sd, epsilon4_sd, mu_sd, delta) {
     .Call('iviRA_sim_utility_mixtureC', PACKAGE = 'iviRA', id, sim, haq, pain_mean, haq_mean, pain_var, haq_var, painhaq_cor, age, male, beta1, beta2, beta3, beta4, alpha1, alpha2, alpha3, alpha4, alpha, epsilon1_sd, epsilon2_sd, epsilon3_sd, epsilon4_sd, mu_sd, delta)
-}
-
-#' @export
-testfun <- function() {
-    .Call('iviRA_testfun', PACKAGE = 'iviRA')
 }
 
 #' @export
@@ -64,11 +69,6 @@ mgmt_costC <- function(yrlen, sim, cost) {
 #' @export
 qalysC <- function(utility, yrlen, sim, si, si_ul) {
     .Call('iviRA_qalysC', PACKAGE = 'iviRA', utility, yrlen, sim, si, si_ul)
-}
-
-#' @export
-fun <- function(x) {
-    .Call('iviRA_fun', PACKAGE = 'iviRA', x)
 }
 
 #' @export

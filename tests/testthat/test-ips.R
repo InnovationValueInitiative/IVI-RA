@@ -83,6 +83,51 @@ test_that("sim_utility_wailoo", {
               sim_utility_wailoo(simhaq, input.dat, t(as.matrix(util.wailoo.pars$coef))))
 })
 
+# Test sim_dhaq_lcgm1C --------------------------------------------------------
+test_that("sim_mlogit_classC", {
+  delta <- matrix(c(seq(1, 6)), nrow = 2, ncol = 3)
+  w <- c(1, 1, 2)
+  set.seed(10)
+  latclass <- iviRA:::sim_mlogit_classC(w, delta)
+  expect_is(latclass, "integer")
+})
+
+test_that("sim_haq_class_lcgm1C", {
+  beta.lc <- haq.lcgm.pars$coef[parameter == "beta3", coef]
+  year <- seq(2.5, 10, .5)
+  year.lag <- year - .5
+  xt <- 1 - (1/(1 + year))
+  xt.lag <-  1 - (1/(1 + year.lag))
+
+  # compare R with C++
+  dhaq.C <- rep(NA, length(xt))
+  for (i in 1:length(xt)){
+    dhaq.C[i] <- iviRA:::sim_dhaq_class_lcgm1C(year[i], 6, beta.lc)
+  }
+  dhaq.R <- beta.lc[2] * (xt - xt.lag) + beta.lc[3] * (xt^2 - xt.lag^2) +
+    beta.lc[4] * (xt^3 - xt.lag^3)
+  expect_equal(dhaq.R, dhaq.C)
+  
+  # HAQ over time
+  haq <- cumsum(c(1.5, dhaq.C))
+  plot(year, haq[-1])
+})
+
+test_that("sim_haq_lcgm1C", {
+  year <- seq(2.5, 10); cycle.length <- 6
+  beta <- haq.lcgm.pars$coef[parameter %in% c("beta1", "beta2", "beta3", "beta4"), coef]
+  beta <- matrix(beta, nrow = 4, ncol = 4, byrow = TRUE)
+  age <- 55; female <- 1; das28 <- 6
+  delta <- haq.lcgm.pars$coef[parameter %in% c("delta2", "delta3", "delta4"), coef] 
+  delta <- matrix(delta, nrow = 3, ncol = length(delta)/3, byrow = TRUE)
+  dhaq.C <- rep(NA, length(year))
+  for (i in 1:length(year)){
+    dhaq.C[i] <- iviRA:::sim_dhaq_lcgm1C(year[i], cycle.length, age, female, das28, delta, beta)
+  }
+  iviRA:::mlogit_probC(w, delta)
+  haq <- cumsum(c(1.5, dhaq.C))
+  plot(c(2, year), haq)
+})
 
 # small integration test ------------------------------------------------------
 arms <- c(6, 1)
@@ -90,7 +135,7 @@ pat <- sample_pats(n = 10)
 input.dat <- input_data(patdata = pat)
 parsamp <- sample_pars(n = 100)
 parsamp.table <- par_table(parsamp, pat)
-sim.out <- sim_haq(arms, input_data = input.dat, pars = parsamp)
+sim.out <- sim_haq(arms, input_data = input.dat, pars = parsamp, cdmards_haq_model = "lcgm")
 sim.out <- cbind(sim.out, sim_hc_cost(sim.out, pat[, "weight"], pars = parsamp))
 sim.out[, prod_loss := sim_prod_loss(sim.out, pl_haq = parsamp$prod.loss)]
 sim.out <- cbind(sim.out, sim_utility_mixture(sim.out, male = input.dat$male, 

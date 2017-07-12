@@ -772,14 +772,14 @@ We also model the rate of HAQ progression using a mixture model approach that ha
 args <- formals(sample_pats)
 rf <- .73
 acr.criteria <- 1 
-imdq <- 0
+imdq <- 0.49
 x <- c(1, args$age_mean, 0, args$das28_mean, 8.2, rf, acr.criteria, imdq)
 indx.delta <- unlist(haq.lcgm.pars$index[c("delta2", "delta3", "delta4")])
 delta <- matrix(haq.lcgm.pars$coef$coef[indx.delta], nrow = 3, byrow = TRUE)
 probs <- mlogit_prob(x, delta)
 @
 
-The \citet{norton2014health} LCGM determined that there are four classes of patients and thus four distinct HAQ trajectories. The probability of class membership depends on 7 variables: age, gender, DAS28, disease duration, rheumatoid factor, the ACR 1987 criteria for RA, and a measure of socioeconomic status. Age, gender, and the DAS28 are relevant to the way the population is defined within our model (see \autoref{sec:populations}) and are therefore important determinants of the HAQ trajectory. Other variables (disease duration, rheumatoid factor, ACR criteria, and socioeconomic status) are not defined within our population. We consequently set disease duration (8.2 months), rheumatoid factor (0.73), and the socioeconomic status variable (0.73) equal to their mean values with the ERAS cohort. The ACR criteria was set to 1. 
+The \citet{norton2014health} LCGM determined that there are four classes of patients and thus four distinct HAQ trajectories. The probability of class membership depends on 7 variables: age, gender, DAS28, disease duration, rheumatoid factor, the ACR 1987 criteria for RA, and a measure of socioeconomic status. Age, gender, and the DAS28 are relevant to the way the population is defined within our model (see \autoref{sec:populations}) and are therefore important determinants of the HAQ trajectory. Other variables (disease duration, rheumatoid factor, ACR criteria, and socioeconomic status) are not defined within our population. We consequently set disease duration (8.2 months), rheumatoid factor (0.73), and the socioeconomic status variable (0.49) equal to their mean values with the ERAS cohort. The ACR criteria was set to 1. 
 
 HAQ trajectores (in levels) by class are shown \autoref{fig:lcgm-haq-prog}. The dotted lines plot observed mean values. There are clear distinguishable classes as both the level of the HAQ score and its slope vary between groups. \citet{norton2014health} refer to the groups as ``low'', ``moderate'', ``high'', and ``severe'' groups, in order from the lowest HAQ scores to the highest. The observed trends for the low, medium, and high groups follow a J-shaped pattern with a sharp drop following treatment initiation and an upward slope thereafter, while the severe group experiences persistently high HAQ scores. Since our model separates the initial treatment phase from the maintenance phase, we are only concerned with HAQ progression following the iniital drop. As in \citet{stevenson2016adalimumab}, we consequently only predict values from year 2 onward. The fitted values are the solid upward sloping lines in the plot.  
 \begin{figure}[H]
@@ -822,13 +822,12 @@ p <- ggplot(p.dat, aes(x = t, y = value, col = factor(type))) + geom_line() + ge
 ggsave("figs/haq-lcgm-vs-linear.png", p, height = 5, width = 7)
 @
 
-
 An important question for cost-effectiveness modeling in RA is how the rate of progression within each class in the LCGM compares to a constant linear trajectory. We examine this question in \autoref{fig:lcgm-vs-linear}, which compares yearly rates of changes in HAQ using the LCGM and with constant annual rates of change (\Sexpr{haq.lprog} per year) based on the \citet{wolfe2010loss} analysis. The LCGM was simulated over 30 years and differences between year $t$ and year $t-1$ were used to assess changes in HAQ score from one year to the next.  
 
 \begin{figure}[H]
 \centering
 \includegraphics[max size={.7\textwidth}{.7\textheight}]{figs/haq-lcgm-vs-linear.png}
-\caption{A comparison of predicted yearly changes in HAQ between a latent class growth model and constant linear progression }\label{fig:lcgm-vs-linear}
+\caption{A comparison of predicted yearly changes in HAQ between a latent class growth model and constant linear progression from year 2 onwards}\label{fig:lcgm-vs-linear}
 \end{figure}
 
 In the moderate, high, and severe groups the rate of HAQ progression is higher initialy in the LCGM than in the \citet{wolfe2010loss} analysis; however, the LCGM modeled rate of HAQ progression declines over time and eventually begins to approach zero. In the low group, HAQ increases at a rate less than \Sexpr{haq.lprog} per year and the rate of increase declines over time. 

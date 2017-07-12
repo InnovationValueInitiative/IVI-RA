@@ -11,14 +11,17 @@
 #' and \code{x.dur} as generated from \link{input_data}.
 #' @param pars List of parameters. Required parameters are \code{rebound}, \code{acr1}, \code{acr2}, \code{acr2eular}, \code{eular2haq}, 
 #' \code{haq.lprog.therapy}, \code{haq.lprog.age}, \code{logor.mort}, \code{mort.loghr.haqdif}, \code{si.surv},
-#' \code{ttd.eular.mod}, \code{ttd.eular.good
-#' }, and \code{lt} as
-#' generated from \link{sample_pars}.
+#' \code{ttd.eular.mod}, \code{ttd.eular.good}, and \code{lt} as generated from \link{sample_pars}. Additionally, if \code{cdmards_prog} is equal 
+#' to "lcgm", then \code{haq.lcgm} must be included. 
+#' @param haq_prog_model Model used to simulate the progression of HAQ. Options are "linear" and "lcgm". If "lcgm" is chosen than a 
+#' latent class growth model is used for cDMARDs and NBT but a constant annual rate is is assumed for all other therapies; otherwise 
+#' a constant linear HAQ progression is assumed for all therapies including cDMARDs and NBT.
 #' @param dur_dist Survival distribution for treatment duration.
 #' @param si_dist Survival distribution for serious infections. Currently rate is assumed
 #' to be constant so an exponential distribution is used.
 #' @param max_months Maximum number of months to run the model for. Default is NULL which implies that
 #' the model is simulated over each patient's lifetime.
+#' @param cdmards_ind Index for cDMARDs.
 #' @param nbt_ind Index for the non-biologic (i.e. a term used to define a selection of treatments clinicians use
 #' after the last biologic in a treatment sequence).
 #' @param check Should the function check parameters and input data passed to the model? Default is TRUE.
@@ -49,11 +52,16 @@
 #' \item{yrlen}{Length of a model cycle in years. Equal to 0.5 given 6-month cycles.}
 #'}
 #' @export
-sim_haq <- function(arminds, input_data, pars, dur_dist = "lnorm", si_dist = "exp",
-                   max_months = NULL, nbt_ind = which(therapy.pars$info$sname == "nbt"), check = TRUE){
+sim_haq <- function(arminds, input_data, pars, cdmards_haq_model = c("linear", "lcgm"),
+                    dur_dist = "lnorm", si_dist = "exp", max_months = NULL, 
+                    cdmards_ind = which(therapy.pars$info$sname == "cdmards"),
+                    nbt_ind = which(therapy.pars$info$sname == "nbt"),
+                    check = TRUE){
   if (check) check_sim_haq(input_data, pars)
+  cdmards.haq.model <- match.arg(cdmards_haq_model)
   treat_gap <- 0
   cycle_length <- 6
+  cdmards.ind <- cdmards_ind - 1
   nbt.ind <- nbt_ind - 1
   arminds <- arminds - 1
   if (class(arminds) == "numeric") arminds <- matrix(arminds, nrow = 1)
@@ -67,10 +75,13 @@ sim_haq <- function(arminds, input_data, pars, dur_dist = "lnorm", si_dist = "ex
   pars.ttd.em <- pars$ttd.eular.mod[[dur_dist]]
   pars.ttd.eg <- pars$ttd.eular.good[[dur_dist]] 
   pars.si <- pars$si.surv[[si_dist]]
-  simout <- sim_haqC(arminds, input_data$haq0, input_data$age, 
-                  input_data$male,
-                  pars$acr$p1, pars$acr$p2, pars$acr2eular, pars$eular2haq, 
+  simout <- sim_haqC(arminds, input_data$haq0, input_data$das28,
+                     input_data$sdai, input_data$cdai,
+                     input_data$age, input_data$male, 
+                     input_data$prev.dmards,
+                    pars$acr$p1, pars$acr$p2, pars$acr2eular, pars$eular2haq, 
                   pars$haq.lprog.therapy, pars$haq.lprog.age,
+                  pars$haq.lcgm$delta, pars$haq.lcgm$beta, cdmards.haq.model,
                   pars$rebound, pars$lt$male, pars$lt$female,
                  input_data$x.mort, pars$logor, dur_dist, input_data$x.dur, 
                  pars.ttd.em$sample[, pars.ttd.em$loc.index, drop = FALSE], 
@@ -79,7 +90,7 @@ sim_haq <- function(arminds, input_data, pars, dur_dist = "lnorm", si_dist = "ex
                  pars.ttd.eg$sample[, pars.ttd.eg$loc.index, drop = FALSE], 
                  pars.ttd.eg$sample[, pars.ttd.eg$anc1.index, drop = FALSE],
                  pars.ttd.eg$sample[, pars.ttd.eg$anc2.index, drop = FALSE],
-                 cycle_length, treat_gap, nbt.ind,
+                 cycle_length, treat_gap, cdmards.ind, nbt.ind,
                  pars.si$sample[, pars.si$loc.index, drop = FALSE], 
                  pars.si$sample[, pars.si$anc1.index, drop = FALSE],
                  pars.si$sample[, pars.si$anc2.index, drop = FALSE], 

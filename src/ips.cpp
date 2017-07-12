@@ -13,7 +13,7 @@ void update_haq_t1(double &haq, double haq_change){
   haq = haq + haq_change;
 }
 
-// Update HAQ after initial response
+// Update HAQ after initial response with linear progression
 void update_haq_t(double &haq, double haq_change_therapy, 
                   arma::rowvec haq_change_age_vec, double age, double cycle_length){
   double haq_change_age = 0.0;
@@ -54,22 +54,64 @@ double durationC(arma::rowvec x, arma::rowvec loc_mod, double anc1_mod,
   return surv/cycle_length;
 }
 
+// Simulate latent class from multinomial logistic regression
+//' @export
+// [[Rcpp::export]]
+int sim_mlogit_classC(arma::rowvec w, arma::mat delta){
+  arma::rowvec latclass_prob = mlogit_probC(w, delta);
+  int latclass = hesim::rcat1C(latclass_prob); 
+  return(latclass);
+}
+
+// Simulate change in HAQ from Norton mixture model conditional on class
+//' @export
+// [[Rcpp::export]]
+double sim_dhaq_class_lcgm1C(double year, double cycle_length, arma::rowvec beta){
+  double xt = 1 - (1/(1 + year));
+  double year_lag = year - cycle_length/12;
+  double xt_lag = 1 - (1/(1 + year_lag));
+  double dyhat = beta(1) * (xt - xt_lag) + beta(2) * (pow(xt, 2) - pow(xt_lag, 2)) +
+    beta(3) * (pow(xt, 3) - pow(xt_lag, 3));
+  return(dyhat);
+}
+
+// Simulate change in HAQ from Norton mixture model 
+//' @export
+// [[Rcpp::export]]
+double sim_dhaq_lcgm1C(double year, double cycle_length, double age, double female,
+                       double das28, arma::mat delta, arma::mat beta){
+  arma::rowvec w(8);
+  w(0) = 1.0; w(1) = age; w(2) = female; w(3) = das28;
+  w(4) = 8.2; // disease duration
+  w(5) = .73; // rheumatoid factor
+  w(6) = 1; // ACR 1987 criteria
+  w(7) = .49; // IMDQ4 measure of SES
+  int latclass = sim_mlogit_classC(w, delta);
+  arma::rowvec beta_vec = beta.row(latclass);
+  double dyhat = sim_dhaq_class_lcgm1C(year, cycle_length, beta_vec);
+  return(dyhat);
+}
+
 // Simulate HAQ score
 //' @export
 // [[Rcpp::export]]
 List sim_haqC(arma::mat therapies,
-             std::vector<double> haq0, std::vector<double> age0, std::vector<int> male,
+             std::vector<double> haq0, std::vector<double> das28_0,
+             std::vector<double> sdai, std::vector<double> cdai,
+             std::vector<double> age0, std::vector<int> male,
+             std::vector<int> prev_dmards,
              arma::cube acr1, arma::cube acr2, arma::cube acr2eular,arma::mat haq_change, 
-             arma::mat haq_prog_therapy, arma::mat haq_prog_age,
+             arma::mat haq_lprog_therapy, arma::mat haq_lprog_age,
+             arma::cube haq_lcgm_delta, arma::cube haq_lcgm_beta, std::string cdmards_haq_model,
              std::vector<double> rebound_factor,
-            arma::mat lifetable_male, arma::mat lifetable_female, 
-            arma::mat x_mort, arma::mat logor, 
-            std::string dur_dist, arma::mat x_dur, 
-            arma::mat dur_loc_mod, arma::vec dur_anc1_mod, arma::vec dur_anc2_mod,
-            arma::mat dur_loc_good, arma::vec dur_anc1_good, arma::vec dur_anc2_good,
-            double cycle_length, int treat_gap, int nbt, 
-            arma::mat si_loc, arma::mat si_anc1, arma::mat si_anc2, std::string si_dist, 
-            arma::mat haqdelta_loghr, int max_months){
+             arma::mat lifetable_male, arma::mat lifetable_female, 
+             arma::mat x_mort, arma::mat logor, 
+             std::string dur_dist, arma::mat x_dur, 
+             arma::mat dur_loc_mod, arma::vec dur_anc1_mod, arma::vec dur_anc2_mod,
+             arma::mat dur_loc_good, arma::vec dur_anc1_good, arma::vec dur_anc2_good,
+             double cycle_length, int treat_gap, int cdmards, int nbt, 
+             arma::mat si_loc, arma::mat si_anc1, arma::mat si_anc2, std::string si_dist, 
+             arma::mat haqdelta_loghr, int max_months){
   
   // Constants
   int n_therapies = therapies.n_cols;
@@ -115,11 +157,19 @@ List sim_haqC(arma::mat therapies,
       if (therapies.n_rows > 1){
         therapies_i = therapies.row(i);
       }
+      int t_cdmards = 0;
       
       // Loop over therapies
       for (int j = 0; j < n_therapies + 1; ++j){
+        if (j == n_therapies - 1){
+           t_cdmards = 0; // counter for cdmards and nbt which does not reset after cdmards ends and nbt begins
+        }
+        
         if (j == n_therapies){
           therapies_ij = nbt;
+          if (therapies_i(j-1) == cdmards){
+              t_cdmards = therapy_cycle[counter - 1] + 1; // note 0 otherwise
+          } 
         }
         else{
           therapies_ij = therapies_i(j);
@@ -171,15 +221,21 @@ List sim_haqC(arma::mat therapies,
             haq = haq + haq_change_t1; 
           }
           else if (t > 0 && t <= duration_j){
-            update_haq_t(haq, as_scalar(haq_prog_therapy.row(s).col(therapies_ij)),
-                         haq_prog_age.row(s), cage_i, cycle_length);
+            if(cdmards_haq_model == "lcgm" && (therapies_ij == nbt | therapies_ij == cdmards)){
+                haq = 1.2345;
+                haq = haq + sim_dhaq_lcgm1C(t_cdmards * cycle_length/12, cycle_length, cage_i, 1 - male[i],
+                                           das28_0[i], haq_lcgm_delta.slice(s), haq_lcgm_beta.slice(s));
+            } else{
+              update_haq_t(haq, as_scalar(haq_lprog_therapy.row(s).col(therapies_ij)),
+                           haq_lprog_age.row(s), cage_i, cycle_length);
+            }
           }
           else if (t > duration_j && t < duration_j + 1 && j < n_therapies){ // rebound
             haq = haq - haq_change_t1 * rebound_factor[s];
           }
           else {
-            update_haq_t(haq, as_scalar(haq_prog_therapy.row(s).col(therapies_ij)), 
-                         haq_prog_age.row(s), cage_i, cycle_length); // consider making j nbt here as patient is no longer on treatment
+            update_haq_t(haq, as_scalar(haq_lprog_therapy.row(s).col(nbt)),
+                          haq_lprog_age.row(s), cage_i, cycle_length); // consider making j nbt here as patient is no longer on treatment
           }
           if (haq < 0){
             haq = 0.0;
@@ -194,7 +250,7 @@ List sim_haqC(arma::mat therapies,
           month_vec.push_back(month);
           therapy_vec.push_back(therapies_ij);
           //therapy_name.push_back(therapy_names[j]);
-          therapy_seq.push_back(j);
+          therapy_seq.push_back(j); // should be j
           therapy_cycle.push_back(t);
           death_vec.push_back(death);
           age_vec.push_back(cage_i);
@@ -231,10 +287,11 @@ List sim_haqC(arma::mat therapies,
             yrlen_vec.push_back(cycle_length/12);
           }
           
-          // Iterate and update age
+          // Iterate and update age + time
           cage_i = cage_i + cycle_length/12;
           month = month + cycle_length;
           age_i = int(cage_i);
+          t_cdmards = t_cdmards + 1;
           ++counter;
           
           // Stop i loop for death
@@ -250,17 +307,8 @@ List sim_haqC(arma::mat therapies,
                       haq_vec, ttsi_vec, si_vec, yrlen_vec);
 }
 
-// Simulation change in HAQ using Norton non-linear mixture model
-//' @export
-// [[Rcpp::export]]
-int sim_dhaq_norton1C(arma::mat delta, arma::mat w){
-  arma::rowvec latclass_prob = mlogit_probC(w, delta);
-  int latclass = hesim::rcat1C(latclass_prob); 
-  return(latclass);
-}
-
-
 // Sample from Hernandez Alva (2013) Mixture Model
+// Note the class 4 is the reference category in the paper 
 //' @export
 // [[Rcpp::export]]
 double sim_utility_mixture1C(arma::rowvec beta1, arma::rowvec beta2, 
@@ -343,20 +391,6 @@ List sim_utility_mixtureC(std::vector<int> id, std::vector<int> sim, std::vector
                                    mu, delta.slice(s), w, x, male[id[i]]));
   }
   return List::create(pain, util);
-}
-
-//' @export
-// [[Rcpp::export]]
-std::vector<double> testfun(){
-  std::vector<double> mu_vec;
-  double mu = 0;
-  for (int i = 0; i < 5; ++i){
-    if (i > 0){
-       mu = 1;
-    } 
-    mu_vec.push_back(mu);
-  }
-  return mu_vec;
 }
 
 // Wailoo 2006 HAQ to Utility Conversion
@@ -607,16 +641,5 @@ std::vector<double> qalysC(std::vector<double> &utility, std::vector<double> &yr
     qalys_vec.push_back(yrlen[i] * (utility[i] - si[i] * si_ul[sim[i]]/12));
   }
   return qalys_vec;
-}
-
-void myfun(int &cat){
-  cat = cat + 1;
-}
-
-//' @export
-// [[Rcpp::export]]
-int fun(int x){
-  myfun(x);
-  return x;
 }
 

@@ -204,12 +204,26 @@ List containing samples for the following model parameters:
   \item{ttd.eular.mod}{Matrix of coefficients from a survival model. From a survival model for moderate Eular responders}
   \item{ttd.eular.good}{Matrix of coefficients for the location parameter and a vector
    of sampled values of the ancillary parameter. From a survival model for good Eular responders.}
-  \item{acr}{List of two matrices \code{p} and \code{po} with each row a sampled parameter 
-  value. The four columns in \code{p} are mutually exclusive categories (ACR <20, ACR 20-50, 
-  ACR 50-70, and ACR 70+) and the four columns in \code{po} are overlapping categories 
-  (ACR < 20, ACR 20, ACR 50, and ACR 70}.
-  \item{das28}{}
-  \item{haq}{}
+  \item{acr}{A list containing six objects. \code{p1} is an array containing information on the
+  probability of achieving the four mutually exclusive ACR categories (ACR<20, ACR 20-50,
+  ACR 50-70, ACR70+). The array stores matrices with each row each row a sampled parameter value
+  and columns denoting the mutuaully exclusive ACR categories. Therapies are indexed using
+  the third dimension. \code{p1.overalap} is identical to \code{p1} but for overlapping ACR
+  response categories (ACR <20, ACR 20+, ACR 50+, ACR 70+). \code{p1} and \code{p1.overlap} are
+  for the first treatment line. \code{p2} and \code{p2.overlap} are the same as 
+  \code{p1} and \code{p1.overlap} but for treatments second line and later. \code{rr} is the 
+  sampled values of the probabilility of overalapping ACR response categories for biologic
+  experienced patients relative to the probability for biologic naive patients (i.e., 
+  the relative risk). Finally, \code{pars} is a matrix of sampled values of model coefficients 
+  from the ordered logistic regression used for the NMA.} 
+  \item{das28}{A list of four elements. \code{dy1} and \code{dy2} are matrices with each row 
+  a sampled parameter value and columns denoting the mean change in DAS28 for each
+  therapy. \code{dy1} is for first line treatment and \code{dy2} is for second line treatment
+  and later. \code{pars} is a matrix of sampled values of model coefficients from the linear
+ model used for the NMA. Finally, \code{rr} is the sampled values of the mean change in
+   DAS28 from baseline for biologic experienced patients as a fraction of the mean change for
+   biologic naive patients.}
+  \item{haq}{Identical to DAS28 but for the HAQ score.}
   \item{eular2haq}{A matrix of sampled HAQ changes by Eular response category. The matrix has
    three columns for no response, moderate response, and good response.}
    \item{acr2haq}{A matrix of sampled HAQ changes by ACR response category. The matrix has
@@ -218,6 +232,12 @@ List containing samples for the following model parameters:
    for each therapy in \code{therapy.pars}.}
    \item{haq.lprog.age}{A matrix of sampled yearly linear change in HAQ by age. The matrix
    has three columns for age < 40, age 40-64, and age 65+.}
+   \item{haq.lcgm}{A list of two elements containing parameters from the latent class growth
+    model. The first element is \code{delta} which is a an array of sampled matrices with
+     each matrix containing coefficients predicting class membership. Rows are classes and columns index
+    variables. \code{beta} is similar to \code{delta}, but each matrix contains coefficients 
+    predicting HAQ as a function of time using a quadratic polynomial model.
+   }
    \item{mixture.utility}{A list containing samples of all parameters in the Hernandez Alva (2013) mixture model. See 'Sampled mixture model parameters'
    for details.}
    \item{wailoo.utility}{A matrix of sampled regression coefficients from the model mapping HAQ to EQ5D utility in Wailoo (2006). Variables are

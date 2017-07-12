@@ -4,9 +4,10 @@
 \alias{sim_haq}
 \title{Simulate HAQ over time}
 \usage{
-sim_haq(arminds, input_data, pars, dur_dist = "lnorm", si_dist = "exp",
-  max_months = NULL, nbt_ind = which(therapy.pars$info$sname == "nbt"),
-  check = TRUE)
+sim_haq(arminds, input_data, pars, cdmards_haq_model = c("linear", "lcgm"),
+  dur_dist = "lnorm", si_dist = "exp", max_months = NULL,
+  cdmards_ind = which(therapy.pars$info$sname == "cdmards"),
+  nbt_ind = which(therapy.pars$info$sname == "nbt"), check = TRUE)
 }
 \arguments{
 \item{arminds}{Indices of treatment arms consisting of sequences of therapies (each element
@@ -18,9 +19,8 @@ and \code{x.dur} as generated from \link{input_data}.}
 
 \item{pars}{List of parameters. Required parameters are \code{rebound}, \code{acr1}, \code{acr2}, \code{acr2eular}, \code{eular2haq}, 
 \code{haq.lprog.therapy}, \code{haq.lprog.age}, \code{logor.mort}, \code{mort.loghr.haqdif}, \code{si.surv},
-\code{ttd.eular.mod}, \code{ttd.eular.good
-}, and \code{lt} as
-generated from \link{sample_pars}.}
+\code{ttd.eular.mod}, \code{ttd.eular.good}, and \code{lt} as generated from \link{sample_pars}. Additionally, if \code{cdmards_prog} is equal 
+to "lcgm", then \code{haq.lcgm} must be included.}
 
 \item{dur_dist}{Survival distribution for treatment duration.}
 
@@ -30,10 +30,16 @@ to be constant so an exponential distribution is used.}
 \item{max_months}{Maximum number of months to run the model for. Default is NULL which implies that
 the model is simulated over each patient's lifetime.}
 
+\item{cdmards_ind}{Index for cDMARDs.}
+
 \item{nbt_ind}{Index for the non-biologic (i.e. a term used to define a selection of treatments clinicians use
 after the last biologic in a treatment sequence).}
 
 \item{check}{Should the function check parameters and input data passed to the model? Default is TRUE.}
+
+\item{haq_prog_model}{Model used to simulate the progression of HAQ. Options are "linear" and "lcgm". If "lcgm" is chosen than a 
+latent class growth model is used for cDMARDs and NBT but a constant annual rate is is assumed for all other therapies; otherwise 
+a constant linear HAQ progression is assumed for all therapies including cDMARDs and NBT.}
 }
 \value{
 A \code{data.table} with the following columns:
