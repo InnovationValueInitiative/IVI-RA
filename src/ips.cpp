@@ -222,7 +222,6 @@ List sim_haqC(arma::mat therapies,
           }
           else if (t > 0 && t <= duration_j){
             if(cdmards_haq_model == "lcgm" && (therapies_ij == nbt | therapies_ij == cdmards)){
-                haq = 1.2345;
                 haq = haq + sim_dhaq_lcgm1C(t_cdmards * cycle_length/12, cycle_length, cage_i, 1 - male[i],
                                            das28_0[i], haq_lcgm_delta.slice(s), haq_lcgm_beta.slice(s));
             } else{
