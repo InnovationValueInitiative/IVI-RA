@@ -13,6 +13,70 @@ void update_haq_t1(double &haq, double haq_change){
   haq = haq + haq_change;
 }
 
+// Effect of treatment on HAQ during the initial treatment phase
+struct ItreatHaq {
+  int acr;
+  int eular;
+  double dhaq;
+};
+
+ItreatHaq sim_itreat_haq(std::string itreat_haq_model, int line, int therapy, int nbt,
+                     arma::rowvec nma_acr1, arma::rowvec nma_acr2, 
+                     double nma_dhaq1, double nma_dhaq2,
+                     arma::mat acr2eular, arma::rowvec acr2haq, arma::rowvec eular2haq){
+  ItreatHaq sim;
+  
+  // ACR response
+  if (itreat_haq_model == "acr-haq" || itreat_haq_model == "acr-eular-haq"){
+      if (line == 0){
+          sim.acr = hesim::rcat1C(nma_acr1);
+        }  
+      else{
+          sim.acr = hesim::rcat1C(nma_acr2);
+      }
+  }
+  
+  // EULAR response
+  if (itreat_haq_model == "acr-eular-haq"){
+      sim.eular = hesim::rcat1C(acr2eular.row(sim.acr));
+  }
+  
+  // HAQ
+  if (itreat_haq_model == "acr-haq"){
+      sim.dhaq = acr2haq(sim.acr);
+  } 
+  else if (itreat_haq_model == "acr-eular-haq"){
+      sim.dhaq = eular2haq(sim.eular);
+  } 
+  else if (itreat_haq_model == "haq") {
+      if (line == 0){
+        sim.dhaq = nma_dhaq1;
+      } else {
+        sim.dhaq = nma_dhaq2;
+      }
+  }
+  
+  // No treatment response for nbt
+  if (therapy == nbt){
+    sim.acr = 0;
+    sim.eular = 0;
+    sim.dhaq = 0;
+  }
+  return sim;
+}
+
+// [[Rcpp::export]]
+List test_itreat_haq(std::string itreat_haq_model, int line, int therapy, int nbt,
+                      arma::rowvec nma_acr1, arma::rowvec nma_acr2, 
+                      double nma_dhaq1, double nma_dhaq2,
+                      arma::mat acr2eular, arma::rowvec acr2haq, arma::rowvec eular2haq){
+  ItreatHaq sim = sim_itreat_haq(itreat_haq_model, line, therapy, nbt,
+                        nma_acr1, nma_acr2, nma_dhaq1, nma_dhaq2,
+                        acr2eular, acr2haq, eular2haq);
+  return List::create(Rcpp::Named("acr") = sim.acr, Rcpp::Named("eular") = sim.eular,
+                      Rcpp::Named("dhaq") = sim.dhaq);
+}
+
 // Update HAQ after initial response with linear progression
 void update_haq_t(double &haq, double haq_change_therapy, 
                   arma::rowvec haq_change_age_vec, double age, double cycle_length){
@@ -29,29 +93,168 @@ void update_haq_t(double &haq, double haq_change_therapy,
   haq = haq + (haq_change_age + haq_change_therapy) * (cycle_length/12);
 }
 
-// Treatment duration
+// Effect of treatment on switching treatment during the treatment phase
+struct ItreatSwitch {
+  int tswitch;
+  int das28;
+  int sdai;
+  int cdai;
+};
+
+// [[Rcpp::export]]
+int get_das28_cat(double das28){
+  int cat = 0;
+  if (das28 >= 2.6 & das28 < 3.2){
+    cat = 1;
+  }
+  else if (das28 >= 3.2 & das28 <= 5.1){
+    cat = 2;
+  }
+  else if (das28 > 5.1){
+    cat = 3;
+  }
+  return cat;
+}
+
+// [[Rcpp::export]]
+int get_sdai_cat(double sdai){
+  int cat = 0;
+  if (sdai > 3.3 & sdai <= 11.0){
+    cat = 1;
+  }
+  else if (sdai > 11 & sdai <= 26){
+    cat = 2;
+  }
+  else if (sdai > 26){
+    cat = 3;
+  }
+  return cat;
+}
+
+// [[Rcpp::export]]
+int get_cdai_cat(double cdai){
+  int cat = 0;
+  if (cdai > 2.8 & cdai <= 10.0){
+    cat = 1;
+  }
+  else if (cdai > 10 & cdai <= 22){
+    cat = 2;
+  }
+  else if (cdai > 22){
+    cat = 3;
+  }
+  return cat;
+}
+
+ItreatSwitch sim_itreat_switch(std::string itreat_switch_model, int line, int therapy, int nbt,
+                  int acr, int eular, double das28, double sdai, double cdai,
+                  arma::rowvec acr2das28, arma::rowvec acr2sdai,arma::rowvec acr2cdai,
+                  arma::rowvec nma_das28_1, arma::rowvec nma_das28_2, arma::rowvec p){
+  
+  ItreatSwitch sim;
+  sim.tswitch = 0;
+  int da_change = 0;
+  int da_cat = 0;
+  
+  // Switching rules
+  if (itreat_switch_model == "acr-switch"){ // Treatment -> ACR -> Switch
+    if (acr == 0){
+      sim.tswitch = 1;
+    }
+  }
+  else if (itreat_switch_model == "acr-das28-switch" ||   // Treatment -> ACR -> DA -> Switch
+           itreat_switch_model == "acr-sdai-switch" ||
+           itreat_switch_model == "acr-cdai-switch") {
+      if (itreat_switch_model == "acr-das28-switch"){
+        da_change = acr2das28(acr);
+        da_cat = get_das28_cat(das28 + da_change);
+      }
+      else if (itreat_switch_model == "acr-sdai-switch"){
+        da_change = acr2sdai(acr);
+        da_cat = get_sdai_cat(sdai + da_change);
+      }
+      else if (itreat_switch_model == "acr-cdai-switch"){
+        da_change = acr2cdai(acr);
+        da_cat = get_cdai_cat(cdai + da_change);
+      }
+      sim.tswitch = R::rbinom(1, p(da_cat));
+    }
+  else if (itreat_switch_model == "das28-switch"){ // Treatment -> DA -> Switch
+      if (line == 0){
+        da_cat = get_das28_cat(das28 + nma_das28_1(therapy));
+      }
+      else{
+        da_cat = get_das28_cat(das28 + nma_das28_2(therapy));
+      }
+      sim.tswitch = R::rbinom(1, p(da_cat));
+  }
+  else if (itreat_switch_model == "acr-eular-switch"){ // Treatment -> ACR -> EULAR -> Switch
+    if (eular == 0){
+      sim.tswitch = 1;
+    }
+  }
+  
+  // NBT
+  if (therapy == nbt){
+    sim.tswitch = 0;
+  }
+  
+  return sim;
+}
+
 //' @export
 // [[Rcpp::export]]
-double durationC(arma::rowvec x, arma::rowvec loc_mod, double anc1_mod,
+List test_itreat_switch(std::string itreat_switch_model, int line, int therapy, int nbt,
+                        int acr, int eular, double das28, double sdai, double cdai,
+                        arma::rowvec acr2das28, arma::rowvec acr2sdai, arma::rowvec acr2cdai,
+                        arma::rowvec nma_das28_1, arma::rowvec nma_das28_2, arma::rowvec p){
+  ItreatSwitch sim = sim_itreat_switch(itreat_switch_model, line, therapy, nbt, acr, eular,
+                                     das28, sdai, cdai, acr2das28, acr2sdai, acr2cdai,
+                                     nma_das28_1, nma_das28_2, p);
+  return List::create(Rcpp::Named("tswitch") = sim.tswitch, Rcpp::Named("das28") = sim.das28,
+                      Rcpp::Named("sdai") = sim.sdai, Rcpp::Named("cdai") = sim.cdai);
+}
+
+
+// Treatment duration by eular response 
+//' @export
+// [[Rcpp::export]]
+double sim_duration_eular(arma::rowvec x, arma::rowvec loc_mod, double anc1_mod,
                  arma::rowvec loc_good, double anc1_good, 
-                 int type, std::string dist, double cycle_length, double si_duration,
+                 int eular, std::string dist, double cycle_length, double si_duration,
                  double anc2_mod = 0.0, double anc2_good = 0.0){
   double surv = 0.0;
   if (si_duration < 0){
     surv = 0.0;
   }
   else {
-    if (type == 0){ //no eular response
+    if (eular == 0){ //no eular response
       surv = 0.0;
     }
-    else if (type == 1){ //moderate eular responder
+    else if (eular == 1){ //moderate eular responder
       surv = rsurvC(dot(x, loc_mod), anc1_mod, dist, anc2_mod);
     }
-    else if (type == 2){ //good eular responder
+    else if (eular == 2){ //good eular responder
       surv = rsurvC(dot(x, loc_good), anc1_good, dist, anc2_good);
     }
   }
-  return surv/cycle_length;
+  return surv/cycle_length; // surv is measured in years, so surv/cycle_length is measured in model cycles
+}
+
+// Treatment duration
+//' @export
+// [[Rcpp::export]]
+double sim_duration(arma::rowvec x, arma::rowvec loc, double anc1, std::string dist, 
+                          int tswitch, double cycle_length, double si_duration,
+                          double anc2 = 0.0){
+  double surv = 0.0;
+  if (si_duration < 0 || tswitch == 1){
+    surv = 0.0;
+  }
+  else {
+    surv = rsurvC(dot(x, loc), anc1, dist, anc2);
+  }
+  return surv/cycle_length; // surv is measured in years, so surv/cycle_length is measured in model cycles
 }
 
 // Simulate latent class from multinomial logistic regression
@@ -94,19 +297,25 @@ double sim_dhaq_lcgm1C(double year, double cycle_length, double age, double fema
 
 // Simulate HAQ score
 //' @export
-// [[Rcpp::export]]
+// [[Rcpp::export]] 
 List sim_haqC(arma::mat therapies,
              std::vector<double> haq0, std::vector<double> das28_0,
-             std::vector<double> sdai, std::vector<double> cdai,
+             std::vector<double> sdai0, std::vector<double> cdai0,
              std::vector<double> age0, std::vector<int> male,
              std::vector<int> prev_dmards,
-             arma::cube acr1, arma::cube acr2, arma::cube acr2eular,arma::mat haq_change, 
+             std::string itreat_haq_model, std::string itreat_switch_model,
+             arma::cube nma_acr1, arma::cube nma_acr2, arma::mat nma_dhaq1, arma::mat nma_dhaq2,
+             arma::mat nma_das28_1, arma::mat nma_das28_2,
+             arma::cube acr2eular,arma::mat acr2haq, arma::mat eular2haq, 
+             arma::mat acr2das28, arma::mat acr2sdai, arma::mat acr2cdai,
+             arma::mat tswitch_da,
              arma::mat haq_lprog_therapy, arma::mat haq_lprog_age,
              arma::cube haq_lcgm_delta, arma::cube haq_lcgm_beta, std::string cdmards_haq_model,
              std::vector<double> rebound_factor,
              arma::mat lifetable_male, arma::mat lifetable_female, 
              arma::mat x_mort, arma::mat logor, 
              std::string dur_dist, arma::mat x_dur, 
+             arma::mat dur_loc, arma::vec dur_anc1, arma::vec dur_anc2,
              arma::mat dur_loc_mod, arma::vec dur_anc1_mod, arma::vec dur_anc2_mod,
              arma::mat dur_loc_good, arma::vec dur_anc1_good, arma::vec dur_anc2_good,
              double cycle_length, int treat_gap, int cdmards, int nbt, 
@@ -137,8 +346,8 @@ List sim_haqC(arma::mat therapies,
   std::vector<int> death_vec;
   std::vector<double> age_vec;
   std::vector<double> ttd_vec;
-  std::vector<int> acr_response_vec;
-  std::vector<int> eular_response_vec;
+  std::vector<int> acr_vec;
+  std::vector<int> eular_vec;
   std::vector<double> haq_vec;
   std::vector<double> ttsi_vec;
   std::vector<int> si_vec;
@@ -158,9 +367,15 @@ List sim_haqC(arma::mat therapies,
         therapies_i = therapies.row(i);
       }
       int t_cdmards = 0;
+      ItreatSwitch sim_s_t1;
+      sim_s_t1.das28 = das28_0[i];
+      sim_s_t1.sdai = sdai0[i];
+      sim_s_t1.cdai = cdai0[i];
       
       // Loop over therapies
       for (int j = 0; j < n_therapies + 1; ++j){
+        
+        // Which therapy is being used and how long has it been used for
         if (j == n_therapies - 1){
            t_cdmards = 0; // counter for cdmards and nbt which does not reset after cdmards ends and nbt begins
         }
@@ -175,29 +390,40 @@ List sim_haqC(arma::mat therapies,
           therapies_ij = therapies_i(j);
         }
         
-        // Type of HAQ responder
-        int acr_response = 0;
-        if (j == 0){
-          acr_response = hesim::rcat1C(acr1.slice(therapies_ij).row(s));
-        } 
-        else{
-          acr_response = hesim::rcat1C(acr2.slice(therapies_ij).row(s));
-        }
-        int eular_response = hesim::rcat1C(acr2eular.slice(s).row(acr_response));
-        if (therapies_ij == nbt){
-          eular_response = 0;
-        }
-        double haq_change_t1 = as_scalar(haq_change.row(s).col(eular_response));
+        // H1-H3: simulate change in HAQ during initial treatment phase
+        ItreatHaq sim_h_t1 = sim_itreat_haq(itreat_haq_model, j, therapies_ij, nbt,
+                                        nma_acr1.slice(therapies_ij).row(s), 
+                                        nma_acr2.slice(therapies_ij).row(s), 
+                                        nma_dhaq1.col(therapies_ij)(s),
+                                        nma_dhaq2.col(therapies_ij)(s),
+                                        acr2eular.slice(s), acr2haq.row(s), 
+                                        eular2haq.row(s));
+        
+        // S1-S6: simulate treatment switching during first 6 months
+        sim_s_t1 = sim_itreat_switch(itreat_switch_model, j, therapies_ij, nbt,
+                                                  sim_h_t1.acr, sim_h_t1.eular,
+                                                  sim_s_t1.das28, sim_s_t1.sdai, sim_s_t1.cdai,
+                                                  acr2das28.row(s), acr2sdai.row(s), acr2cdai.row(s),
+                                                  nma_das28_1.row(s), nma_das28_2.row(s), 
+                                                  tswitch_da.row(s));
         
         // Treatment duration
         double si_duration_j = (-cycle_length/12 + rsurvC(as_scalar(si_loc.row(s).col(therapies_ij)), 
                                               as_scalar(si_anc1.row(s).col(therapies_ij)),
                                               si_dist,as_scalar(si_anc2.row(s).col(therapies_ij))
                                               )) * (12/cycle_length);
-        double duration_j = durationC(x_dur.row(i), dur_loc_mod.row(s), dur_anc1_mod(s), 
-                                      dur_loc_good.row(s), dur_anc1_good(s), 
-                                      eular_response, dur_dist, cycle_length, si_duration_j,
-                                      dur_anc2_mod(s), dur_anc2_good(s));
+        double duration_j = 0;
+        if (itreat_switch_model == "acr-eular-haq"){
+            duration_j = sim_duration_eular(x_dur.row(i), dur_loc_mod.row(s), dur_anc1_mod(s), 
+                                                 dur_loc_good.row(s), dur_anc1_good(s), 
+                                                 sim_h_t1.eular, dur_dist, cycle_length, si_duration_j,
+                                                 dur_anc2_mod(s), dur_anc2_good(s));
+        }
+        else {
+          duration_j = sim_duration(x_dur.row(i), dur_loc.row(s), dur_anc1(s), dur_dist, 
+                                    sim_s_t1.tswitch, cycle_length, si_duration_j,
+                                                 dur_anc2(s));
+        }
         
         // Loop over time
         for (int t = 0; t < maxt; ++t){
@@ -218,7 +444,7 @@ List sim_haqC(arma::mat therapies,
           
           // Update HAQ score
           if (t == 0){ // initial haq change
-            haq = haq + haq_change_t1; 
+            haq = haq + sim_h_t1.dhaq; 
           }
           else if (t > 0 && t <= duration_j){
             if(cdmards_haq_model == "lcgm" && (therapies_ij == nbt | therapies_ij == cdmards)){
@@ -230,7 +456,7 @@ List sim_haqC(arma::mat therapies,
             }
           }
           else if (t > duration_j && t < duration_j + 1 && j < n_therapies){ // rebound
-            haq = haq - haq_change_t1 * rebound_factor[s];
+            haq = haq - sim_h_t1.dhaq * rebound_factor[s];
           }
           else {
             update_haq_t(haq, as_scalar(haq_lprog_therapy.row(s).col(nbt)),
@@ -260,8 +486,8 @@ List sim_haqC(arma::mat therapies,
             ttd_vec.push_back(NA_REAL);
           }
           
-          acr_response_vec.push_back(acr_response);
-          eular_response_vec.push_back(eular_response);
+          acr_vec.push_back(sim_h_t1.acr);
+          eular_vec.push_back(sim_h_t1.eular);
           haq_vec.push_back(haq);
           if (therapies_ij != nbt){
             ttsi_vec.push_back(si_duration_j - t);
@@ -302,7 +528,7 @@ List sim_haqC(arma::mat therapies,
     }
   }
   return List::create(sim, id, month_vec, therapy_vec, therapy_seq, therapy_cycle, death_vec, 
-                      age_vec, ttd_vec, acr_response_vec, eular_response_vec,
+                      age_vec, ttd_vec, acr_vec, eular_vec,
                       haq_vec, ttsi_vec, si_vec, yrlen_vec);
 }
 

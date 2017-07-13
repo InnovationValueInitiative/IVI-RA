@@ -15,19 +15,21 @@
 #' @param ltmale Identical to \code{ltfemale} but for men.
 #' @param acr2eular_mat A two-way frequency matrix with columns denoting EULAR response
 #'  (none, moderate, good) and rows denoting ACR response  (<20, 20-50, 50-70, 70+).
-#' @param switch_logor Vector of log odds ratios describing the probability of switching treatment
-#' at 6 monhts. Should contain three elements corresponding to (in order) an intercept,
-#'  moderate disease activity, and high disease activity. 
-#' @param switch_logor_se Standard error of the log odds ratio or probability of switching
-#'treatment at 6 months
+#' @param switch_alpha A vector of length four where each element is the number of patients 
+#' switching treatment at 6 months for a given disease activity level 
+#' (remission, low, moderate, high). Equivalent to alpha parameter in beta distribution.
+#' @param switch_beta A vector of length four where each element is the number of patients 
+#' not switching treatment at 6 months for a given disease activity level 
+#' (remission, low, moderate, high). Equivalent to beta parameter in beta distribution.
 #' @param treat_cost Treatment cost matrix in format of therapy.pars$cost.
 #' @param mort_logor Log odds ratio of impact of baseline HAQ on probability of mortality.
 #' @param mort_logor_se Standard error of log odds ratio of impact of baseline HAQ on probability of mortality.
 #' @param mort_loghr_haqdif Log hazard ratio of impact of change in HAQ from baseline on mortality rate. A vector with
 #' each element denoting (in order) hazard ratio for months 0-6, >6 - 12, >12 - 24, >24 -36, >36.
 #' @param mort_loghr_se_haqdif Standard error of log hazard ratio of impact of change in HAQ from baseline on mortality rate.
-#' @param ttd_eular_mod A list containing treatment duration parameters for patientes with a moderate EULAR response. See 'Treatment duration'.
-#' @param ttd_eular_good A list containing treatment duration parameters for patientes with a good EULAR response. See 'Treatment duration'.
+#' @param ttd A list containing treatment duration parameters for patients.
+#' @param ttd_eular_mod A list containing treatment duration parameters for patients with a moderate EULAR response. See 'Treatment duration'.
+#' @param ttd_eular_good A list containing treatment duration parameters for patients with a good EULAR response. See 'Treatment duration'.
 #' @param nma_acr_mean Posterior means for ACR response NMA parameters on probit scale for 
 #' biologic naive patients (i.e., 1st line). ACR response is modeled using an ordered probit model.
 #' @param nma_acr_vcov Variance-covariance matrix for ACR response NMA parameters on probit scale for 
@@ -206,11 +208,12 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
                        ltfemale = lifetable.female, ltmale = lifetable.male,
                        acr2eular_mat = acr2eular,
                        treat_cost = therapy.pars$cost,
-                       switch_logor = treat.switch$logor,
-                       switch_logor_se = treat.switch$logor_se,
+                       switch_alpha = treat.switch$alpha,
+                       switch_beta = treat.switch$beta,
                        mort_logor = mort.or$logor, mort_logor_se = mort.or$logor_se,
                        mort_loghr_haqdif = mort.hr.haqdif$loghr,
                        mort_loghr_se_haqdif = mort.hr.haqdif$loghr_se,
+                       ttd = ttd.corrona,
                        ttd_eular_mod = ttd.eular.mod.adj, ttd_eular_good = ttd.eular.good.adj,
                        nma_acr_mean = therapy.pars$nma.acr.naive$mean,
                        nma_acr_vcov = therapy.pars$nma.acr.naive$vcov,
@@ -253,7 +256,8 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
   sim$rebound <- runif(n, rebound_lower, rebound_upper)
   sim$lt <- lt_data(ltmale, ltfemale)
   sim$treat.cost <- calc_treat_cost(treat_cost)
-  sim$switch.logor <- sample_normals(n, switch_logor, switch_logor_se)
+  sim$switch <- sample_betas(n, switch_alpha, switch_beta,
+                             col_names = c("remission", "low", "moderate", "high"))
   sim$acr2eular <- sample_dirichlets(n, acr2eular_mat)
   sim$acr2sdai <- sample_uniforms(n, acr2sdai_lower, acr2sdai_upper, acr.cats)
   sim$acr2cdai <- sample_uniforms(n, acr2cdai_lower, acr2cdai_upper, acr.cats)
@@ -261,6 +265,7 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
   sim$logor.mort <- sample_mvnorm(n, mort_logor, mort_logor_se^2)
   sim$mort.loghr.haqdif <- sample_normals(n, mort_loghr_haqdif, mort_loghr_se_haqdif,
                                          col_names = paste0("month_", c("less6", "6to12", "12to24", "24to36", "36to48")))
+  sim$ttd <- sample_survpars(n, ttd)
   sim$ttd.eular.mod <- sample_survpars(n, ttd_eular_mod)
   sim$ttd.eular.good <- sample_survpars(n, ttd_eular_good)
   treat_hist <- match.arg(treat_hist)
@@ -365,6 +370,25 @@ calc_treat_cost <- function(x){
   
   # return
   return(y)
+}
+
+#' Sample from beta distributions
+#'
+#' Sample from multiple independent beta distributions. Produces a unique sample of size \code{n} 
+#' using each element in \code{shape1} and \code{shape2}. 
+#' @param n Number of observations.
+#' @param shape1 Alpha parameter in beta distribution.
+#' @param shape2 Beta parameter in beta distribution.
+#' @param col_names Column names to returned matrix.
+#' 
+#' @return Matrix with each column a sample from a beta distribution. 
+#' 
+#' @export
+sample_betas <- function(n, shape1, shape2, col_names = NULL){
+  s <- matrix(rbeta(n * length(shape1), shape1, shape2),
+              nrow = n, ncol = length(shape1), byrow = T)
+  colnames(s) <- col_names
+  return(s)
 }
 
 #' Sample matrices using a Dirichlet distribution 
@@ -766,11 +790,12 @@ par_table <- function(x, pat){
   acr2eular.dt <- cbind(acr2eular.dt, apply_summary(acr2eular.mat))
   
   ### treatment switching at 6 months
-  switch <- data.table(Group = "Logistic regression for treatment switch at 6 months",
-                    Distribution = "Normal",
-                    Parameter = c("Intercept", "Moderate disease activity", "High disease activity"),
+  switch <- data.table(Group = "Probability of switching treatment at 6 months",
+                    Distribution = "Beta",
+                    Parameter = c("Remission", "Low disease activity", 
+                                  "Moderate disease activity", "High disease activity"),
                     Source = "Zhang2011")
-  switch <- cbind(switch, apply_summary(x$switch.logor))
+  switch <- cbind(switch, apply_summary(x$switch))
   
   ### treatment duration by eular response
   ttd.em.summary <- survival_summary(x$ttd.eular.mod)

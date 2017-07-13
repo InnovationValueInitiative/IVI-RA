@@ -7,11 +7,10 @@
 sample_pars(n = 100, rebound_lower = 0.7, rebound_upper = 1,
   ltfemale = lifetable.female, ltmale = lifetable.male,
   acr2eular_mat = acr2eular, treat_cost = therapy.pars$cost,
-  switch_logor = treat.switch$logor,
-  switch_logor_se = treat.switch$logor_se, mort_logor = mort.or$logor,
-  mort_logor_se = mort.or$logor_se,
+  switch_alpha = treat.switch$alpha, switch_beta = treat.switch$beta,
+  mort_logor = mort.or$logor, mort_logor_se = mort.or$logor_se,
   mort_loghr_haqdif = mort.hr.haqdif$loghr,
-  mort_loghr_se_haqdif = mort.hr.haqdif$loghr_se,
+  mort_loghr_se_haqdif = mort.hr.haqdif$loghr_se, ttd = ttd.corrona,
   ttd_eular_mod = ttd.eular.mod.adj, ttd_eular_good = ttd.eular.good.adj,
   nma_acr_mean = therapy.pars$nma.acr.naive$mean,
   nma_acr_vcov = therapy.pars$nma.acr.naive$vcov, nma_acr_rr_lower = 0.75,
@@ -63,12 +62,13 @@ the probability of death at a given age.}
 
 \item{treat_cost}{Treatment cost matrix in format of therapy.pars$cost.}
 
-\item{switch_logor}{Vector of log odds ratios describing the probability of switching treatment
-at 6 monhts. Should contain three elements corresponding to (in order) an intercept,
- moderate disease activity, and high disease activity.}
+\item{switch_alpha}{A vector of length four where each element is the number of patients 
+switching treatment at 6 months for a given disease activity level 
+(remission, low, moderate, high). Equivalent to alpha parameter in beta distribution.}
 
-\item{switch_logor_se}{Standard error of the log odds ratio or probability of switching
-treatment at 6 months}
+\item{switch_beta}{A vector of length four where each element is the number of patients 
+not switching treatment at 6 months for a given disease activity level 
+(remission, low, moderate, high). Equivalent to beta parameter in beta distribution.}
 
 \item{mort_logor}{Log odds ratio of impact of baseline HAQ on probability of mortality.}
 
@@ -79,9 +79,11 @@ each element denoting (in order) hazard ratio for months 0-6, >6 - 12, >12 - 24,
 
 \item{mort_loghr_se_haqdif}{Standard error of log hazard ratio of impact of change in HAQ from baseline on mortality rate.}
 
-\item{ttd_eular_mod}{A list containing treatment duration parameters for patientes with a moderate EULAR response. See 'Treatment duration'.}
+\item{ttd}{A list containing treatment duration parameters for patients.}
 
-\item{ttd_eular_good}{A list containing treatment duration parameters for patientes with a good EULAR response. See 'Treatment duration'.}
+\item{ttd_eular_mod}{A list containing treatment duration parameters for patients with a moderate EULAR response. See 'Treatment duration'.}
+
+\item{ttd_eular_good}{A list containing treatment duration parameters for patients with a good EULAR response. See 'Treatment duration'.}
 
 \item{nma_acr_mean}{Posterior means for ACR response NMA parameters on probit scale for 
 biologic naive patients (i.e., 1st line). ACR response is modeled using an ordered probit model.}

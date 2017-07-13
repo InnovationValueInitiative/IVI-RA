@@ -4,8 +4,11 @@
 \alias{sim_haq}
 \title{Simulate HAQ over time}
 \usage{
-sim_haq(arminds, input_data, pars, cdmards_haq_model = c("lcgm", "linear"),
-  dur_dist = "lnorm", si_dist = "exp", max_months = NULL,
+sim_haq(arminds, input_data, pars, itreat_haq = c("acr-haq", "acr-eular-haq",
+  "haq"), itreat_switch = c("acr-switch", "acr-das28-switch",
+  "acr-sdai-switch", "acr-cdai-switch", "das28-switch", "acr-eular-switch"),
+  cdmards_haq_model = c("lcgm", "linear"), dur_dist = "lnorm",
+  si_dist = "exp", max_months = NULL,
   cdmards_ind = which(therapy.pars$info$sname == "cdmards"),
   nbt_ind = which(therapy.pars$info$sname == "nbt"), check = TRUE)
 }
@@ -21,6 +24,23 @@ and \code{x.dur} as generated from \link{input_data}.}
 \code{haq.lprog.therapy}, \code{haq.lprog.age}, \code{logor.mort}, \code{mort.loghr.haqdif}, \code{si.surv},
 \code{ttd.eular.mod}, \code{ttd.eular.good}, and \code{lt} as generated from \link{sample_pars}. Additionally, if \code{cdmards_prog} is equal 
 to "lcgm", then \code{haq.lcgm} must be included.}
+
+\item{itreat_haq}{How should the relationship between treatment and HAQ during the initial 
+treatment phase (i.e., first 6 months) be modeled? Options, which are equivalent to H1-H3
+in the documentation are
+H1: Treatment -> ACR -> HAQ (\code{acr-haq}), 
+H2: Treatment -> ACR -> EULAR -> HAQ (\code{acr-eular-haq}), or
+H3:Treatment -> HAQ (\code{haq}).}
+
+\item{itreat_switch}{How should the relationship between treatment and switching to a new 
+treatment during the initial treatment phase (i.e., first 6 months) be modeled. Options, which
+are equivalent to S1-S6 in the documentation are
+S1: Treatment -> ACR -> Switch (\code{acr-switch}), 
+S2: Treatment -> ACR -> DAS28 -> Switch (\code{acr-das28-switch}),
+S3: Treatment -> ACR -> SDAI -> Switch (\code{acr-sdai-switch}),
+S4: Treatment -> ACR -> CDAI -> Switch (\code{acr-cdai-switch}),
+S5: Treatment -> DAS28 -> Switch (\code{das28-switch}),
+S6: Treatment -> ACR -> EULAR -> Switch (\code{acr-eular-switch}).}
 
 \item{dur_dist}{Survival distribution for treatment duration.}
 

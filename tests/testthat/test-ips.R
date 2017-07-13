@@ -2,6 +2,7 @@ context("Workhorse IPS functions")
 library("flexsurv")
 library("data.table")
 source("../../data-raw/func.R")
+seed <- runif(1, 0, 1000)
 
 # Test C++ function durationC -------------------------------------------------
 # Data for testing
@@ -18,7 +19,6 @@ cycle.length <- 6
 
 # test function
 durationC_samp <- function(dist, type = 1){
-  seed <- runif(1, 0, 100)
   fit <- fits[[dist]]
   est <- pars[[dist]]$est
   loc.est <- est[pars[[dist]]$loc.index]
@@ -26,11 +26,11 @@ durationC_samp <- function(dist, type = 1){
   anc2.est <-  est[pars[[dist]]$anc2.index]
 
   set.seed(seed)
-  samp1 <- IVI026::durationC(x, loc.est, anc1.est, loc.est, anc1.est, 
+  samp1 <- iviRA::durationC(x, loc.est, anc1.est, loc.est, anc1.est, 
                              type = type, dist, cycle.length, 20,
                              anc2.est, anc2.est)
   set.seed(seed)
-  samp2 <- IVI026::rsurvC(x %*% loc.est, anc1.est, dist, anc2.est)/cycle.length
+  samp2 <- iviRA::rsurvC(x %*% loc.est, anc1.est, dist, anc2.est)/cycle.length
   return(list(samp1, samp2))
 }
 
@@ -76,8 +76,8 @@ test_that("sim_utility_wailoo", {
   prev.dmards <- .0249
   haq <- 1.5
   simhaq <- data.table::data.table(sim = 1, id = 1, age = age, haq = haq)
-  input.dat <- list(dis.dur = dis.dur, haq0 = haq0, male = male, prev.dmards = prev.dmards)
-  
+  input.dat <- list(dis.dur = dis.dur, haq0 = haq0, male = male, prev.dmards = prev.dmards,
+                    n = 1)
   x <- cbind(1, age, dis.dur, haq0, male, prev.dmards, haq)
   expect_equal(as.numeric(1/(1 + exp(-x %*% util.wailoo.pars$coef))),
               sim_utility_wailoo(simhaq, input.dat, t(as.matrix(util.wailoo.pars$coef))))
@@ -87,7 +87,7 @@ test_that("sim_utility_wailoo", {
 test_that("sim_mlogit_classC", {
   delta <- matrix(c(seq(1, 6)), nrow = 2, ncol = 3)
   w <- c(1, 1, 2)
-  set.seed(10)
+  set.seed(seed)
   latclass <- iviRA:::sim_mlogit_classC(w, delta)
   expect_is(latclass, "integer")
 })
@@ -124,9 +124,122 @@ test_that("sim_haq_lcgm1C", {
   for (i in 1:length(year)){
     dhaq.C[i] <- iviRA:::sim_dhaq_lcgm1C(year[i], cycle.length, age, female, das28, delta, beta)
   }
-  iviRA:::mlogit_probC(w, delta)
   haq <- cumsum(c(1.5, dhaq.C))
   plot(c(2, year), haq)
+})
+
+# Test sim_itreat_haq ---------------------------------------------------------
+test_that("sim_itreat_haq", {
+  parsamp <- sample_pars(n = 3)
+  line <- 0; therapy <- 0; nbt <- therapy + 5
+  nma.acr1 <- nma.acr2 <- parsamp$acr$p1[1,, therapy + 1]
+  nma.dhaq1 <- nma.dhaq2 <- parsamp$haq$dy1[1, therapy + 1]
+  sim.acr2eular <- parsamp$acr2eular[,,1]
+  sim.acr2haq <- parsamp$acr2haq
+  sim.eular2haq <- parsamp$eular2haq[1, ]
+  pars <- list("acr-haq", line, therapy, nbt, nma.acr1, nma.acr2,
+            nma.dhaq1, nma.dhaq2, sim.acr2eular, sim.acr2haq, sim.eular2haq)
+  
+  ## Treatment -> ACR -> HAQ
+  set.seed(seed)
+  sim <- do.call(getFromNamespace("test_itreat_haq", "iviRA"), pars)
+  set.seed(seed)
+  acr <- hesim::rcat(matrix(nma.acr1, nrow = 1)) - 1
+  eular <- hesim::rcat(acr2eular[acr + 1,, drop = FALSE]) - 1
+  expect_equal(sim$acr, c(acr))
+  expect_equal(sim$eular, c(eular))
+  
+  # check nbt returns correctly
+  pars[[4]] <- therapy
+  sim <- do.call(getFromNamespace("test_itreat_haq", "iviRA"), pars)
+  expect_equal(sim$acr, 0)
+  expect_equal(sim$eular, 0)
+  expect_equal(sim$dhaq, 0)
+  
+  ## Treatment -> ACR -> EULAR -> HAQ
+  pars[[1]] <- "acr-eular-haq"
+  pars[[4]] <- nbt
+  set.seed(seed)
+  sim <- do.call(getFromNamespace("test_itreat_haq", "iviRA"), pars)
+  set.seed(seed)
+  acr <- c(hesim::rcat(matrix(nma.acr1, nrow = 1))) - 1
+  eular <- c(hesim::rcat(acr2eular[acr + 1,, drop = FALSE])) - 1
+  dhaq <- sim.eular2haq[eular + 1]
+  expect_equal(sim$acr, acr)
+  expect_equal(sim$eular, eular)
+  expect_equal(sim$dhaq, as.vector(dhaq))
+  
+  # check nbt returns correctly
+  pars[[4]] <- therapy
+  sim <- do.call(getFromNamespace("test_itreat_haq", "iviRA"), pars)
+  expect_equal(sim$acr, 0)
+  expect_equal(sim$eular, 0)
+  expect_equal(sim$dhaq, 0)
+  
+  ## Treatment -> HAQ
+  pars[[1]] <- "haq"
+  pars[[4]] <- nbt
+  set.seed(seed)
+  sim <- do.call(getFromNamespace("test_itreat_haq", "iviRA"), pars)
+  set.seed(seed)
+  expect_equal(sim$dhaq, as.vector(nma.dhaq1))
+  expect_equal(sim$eular, eular)
+  
+  # check nbt returns correctly
+  pars[[4]] <- therapy
+  sim <- do.call(getFromNamespace("test_itreat_haq", "iviRA"), pars)
+  expect_equal(sim$acr, 0)
+  expect_equal(sim$eular, 0)
+  expect_equal(sim$dhaq, 0)
+})
+
+# Test itreat_switchC ---------------------------------------------------------
+# get_da_cat
+test_that("get_da_cat", {
+  expect_equal(iviRA:::get_das28_cat(2.1), 0)
+  expect_equal(iviRA:::get_das28_cat(6.0), 3)
+  expect_equal(iviRA:::get_sdai_cat(4.1), 1)
+  expect_equal(iviRA:::get_sdai_cat(15.0), 2)
+})
+
+# itreat_switchC
+test_that("itreat_switch", {
+  parsamp <- sample_pars(n = 3)
+  line <- 0; therapy <- 1; nbt <- therapy + 2; 
+  acr <- 0; eular <- 2; das28 <- 6; cdai <- 41; sdai <- 43
+  sim.acr2das28 <- parsamp$acr2das28[1, ]
+  sim.acr2sdai <- parsamp$acr2sdai[1, ]
+  sim.acr2cdai <- parsamp$acr2cdai[1, ]
+  nma.das28.1 <- parsamp$das28$dy1[1, ]
+  nma.das28.2 <- parsamp$das28$dy2[1, ]
+  p <- c(0, .15, .22, .29)
+  pars <- list("acr-switch", line, therapy, nbt, acr = acr, eular, das28, sdai, cdai,
+            sim.acr2das28, sim.acr2sdai, sim.acr2cdai, nma.das28.1, nma.das28.2, p)
+  
+  # Treatment -> ACR -> Switch
+  sim <- do.call(getFromNamespace("test_itreat_switch", "iviRA"), pars)
+  expect_equal(sim$t, 1)
+  pars[["acr"]] <- 1
+  sim <- do.call(getFromNamespace("test_itreat_switch", "iviRA"), pars)
+  expect_equal(sim$tswitch, 0)
+  
+  # Treatment -> ACR -> DA -> Switch
+  pars[[1]] <- "acr-das28-switch"
+  set.seed(seed)
+  sim <- do.call(getFromNamespace("test_itreat_switch", "iviRA"), pars)
+  set.seed(seed)
+  twitch.R <- rbinom(1, 1, p[iviRA:::get_das28_cat(das28 + sim.acr2das28[pars[["acr"]] + 1])])
+  expect_equal(sim$tswitch, twitch.R)
+  
+  # Treatment -> DA -> Switch
+  pars[[1]] <- "das28-switch"
+  set.seed(seed)
+  sim <- do.call(getFromNamespace("test_itreat_switch", "iviRA"), pars)
+  set.seed(seed)
+  twitch.R <- rbinom(1, 1, p[iviRA:::get_das28_cat(das28 + nma.das28.1[therapy + 1])])
+  expect_equal(sim$tswitch, twitch.R)
+  
+
 })
 
 # small integration test ------------------------------------------------------
@@ -135,7 +248,8 @@ pat <- sample_pats(n = 10)
 input.dat <- input_data(patdata = pat)
 parsamp <- sample_pars(n = 100)
 parsamp.table <- par_table(parsamp, pat)
-sim.out <- sim_haq(arms, input_data = input.dat, pars = parsamp, cdmards_haq_model = "lcgm")
+sim.out <- sim_haq(arms, input_data = input.dat, pars = parsamp, 
+                   itreat_haq = "acr-haq", cdmards_haq_model = "lcgm")
 sim.out <- cbind(sim.out, sim_hc_cost(sim.out, pat[, "weight"], pars = parsamp))
 sim.out[, prod_loss := sim_prod_loss(sim.out, pl_haq = parsamp$prod.loss)]
 sim.out <- cbind(sim.out, sim_utility_mixture(sim.out, male = input.dat$male, 

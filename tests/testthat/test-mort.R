@@ -10,7 +10,7 @@ test_that("newprob", {
   logor <- c(1.1, 1.3, .85)
   logit.baseline <- .5
   predR <- as.numeric(inv_logit(x %*%  logor + logit.baseline))
-  predC <- IVI026:::newprobC(x, logor, logit.baseline)
+  predC <- iviRA:::newprobC(x, logor, logit.baseline)
   expect_equal(predR, predC)
 })
 
@@ -39,7 +39,7 @@ mortprobR <- function(age, male, lifetable_male, lifetable_female,
           agerow <- which(lifetable_female[, "age"] == 55)
           logit.qx <- lifetable_female[agerow, "logit_qx"]
       }
-      qx <- IVI026:::newprobC(x, logor, logit.qx)
+      qx <- iviRA:::newprobC(x, logor, logit.qx)
       haq.change <- (haq - haq0)/.25
       rate <- -log(1 - qx) * exp(loghr * haq.change) 
       qx <- 1 - exp(-rate * (cycle_length/12))
@@ -55,7 +55,7 @@ mort.pars <- list(age, male = 0, lifetable_male = lt$male,
 mort.parsR <- mort.pars
 mort.parsR[[length(mort.parsR)]] <- mort.parsR[[length(mort.parsR)]][1]
 test_that("mortprobC", {
-  qxC <- do.call(getFromNamespace("mortprobC", "IVI026"), mort.pars)
+  qxC <- do.call(getFromNamespace("mortprobC", "iviRA"), mort.pars)
   qxR <- do.call("mortprobR", mort.pars)
   expect_equal(qxC, qxR[1])
 })
@@ -69,7 +69,7 @@ death_sampleR <- function(n, ...){
 test_that("death_sampleC", {
   # C++ function
   set.seed(100)
-  sampC <- replicate(1000, do.call(getFromNamespace("sample_deathC", "IVI026"), mort.pars))
+  sampC <- replicate(1000, do.call(getFromNamespace("sample_deathC", "iviRA"), mort.pars))
   
   # R function
   set.seed(100)

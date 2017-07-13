@@ -49,3 +49,9 @@ arma::rowvec mlogit_probC(arma::rowvec x, arma::mat beta) {
   return p;
 }
 
+// Logistic function
+// [[Rcpp::export]]
+double logistic(double p){
+  return 1/(1 + exp(-p));
+}
+

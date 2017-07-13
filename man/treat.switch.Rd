@@ -6,15 +6,13 @@
 \title{Treatment switching at 6 months}
 \format{A data.table containing the following columns:
 \describe{
-  \item{variable}{Name of variable. Includes the intercept, an indicator variable for whether
+  \item{disease_activity}{Name of variable. Includes the intercept, an indicator variable for whether
   disease activity is moderate (CDAI 10-22), and an indicator variable for 
   whether disease activity is high (CDAI greater than 22).}
-  \item{or}{The odds ratio of the coefficients.}
-  \item{or_lower}{Lower 95 percent confidence interval for the odds ratio.}
-  \item{or_upper}{Upper 95 percent confidence interval for the odds ratio.}
-  \item{logor}{Log odds ratio of the coefficents.}
-  \item{logor_lower}{Lower 95 percent confidence interval for the log of the odds ratio.}
-  \item{logor_upper}{Upper 95 percent confidence interval for the log of the odds ratio.}
+  \item{p}{Probability of switching treatment. }
+  \item{p_se}{Standard error of probability of switching treatment.}
+  \item{alpha}{Alpha parameter in beta distribution.}
+  \item{beta}{Beta parameter in a beta distribution.}
 }}
 \source{
 Zhang, Jie, et al. "Thresholds in disease activity for switching biologics in rheumatoid 
@@ -25,7 +23,7 @@ Arthritis care & research 63.12 (2011): 1672-1679.
 treat.switch
 }
 \description{
-Regression coefficients from a logistic regression equation predicting the probability of 
-switching treatment at 6 months by disease activity level.
+Probability of treatment switching at 6 months by disease activity level (remission, low,
+moderate, high)
 }
 \keyword{datasets}

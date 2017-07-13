@@ -231,13 +231,16 @@ ggsave("figs/ttd-bsrbr-ipdsurv-comp-gengamma-by-eular.pdf",
 # SAVE PARAMETERS FOR MODEL ----------------------------------------------------
 # moderate responders
 ttd.eular.mod <- ttd.eular.good <- ttd.eular.mod.adj <- ttd.eular.good.adj <- list()
+ttd.corrona <- ttd.eular.mod
 for (i in 1:length(mods)){
   ttd.eular.mod[[mods[i]]] <- flexsurvreg_pars(fits.b.m[[mods[i]]])
   ttd.eular.good[[mods[i]]] <- flexsurvreg_pars(fits.b.g[[mods[i]]])
   ttd.eular.mod.adj[[mods[i]]] <- flexsurvreg_pars(fits.b.m.adj[[mods[i]]])
   ttd.eular.good.adj[[mods[i]]] <- flexsurvreg_pars(fits.b.g.adj[[mods[i]]])
+  ttd.corrona[[mods[i]]] <- flexsurvreg_pars(fits.c[[mods[i]]])
 }
 
 # SAVE PARAMETERS --------------------------------------------------------------
 save(ttd.eular.mod, ttd.eular.good, ttd.eular.mod.adj, ttd.eular.good.adj, 
+     ttd.corrona,
      file = "../data/ttd-pars.rda", compress = "bzip2")

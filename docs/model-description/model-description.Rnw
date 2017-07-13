@@ -488,17 +488,12 @@ database in a given category.
 
 \subsubsection{Probability of switching treatment}
 <<treat-switch, echo = FALSE, include = FALSE>>=
-tab <- treat.switch[, .(variable, logor, logor_lower, logor_upper)]
-p.low <- 1/(1 + exp(-(tab[variable == "intercept", logor])))
-p.moderate <- 1/(1 + exp(-(tab[variable == "intercept", logor] +
-                             tab[variable == "da_moderate", logor])))
-p.high <- 1/(1 + exp(-(tab[variable == "intercept", logor] +
-                             tab[variable == "da_high", logor])))
-tab <- tab[, .(logor, logor_lower, logor_upper)]
-tab <- rbind(tab[1],
-             data.table(logor = 0, logor_lower = 0, logor_upper = 0),
-             tab[2:3])
-tab <- cbind(c("Intercept", "CDAI <10 (low)", "CDAI 10-22 (moderate)", "CDAI $\\geq 22$"), 
+tab <- treat.switch[, .(p, p_lower, p_upper)]
+p.low <- treat.switch[disease_activity == "Low", p]
+p.moderate <- treat.switch[disease_activity == "Moderate", p]
+p.high <- treat.switch[disease_activity == "High", p]
+tab <- cbind(c("CDAI $\\leq 2.8$", "CDAI >2.8-10 (low)", 
+               "CDAI >10-22 (moderate)", "CDAI $\\geq 22$"), 
              formatC(as.matrix(tab), format = "f", digits = 3))
 tex <- print(xtable(tab), 
       include.rownames = FALSE, include.colnames = FALSE,
@@ -511,7 +506,7 @@ The probability of stopping treatment depends on the model structure used. If \t
 \begin{table}[!ht]
 \begin{center}
 \begin{threeparttable}
-\caption{Coefficients from a logistic regression of the probability of switching treatment at 6 months} \label{tbl:logistic-treat-switch}
+\caption{Estimated probability of switching treatment at 6 months} \label{tbl:logistic-treat-switch}
 \begin{tabularx}{\textwidth}{@{\extracolsep{\fill}}lccc}
 \hline
 \multicolumn{2}{l}{} & \multicolumn{2}{c}{95\% CI} \\
@@ -1424,11 +1419,11 @@ Parameter uncertainty is quantified using PSA, which propagates uncertainty in t
 \multicolumn{1}{l}{Parameter(s)} & \multicolumn{1}{l}{Distribution} \\
 \hline
 Rebound factor & Uniform\\
-NMA parameters - ACR response & Bayesian posterior distribution \\
-NMA parameters - DAS28 & Bayesian posterior distribution \\
-NMA parameters - HAQ & Bayesian posterior distribution \\
+NMA parameters - ACR response & Multivariate normal \\
+NMA parameters - DAS28 & Multivariate normal \\
+NMA parameters - HAQ & Multivariate normal \\
 Drug acquisition and administration cost & Fixed \\
-Logistic regression coefficients for probability of treatment switch at 6 months & Normal \\
+Probability of treatment switch at 6 months & Beta \\
 Survival model parameters for treatment duration during maintenance phase & Multivariate normal \\
 US lifetable mortality rates & Fixed \\
 Mortality probability odds ratio - baseline HAQ & Normal \\

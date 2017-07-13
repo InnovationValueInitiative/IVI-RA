@@ -13,6 +13,21 @@
 #' \code{haq.lprog.therapy}, \code{haq.lprog.age}, \code{logor.mort}, \code{mort.loghr.haqdif}, \code{si.surv},
 #' \code{ttd.eular.mod}, \code{ttd.eular.good}, and \code{lt} as generated from \link{sample_pars}. Additionally, if \code{cdmards_prog} is equal 
 #' to "lcgm", then \code{haq.lcgm} must be included. 
+#' @param itreat_haq How should the relationship between treatment and HAQ during the initial 
+#' treatment phase (i.e., first 6 months) be modeled? Options, which are equivalent to H1-H3
+#' in the documentation are
+#' H1: Treatment -> ACR -> HAQ (\code{acr-haq}), 
+#' H2: Treatment -> ACR -> EULAR -> HAQ (\code{acr-eular-haq}), or
+#' H3:Treatment -> HAQ (\code{haq}). 
+#' @param itreat_switch How should the relationship between treatment and switching to a new 
+#' treatment during the initial treatment phase (i.e., first 6 months) be modeled. Options, which
+#' are equivalent to S1-S6 in the documentation are
+#' S1: Treatment -> ACR -> Switch (\code{acr-switch}), 
+#' S2: Treatment -> ACR -> DAS28 -> Switch (\code{acr-das28-switch}),
+#' S3: Treatment -> ACR -> SDAI -> Switch (\code{acr-sdai-switch}),
+#' S4: Treatment -> ACR -> CDAI -> Switch (\code{acr-cdai-switch}),
+#' S5: Treatment -> DAS28 -> Switch (\code{das28-switch}),
+#' S6: Treatment -> ACR -> EULAR -> Switch (\code{acr-eular-switch}). 
 #' @param haq_prog_model Model used to simulate the progression of HAQ. Options are "lcgm" and "linear", with
 #' "lcgm" as the default. If "lcgm" is chosen, then a latent class growth model is used for cDMARDs
 #' and NBT but a constant annual rate is is assumed for all other therapies; otherwise 
@@ -53,12 +68,18 @@
 #' \item{yrlen}{Length of a model cycle in years. Equal to 0.5 given 6-month cycles.}
 #'}
 #' @export
-sim_haq <- function(arminds, input_data, pars, cdmards_haq_model = c("lcgm", "linear"),
+sim_haq <- function(arminds, input_data, pars, 
+                    itreat_haq = c("acr-haq", "acr-eular-haq", "haq"),
+                    itreat_switch = c("acr-switch", "acr-das28-switch", "acr-sdai-switch",
+                                      "acr-cdai-switch", "das28-switch", "acr-eular-switch"),
+                    cdmards_haq_model = c("lcgm", "linear"),
                     dur_dist = "lnorm", si_dist = "exp", max_months = NULL, 
                     cdmards_ind = which(therapy.pars$info$sname == "cdmards"),
                     nbt_ind = which(therapy.pars$info$sname == "nbt"),
                     check = TRUE){
   if (check) check_sim_haq(input_data, pars)
+  itreat.haq <- match.arg(itreat_haq)
+  itreat.switch <- match.arg(itreat_switch)
   cdmards.haq.model <- match.arg(cdmards_haq_model)
   treat_gap <- 0
   cycle_length <- 6
@@ -73,6 +94,7 @@ sim_haq <- function(arminds, input_data, pars, cdmards_haq_model = c("lcgm", "li
   if (is.null(max_months)){
     max_months <- 12 * 150
   }
+  pars.ttd <- pars$ttd[[dur_dist]]
   pars.ttd.em <- pars$ttd.eular.mod[[dur_dist]]
   pars.ttd.eg <- pars$ttd.eular.good[[dur_dist]] 
   pars.si <- pars$si.surv[[si_dist]]
@@ -80,11 +102,19 @@ sim_haq <- function(arminds, input_data, pars, cdmards_haq_model = c("lcgm", "li
                      input_data$sdai, input_data$cdai,
                      input_data$age, input_data$male, 
                      input_data$prev.dmards,
-                    pars$acr$p1, pars$acr$p2, pars$acr2eular, pars$eular2haq, 
+                     itreat.haq, itreat.switch,
+                    pars$acr$p1, pars$acr$p2, pars$haq$dy1, pars$haq$dy2,
+                    pars$das28$dy1, pars$das28$dy2,
+                    pars$acr2eular, pars$acr2haq, pars$eular2haq,
+                    pars$acr2das28, pars$acr2sdai, pars$acr2cdai,
+                    pars$switch,
                   pars$haq.lprog.therapy, pars$haq.lprog.age,
                   pars$haq.lcgm$delta, pars$haq.lcgm$beta, cdmards.haq.model,
                   pars$rebound, pars$lt$male, pars$lt$female,
-                 input_data$x.mort, pars$logor, dur_dist, input_data$x.dur, 
+                 input_data$x.mort, pars$logor, dur_dist, input_data$x.dur,
+                 pars.ttd$sample[, pars.ttd$loc.index, drop = FALSE],
+                 pars.ttd$sample[, pars.ttd$anc1.index, drop = FALSE],
+                 pars.ttd$sample[, pars.ttd$anc2.index, drop = FALSE],
                  pars.ttd.em$sample[, pars.ttd.em$loc.index, drop = FALSE], 
                  pars.ttd.em$sample[, pars.ttd.em$anc1.index, drop = FALSE],
                  pars.ttd.em$sample[, pars.ttd.em$anc2.index, drop = FALSE], 
