@@ -7,12 +7,10 @@
 sample_pars(n = 100, rebound_lower = 0.7, rebound_upper = 1,
   ltfemale = lifetable.female, ltmale = lifetable.male,
   acr2eular_mat = acr2eular, treat_cost = therapy.pars$cost,
-  switch_alpha = treat.switch$alpha, switch_beta = treat.switch$beta,
   mort_logor = mort.or$logor, mort_logor_se = mort.or$logor_se,
   mort_loghr_haqdif = mort.hr.haqdif$loghr,
-  mort_loghr_se_haqdif = mort.hr.haqdif$loghr_se, ttd = ttd.corrona,
-  ttd_eular_mod = ttd.eular.mod.adj, ttd_eular_good = ttd.eular.good.adj,
-  nma_acr_mean = therapy.pars$nma.acr.naive$mean,
+  mort_loghr_se_haqdif = mort.hr.haqdif$loghr_se, ttd_da = ttd.da,
+  ttd_eular = ttd.eular, nma_acr_mean = therapy.pars$nma.acr.naive$mean,
   nma_acr_vcov = therapy.pars$nma.acr.naive$vcov, nma_acr_rr_lower = 0.75,
   nma_acr_rr_upper = 0.92,
   nma_das28_mean = therapy.pars$nma.das28.naive$mean,
@@ -62,14 +60,6 @@ the probability of death at a given age.}
 
 \item{treat_cost}{Treatment cost matrix in format of therapy.pars$cost.}
 
-\item{switch_alpha}{A vector of length four where each element is the number of patients 
-switching treatment at 6 months for a given disease activity level 
-(remission, low, moderate, high). Equivalent to alpha parameter in beta distribution.}
-
-\item{switch_beta}{A vector of length four where each element is the number of patients 
-not switching treatment at 6 months for a given disease activity level 
-(remission, low, moderate, high). Equivalent to beta parameter in beta distribution.}
-
 \item{mort_logor}{Log odds ratio of impact of baseline HAQ on probability of mortality.}
 
 \item{mort_logor_se}{Standard error of log odds ratio of impact of baseline HAQ on probability of mortality.}
@@ -79,11 +69,9 @@ each element denoting (in order) hazard ratio for months 0-6, >6 - 12, >12 - 24,
 
 \item{mort_loghr_se_haqdif}{Standard error of log hazard ratio of impact of change in HAQ from baseline on mortality rate.}
 
-\item{ttd}{A list containing treatment duration parameters for patients.}
+\item{ttd_da}{A list containing treatment duration parameters stratified by disease activity level. See 'Treatment duration'.}
 
-\item{ttd_eular_mod}{A list containing treatment duration parameters for patients with a moderate EULAR response. See 'Treatment duration'.}
-
-\item{ttd_eular_good}{A list containing treatment duration parameters for patients with a good EULAR response. See 'Treatment duration'.}
+\item{ttd_eular}{A list containing treatment duration parameters stratified by EULAR response. See 'Treatment duration'.}
 
 \item{nma_acr_mean}{Posterior means for ACR response NMA parameters on probit scale for 
 biologic naive patients (i.e., 1st line). ACR response is modeled using an ordered probit model.}

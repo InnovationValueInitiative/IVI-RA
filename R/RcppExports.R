@@ -23,13 +23,13 @@ test_itreat_switch <- function(itreat_switch_model, line, therapy, nbt, acr, eul
 }
 
 #' @export
-sim_duration_eular <- function(x, loc_mod, anc1_mod, loc_good, anc1_good, eular, dist, cycle_length, si_duration, anc2_mod = 0.0, anc2_good = 0.0) {
-    .Call('iviRA_sim_duration_eular', PACKAGE = 'iviRA', x, loc_mod, anc1_mod, loc_good, anc1_good, eular, dist, cycle_length, si_duration, anc2_mod, anc2_good)
+sim_ttd_eular <- function(x, loc_mod, anc1_mod, loc_good, anc1_good, eular, dist, cycle_length, ttsi, anc2_mod = 0.0, anc2_good = 0.0) {
+    .Call('iviRA_sim_ttd_eular', PACKAGE = 'iviRA', x, loc_mod, anc1_mod, loc_good, anc1_good, eular, dist, cycle_length, ttsi, anc2_mod, anc2_good)
 }
 
 #' @export
-sim_duration <- function(x, loc, anc1, dist, tswitch, cycle_length, si_duration, anc2 = 0.0) {
-    .Call('iviRA_sim_duration', PACKAGE = 'iviRA', x, loc, anc1, dist, tswitch, cycle_length, si_duration, anc2)
+sim_ttd_da <- function(x, loc_rem, anc1_rem, loc_low, anc1_low, loc_mod, anc1_mod, da_cat, tswitch, dist, cycle_length, ttsi, anc2_rem, anc2_low = 0.0, anc2_mod = 0.0) {
+    .Call('iviRA_sim_ttd_da', PACKAGE = 'iviRA', x, loc_rem, anc1_rem, loc_low, anc1_low, loc_mod, anc1_mod, da_cat, tswitch, dist, cycle_length, ttsi, anc2_rem, anc2_low, anc2_mod)
 }
 
 #' @export
@@ -48,8 +48,8 @@ sim_dhaq_lcgm1C <- function(year, cycle_length, age, female, das28, delta, beta)
 }
 
 #' @export
-sim_haqC <- function(therapies, haq0, das28_0, sdai0, cdai0, age0, male, prev_dmards, itreat_haq_model, itreat_switch_model, nma_acr1, nma_acr2, nma_dhaq1, nma_dhaq2, nma_das28_1, nma_das28_2, acr2eular, acr2haq, eular2haq, acr2das28, acr2sdai, acr2cdai, tswitch_da, haq_lprog_therapy, haq_lprog_age, haq_lcgm_delta, haq_lcgm_beta, cdmards_haq_model, rebound_factor, lifetable_male, lifetable_female, x_mort, logor, dur_dist, x_dur, dur_loc, dur_anc1, dur_anc2, dur_loc_mod, dur_anc1_mod, dur_anc2_mod, dur_loc_good, dur_anc1_good, dur_anc2_good, cycle_length, treat_gap, cdmards, nbt, si_loc, si_anc1, si_anc2, si_dist, haqdelta_loghr, max_months) {
-    .Call('iviRA_sim_haqC', PACKAGE = 'iviRA', therapies, haq0, das28_0, sdai0, cdai0, age0, male, prev_dmards, itreat_haq_model, itreat_switch_model, nma_acr1, nma_acr2, nma_dhaq1, nma_dhaq2, nma_das28_1, nma_das28_2, acr2eular, acr2haq, eular2haq, acr2das28, acr2sdai, acr2cdai, tswitch_da, haq_lprog_therapy, haq_lprog_age, haq_lcgm_delta, haq_lcgm_beta, cdmards_haq_model, rebound_factor, lifetable_male, lifetable_female, x_mort, logor, dur_dist, x_dur, dur_loc, dur_anc1, dur_anc2, dur_loc_mod, dur_anc1_mod, dur_anc2_mod, dur_loc_good, dur_anc1_good, dur_anc2_good, cycle_length, treat_gap, cdmards, nbt, si_loc, si_anc1, si_anc2, si_dist, haqdelta_loghr, max_months)
+sim_haqC <- function(therapies, haq0, das28_0, sdai0, cdai0, age0, male, prev_dmards, itreat_haq_model, itreat_switch_model, nma_acr1, nma_acr2, nma_dhaq1, nma_dhaq2, nma_das28_1, nma_das28_2, acr2eular, acr2haq, eular2haq, acr2das28, acr2sdai, acr2cdai, tswitch_da, haq_lprog_therapy, haq_lprog_age, haq_lcgm_delta, haq_lcgm_beta, cdmards_haq_model, rebound_factor, lifetable_male, lifetable_female, x_mort, logor, dur_dist, x_dur, ttd_da_loc_rem, ttd_da_anc1_rem, ttd_da_anc2_rem, ttd_da_loc_low, ttd_da_anc1_low, ttd_da_anc2_low, ttd_da_loc_mod, ttd_da_anc1_mod, ttd_da_anc2_mod, ttd_eular_loc_mod, ttd_eular_anc1_mod, ttd_eular_anc2_mod, ttd_eular_loc_good, ttd_eular_anc1_good, ttd_eular_anc2_good, cycle_length, treat_gap, cdmards, nbt, si_loc, si_anc1, si_anc2, si_dist, haqdelta_loghr, max_months) {
+    .Call('iviRA_sim_haqC', PACKAGE = 'iviRA', therapies, haq0, das28_0, sdai0, cdai0, age0, male, prev_dmards, itreat_haq_model, itreat_switch_model, nma_acr1, nma_acr2, nma_dhaq1, nma_dhaq2, nma_das28_1, nma_das28_2, acr2eular, acr2haq, eular2haq, acr2das28, acr2sdai, acr2cdai, tswitch_da, haq_lprog_therapy, haq_lprog_age, haq_lcgm_delta, haq_lcgm_beta, cdmards_haq_model, rebound_factor, lifetable_male, lifetable_female, x_mort, logor, dur_dist, x_dur, ttd_da_loc_rem, ttd_da_anc1_rem, ttd_da_anc2_rem, ttd_da_loc_low, ttd_da_anc1_low, ttd_da_anc2_low, ttd_da_loc_mod, ttd_da_anc1_mod, ttd_da_anc2_mod, ttd_eular_loc_mod, ttd_eular_anc1_mod, ttd_eular_anc2_mod, ttd_eular_loc_good, ttd_eular_anc1_good, ttd_eular_anc2_good, cycle_length, treat_gap, cdmards, nbt, si_loc, si_anc1, si_anc2, si_dist, haqdelta_loghr, max_months)
 }
 
 #' @export

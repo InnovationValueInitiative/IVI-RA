@@ -8,6 +8,13 @@ logit <- function(p){
   return(log(p/(1-p)))
 }
 
+# ADJUST PROBABILITY WITH ODDS RATIO--------------------------------------------
+# adjust probability using odds ratio
+or2newprob <- function(oldprob, or){
+  p.new <- 1/(1 + exp(-(logit(oldprob) + log(or))))
+  return(p.new)
+}
+
 # NMA MISSING TRIALS -----------------------------------------------------------
 # Add NA data when missing trials for NMA; set nbt equal to cDMARSs/MTX
 #
@@ -43,10 +50,11 @@ dt_reorder <- function(x, var, y_vec){
 
 # FIND BEST PARAMETRIC FIT TO SURVIVAL CURVE -----------------------------------
 # Loop over distributions fitting parametric survival model
-parametric_fit <- function(dists, data){
+parametric_fit <- function(dists, data, xvars = "1"){
   fit <- vector(length(dists), mode = "list"); names(fit) <- dists
+  surv.f <- as.formula(paste("Surv(t, event)~", paste(xvars, collapse = "+")))
   for (i in 1:length(dists)){
-    fit[[i]] <- flexsurvreg(Surv(t, event) ~ 1,
+    fit[[i]] <- flexsurvreg(surv.f,
                             data = data, dist = dists[i])
   }
   return(fit)

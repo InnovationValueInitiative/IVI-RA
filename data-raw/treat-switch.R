@@ -11,7 +11,7 @@ logor.l <- log(or.l)
 logor.u <- log(or.u)
 logor.se <- c(se_normal(logor.l[1], logor.u[1]), se_normal(logor.l[2], logor.u[2]))
 
-# probability by disease activiy level
+# probability by disease activity level
 p.moderate <- .163 # from CORRONA
 logor.int <- logit(p.moderate) - logor[1]
 or.int <- exp(logor.int)

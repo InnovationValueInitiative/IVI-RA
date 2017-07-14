@@ -18,7 +18,7 @@ is the index of a therapy in \code{therapy.pars$info}. May be a vector consistin
 of unique sequences for each patient.}
 
 \item{input_data}{List of input data. Required inputs are \code{haq0}, \code{age}, \code{male}, \code{x.mort}, 
-and \code{x.dur} as generated from \link{input_data}.}
+and \code{x.ttd} as generated from \link{input_data}.}
 
 \item{pars}{List of parameters. Required parameters are \code{rebound}, \code{acr1}, \code{acr2}, \code{acr2eular}, \code{eular2haq}, 
 \code{haq.lprog.therapy}, \code{haq.lprog.age}, \code{logor.mort}, \code{mort.loghr.haqdif}, \code{si.surv},

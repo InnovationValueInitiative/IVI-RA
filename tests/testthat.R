@@ -1,3 +1,3 @@
 library(testthat)
-library(IVI026)
-test_check("IVI026")
+library(iviRA)
+test_check("iviRA")

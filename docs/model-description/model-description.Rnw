@@ -160,7 +160,7 @@ This document describes version 0.1 of IVI's rheumatoid arthritis (RA) cost-effe
 
 The model is available as an \href{https://cran.r-project.org/}{\R{}} package with documentation available \href{https://innovationvalueinitiative.github.io/IVI-RA/index.html}{online}. The source code can be viewed or downloaded at our \href{https://github.com/InnovationValueInitiative/IVI-RA}{GitHub repository}. The IPS was primarily written in \CPP{} so that PSA and analyses of structural uncertainty can be run in a reasonable amount of time. The model can either be run using \R{} (see \href{https://innovationvalueinitiative.github.io/IVI-RA/index.html}{documentation}) or \href{http://www.shinyapps.io/}{online} with our user-friendly R Shiny web application. 
 
-This document is structured as follows. We begin by discussing treatment strategies that can be modeled in \autoref{sec:treatments}. \autoref{sec:model-structures} outlines the competing model structures. \autoref{sec:data-parameters} describes the statistical techniques used to estimate the model parameters and the data sources used. \autoref{sec:populations} examines the data needed to define a population and run an analysis. Finally, \autoref{sec:sim-uncertainty} describes the simulation techniques used to implement the RA family of models and quantify uncertainty.
+This document is structured as follows. We begin by discussing treatment strategies that can be modeled in \autoref{sec:treatments}. \autoref{sec:model-structures} outlines the competing model structures. \autoref{sec:data-parameters} describes the statistical techniques used to estimate the model parameters and the data sources used. \autoref{sec:populations} examines the data needed to define a population and run an analysis. Finally, \autoref{sec:sim-uncertainty} describes the simulation techniques used to implement the IVI-RA model and quantify uncertainty.
 
 \section{Treatment strategies}\label{sec:treatments}
 The primary purpose of the model is to evaluate the cost-effectiveness of treatments for RA. Since patients typically use multiple treatments over a lifetime, the model is capable of simulating a treatment sequence of any arbitrary length. Treatments that can be included in a sequence include conventional disease-modifying anti-rheumatic drugs (cDMARDs) such as methotrexate as well as the following biologic DMARDS (bDMARDs):
@@ -466,6 +466,7 @@ tex <- print(xtable(tab),
       file = "tables/acr2eular.txt")
 @
 
+
 \begin{table}[!ht]
 \begin{center}
 \begin{threeparttable}
@@ -486,45 +487,12 @@ database in a given category.
 \end{center}
 \end{table}
 
-\subsubsection{Probability of switching treatment}
-<<treat-switch, echo = FALSE, include = FALSE>>=
-tab <- treat.switch[, .(p, p_lower, p_upper)]
-p.low <- treat.switch[disease_activity == "Low", p]
-p.moderate <- treat.switch[disease_activity == "Moderate", p]
-p.high <- treat.switch[disease_activity == "High", p]
-tab <- cbind(c("CDAI $\\leq 2.8$", "CDAI >2.8-10 (low)", 
-               "CDAI >10-22 (moderate)", "CDAI $\\geq 22$"), 
-             formatC(as.matrix(tab), format = "f", digits = 3))
-tex <- print(xtable(tab), 
-      include.rownames = FALSE, include.colnames = FALSE,
-      only.contents = TRUE, sanitize.text.function = identity,
-      file = "tables/treat-switch.txt")
-@
-
-The probability of stopping treatment depends on the model structure used. If \textbf{S1} or \textbf{S6} is used, then patients stop treatment when there is no ACR response or no EULAR response, and continue treatment otherwise. If switching depends on SDAI, CDAI, or DAS28, then we model the probability of treatment switching and adjust it according to the level of disease activity. 
-
-\begin{table}[!ht]
-\begin{center}
-\begin{threeparttable}
-\caption{Estimated probability of switching treatment at 6 months} \label{tbl:logistic-treat-switch}
-\begin{tabularx}{\textwidth}{@{\extracolsep{\fill}}lccc}
-\hline
-\multicolumn{2}{l}{} & \multicolumn{2}{c}{95\% CI} \\
-\cmidrule{3-4} 
-\multicolumn{1}{c}{Variable} & \multicolumn{1}{c}{Estimate} & \multicolumn{1}{c}{Lower} & \multicolumn{1}{c}{Upper} \\
-\hline
-\ExpandableInput{tables/treat-switch.txt}
-\hline
-\end{tabularx}
-\scriptsize
-Notes: Coefficients are log odds ratios. CDAI <10 (low) is a reference category. 
-\end{threeparttable}
-\end{center}
-\end{table}
-
-The probability of treatment switching is estimated using a logistic regression equation. Differences in discontinuation by disease activity level are based on the odds ratios reported in \citet{zhang2011thresholds} from an analysis of the Consortium of Rheumatology Researchers of North America (CORRONA) database. \citet{zhang2011thresholds} estimated odds ratios for three disease activity categories based on CDAI (<10 (low), 10-22 (moderate), and $\geq$ 22 (high)). We set the intercept in our logistic regression equation so that the probability of treatment switching for a patient with moderate disease activity is \Sexpr{p.moderate*100}\%. This assumption is based on an estimate of the probability of treatment discontinuation at 6 months from a Kaplan-Meier curve estimated using the Consortium of Rheumatology Researchers of North America (CORRONA) database (see \autoref{sec:ttd-corrona} for more details)---a population that tended to have moderate disease activity (mean CDAI = 16.0)---and is consistent with ranges from the literature \citep{souto2015rate}. The standard error of the intercept was set so that the probability of switching with moderate disease activity varied by $\pm$ 3\%. The coefficients for all variables in the logistic regression equations are shown in \autoref{tbl:logistic-treat-switch}.   
-
-In the IPS, we use the absolute level of disease activity at 6 months (not at baseline) to make predictions. We define low, moderate, and high disease activity when using DAS28 and SDAI as in \citet{anderson2012rheumatoid}. The predicted probabilities of switching at 6 months for low, medium and high disease activity patients are \Sexpr{formatC(p.low*100, format = "f", digits = 1)}\%, \Sexpr{formatC(p.moderate*100, format = "f", digits = 1)}\%, and \Sexpr{formatC(p.high*100, format = "f", digits = 1)}\% respectively. 
+% \subsubsection{Switching treatment at 6 months}
+% The probability of stopping treatment depends on the model structure used. If \textbf{S1} or \textbf{S6} is used, then patients stop treatment when there is no ACR response or no EULAR response, and continue treatment otherwise. If switching depends on SDAI, CDAI, or DAS28, then we model the probability of treatment switching and adjust it according to the level of disease activity. 
+% 
+% The probability of treatment switching is estimated using a logistic regression equation. Differences in discontinuation by disease activity level are based on the odds ratios reported in \citet{zhang2011thresholds} from an analysis of the Consortium of Rheumatology Researchers of North America (CORRONA) database. \citet{zhang2011thresholds} estimated odds ratios for three disease activity categories based on CDAI (<10 (low), 10-22 (moderate), and $\geq$ 22 (high)). We set the intercept in our logistic regression equation so that the probability of treatment switching for a patient with moderate disease activity is \Sexpr{p.moderate*100}\%. This assumption is based on an estimate of the probability of treatment discontinuation at 6 months from a Kaplan-Meier curve estimated using the Consortium of Rheumatology Researchers of North America (CORRONA) database (see \autoref{sec:ttd-corrona} for more details)---a population that tended to have moderate disease activity (mean CDAI = 16.0)---and is consistent with ranges from the literature \citep{souto2015rate}. The standard error of the intercept was set so that the probability of switching with moderate disease activity varied by $\pm$ 3\%. The coefficients for all variables in the logistic regression equations are shown in \autoref{tbl:logistic-treat-switch}.   
+% 
+% In the IPS, we use the absolute level of disease activity at 6 months (not at baseline) to make predictions. We define low, moderate, and high disease activity when using DAS28 and SDAI as in \citet{anderson2012rheumatoid}. The predicted probabilities of switching at 6 months for low, medium and high disease activity patients are \Sexpr{formatC(p.low*100, format = "f", digits = 1)}\%, \Sexpr{formatC(p.moderate*100, format = "f", digits = 1)}\%, and \Sexpr{formatC(p.high*100, format = "f", digits = 1)}\% respectively. 
 
 \subsection{Change in HAQ at 6 months}
 As in \citet{icer2017tim}, ACR responses from the NMA were translated into HAQ scores based on evidence from the ADACTA trial reported in \citet{carlson2015economic} (\autoref{tbl:acr2haq}).
@@ -587,12 +555,16 @@ The relationship between EULAR response and HAQ is based on analyses conducted b
 
 \autoref{tbl:sim-haq-change} compares the impact of treatment on HAQ using model structures \textbf{H1-H3}.
 
-<<sim_haq_change, cache=TRUE, echo=FALSE, include=FALSE>>=
+<<sim6-haq, cache=TRUE, echo=FALSE, include=FALSE>>=
+## arms to include
 arm.snames <- c("cdmards", "abtivmtx", "adamtx", "etnmtx", "golmtx", "ifxmtx", "tczmtx", "czpmtx",
                           "abtscmtx", "rtxmtx", "tofmtx")
 arminds <- as.list(which(therapy.pars$info$sname %in% arm.snames))
 arm.names <- therapy.pars$info[sname %in% arm.snames, mname]
-ir <- function(arminds, arm_names, nouter = 1000, ninner = 1000, treat_hist = "naive"){
+
+## simulation function
+sim6_summary <- function(arminds, arm_names, nouter = 1000, ninner = 1000, treat_hist = "naive",
+                         itreat_haq, itreat_switch){
   acr.mean <- matrix(NA, nrow = length(arminds), ncol = 4)
   acr.o.mean <- matrix(NA, nrow = length(arminds), ncol = 3)
   acr.lower <- acr.upper <- acr.mean
@@ -604,7 +576,8 @@ ir <- function(arminds, arm_names, nouter = 1000, ninner = 1000, treat_hist = "n
   input.dat <- input_data(patdata = pat)
   parsamp <- sample_pars(n = nouter, treat_hist = treat_hist)
   for (i in 1:length(arminds)){
-    sim6 <- sim_haq(arminds[[i]], input_data = input.dat, pars = parsamp, max_months = 6)
+    sim6 <- sim_haq(arminds[[i]], input_data = input.dat, pars = parsamp, max_months = 6,
+                    itreat_haq = itreat_haq, itreat_switch = itreat_switch)
 
     ## acr
     acr.full <- data.table(sim = rep(seq(1, ninner) , 4),
@@ -651,7 +624,19 @@ ir <- function(arminds, arm_names, nouter = 1000, ninner = 1000, treat_hist = "n
               eular.lower = eular.lower, eular.mean = eular.mean, eular.upper = eular.upper,
               dhaq.lower = dhaq.lower, dhaq.mean = dhaq.mean, dhaq.upper = dhaq.upper))
 }
-ir_table <- function(x, digits = 2){
+
+## simulate
+# H1 - H3
+sim6.acr2haq.naive <- sim6_summary(arminds, arm.names, treat_hist = "naive", itreat_haq = "acr-haq",
+                                   itreat_switch = "acr-switch")
+sim6.haq.naive <- sim6_summary(arminds, arm.names, treat_hist = "naive", itreat_haq = "haq",
+                                   itreat_switch = "das28-switch")
+sim6.acr2eular2haq.naive <- sim6_summary(arminds, arm.names, treat_hist = "naive", itreat_haq = "acr-eular-haq",
+                                   itreat_switch = "acr-eular-switch")
+@
+
+<<sim6-haq-tables, cache=TRUE, echo=FALSE, include=FALSE>>=
+summary_table <- function(x, digits = 2){
   # table output
   table.mean <- cbind(x$acr.mean, x$acr.o.mean, x$eular.mean, x$dhaq.mean)
   table.lower <- cbind(x$acr.lower, x$acr.o.lower, x$eular.lower, x$dhaq.lower)
@@ -662,49 +647,43 @@ ir_table <- function(x, digits = 2){
   ftable <- paste0(ftable.mean, " (", ftable.lower, ", ", ftable.upper, ")")
   ftable <- matrix(ftable, nrow = nrow(ftable.mean), ncol = ncol(ftable.mean))
   cn <- c("acrl20", "acr20-50", "acr50-70", "acr70+", "acr20", "acr50", "acr70",
-                           "eular_nr", "eular_mr", "eular_gr", "eular_dhaq")
+                           "eular_nr", "eular_mr", "eular_gr", "dhaq")
   colnames(ftable) <- cn
   rownames(ftable) <- x$arm.names
   return(ftable)
 }
-sim.ir.naive <- ir(arminds, arm.names, treat_hist = "naive")
-#sim.ir.exp <- ir(arminds, arm.names, treat_hist = "exp")
-tab.naive <- ir_table(sim.ir.naive)
-#tab.exp <- ir_table(sim.ir.exp)
-acr_dhaq <- NA
-dhaq <- NA
-tab.naive <- cbind(tab.naive, acr_dhaq, dhaq)
+
+# H1 - H3
+tab.acr2haq.naive <- summary_table(sim6.acr2haq.naive)
+tab.haq.naive <- summary_table(sim6.haq.naive)
+tab.acr2eular2haq.naive <- summary_table(sim6.acr2eular2haq.naive)
 
 # TEX table
-tab <- tab.naive[, c("acr_dhaq", "dhaq", "eular_nr", "eular_mr", "eular_gr", "eular_dhaq")]
-tex <- print(xtable(tab),
+tab.dhaq.naive <- cbind(tab.acr2haq.naive[, "dhaq"], tab.haq.naive[, "dhaq"], tab.acr2eular2haq.naive[, "dhaq"]) 
+rownames(tab.dhaq.naive) <- arm.names
+tex <- print(xtable(tab.dhaq.naive),
       include.rownames = TRUE, include.colnames = FALSE,
       only.contents = TRUE, sanitize.text.function = identity,
       file = "tables/sim-dhaq-6months.txt")
+
 @
 
-\begin{landscape}
 \begin{table}[!ht]
 \begin{center}
 \begin{threeparttable}
 \caption{Simulated change in HAQ at 6 months under different model structures} \label{tbl:sim-haq-change}
-\scriptsize
-\begin{tabular}{lcccccc}
+\begin{tabularx}{\textwidth}{@{\extracolsep{\fill}}lccc}
 \hline
-\multicolumn{1}{c}{} & \multicolumn{1}{c}{\textbf{H1}} & \multicolumn{1}{c}{\textbf{H2}} & \multicolumn{4}{c}{\textbf{H3}} \\
-\cmidrule(lr){2-2} \cmidrule(lr){3-3}  \cmidrule(lr){4-7} 
-\multicolumn{1}{l}{} & \multicolumn{1}{c}{$\Delta$HAQ} & \multicolumn{1}{c}{$\Delta$HAQ} & \multicolumn{1}{c}{EULAR no response} & \multicolumn{1}{c}{EULAR moderate response} & \multicolumn{1}{c}{EULAR good response} & \multicolumn{1}{c}{$\Delta$HAQ}\\
+\multicolumn{1}{l}{} & \multicolumn{1}{c}{\textbf{H1}} & \multicolumn{1}{c}{\textbf{H2}} & \multicolumn{1}{c}{\textbf{H3}} \\
 \hline
 \ExpandableInput{tables/sim-dhaq-6months.txt}
 \hline
-\end{tabular}
+\end{tabularx}
 \scriptsize
-Notes: 95\% credible intervals are in parentheses. Estimates are based on 6-month simulations of 1,000 patients and 1,000 parameters sets for each therapy. $\Delta$HAQ denotes a change in the HAQ score at 6 months from baseline; a negative value indicates a reduction in the HAQ score. cDMARDs = conventional disease-modifying antirheumatic drugs; MTX = methotrexate; ABT IV = abatacept intravenous; ADA = adalimumab; ETN = etanercept; GOL = golimumab; IFX = infliximab; TCZ = tocilizumab; CZP = certolizumab pegol; ABT SC = abatacept subcutaneous; RTX = rituximab; TOF = tofacitinib. ACR = American College of Rheumatology.
+Notes: \textbf{H1}, \textbf{H2}, and \textbf{H3} are the Treatment $\rightarrow$ ACR $\rightarrow$ HAQ, Treatment $\rightarrow$ HAQ, and Treatment $\rightarrow$ ACR $\rightarrow$ EULAR $\rightarrow$ HAQ pathways respectively. 95\% credible intervals are in parentheses. Estimates are based on 6-month simulations of 1,000 patients and 1,000 parameters sets for each therapy. $\Delta$HAQ denotes a change in the HAQ score at 6 months from baseline; a negative value indicates a reduction in the HAQ score. cDMARDs = conventional disease-modifying antirheumatic drugs; MTX = methotrexate; ABT IV = abatacept intravenous; ADA = adalimumab; ETN = etanercept; GOL = golimumab; IFX = infliximab; TCZ = tocilizumab; CZP = certolizumab pegol; ABT SC = abatacept subcutaneous; RTX = rituximab; TOF = tofacitinib. ACR = American College of Rheumatology.
 \end{threeparttable}
 \end{center}
 \end{table}
-\end{landscape}
-
 
 \subsection{HAQ progression in the absence of bDMARD treatment}\label{haq-progression-in-the-absence-of-bdmard-treatment}
 

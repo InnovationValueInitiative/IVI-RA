@@ -13,7 +13,7 @@ sample_survpars(nsims, x)
 }
 \value{
 A list of matrices containing random draws of the parameters of the survival distribution. One matrix
-for the location parameter and each of the ancillary parameters.
+for the location parameter and one matrix for each of the ancillary parameters.
 }
 \description{
 Generate a random sample of parameters for each survival distribution. Parameters are

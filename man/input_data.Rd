@@ -28,7 +28,7 @@ A list containing the following data inputs:
   \item{dis.dur}{A vector of disease duration}
   \item{prev.dmards}{A vector of the number of previous DMARDs}
   \item{x.mort}{Design matrix for mortality adjustment with odds ratios}
-  \item{x.dur}{Design matrix for treatment duration.}
+  \item{x.ttd}{Design matrix for treatment duration.}
 }
 }
 \description{

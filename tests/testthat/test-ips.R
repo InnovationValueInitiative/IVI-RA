@@ -4,7 +4,7 @@ library("data.table")
 source("../../data-raw/func.R")
 seed <- runif(1, 0, 1000)
 
-# Test C++ function durationC -------------------------------------------------
+# Test C++ function sim_duration ----------------------------------------------
 # Data for testing
 dists <- c("exp", "weibull", "gompertz", "lnorm", "llogis", "gamma", "gengamma")
 fits <- pars <- vector(mode = "list", length(dists))
@@ -18,7 +18,7 @@ x <- c(1, ovarian[1, "age"])
 cycle.length <- 6
 
 # test function
-durationC_samp <- function(dist, type = 1){
+test_sim_duration_eular <- function(dist, type = 1){
   fit <- fits[[dist]]
   est <- pars[[dist]]$est
   loc.est <- est[pars[[dist]]$loc.index]
@@ -26,44 +26,44 @@ durationC_samp <- function(dist, type = 1){
   anc2.est <-  est[pars[[dist]]$anc2.index]
 
   set.seed(seed)
-  samp1 <- iviRA::durationC(x, loc.est, anc1.est, loc.est, anc1.est, 
-                             type = type, dist, cycle.length, 20,
+  samp1 <- iviRA::sim_duration_eular(x, loc.est, anc1.est, loc.est, anc1.est, 
+                             type, dist, cycle.length, 20,
                              anc2.est, anc2.est)
   set.seed(seed)
   samp2 <- iviRA::rsurvC(x %*% loc.est, anc1.est, dist, anc2.est)/cycle.length
   return(list(samp1, samp2))
 }
 
-test_that("durationC", {
+test_that("sim_duration_eular", {
   
   # exponential distribution
-  samp <- durationC_samp("exp")
+  samp <- test_sim_duration_eular("exp")
   expect_equal(samp[[1]], samp[[2]])
-  samp <- durationC_samp("exp", type = 0)
+  samp <- test_sim_duration_eular("exp", type = 0)
   expect_equal(samp[[1]], 0)
 
   # weibull
-  samp <- durationC_samp("weibull")
+  samp <- test_sim_duration_eular("weibull")
   expect_equal(samp[[1]], samp[[2]])
   
   # gompertz
-  samp <- durationC_samp("gompertz")
+  samp <- test_sim_duration_eular("gompertz")
   expect_equal(samp[[1]], samp[[2]])
   
   # log-normal
-  samp <- durationC_samp("lnorm")
+  samp <- test_sim_duration_eular("lnorm")
   expect_equal(samp[[1]], samp[[2]])
   
   # gamma
-  samp <- durationC_samp("gamma")
+  samp <- test_sim_duration_eular("gamma")
   expect_equal(samp[[1]], samp[[2]])
   
   # log-logistic
-  samp <- durationC_samp("llogis")
+  samp <- test_sim_duration_eular("llogis")
   expect_equal(samp[[1]], samp[[2]])
   
   # generalized gamma
-  samp <- durationC_samp("gengamma")
+  samp <- test_sim_duration_eular("gengamma")
   expect_equal(samp[[1]], samp[[2]])
 })
 
@@ -249,7 +249,8 @@ input.dat <- input_data(patdata = pat)
 parsamp <- sample_pars(n = 100)
 parsamp.table <- par_table(parsamp, pat)
 sim.out <- sim_haq(arms, input_data = input.dat, pars = parsamp, 
-                   itreat_haq = "acr-haq", cdmards_haq_model = "lcgm")
+                   itreat_haq = "acr-haq", itreat_switch = "acr-das28-switch",
+                   cdmards_haq_model = "lcgm")
 sim.out <- cbind(sim.out, sim_hc_cost(sim.out, pat[, "weight"], pars = parsamp))
 sim.out[, prod_loss := sim_prod_loss(sim.out, pl_haq = parsamp$prod.loss)]
 sim.out <- cbind(sim.out, sim_utility_mixture(sim.out, male = input.dat$male, 

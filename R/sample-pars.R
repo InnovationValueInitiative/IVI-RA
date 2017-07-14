@@ -15,21 +15,14 @@
 #' @param ltmale Identical to \code{ltfemale} but for men.
 #' @param acr2eular_mat A two-way frequency matrix with columns denoting EULAR response
 #'  (none, moderate, good) and rows denoting ACR response  (<20, 20-50, 50-70, 70+).
-#' @param switch_alpha A vector of length four where each element is the number of patients 
-#' switching treatment at 6 months for a given disease activity level 
-#' (remission, low, moderate, high). Equivalent to alpha parameter in beta distribution.
-#' @param switch_beta A vector of length four where each element is the number of patients 
-#' not switching treatment at 6 months for a given disease activity level 
-#' (remission, low, moderate, high). Equivalent to beta parameter in beta distribution.
 #' @param treat_cost Treatment cost matrix in format of therapy.pars$cost.
 #' @param mort_logor Log odds ratio of impact of baseline HAQ on probability of mortality.
 #' @param mort_logor_se Standard error of log odds ratio of impact of baseline HAQ on probability of mortality.
 #' @param mort_loghr_haqdif Log hazard ratio of impact of change in HAQ from baseline on mortality rate. A vector with
 #' each element denoting (in order) hazard ratio for months 0-6, >6 - 12, >12 - 24, >24 -36, >36.
 #' @param mort_loghr_se_haqdif Standard error of log hazard ratio of impact of change in HAQ from baseline on mortality rate.
-#' @param ttd A list containing treatment duration parameters for patients.
-#' @param ttd_eular_mod A list containing treatment duration parameters for patients with a moderate EULAR response. See 'Treatment duration'.
-#' @param ttd_eular_good A list containing treatment duration parameters for patients with a good EULAR response. See 'Treatment duration'.
+#' @param ttd_da A list containing treatment duration parameters stratified by disease activity level. See 'Treatment duration'.
+#' @param ttd_eular A list containing treatment duration parameters stratified by EULAR response. See 'Treatment duration'.
 #' @param nma_acr_mean Posterior means for ACR response NMA parameters on probit scale for 
 #' biologic naive patients (i.e., 1st line). ACR response is modeled using an ordered probit model.
 #' @param nma_acr_vcov Variance-covariance matrix for ACR response NMA parameters on probit scale for 
@@ -208,13 +201,10 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
                        ltfemale = lifetable.female, ltmale = lifetable.male,
                        acr2eular_mat = acr2eular,
                        treat_cost = therapy.pars$cost,
-                       switch_alpha = treat.switch$alpha,
-                       switch_beta = treat.switch$beta,
                        mort_logor = mort.or$logor, mort_logor_se = mort.or$logor_se,
                        mort_loghr_haqdif = mort.hr.haqdif$loghr,
                        mort_loghr_se_haqdif = mort.hr.haqdif$loghr_se,
-                       ttd = ttd.corrona,
-                       ttd_eular_mod = ttd.eular.mod.adj, ttd_eular_good = ttd.eular.good.adj,
+                       ttd_da = ttd.da, ttd_eular = ttd.eular,
                        nma_acr_mean = therapy.pars$nma.acr.naive$mean,
                        nma_acr_vcov = therapy.pars$nma.acr.naive$vcov,
                        nma_acr_rr_lower = .75, nma_acr_rr_upper = .92,
@@ -256,8 +246,6 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
   sim$rebound <- runif(n, rebound_lower, rebound_upper)
   sim$lt <- lt_data(ltmale, ltfemale)
   sim$treat.cost <- calc_treat_cost(treat_cost)
-  sim$switch <- sample_betas(n, switch_alpha, switch_beta,
-                             col_names = c("remission", "low", "moderate", "high"))
   sim$acr2eular <- sample_dirichlets(n, acr2eular_mat)
   sim$acr2sdai <- sample_uniforms(n, acr2sdai_lower, acr2sdai_upper, acr.cats)
   sim$acr2cdai <- sample_uniforms(n, acr2cdai_lower, acr2cdai_upper, acr.cats)
@@ -265,9 +253,8 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
   sim$logor.mort <- sample_mvnorm(n, mort_logor, mort_logor_se^2)
   sim$mort.loghr.haqdif <- sample_normals(n, mort_loghr_haqdif, mort_loghr_se_haqdif,
                                          col_names = paste0("month_", c("less6", "6to12", "12to24", "24to36", "36to48")))
-  sim$ttd <- sample_survpars(n, ttd)
-  sim$ttd.eular.mod <- sample_survpars(n, ttd_eular_mod)
-  sim$ttd.eular.good <- sample_survpars(n, ttd_eular_good)
+  sim$ttd.da <- sample_stratified_survpars(n, ttd_da)
+  sim$ttd.eular <- sample_stratified_survpars(n, ttd_eular)
   treat_hist <- match.arg(treat_hist)
   sim$acr <- sample_nma_acr(n, nma_acr_mean, nma_acr_vcov, rr_lower = nma_acr_rr_lower,
                               rr_upper = nma_acr_rr_upper, hist = treat_hist)
@@ -561,7 +548,7 @@ sample_nma_acr <- function(nsims, m, vcov, rr_lower, rr_upper, hist){
 #' @param x A list of survival parameters. For example, see 'Treatment duration' in \link{sample_pars}.
 #' 
 #' @return A list of matrices containing random draws of the parameters of the survival distribution. One matrix
-#' for the location parameter and each of the ancillary parameters. 
+#' for the location parameter and one matrix for each of the ancillary parameters. 
 #' 
 #' @export
 sample_survpars <- function(nsims, x){
@@ -573,6 +560,29 @@ sample_survpars <- function(nsims, x){
     samp <- MASS::mvrnorm(nsims, xi$est, xi$vcov)
     l[[i]] <- list(sample = samp, loc.index = xi$loc.index, anc1.index = xi$anc1.index,
                    anc2.index = xi$anc2.index)
+  }
+  return(l)
+}
+
+
+#' Sample stratified survival parameters 
+#'
+#' Sample survival paramters stratified by variable. 
+#' 
+#' @param nsims Size of the posterior sample.
+#' @param x A list of survival parameters. For example, see 'Treatment duration' in \link{sample_pars}.
+#' 
+#' @return A list of lists. The top level list is the value of the variable used for 
+#' stratification. The second level list consists of matrices each containing random draws of the
+#'  parameters of the survival distribution. The matrices are for the location parameter and
+#'  each of the ancillary parameters. 
+#'  
+#' @keywords internal
+sample_stratified_survpars <- function(nsims, x){
+  l <- vector(length(x), mode = "list")
+  names(l) <- names(x)
+  for (i in 1:length(x)){
+    l[[i]] <- sample_survpars(nsims, x[[i]])
   }
   return(l)
 }
@@ -789,28 +799,55 @@ par_table <- function(x, pat){
                         Source = "Stevenson2016")
   acr2eular.dt <- cbind(acr2eular.dt, apply_summary(acr2eular.mat))
   
-  ### treatment switching at 6 months
-  switch <- data.table(Group = "Probability of switching treatment at 6 months",
-                    Distribution = "Beta",
-                    Parameter = c("Remission", "Low disease activity", 
-                                  "Moderate disease activity", "High disease activity"),
-                    Source = "Zhang2011")
-  switch <- cbind(switch, apply_summary(x$switch))
-  
   ### treatment duration by eular response
-  ttd.em.summary <- survival_summary(x$ttd.eular.mod)
+  # moderate response
+  ttd.em.summary <- survival_summary(x$ttd.eular$moderate)
   ttd.em <- data.table(Group = "Treatment duration - moderate EULAR response",
                              Distribution = "Multivariate normal",
                              Parameter = ttd.em.summary$par.names,
                              Source = "Stevenson2016")
   ttd.em <- cbind(ttd.em, ttd.em.summary$par.summry)
   
-  ttd.eg.summary <- survival_summary(x$ttd.eular.good)
+  # good response
+  ttd.eg.summary <- survival_summary(x$ttd.eular$good)
   ttd.eg <- data.table(Group = "Treatment duration - good EULAR response",
                          Distribution = "Multivariate normal",
                          Parameter = ttd.eg.summary$par.names,
                          Source = "Stevenson2016")
   ttd.eg <- cbind(ttd.eg, ttd.eg.summary$par.summry)
+  
+  ### treatment duration by disease activity
+  # remission
+  ttd.da.remission.summary <- survival_summary(x$ttd.da$remission)
+  ttd.da.remission <- data.table(Group = "Treatment duration - remission",
+                       Distribution = "Multivariate normal",
+                       Parameter = ttd.da.remission.summary$par.names,
+                       Source = "Zhang2011")
+  ttd.da.remission <- cbind(ttd.da.remission, ttd.da.remission.summary$par.summry)
+  
+  # low
+  ttd.da.low.summary <- survival_summary(x$ttd.da$low)
+  ttd.da.low <- data.table(Group = "Treatment duration - low disease activity",
+                                 Distribution = "Multivariate normal",
+                                 Parameter = ttd.da.low.summary$par.names,
+                                 Source = "Zhang2011")
+  ttd.da.low <- cbind(ttd.da.low, ttd.da.low.summary$par.summry)
+  
+  # moderate
+  ttd.da.moderate.summary <- survival_summary(x$ttd.da$moderate)
+  ttd.da.moderate <- data.table(Group = "Treatment duration - moderate disease activity",
+                           Distribution = "Multivariate normal",
+                           Parameter = ttd.da.moderate.summary$par.names,
+                           Source = "Zhang2011")
+  ttd.da.moderate <- cbind(ttd.da.moderate, ttd.da.moderate.summary$par.summry)
+  
+  # high
+  # ttd.da.high.summary <- survival_summary(x$ttd.da$high)
+  # ttd.da.high <- data.table(Group = "Treatment duration - high disease activity",
+  #                               Distribution = "Multivariate normal",
+  #                               Parameter = ttd.da.high.summary$par.names,
+  #                               Source = "Zhang2011")
+  # ttd.da.high <- cbind(ttd.da.high, ttd.da.high.summary$par.summry)
   
   ### NMA ACR parameters
   ## coefficients
@@ -1086,7 +1123,8 @@ par_table <- function(x, pat){
   util.wailoo <- cbind(util.wailoo, apply_summary(x$wailoo.utility)) 
                     
   # table 
-  table <- rbind(rebound, acr2eular.dt, switch, ttd.em, ttd.eg, 
+  table <- rbind(rebound, acr2eular.dt, ttd.em, ttd.eg, 
+                 ttd.da.remission, ttd.da.low, ttd.da.moderate,
                  acr, acr.rr, das28, das28.rr, haq, haq.rr,
                  hce, lhpt, lhpa, haq.lcgm, lo.mort, lhr.mort, lt,
                  tc, hdays, hcost, mgmt, prod.loss, si.surv, si.cost, si.ul, util, util.wailoo)

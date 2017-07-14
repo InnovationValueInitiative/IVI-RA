@@ -85,9 +85,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// sim_duration_eular
-double sim_duration_eular(arma::rowvec x, arma::rowvec loc_mod, double anc1_mod, arma::rowvec loc_good, double anc1_good, int eular, std::string dist, double cycle_length, double si_duration, double anc2_mod, double anc2_good);
-RcppExport SEXP iviRA_sim_duration_eular(SEXP xSEXP, SEXP loc_modSEXP, SEXP anc1_modSEXP, SEXP loc_goodSEXP, SEXP anc1_goodSEXP, SEXP eularSEXP, SEXP distSEXP, SEXP cycle_lengthSEXP, SEXP si_durationSEXP, SEXP anc2_modSEXP, SEXP anc2_goodSEXP) {
+// sim_ttd_eular
+double sim_ttd_eular(arma::rowvec x, arma::rowvec loc_mod, double anc1_mod, arma::rowvec loc_good, double anc1_good, int eular, std::string dist, double cycle_length, double ttsi, double anc2_mod, double anc2_good);
+RcppExport SEXP iviRA_sim_ttd_eular(SEXP xSEXP, SEXP loc_modSEXP, SEXP anc1_modSEXP, SEXP loc_goodSEXP, SEXP anc1_goodSEXP, SEXP eularSEXP, SEXP distSEXP, SEXP cycle_lengthSEXP, SEXP ttsiSEXP, SEXP anc2_modSEXP, SEXP anc2_goodSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -99,28 +99,35 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type eular(eularSEXP);
     Rcpp::traits::input_parameter< std::string >::type dist(distSEXP);
     Rcpp::traits::input_parameter< double >::type cycle_length(cycle_lengthSEXP);
-    Rcpp::traits::input_parameter< double >::type si_duration(si_durationSEXP);
+    Rcpp::traits::input_parameter< double >::type ttsi(ttsiSEXP);
     Rcpp::traits::input_parameter< double >::type anc2_mod(anc2_modSEXP);
     Rcpp::traits::input_parameter< double >::type anc2_good(anc2_goodSEXP);
-    rcpp_result_gen = Rcpp::wrap(sim_duration_eular(x, loc_mod, anc1_mod, loc_good, anc1_good, eular, dist, cycle_length, si_duration, anc2_mod, anc2_good));
+    rcpp_result_gen = Rcpp::wrap(sim_ttd_eular(x, loc_mod, anc1_mod, loc_good, anc1_good, eular, dist, cycle_length, ttsi, anc2_mod, anc2_good));
     return rcpp_result_gen;
 END_RCPP
 }
-// sim_duration
-double sim_duration(arma::rowvec x, arma::rowvec loc, double anc1, std::string dist, int tswitch, double cycle_length, double si_duration, double anc2);
-RcppExport SEXP iviRA_sim_duration(SEXP xSEXP, SEXP locSEXP, SEXP anc1SEXP, SEXP distSEXP, SEXP tswitchSEXP, SEXP cycle_lengthSEXP, SEXP si_durationSEXP, SEXP anc2SEXP) {
+// sim_ttd_da
+double sim_ttd_da(arma::rowvec x, arma::rowvec loc_rem, double anc1_rem, arma::rowvec loc_low, double anc1_low, arma::rowvec loc_mod, double anc1_mod, int da_cat, int tswitch, std::string dist, double cycle_length, double ttsi, double anc2_rem, double anc2_low, double anc2_mod);
+RcppExport SEXP iviRA_sim_ttd_da(SEXP xSEXP, SEXP loc_remSEXP, SEXP anc1_remSEXP, SEXP loc_lowSEXP, SEXP anc1_lowSEXP, SEXP loc_modSEXP, SEXP anc1_modSEXP, SEXP da_catSEXP, SEXP tswitchSEXP, SEXP distSEXP, SEXP cycle_lengthSEXP, SEXP ttsiSEXP, SEXP anc2_remSEXP, SEXP anc2_lowSEXP, SEXP anc2_modSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::rowvec >::type x(xSEXP);
-    Rcpp::traits::input_parameter< arma::rowvec >::type loc(locSEXP);
-    Rcpp::traits::input_parameter< double >::type anc1(anc1SEXP);
-    Rcpp::traits::input_parameter< std::string >::type dist(distSEXP);
+    Rcpp::traits::input_parameter< arma::rowvec >::type loc_rem(loc_remSEXP);
+    Rcpp::traits::input_parameter< double >::type anc1_rem(anc1_remSEXP);
+    Rcpp::traits::input_parameter< arma::rowvec >::type loc_low(loc_lowSEXP);
+    Rcpp::traits::input_parameter< double >::type anc1_low(anc1_lowSEXP);
+    Rcpp::traits::input_parameter< arma::rowvec >::type loc_mod(loc_modSEXP);
+    Rcpp::traits::input_parameter< double >::type anc1_mod(anc1_modSEXP);
+    Rcpp::traits::input_parameter< int >::type da_cat(da_catSEXP);
     Rcpp::traits::input_parameter< int >::type tswitch(tswitchSEXP);
+    Rcpp::traits::input_parameter< std::string >::type dist(distSEXP);
     Rcpp::traits::input_parameter< double >::type cycle_length(cycle_lengthSEXP);
-    Rcpp::traits::input_parameter< double >::type si_duration(si_durationSEXP);
-    Rcpp::traits::input_parameter< double >::type anc2(anc2SEXP);
-    rcpp_result_gen = Rcpp::wrap(sim_duration(x, loc, anc1, dist, tswitch, cycle_length, si_duration, anc2));
+    Rcpp::traits::input_parameter< double >::type ttsi(ttsiSEXP);
+    Rcpp::traits::input_parameter< double >::type anc2_rem(anc2_remSEXP);
+    Rcpp::traits::input_parameter< double >::type anc2_low(anc2_lowSEXP);
+    Rcpp::traits::input_parameter< double >::type anc2_mod(anc2_modSEXP);
+    rcpp_result_gen = Rcpp::wrap(sim_ttd_da(x, loc_rem, anc1_rem, loc_low, anc1_low, loc_mod, anc1_mod, da_cat, tswitch, dist, cycle_length, ttsi, anc2_rem, anc2_low, anc2_mod));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -167,8 +174,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // sim_haqC
-List sim_haqC(arma::mat therapies, std::vector<double> haq0, std::vector<double> das28_0, std::vector<double> sdai0, std::vector<double> cdai0, std::vector<double> age0, std::vector<int> male, std::vector<int> prev_dmards, std::string itreat_haq_model, std::string itreat_switch_model, arma::cube nma_acr1, arma::cube nma_acr2, arma::mat nma_dhaq1, arma::mat nma_dhaq2, arma::mat nma_das28_1, arma::mat nma_das28_2, arma::cube acr2eular, arma::mat acr2haq, arma::mat eular2haq, arma::mat acr2das28, arma::mat acr2sdai, arma::mat acr2cdai, arma::mat tswitch_da, arma::mat haq_lprog_therapy, arma::mat haq_lprog_age, arma::cube haq_lcgm_delta, arma::cube haq_lcgm_beta, std::string cdmards_haq_model, std::vector<double> rebound_factor, arma::mat lifetable_male, arma::mat lifetable_female, arma::mat x_mort, arma::mat logor, std::string dur_dist, arma::mat x_dur, arma::mat dur_loc, arma::vec dur_anc1, arma::vec dur_anc2, arma::mat dur_loc_mod, arma::vec dur_anc1_mod, arma::vec dur_anc2_mod, arma::mat dur_loc_good, arma::vec dur_anc1_good, arma::vec dur_anc2_good, double cycle_length, int treat_gap, int cdmards, int nbt, arma::mat si_loc, arma::mat si_anc1, arma::mat si_anc2, std::string si_dist, arma::mat haqdelta_loghr, int max_months);
-RcppExport SEXP iviRA_sim_haqC(SEXP therapiesSEXP, SEXP haq0SEXP, SEXP das28_0SEXP, SEXP sdai0SEXP, SEXP cdai0SEXP, SEXP age0SEXP, SEXP maleSEXP, SEXP prev_dmardsSEXP, SEXP itreat_haq_modelSEXP, SEXP itreat_switch_modelSEXP, SEXP nma_acr1SEXP, SEXP nma_acr2SEXP, SEXP nma_dhaq1SEXP, SEXP nma_dhaq2SEXP, SEXP nma_das28_1SEXP, SEXP nma_das28_2SEXP, SEXP acr2eularSEXP, SEXP acr2haqSEXP, SEXP eular2haqSEXP, SEXP acr2das28SEXP, SEXP acr2sdaiSEXP, SEXP acr2cdaiSEXP, SEXP tswitch_daSEXP, SEXP haq_lprog_therapySEXP, SEXP haq_lprog_ageSEXP, SEXP haq_lcgm_deltaSEXP, SEXP haq_lcgm_betaSEXP, SEXP cdmards_haq_modelSEXP, SEXP rebound_factorSEXP, SEXP lifetable_maleSEXP, SEXP lifetable_femaleSEXP, SEXP x_mortSEXP, SEXP logorSEXP, SEXP dur_distSEXP, SEXP x_durSEXP, SEXP dur_locSEXP, SEXP dur_anc1SEXP, SEXP dur_anc2SEXP, SEXP dur_loc_modSEXP, SEXP dur_anc1_modSEXP, SEXP dur_anc2_modSEXP, SEXP dur_loc_goodSEXP, SEXP dur_anc1_goodSEXP, SEXP dur_anc2_goodSEXP, SEXP cycle_lengthSEXP, SEXP treat_gapSEXP, SEXP cdmardsSEXP, SEXP nbtSEXP, SEXP si_locSEXP, SEXP si_anc1SEXP, SEXP si_anc2SEXP, SEXP si_distSEXP, SEXP haqdelta_loghrSEXP, SEXP max_monthsSEXP) {
+List sim_haqC(arma::mat therapies, std::vector<double> haq0, std::vector<double> das28_0, std::vector<double> sdai0, std::vector<double> cdai0, std::vector<double> age0, std::vector<int> male, std::vector<int> prev_dmards, std::string itreat_haq_model, std::string itreat_switch_model, arma::cube nma_acr1, arma::cube nma_acr2, arma::mat nma_dhaq1, arma::mat nma_dhaq2, arma::mat nma_das28_1, arma::mat nma_das28_2, arma::cube acr2eular, arma::mat acr2haq, arma::mat eular2haq, arma::mat acr2das28, arma::mat acr2sdai, arma::mat acr2cdai, arma::mat tswitch_da, arma::mat haq_lprog_therapy, arma::mat haq_lprog_age, arma::cube haq_lcgm_delta, arma::cube haq_lcgm_beta, std::string cdmards_haq_model, std::vector<double> rebound_factor, arma::mat lifetable_male, arma::mat lifetable_female, arma::mat x_mort, arma::mat logor, std::string dur_dist, arma::mat x_dur, arma::mat ttd_da_loc_rem, arma::vec ttd_da_anc1_rem, arma::vec ttd_da_anc2_rem, arma::mat ttd_da_loc_low, arma::vec ttd_da_anc1_low, arma::vec ttd_da_anc2_low, arma::mat ttd_da_loc_mod, arma::vec ttd_da_anc1_mod, arma::vec ttd_da_anc2_mod, arma::mat ttd_eular_loc_mod, arma::vec ttd_eular_anc1_mod, arma::vec ttd_eular_anc2_mod, arma::mat ttd_eular_loc_good, arma::vec ttd_eular_anc1_good, arma::vec ttd_eular_anc2_good, double cycle_length, int treat_gap, int cdmards, int nbt, arma::mat si_loc, arma::mat si_anc1, arma::mat si_anc2, std::string si_dist, arma::mat haqdelta_loghr, int max_months);
+RcppExport SEXP iviRA_sim_haqC(SEXP therapiesSEXP, SEXP haq0SEXP, SEXP das28_0SEXP, SEXP sdai0SEXP, SEXP cdai0SEXP, SEXP age0SEXP, SEXP maleSEXP, SEXP prev_dmardsSEXP, SEXP itreat_haq_modelSEXP, SEXP itreat_switch_modelSEXP, SEXP nma_acr1SEXP, SEXP nma_acr2SEXP, SEXP nma_dhaq1SEXP, SEXP nma_dhaq2SEXP, SEXP nma_das28_1SEXP, SEXP nma_das28_2SEXP, SEXP acr2eularSEXP, SEXP acr2haqSEXP, SEXP eular2haqSEXP, SEXP acr2das28SEXP, SEXP acr2sdaiSEXP, SEXP acr2cdaiSEXP, SEXP tswitch_daSEXP, SEXP haq_lprog_therapySEXP, SEXP haq_lprog_ageSEXP, SEXP haq_lcgm_deltaSEXP, SEXP haq_lcgm_betaSEXP, SEXP cdmards_haq_modelSEXP, SEXP rebound_factorSEXP, SEXP lifetable_maleSEXP, SEXP lifetable_femaleSEXP, SEXP x_mortSEXP, SEXP logorSEXP, SEXP dur_distSEXP, SEXP x_durSEXP, SEXP ttd_da_loc_remSEXP, SEXP ttd_da_anc1_remSEXP, SEXP ttd_da_anc2_remSEXP, SEXP ttd_da_loc_lowSEXP, SEXP ttd_da_anc1_lowSEXP, SEXP ttd_da_anc2_lowSEXP, SEXP ttd_da_loc_modSEXP, SEXP ttd_da_anc1_modSEXP, SEXP ttd_da_anc2_modSEXP, SEXP ttd_eular_loc_modSEXP, SEXP ttd_eular_anc1_modSEXP, SEXP ttd_eular_anc2_modSEXP, SEXP ttd_eular_loc_goodSEXP, SEXP ttd_eular_anc1_goodSEXP, SEXP ttd_eular_anc2_goodSEXP, SEXP cycle_lengthSEXP, SEXP treat_gapSEXP, SEXP cdmardsSEXP, SEXP nbtSEXP, SEXP si_locSEXP, SEXP si_anc1SEXP, SEXP si_anc2SEXP, SEXP si_distSEXP, SEXP haqdelta_loghrSEXP, SEXP max_monthsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -207,15 +214,21 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::mat >::type logor(logorSEXP);
     Rcpp::traits::input_parameter< std::string >::type dur_dist(dur_distSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type x_dur(x_durSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type dur_loc(dur_locSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type dur_anc1(dur_anc1SEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type dur_anc2(dur_anc2SEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type dur_loc_mod(dur_loc_modSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type dur_anc1_mod(dur_anc1_modSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type dur_anc2_mod(dur_anc2_modSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type dur_loc_good(dur_loc_goodSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type dur_anc1_good(dur_anc1_goodSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type dur_anc2_good(dur_anc2_goodSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type ttd_da_loc_rem(ttd_da_loc_remSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type ttd_da_anc1_rem(ttd_da_anc1_remSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type ttd_da_anc2_rem(ttd_da_anc2_remSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type ttd_da_loc_low(ttd_da_loc_lowSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type ttd_da_anc1_low(ttd_da_anc1_lowSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type ttd_da_anc2_low(ttd_da_anc2_lowSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type ttd_da_loc_mod(ttd_da_loc_modSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type ttd_da_anc1_mod(ttd_da_anc1_modSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type ttd_da_anc2_mod(ttd_da_anc2_modSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type ttd_eular_loc_mod(ttd_eular_loc_modSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type ttd_eular_anc1_mod(ttd_eular_anc1_modSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type ttd_eular_anc2_mod(ttd_eular_anc2_modSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type ttd_eular_loc_good(ttd_eular_loc_goodSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type ttd_eular_anc1_good(ttd_eular_anc1_goodSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type ttd_eular_anc2_good(ttd_eular_anc2_goodSEXP);
     Rcpp::traits::input_parameter< double >::type cycle_length(cycle_lengthSEXP);
     Rcpp::traits::input_parameter< int >::type treat_gap(treat_gapSEXP);
     Rcpp::traits::input_parameter< int >::type cdmards(cdmardsSEXP);
@@ -226,7 +239,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< std::string >::type si_dist(si_distSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type haqdelta_loghr(haqdelta_loghrSEXP);
     Rcpp::traits::input_parameter< int >::type max_months(max_monthsSEXP);
-    rcpp_result_gen = Rcpp::wrap(sim_haqC(therapies, haq0, das28_0, sdai0, cdai0, age0, male, prev_dmards, itreat_haq_model, itreat_switch_model, nma_acr1, nma_acr2, nma_dhaq1, nma_dhaq2, nma_das28_1, nma_das28_2, acr2eular, acr2haq, eular2haq, acr2das28, acr2sdai, acr2cdai, tswitch_da, haq_lprog_therapy, haq_lprog_age, haq_lcgm_delta, haq_lcgm_beta, cdmards_haq_model, rebound_factor, lifetable_male, lifetable_female, x_mort, logor, dur_dist, x_dur, dur_loc, dur_anc1, dur_anc2, dur_loc_mod, dur_anc1_mod, dur_anc2_mod, dur_loc_good, dur_anc1_good, dur_anc2_good, cycle_length, treat_gap, cdmards, nbt, si_loc, si_anc1, si_anc2, si_dist, haqdelta_loghr, max_months));
+    rcpp_result_gen = Rcpp::wrap(sim_haqC(therapies, haq0, das28_0, sdai0, cdai0, age0, male, prev_dmards, itreat_haq_model, itreat_switch_model, nma_acr1, nma_acr2, nma_dhaq1, nma_dhaq2, nma_das28_1, nma_das28_2, acr2eular, acr2haq, eular2haq, acr2das28, acr2sdai, acr2cdai, tswitch_da, haq_lprog_therapy, haq_lprog_age, haq_lcgm_delta, haq_lcgm_beta, cdmards_haq_model, rebound_factor, lifetable_male, lifetable_female, x_mort, logor, dur_dist, x_dur, ttd_da_loc_rem, ttd_da_anc1_rem, ttd_da_anc2_rem, ttd_da_loc_low, ttd_da_anc1_low, ttd_da_anc2_low, ttd_da_loc_mod, ttd_da_anc1_mod, ttd_da_anc2_mod, ttd_eular_loc_mod, ttd_eular_anc1_mod, ttd_eular_anc2_mod, ttd_eular_loc_good, ttd_eular_anc1_good, ttd_eular_anc2_good, cycle_length, treat_gap, cdmards, nbt, si_loc, si_anc1, si_anc2, si_dist, haqdelta_loghr, max_months));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -608,12 +621,12 @@ static const R_CallMethodDef CallEntries[] = {
     {"iviRA_get_sdai_cat", (DL_FUNC) &iviRA_get_sdai_cat, 1},
     {"iviRA_get_cdai_cat", (DL_FUNC) &iviRA_get_cdai_cat, 1},
     {"iviRA_test_itreat_switch", (DL_FUNC) &iviRA_test_itreat_switch, 15},
-    {"iviRA_sim_duration_eular", (DL_FUNC) &iviRA_sim_duration_eular, 11},
-    {"iviRA_sim_duration", (DL_FUNC) &iviRA_sim_duration, 8},
+    {"iviRA_sim_ttd_eular", (DL_FUNC) &iviRA_sim_ttd_eular, 11},
+    {"iviRA_sim_ttd_da", (DL_FUNC) &iviRA_sim_ttd_da, 15},
     {"iviRA_sim_mlogit_classC", (DL_FUNC) &iviRA_sim_mlogit_classC, 2},
     {"iviRA_sim_dhaq_class_lcgm1C", (DL_FUNC) &iviRA_sim_dhaq_class_lcgm1C, 3},
     {"iviRA_sim_dhaq_lcgm1C", (DL_FUNC) &iviRA_sim_dhaq_lcgm1C, 7},
-    {"iviRA_sim_haqC", (DL_FUNC) &iviRA_sim_haqC, 54},
+    {"iviRA_sim_haqC", (DL_FUNC) &iviRA_sim_haqC, 60},
     {"iviRA_sim_utility_mixture1C", (DL_FUNC) &iviRA_sim_utility_mixture1C, 18},
     {"iviRA_sim_utility_mixtureC", (DL_FUNC) &iviRA_sim_utility_mixtureC, 25},
     {"iviRA_sim_utility_wailooC", (DL_FUNC) &iviRA_sim_utility_wailooC, 15},

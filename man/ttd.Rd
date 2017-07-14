@@ -3,41 +3,37 @@
 \docType{data}
 \name{ttd}
 \alias{ttd}
-\alias{ttd.eular.mod}
-\alias{ttd.eular.good}
-\alias{ttd.eular.mod.adj}
-\alias{ttd.eular.good.adj}
+\alias{ttd.eular}
+\alias{ttd.da}
 \title{Time to treatment discontinuation parameters}
-\format{A list of lists. One list for each parametric distribution. Within each distribution
-the list contains parameters produced by \code{flexsurv} on real-line scale
- (e.g. after log transformation if they are defined as positive). The parameters are:
-\describe{
-  \item{coef}{Coefficients for all parameters including location parameter and 
-  ancillary parameter(s)}
-  \item{vcov}{Covariance matrix for all parameters including location parameter and 
-  ancillary parameter(s)}
-}}
+\format{A list of lists of lists. The top level list is the level of EULAR response or
+ disease activity. The second level list is the parametric distribution used. 
+ The third level list contains the parameters of a given parametetric fit as described in
+ \link{sample_pars}.}
 \source{
 Stevenson, Matt, et al. "Adalimumab, etanercept, infliximab, certolizumab pegol, 
 golimumab, tocilizumab and abatacept for the treatment of rheumatoid arthritis not previously
  treated with disease-modifying antirheumatic drugs and after the failure of conventional 
  disease-modifying antirheumatic drugs only: systematic review and economic evaluation." 
 Health Technology Assessment 20.35 (2016): 1-610.
+
+Zhang, Jie, et al. "Thresholds in disease activity for switching biologics in rheumatoid 
+arthritis patients: experience from a large US cohort." 
+Arthritis care & research 63.12 (2011): 1672-1679.
 }
 \usage{
-ttd.eular.mod
+ttd.eular
 
-ttd.eular.good
-
-ttd.eular.mod.adj
-
-ttd.eular.good.adj
+ttd.da
 }
 \description{
-A list of parameters estimated in a parametric survival analysis of time to treatment 
-discontinuation. Models were fit using \emph{flexsurv}. Survival curves were scanned from the 2016 NICE  
-HTA and then converted to individual-level patient dat using the \code{reconstruct_ipd}
-function. Survival curves are stratified by patients with moderate and good responses 
-to treatment according to Eular response categories.
+\code{ttd.eular} and \code{ttd.da} are lists of lists containing treatment discontinuation
+parameters stratified by EULAR response (moderate, high) and disease activity 
+(remission, low, moderate, high) respectively.
+}
+\details{
+Time to treatment discontinuation paramters for each level of EULAR response or disease activity
+are represented with a list as described in \link{sample_pars}. Models were fit using \emph{flexsurv}.
+Survival curves are based on analyses of reconstructed individual patient data.
 }
 \keyword{datasets}

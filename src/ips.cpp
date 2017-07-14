@@ -99,6 +99,7 @@ struct ItreatSwitch {
   int das28;
   int sdai;
   int cdai;
+  int da_cat;
 };
 
 // [[Rcpp::export]]
@@ -153,8 +154,8 @@ ItreatSwitch sim_itreat_switch(std::string itreat_switch_model, int line, int th
   
   ItreatSwitch sim;
   sim.tswitch = 0;
+  sim.da_cat = 0;
   int da_change = 0;
-  int da_cat = 0;
   
   // Switching rules
   if (itreat_switch_model == "acr-switch"){ // Treatment -> ACR -> Switch
@@ -167,26 +168,26 @@ ItreatSwitch sim_itreat_switch(std::string itreat_switch_model, int line, int th
            itreat_switch_model == "acr-cdai-switch") {
       if (itreat_switch_model == "acr-das28-switch"){
         da_change = acr2das28(acr);
-        da_cat = get_das28_cat(das28 + da_change);
+        sim.da_cat = get_das28_cat(das28 + da_change);
       }
       else if (itreat_switch_model == "acr-sdai-switch"){
         da_change = acr2sdai(acr);
-        da_cat = get_sdai_cat(sdai + da_change);
+        sim.da_cat = get_sdai_cat(sdai + da_change);
       }
       else if (itreat_switch_model == "acr-cdai-switch"){
         da_change = acr2cdai(acr);
-        da_cat = get_cdai_cat(cdai + da_change);
+        sim.da_cat = get_cdai_cat(cdai + da_change);
       }
-      sim.tswitch = R::rbinom(1, p(da_cat));
+      sim.tswitch = R::rbinom(1, p(sim.da_cat));
     }
   else if (itreat_switch_model == "das28-switch"){ // Treatment -> DA -> Switch
       if (line == 0){
-        da_cat = get_das28_cat(das28 + nma_das28_1(therapy));
+        sim.da_cat = get_das28_cat(das28 + nma_das28_1(therapy));
       }
       else{
-        da_cat = get_das28_cat(das28 + nma_das28_2(therapy));
+        sim.da_cat = get_das28_cat(das28 + nma_das28_2(therapy));
       }
-      sim.tswitch = R::rbinom(1, p(da_cat));
+      sim.tswitch = R::rbinom(1, p(sim.da_cat));
   }
   else if (itreat_switch_model == "acr-eular-switch"){ // Treatment -> ACR -> EULAR -> Switch
     if (eular == 0){
@@ -198,7 +199,6 @@ ItreatSwitch sim_itreat_switch(std::string itreat_switch_model, int line, int th
   if (therapy == nbt){
     sim.tswitch = 0;
   }
-  
   return sim;
 }
 
@@ -216,15 +216,15 @@ List test_itreat_switch(std::string itreat_switch_model, int line, int therapy, 
 }
 
 
-// Treatment duration by eular response 
+// Time to treatment discontinuation by eular response 
 //' @export
 // [[Rcpp::export]]
-double sim_duration_eular(arma::rowvec x, arma::rowvec loc_mod, double anc1_mod,
+double sim_ttd_eular(arma::rowvec x, arma::rowvec loc_mod, double anc1_mod,
                  arma::rowvec loc_good, double anc1_good, 
-                 int eular, std::string dist, double cycle_length, double si_duration,
+                 int eular, std::string dist, double cycle_length, double ttsi,
                  double anc2_mod = 0.0, double anc2_good = 0.0){
   double surv = 0.0;
-  if (si_duration < 0){
+  if (ttsi < 0){
     surv = 0.0;
   }
   else {
@@ -241,18 +241,33 @@ double sim_duration_eular(arma::rowvec x, arma::rowvec loc_mod, double anc1_mod,
   return surv/cycle_length; // surv is measured in years, so surv/cycle_length is measured in model cycles
 }
 
-// Treatment duration
+// Time to treatment discontinuation by disease activity level
 //' @export
 // [[Rcpp::export]]
-double sim_duration(arma::rowvec x, arma::rowvec loc, double anc1, std::string dist, 
-                          int tswitch, double cycle_length, double si_duration,
-                          double anc2 = 0.0){
+double sim_ttd_da(arma::rowvec x, arma::rowvec loc_rem, double anc1_rem,
+                       arma::rowvec loc_low, double anc1_low, 
+                       arma::rowvec loc_mod, double anc1_mod, 
+                       int da_cat, int tswitch, std::string dist,
+                       double cycle_length, double ttsi,
+                       double anc2_rem, double anc2_low = 0.0, double anc2_mod = 0.0){
   double surv = 0.0;
-  if (si_duration < 0 || tswitch == 1){
+  if (ttsi < 0 || tswitch == 1){
     surv = 0.0;
   }
   else {
-    surv = rsurvC(dot(x, loc), anc1, dist, anc2);
+    if (da_cat == 0){ // remission
+      surv = rsurvC(dot(x, loc_rem), anc1_rem, dist, anc2_rem);
+    }
+    else if (da_cat == 1){ // low disease activity 
+        surv = rsurvC(dot(x, loc_low), anc1_low, dist, anc2_low);
+    } 
+    else if (da_cat == 2) { // moderate disease activity
+        surv = rsurvC(dot(x, loc_mod), anc1_mod, dist, anc2_mod);
+    }
+    else if (da_cat == 3){ // good disease activity
+        //surv = rsurvC(dot(x, loc_high), anc1_high, dist, anc2_high);
+        surv = 0.0;
+    }
   }
   return surv/cycle_length; // surv is measured in years, so surv/cycle_length is measured in model cycles
 }
@@ -315,9 +330,11 @@ List sim_haqC(arma::mat therapies,
              arma::mat lifetable_male, arma::mat lifetable_female, 
              arma::mat x_mort, arma::mat logor, 
              std::string dur_dist, arma::mat x_dur, 
-             arma::mat dur_loc, arma::vec dur_anc1, arma::vec dur_anc2,
-             arma::mat dur_loc_mod, arma::vec dur_anc1_mod, arma::vec dur_anc2_mod,
-             arma::mat dur_loc_good, arma::vec dur_anc1_good, arma::vec dur_anc2_good,
+             arma::mat ttd_da_loc_rem, arma::vec ttd_da_anc1_rem, arma::vec ttd_da_anc2_rem,
+             arma::mat ttd_da_loc_low, arma::vec ttd_da_anc1_low, arma::vec ttd_da_anc2_low,
+             arma::mat ttd_da_loc_mod, arma::vec ttd_da_anc1_mod, arma::vec ttd_da_anc2_mod,
+             arma::mat ttd_eular_loc_mod, arma::vec ttd_eular_anc1_mod, arma::vec ttd_eular_anc2_mod,
+             arma::mat ttd_eular_loc_good, arma::vec ttd_eular_anc1_good, arma::vec ttd_eular_anc2_good,
              double cycle_length, int treat_gap, int cdmards, int nbt, 
              arma::mat si_loc, arma::mat si_anc1, arma::mat si_anc2, std::string si_dist, 
              arma::mat haqdelta_loghr, int max_months){
@@ -407,29 +424,32 @@ List sim_haqC(arma::mat therapies,
                                                   nma_das28_1.row(s), nma_das28_2.row(s), 
                                                   tswitch_da.row(s));
         
-        // Treatment duration
-        double si_duration_j = (-cycle_length/12 + rsurvC(as_scalar(si_loc.row(s).col(therapies_ij)), 
+        // Time to treatment discontinuation and serious infections
+        double ttsi_j = (-cycle_length/12 + rsurvC(as_scalar(si_loc.row(s).col(therapies_ij)), 
                                               as_scalar(si_anc1.row(s).col(therapies_ij)),
                                               si_dist,as_scalar(si_anc2.row(s).col(therapies_ij))
                                               )) * (12/cycle_length);
-        double duration_j = 0;
+        double ttd_j = 0;
         if (itreat_switch_model == "acr-eular-haq"){
-            duration_j = sim_duration_eular(x_dur.row(i), dur_loc_mod.row(s), dur_anc1_mod(s), 
-                                                 dur_loc_good.row(s), dur_anc1_good(s), 
-                                                 sim_h_t1.eular, dur_dist, cycle_length, si_duration_j,
-                                                 dur_anc2_mod(s), dur_anc2_good(s));
+            ttd_j = sim_ttd_eular(x_dur.row(i), ttd_eular_loc_mod.row(s), ttd_eular_anc1_mod(s), 
+                                                 ttd_eular_loc_good.row(s), ttd_eular_loc_good(s), 
+                                                 sim_h_t1.eular, dur_dist, cycle_length, ttsi_j,
+                                                 ttd_eular_anc2_mod(s), ttd_eular_anc2_good(s));
         }
         else {
-          duration_j = sim_duration(x_dur.row(i), dur_loc.row(s), dur_anc1(s), dur_dist, 
-                                    sim_s_t1.tswitch, cycle_length, si_duration_j,
-                                                 dur_anc2(s));
+          ttd_j = sim_ttd_da(x_dur.row(i), ttd_da_loc_rem.row(s), ttd_da_anc1_rem(s),
+                                       ttd_da_loc_low.row(s), ttd_da_anc1_low(s),
+                                       ttd_da_loc_mod.row(s), ttd_da_anc1_mod(s),
+                                        sim_s_t1.da_cat, sim_s_t1.tswitch, dur_dist, 
+                                        cycle_length, ttsi_j,
+                                        ttd_da_anc2_rem(s), ttd_da_anc2_low(s), ttd_da_anc2_mod(s));
         }
         
         // Loop over time
         for (int t = 0; t < maxt; ++t){
           
           // Stop j loop if cycle is larger than treatment duration
-          if (j < n_therapies && t > 0 && t >= duration_j + 1 + treat_gap){
+          if (j < n_therapies && t > 0 && t >= ttd_j + 1 + treat_gap){
             cage_i = cage_i - cycle_length/12 + 0.5;
             month = month - cycle_length + 6;
             age_i = int(cage_i);
@@ -446,7 +466,7 @@ List sim_haqC(arma::mat therapies,
           if (t == 0){ // initial haq change
             haq = haq + sim_h_t1.dhaq; 
           }
-          else if (t > 0 && t <= duration_j){
+          else if (t > 0 && t <= ttd_j){
             if(cdmards_haq_model == "lcgm" && (therapies_ij == nbt | therapies_ij == cdmards)){
                 haq = haq + sim_dhaq_lcgm1C(t_cdmards * cycle_length/12, cycle_length, cage_i, 1 - male[i],
                                            das28_0[i], haq_lcgm_delta.slice(s), haq_lcgm_beta.slice(s));
@@ -455,7 +475,7 @@ List sim_haqC(arma::mat therapies,
                            haq_lprog_age.row(s), cage_i, cycle_length);
             }
           }
-          else if (t > duration_j && t < duration_j + 1 && j < n_therapies){ // rebound
+          else if (t > ttd_j && t < ttd_j + 1 && j < n_therapies){ // rebound
             haq = haq - sim_h_t1.dhaq * rebound_factor[s];
           }
           else {
@@ -480,7 +500,7 @@ List sim_haqC(arma::mat therapies,
           death_vec.push_back(death);
           age_vec.push_back(cage_i);
           if (therapies_ij != nbt){
-            ttd_vec.push_back(duration_j - t);
+            ttd_vec.push_back(ttd_j - t);
           }
           else {
             ttd_vec.push_back(NA_REAL);
@@ -490,16 +510,16 @@ List sim_haqC(arma::mat therapies,
           eular_vec.push_back(sim_h_t1.eular);
           haq_vec.push_back(haq);
           if (therapies_ij != nbt){
-            ttsi_vec.push_back(si_duration_j - t);
+            ttsi_vec.push_back(ttsi_j - t);
           }
           else{
             ttsi_vec.push_back(NA_REAL);
           }
-          if (si_duration_j < duration_j && t > duration_j && t < duration_j + 1
+          if (ttsi_j < ttd_j && t > ttd_j && t < ttd_j + 1
                 && therapies_ij != nbt) {
             si_vec.push_back(1);
           } 
-          else if (si_duration_j < 0 && therapies_ij != nbt) {
+          else if (ttsi_j < 0 && therapies_ij != nbt) {
             si_vec.push_back(1);
           }
           else {
