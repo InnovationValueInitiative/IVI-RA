@@ -9,3 +9,11 @@ output:
 There are two ways to collaborate with IVI. First, you can comment on the structure of the model or the evidence considered at [url]. IVI and a technical panel will review the comments and determine whether they should be incorporated into the model. Second, you can make changes to the code itself and make a [pull request](https://help.github.com/articles/about-pull-requests/). Code changes that affect the structure of the model or parameter values will only be incoporated after a review by the technical panel but other changes such as bug fixes or performance improvements may be immediately accepted. 
 
 The purpose of this page is to help you make changes to the code. We use [Git](https://git-scm.com/) and host our code on [GitHub](https://github.com/). To collaborate, you will therefore need to create a GitHub account and [install](https://help.github.com/articles/set-up-git/) Git on your machine. Once your setup you can then follow the steps outlined below to contribute to the model.
+
+Step 1: After signing into [GitHub](https://github.com/), you need to create your own remote repository of the IVI model. Click the green "New" button  in the upper right corner of the [IVI Github](https://github.com/InnovationValueInitiative) page. Type in the repository name you prefer and click the green "Create repository" button.
+
+Step 2: Use the command line to navigate to the location where you would like to create your local repository. Follow the instructions under "... or create a new repository on the command line" to create a local repository. 
+
+Step 3: Use the command line to navigate to your local IVI directory. [Push](https://help.github.com/articles/github-glossary/#push) your local work and [pull](https://help.github.com/articles/github-glossary/#pull) changes made by others to the IVI code by typing the following command into the command line:
+
+git remote add upstream https://github.com/InnovationValueInitiative/IVI.git
