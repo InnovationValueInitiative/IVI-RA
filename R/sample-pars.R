@@ -21,6 +21,8 @@
 #' @param mort_loghr_haqdif Log hazard ratio of impact of change in HAQ from baseline on mortality rate. A vector with
 #' each element denoting (in order) hazard ratio for months 0-6, >6 - 12, >12 - 24, >24 -36, >36.
 #' @param mort_loghr_se_haqdif Standard error of log hazard ratio of impact of change in HAQ from baseline on mortality rate.
+#' @param ttd_all A list containing treatment duration parameters representative of all patients (i.e., unstratified).
+#'  See 'Treatment duration'.
 #' @param ttd_da A list containing treatment duration parameters stratified by disease activity level. See 'Treatment duration'.
 #' @param ttd_eular A list containing treatment duration parameters stratified by EULAR response. See 'Treatment duration'.
 #' @param nma_acr_mean Posterior means for ACR response NMA parameters on probit scale for 
@@ -79,7 +81,7 @@
 #'  for general management of RA.
 #' @param pl_mean Mean annual productivity loss per 1-unit increase in HAQ.
 #' @param pl_se Standard error of mean annual productivity loss per 1-unit increase in HAQ.
-#' @param si_surv Paramters of survival model used to estimate time to serious infection.
+#' @param ttsi Paramters of survival model used to estimate time to serious infection.
 #' @param si_ul One month loss in utility from a serious infection. 
 #' @param si_ul_range Range used to vary serious infection utility loss. Default is to calculate upper and lower bound by multiplying 
 #' \code{si_ul} by 1 +/- 0.2 (i.e. a 20\% change).
@@ -149,7 +151,8 @@
 #'    \item{mgmt.cost}{Matrix of sampled values of general management costs. Each column is a different category of costs (
 #'    chest x-ray, x-ray visit, outpatient follow-up, and Mantoux tuberculin skin test). }
 #'    \item{prod.loss}{Vector of sampled values of decrease in wages (e.g. productivity loss) per unit increase in HAQ.}
-#'    \item{si.surv}{Matrix of coefficients from a survival model. Columns numbers coincide with therapy indices.}
+#'    \item{ttsi}{Matrix of coefficients from a time-to event model predicting time to serious infection.
+#'     Columns numbers coincide with therapy indices.}
 #'    \item{si.cost}{Vector of sampled values of the medical cost of a serious infection.}
 #'    \item{si.ul}{Vector of the sampled values of the annualized utility loss from a serious infection.}
 #' }
@@ -204,7 +207,7 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
                        mort_logor = mort.or$logor, mort_logor_se = mort.or$logor_se,
                        mort_loghr_haqdif = mort.hr.haqdif$loghr,
                        mort_loghr_se_haqdif = mort.hr.haqdif$loghr_se,
-                       ttd_da = ttd.da, ttd_eular = ttd.eular,
+                       ttd_all = ttd.all, ttd_da = ttd.da, ttd_eular = ttd.eular,
                        nma_acr_mean = therapy.pars$nma.acr.naive$mean,
                        nma_acr_vcov = therapy.pars$nma.acr.naive$vcov,
                        nma_acr_rr_lower = .75, nma_acr_rr_upper = .92,
@@ -236,7 +239,7 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
                        mgmt_cost_mean = mgmt.cost$est,
                        mgmt_cost_se = mgmt.cost$se,
                        pl_mean = 5853.30, pl_se = 1526.691,
-                       si_surv = therapy.pars$si,
+                       ttsi = therapy.pars$si,
                        si_cost = 5873, si_cost_range = .2,
                        si_ul = .156, si_ul_range = .2,
                        therapy_names = therapy.pars$info$sname){
@@ -253,6 +256,7 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
   sim$logor.mort <- sample_mvnorm(n, mort_logor, mort_logor_se^2)
   sim$mort.loghr.haqdif <- sample_normals(n, mort_loghr_haqdif, mort_loghr_se_haqdif,
                                          col_names = paste0("month_", c("less6", "6to12", "12to24", "24to36", "36to48")))
+  sim$ttd.all <- sample_survpars(n, ttd_all)
   sim$ttd.da <- sample_stratified_survpars(n, ttd_da)
   sim$ttd.eular <- sample_stratified_survpars(n, ttd_eular)
   treat_hist <- match.arg(treat_hist)
@@ -281,7 +285,7 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
   sim$mgmt.cost <- sample_gammas(n, mgmt_cost_mean, mgmt_cost_se,
                                 col_names = c("chest_xray", "xray_visit", "outpatient_followup", "tuberculin_test"))
   sim$prod.loss <- rnorm(n, pl_mean, pl_se)
-  sim$si.surv <- sample_survpars(n, si_surv)
+  sim$ttsi <- sample_survpars(n, ttsi)
   sim$si.cost <- runif(n, si_cost * (1 - si_cost_range),  si_cost * (1 + si_cost_range))
   sim$si.ul <- runif(n, si_ul * (1 - si_ul_range), si_ul * (1 + si_ul_range))
   return(sim)
@@ -799,6 +803,14 @@ par_table <- function(x, pat){
                         Source = "Stevenson2016")
   acr2eular.dt <- cbind(acr2eular.dt, apply_summary(acr2eular.mat))
   
+  ### treatment duration overall
+  ttd.all.summary <- survival_summary(x$ttd.all)
+  ttd.all <- data.table(Group = "Treatment duration - all patients",
+                       Distribution = "Multivariate normal",
+                       Parameter = ttd.all.summary$par.names,
+                       Source = "Strand2013")
+  ttd.all <- cbind(ttd.all, ttd.all.summary$par.summry)
+  
   ### treatment duration by eular response
   # moderate response
   ttd.em.summary <- survival_summary(x$ttd.eular$moderate)
@@ -969,7 +981,7 @@ par_table <- function(x, pat){
   # lifetables
   lt.labs <- c(paste0("qx - female, age ", x$lt$female[, "age"]), paste0("qx - male, age ", x$lt$male[, "age"]))
   lt <- data.table(Group = "Lifetables", 
-                   Distribution = "Normal",
+                   Distribution = "Fixed",
                    Parameter = lt.labs,
                    Source = "CDC2011")
   lt <- cbind(lt, apply_summary(t(rbind(x$lt$female[, "qx", drop = FALSE],
@@ -1049,12 +1061,12 @@ par_table <- function(x, pat){
   
   ### serious infection
   ## rate
-  si.surv.summary <- survival_summary(x$si.surv)
-  si.surv <- data.table(Group = "Time to serious infection",
+  ttsi.summary <- survival_summary(x$ttsi)
+  ttsi <- data.table(Group = "Time to serious infection",
                        Distribution = "Multivariate normal",
-                       Parameter = si.surv.summary$par.names,
+                       Parameter = ttsi.summary$par.names,
                        Source = "Singh2011")
-  si.surv <- cbind(si.surv, si.surv.summary$par.summry)
+  ttsi <- cbind(ttsi, ttsi.summary$par.summry)
   
   ## cost per infection
   si.cost <- data.table(Group = "Serious infection cost",
@@ -1123,11 +1135,11 @@ par_table <- function(x, pat){
   util.wailoo <- cbind(util.wailoo, apply_summary(x$wailoo.utility)) 
                     
   # table 
-  table <- rbind(rebound, acr2eular.dt, ttd.em, ttd.eg, 
+  table <- rbind(rebound, acr2eular.dt, ttd.all, ttd.em, ttd.eg, 
                  ttd.da.remission, ttd.da.low, ttd.da.moderate,
                  acr, acr.rr, das28, das28.rr, haq, haq.rr,
                  hce, lhpt, lhpa, haq.lcgm, lo.mort, lhr.mort, lt,
-                 tc, hdays, hcost, mgmt, prod.loss, si.surv, si.cost, si.ul, util, util.wailoo)
+                 tc, hdays, hcost, mgmt, prod.loss, ttsi, si.cost, si.ul, util, util.wailoo)
   table <- table[, .(Group, Parameter, Mean, SD, Lower, Upper, Distribution, Source)]
   setnames(table, colnames(table), c("Group", "Parameter", "Posterior mean", "Posterior SD", 
                                      "Posterior 2.5%", "Posterior 97.5%", "Distribution", "Source"))

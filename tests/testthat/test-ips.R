@@ -243,7 +243,7 @@ test_that("itreat_switch", {
 })
 
 # small integration test ------------------------------------------------------
-arms <- c(6, 1)
+arms <- c(3, 1)
 pat <- sample_pats(n = 10)
 input.dat <- input_data(patdata = pat)
 parsamp <- sample_pars(n = 100)

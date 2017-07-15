@@ -9,8 +9,9 @@ sample_pars(n = 100, rebound_lower = 0.7, rebound_upper = 1,
   acr2eular_mat = acr2eular, treat_cost = therapy.pars$cost,
   mort_logor = mort.or$logor, mort_logor_se = mort.or$logor_se,
   mort_loghr_haqdif = mort.hr.haqdif$loghr,
-  mort_loghr_se_haqdif = mort.hr.haqdif$loghr_se, ttd_da = ttd.da,
-  ttd_eular = ttd.eular, nma_acr_mean = therapy.pars$nma.acr.naive$mean,
+  mort_loghr_se_haqdif = mort.hr.haqdif$loghr_se, ttd_all = ttd.all,
+  ttd_da = ttd.da, ttd_eular = ttd.eular,
+  nma_acr_mean = therapy.pars$nma.acr.naive$mean,
   nma_acr_vcov = therapy.pars$nma.acr.naive$vcov, nma_acr_rr_lower = 0.75,
   nma_acr_rr_upper = 0.92,
   nma_das28_mean = therapy.pars$nma.das28.naive$mean,
@@ -34,7 +35,7 @@ sample_pars(n = 100, rebound_lower = 0.7, rebound_upper = 1,
   0.72, 1.86, 4.16), hosp_days_se = c(0.5, 0.5, 0.5, 0.5, 0.5, 0.5),
   hosp_cost_mean = rep(1251, 6), hosp_cost_se = rep(191, 6),
   mgmt_cost_mean = mgmt.cost$est, mgmt_cost_se = mgmt.cost$se,
-  pl_mean = 5853.3, pl_se = 1526.691, si_surv = therapy.pars$si,
+  pl_mean = 5853.3, pl_se = 1526.691, ttsi = therapy.pars$si,
   si_cost = 5873, si_cost_range = 0.2, si_ul = 0.156, si_ul_range = 0.2,
   therapy_names = therapy.pars$info$sname)
 }
@@ -68,6 +69,9 @@ the probability of death at a given age.}
 each element denoting (in order) hazard ratio for months 0-6, >6 - 12, >12 - 24, >24 -36, >36.}
 
 \item{mort_loghr_se_haqdif}{Standard error of log hazard ratio of impact of change in HAQ from baseline on mortality rate.}
+
+\item{ttd_all}{A list containing treatment duration parameters representative of all patients (i.e., unstratified).
+See 'Treatment duration'.}
 
 \item{ttd_da}{A list containing treatment duration parameters stratified by disease activity level. See 'Treatment duration'.}
 
@@ -164,7 +168,7 @@ for general management of RA.}
 
 \item{pl_se}{Standard error of mean annual productivity loss per 1-unit increase in HAQ.}
 
-\item{si_surv}{Paramters of survival model used to estimate time to serious infection.}
+\item{ttsi}{Paramters of survival model used to estimate time to serious infection.}
 
 \item{si_cost}{Cost of a serious infection.}
 
@@ -240,7 +244,8 @@ List containing samples for the following model parameters:
    \item{mgmt.cost}{Matrix of sampled values of general management costs. Each column is a different category of costs (
    chest x-ray, x-ray visit, outpatient follow-up, and Mantoux tuberculin skin test). }
    \item{prod.loss}{Vector of sampled values of decrease in wages (e.g. productivity loss) per unit increase in HAQ.}
-   \item{si.surv}{Matrix of coefficients from a survival model. Columns numbers coincide with therapy indices.}
+   \item{ttsi}{Matrix of coefficients from a time-to event model predicting time to serious infection.
+    Columns numbers coincide with therapy indices.}
    \item{si.cost}{Vector of sampled values of the medical cost of a serious infection.}
    \item{si.ul}{Vector of the sampled values of the annualized utility loss from a serious infection.}
 }

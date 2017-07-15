@@ -7,7 +7,7 @@
 sim_haq(arminds, input_data, pars, itreat_haq = c("acr-haq", "acr-eular-haq",
   "haq"), itreat_switch = c("acr-switch", "acr-das28-switch",
   "acr-sdai-switch", "acr-cdai-switch", "das28-switch", "acr-eular-switch"),
-  cdmards_haq_model = c("lcgm", "linear"), dur_dist = "lnorm",
+  cdmards_haq_model = c("lcgm", "linear"), ttd_dist = "lnorm",
   si_dist = "exp", max_months = NULL,
   cdmards_ind = which(therapy.pars$info$sname == "cdmards"),
   nbt_ind = which(therapy.pars$info$sname == "nbt"), check = TRUE)
@@ -21,7 +21,7 @@ of unique sequences for each patient.}
 and \code{x.ttd} as generated from \link{input_data}.}
 
 \item{pars}{List of parameters. Required parameters are \code{rebound}, \code{acr1}, \code{acr2}, \code{acr2eular}, \code{eular2haq}, 
-\code{haq.lprog.therapy}, \code{haq.lprog.age}, \code{logor.mort}, \code{mort.loghr.haqdif}, \code{si.surv},
+\code{haq.lprog.therapy}, \code{haq.lprog.age}, \code{logor.mort}, \code{mort.loghr.haqdif}, \code{ttsi},
 \code{ttd.eular.mod}, \code{ttd.eular.good}, and \code{lt} as generated from \link{sample_pars}. Additionally, if \code{cdmards_prog} is equal 
 to "lcgm", then \code{haq.lcgm} must be included.}
 
@@ -42,7 +42,7 @@ S4: Treatment -> ACR -> CDAI -> Switch (\code{acr-cdai-switch}),
 S5: Treatment -> DAS28 -> Switch (\code{das28-switch}),
 S6: Treatment -> ACR -> EULAR -> Switch (\code{acr-eular-switch}).}
 
-\item{dur_dist}{Survival distribution for treatment duration.}
+\item{ttd_dist}{Survival distribution for treatment duration.}
 
 \item{si_dist}{Survival distribution for serious infections. Currently rate is assumed
 to be constant so an exponential distribution is used.}

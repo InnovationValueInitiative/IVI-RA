@@ -10,7 +10,7 @@
 #' @param input_data List of input data. Required inputs are \code{haq0}, \code{age}, \code{male}, \code{x.mort}, 
 #' and \code{x.ttd} as generated from \link{input_data}.
 #' @param pars List of parameters. Required parameters are \code{rebound}, \code{acr1}, \code{acr2}, \code{acr2eular}, \code{eular2haq}, 
-#' \code{haq.lprog.therapy}, \code{haq.lprog.age}, \code{logor.mort}, \code{mort.loghr.haqdif}, \code{si.surv},
+#' \code{haq.lprog.therapy}, \code{haq.lprog.age}, \code{logor.mort}, \code{mort.loghr.haqdif}, \code{ttsi},
 #' \code{ttd.eular.mod}, \code{ttd.eular.good}, and \code{lt} as generated from \link{sample_pars}. Additionally, if \code{cdmards_prog} is equal 
 #' to "lcgm", then \code{haq.lcgm} must be included. 
 #' @param itreat_haq How should the relationship between treatment and HAQ during the initial 
@@ -32,7 +32,7 @@
 #' "lcgm" as the default. If "lcgm" is chosen, then a latent class growth model is used for cDMARDs
 #' and NBT but a constant annual rate is is assumed for all other therapies; otherwise 
 #' a constant linear HAQ progression is assumed for all therapies including cDMARDs and NBT.
-#' @param dur_dist Survival distribution for treatment duration.
+#' @param ttd_dist Survival distribution for treatment duration.
 #' @param si_dist Survival distribution for serious infections. Currently rate is assumed
 #' to be constant so an exponential distribution is used.
 #' @param max_months Maximum number of months to run the model for. Default is NULL which implies that
@@ -73,7 +73,7 @@ sim_haq <- function(arminds, input_data, pars,
                     itreat_switch = c("acr-switch", "acr-das28-switch", "acr-sdai-switch",
                                       "acr-cdai-switch", "das28-switch", "acr-eular-switch"),
                     cdmards_haq_model = c("lcgm", "linear"),
-                    dur_dist = "lnorm", si_dist = "exp", max_months = NULL, 
+                    ttd_dist = "lnorm", si_dist = "exp", max_months = NULL, 
                     cdmards_ind = which(therapy.pars$info$sname == "cdmards"),
                     nbt_ind = which(therapy.pars$info$sname == "nbt"),
                     check = TRUE){
@@ -82,10 +82,10 @@ sim_haq <- function(arminds, input_data, pars,
     stop("Number of treatment sequences must either be the same for each patient or equal to the number of patients
          in input_data")
   }
-  if (check) check_sim_haq(input_data, pars)
   itreat.haq <- match.arg(itreat_haq)
   itreat.switch <- match.arg(itreat_switch)
   cdmards.haq.model <- match.arg(cdmards_haq_model)
+  if (check) check_sim_haq(arminds, input_data, pars, itreat.haq, itreat.switch)
   
   # default internal values
   treat_gap <- 0
@@ -93,7 +93,7 @@ sim_haq <- function(arminds, input_data, pars,
   if (is.null(max_months)){
     max_months <- 12 * 150
   }
-  prob.switch.da <- matrix(rep(c(0, 0, 0, 1), each = pars$n), ncol = 4)
+  prob.switch.da <- matrix(rep(c(0, 0, 1, 1), each = pars$n), ncol = 4)
   
   # indexing
   cdmards.ind <- cdmards_ind - 1
@@ -101,12 +101,13 @@ sim_haq <- function(arminds, input_data, pars,
   arminds <- arminds - 1
 
   # survival parameters
-  pars.ttd.da.rem <- pars$ttd.da$remission[[dur_dist]]
-  pars.ttd.da.low <- pars$ttd.da$low[[dur_dist]]
-  pars.ttd.da.mod <- pars$ttd.da$moderate[[dur_dist]]
-  pars.ttd.em <- pars$ttd.eular$moderate[[dur_dist]]
-  pars.ttd.eg <- pars$ttd.eular$good[[dur_dist]]
-  pars.si <- pars$si.surv[[si_dist]]
+  pars.ttd.all <- pars$ttd.all[[ttd_dist]]
+  pars.ttd.da.rem <- pars$ttd.da$remission[[ttd_dist]]
+  pars.ttd.da.low <- pars$ttd.da$low[[ttd_dist]]
+  pars.ttd.da.mod <- pars$ttd.da$moderate[[ttd_dist]]
+  pars.ttd.em <- pars$ttd.eular$moderate[[ttd_dist]]
+  pars.ttd.eg <- pars$ttd.eular$good[[ttd_dist]]
+  pars.si <- pars$ttsi[[si_dist]]
   
   # run simulation
   simout <- sim_haqC(arminds, input_data$haq0, input_data$das28,
@@ -122,7 +123,10 @@ sim_haq <- function(arminds, input_data, pars,
                   pars$haq.lprog.therapy, pars$haq.lprog.age,
                   pars$haq.lcgm$delta, pars$haq.lcgm$beta, cdmards.haq.model,
                   pars$rebound, pars$lt$male, pars$lt$female,
-                 input_data$x.mort, pars$logor, dur_dist, input_data$x.ttd,
+                 input_data$x.mort, pars$logor, ttd_dist, input_data$x.ttd,
+                 pars.ttd.all$sample[, pars.ttd.all$loc.index, drop = FALSE],
+                 pars.ttd.all$sample[, pars.ttd.all$anc1.index, drop = FALSE],
+                 pars.ttd.all$sample[, pars.ttd.all$anc2.index, drop = FALSE],
                  pars.ttd.da.rem$sample[, pars.ttd.da.rem$loc.index, drop = FALSE],
                  pars.ttd.da.rem$sample[, pars.ttd.da.rem$anc1.index, drop = FALSE],
                  pars.ttd.da.rem$sample[, pars.ttd.da.rem$anc2.index, drop = FALSE],
@@ -161,12 +165,15 @@ sim_haq <- function(arminds, input_data, pars,
 #' 
 #' @param input_data \code{input_data} as passed to \link{sim_haq}.
 #' @param pars \code{pars} as passed to \link{sim_haq}.
+#' @param itreat_haq Treatment to HAQ pathway first 6 months.
+#' @param itreat_switch Treatment switching pathway first 6 months.
 #' @keywords internal
-check_sim_haq <- function(input_data, pars){
+check_sim_haq <- function(arminds, input_data, pars, itreat_haq, itreat_switch){
   names.dist <- c("exponential", "exp", "weibull", "gompertz", "gamma", "llogis",
                   "lnorm", "gengamma")
+  arminds.unique <- unique(c(arminds))
   
-  ## check input data
+  # check input data
   if(is.null(input_data$haq0)) stop("'haq0' element of input_data list not given")
   if(is.null(input_data$age)) stop("'age' element of input_data list not given")
   if(is.null(input_data$male)) stop("'male' element of input_data list not given")
@@ -179,10 +186,10 @@ check_sim_haq <- function(input_data, pars){
                   " Should equal ", n))
   }
   
-  ## check parameter inputs
+  # check parameter inputs
   n <- pars$n
   
-  # rebound
+  ## rebound
   if(is.null(pars$rebound)) stop("'rebound' element of pars list not given")
   if(!is.vector(pars$rebound))  stop("'rebound' element of pars list must be a vector")
   if(length(pars$rebound) != n) {
@@ -190,7 +197,7 @@ check_sim_haq <- function(input_data, pars){
          "sampled parameter sets which equals ", n))
   }
   
-  # acr2eular
+  ## acr2eular
   if(is.null(pars$acr2eular)) stop("'acr2eular' element of pars list not given")
   if(!is.array(pars$acr2eular))  stop("'acr2eular' element of pars list must be an array")
   if(dim(pars$acr2eular)[1] != 4) stop("First dimension of 'acr2eular' element of pars must be 4")
@@ -200,7 +207,7 @@ check_sim_haq <- function(input_data, pars){
          "sampled parameter sets which equals ", n))
   }
 
-  # eular2haq
+  ## eular2haq
   if(is.null(pars$eular2haq)) stop("'eular2haq' element of pars list not given")
   if(!is.matrix(pars$eular2haq))  stop("'eular2haq' element of pars list must be a matrix")
   if(ncol(pars$eular2haq) != 3) stop("Number of columns of 'eular2haq' element of pars must be 3")
@@ -209,7 +216,7 @@ check_sim_haq <- function(input_data, pars){
          "of sampled parameter sets which equals ", n))
   } 
   
-  # haq.lprog.therapy
+  ## haq.lprog.therapy
   if(is.null(pars$haq.lprog.therapy)) stop("'haq.lprog.therapy' element of pars list not given")
   if(!is.matrix(pars$haq.lprog.therapy))  stop("'haq.lprog.therapy' element of pars list must be a matrix")
   if(nrow(pars$haq.lprog.therapy) != n) {
@@ -217,7 +224,7 @@ check_sim_haq <- function(input_data, pars){
                 "of sampled parameter sets which equals ", n))
   } 
   
-  # haq.lprog.age
+  ## haq.lprog.age
   if(is.null(pars$haq.lprog.age)) stop("'haq.lprog.age' element of pars list not given")
   if(!is.matrix(pars$haq.lprog.age))  stop("'haq.lprog.age' element of pars list must be a matrix")
   if(ncol(pars$haq.lprog.age) != 3) stop("Number of columns in 'haq.lprog.age' element of pars must be 3")
@@ -226,7 +233,7 @@ check_sim_haq <- function(input_data, pars){
                 "of sampled parameter sets which equals ", n))
   }
 
-  # logor.mort
+  ## logor.mort
   if(is.null(pars$logor.mort)) stop("'logor.mort' element of pars list not given")
   if(!is.matrix(pars$logor.mort))  stop("'logor.mort' element of pars list must be a matrix")
   if(nrow(pars$logor.mort) != n) {
@@ -234,7 +241,7 @@ check_sim_haq <- function(input_data, pars){
                 "of sampled parameter sets which equals ", n))
   }
   
-  # mort.loghr.haqdif
+  ## mort.loghr.haqdif
   if(is.null(pars$mort.loghr.haqdif)) stop("'mort.loghr.haqdif' element of pars list not given")
   if(!is.matrix(pars$mort.loghr.haqdif))  stop("'mort.loghr.haqdif' element of pars list must be a matrix")
   if(ncol(pars$mort.loghr.haqdif) != 5) stop("Number of columns in 'mort.loghr.haqdif' element of pars must be 5")
@@ -243,15 +250,15 @@ check_sim_haq <- function(input_data, pars){
                 "of sampled parameter sets which equals ", n))
   }
   
-  # si.surv
-  if(is.null(pars$si.surv)) stop("'si.surv' element of pars list not given")
-  if(!is.list(pars$si.surv))  stop("'si.surv' element of pars list must be a list")
-  if(all(!names(pars$si.surv) %in% names.dist)) {
-    stop(paste0("Survival distribution in 'si.surv' element of pars list must contain at least ",
+  ## ttsi
+  if(is.null(pars$ttsi)) stop("'ttsi' element of pars list not given")
+  if(!is.list(pars$ttsi))  stop("'ttsi' element of pars list must be a list")
+  if(all(!names(pars$ttsi) %in% names.dist)) {
+    stop(paste0("Survival distribution in 'ttsi' element of pars list must contain at least ",
                 "one of the following distributions: "), paste(names.dist, collapse = ", "))
   } 
   
-  # ttd.eular
+  ## ttd.eular
   if(is.null(pars$ttd.eular)) stop("'ttd.eular' element of pars list not given")
   for (i in 1:length(pars$ttd.eular)){
     if(!is.list(pars$ttd.eular[[i]]))  stop("Second level of 'ttd.eular' element of pars list 
@@ -267,16 +274,46 @@ check_sim_haq <- function(input_data, pars){
     #   }
     # }  # code similar to this needs to be added to all ttd survival distributions
   }
-  # ttd.da
+  ## ttd.da
   if(is.null(pars$ttd.da)) stop("'ttd.da' element of pars list not given")
   
-  # lt 
+  ## lt 
   if(is.null(pars$lt)) stop("'lt' element of pars list not given")
   if (!all(names(pars$lt) %in% c("female", "male"))) stop(paste0("'lt' element of pars must contain ",
                                                           "lifetables named 'male' and 'female'"))
   if(ncol(pars$lt$male) != 3 | ncol(pars$lt$female) != 3){
     stop("Number of columns in 'lt$female' element of pars and 'lt$male' must be 3")
   } 
+  
+  ## NMA ACR
+  nma.acr1 <- pars$acr$p1[, , arminds.unique]
+  nma.acr2 <- pars$acr$p2[, , arminds.unique]
+  if (itreat_haq %in% c("acr-haq", "acr-eular-haq")){
+    if (any(is.na(nma.acr1) | is.na(nma.acr2))){
+      stop ("'acr' element of pars has missing parameter values for one of the selected treatment 
+            arms; that is, the NMA results are missing.")
+    }
+  }
+
+  ## NMA HAQ
+  nma.haq1 <- pars$haq$dy1[, arminds.unique]
+  nma.haq2 <- pars$haq$dy2[, arminds.unique] 
+  if (itreat_haq == "haq"){
+    if (any(is.na(nma.haq1) | is.na(nma.haq2))){
+      stop ("'haq' element of pars has missing parameter values for one of the selected treatment 
+            arms; that is, the NMA results are missing.")
+    }
+  }
+  
+  ## NMA DA28
+  nma.das28.1 <- pars$das28$dy1[, arminds.unique]
+  nma.das28.2 <- pars$das28$dy2[, arminds.unique] 
+  if (itreat_switch == "das28-switch"){
+    if (any(is.na(nma.das28.1) | is.na(nma.das28.1))){
+      stop ("'das28' element of pars has missing parameter values for one of the selected treatment 
+            arms; that is, the NMA results are missing.")
+    }
+  }
 }
 
 

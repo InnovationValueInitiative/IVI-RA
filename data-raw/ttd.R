@@ -309,8 +309,9 @@ ttd.eular.uk <- list(moderate = ttd.eular.mod, good = ttd.eular.good)
 ttd.eular <- list(moderate = ttd.eular.mod.adj, good = ttd.eular.good.adj) # us version
 ttd.da <- list(remission = ttd.da.low, low = ttd.da.low, 
                moderate = ttd.da.mod)
+ttd.all <- ttd.da$moderate
 
 
 # SAVE PARAMETERS --------------------------------------------------------------
-save(ttd.eular, ttd.da,
+save(ttd.all, ttd.eular, ttd.da,
      file = "../data/ttd-pars.rda", compress = "bzip2")

@@ -4,12 +4,16 @@
 \alias{check_sim_haq}
 \title{Check parameters of sim_haq}
 \usage{
-check_sim_haq(input_data, pars)
+check_sim_haq(arminds, input_data, pars, itreat_haq, itreat_switch)
 }
 \arguments{
 \item{input_data}{\code{input_data} as passed to \link{sim_haq}.}
 
 \item{pars}{\code{pars} as passed to \link{sim_haq}.}
+
+\item{itreat_haq}{Treatment to HAQ pathway first 6 months.}
+
+\item{itreat_switch}{Treatment switching pathway first 6 months.}
 }
 \description{
 Error messages when incorrect inputs are passed to sim_haq.

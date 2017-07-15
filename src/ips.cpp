@@ -249,7 +249,7 @@ double sim_ttd_da(arma::rowvec x, arma::rowvec loc_rem, double anc1_rem,
                        arma::rowvec loc_mod, double anc1_mod, 
                        int da_cat, int tswitch, std::string dist,
                        double cycle_length, double ttsi,
-                       double anc2_rem, double anc2_low = 0.0, double anc2_mod = 0.0){
+                       double anc2_rem = 0.0, double anc2_low = 0.0, double anc2_mod = 0.0){
   double surv = 0.0;
   if (ttsi < 0 || tswitch == 1){
     surv = 0.0;
@@ -268,6 +268,23 @@ double sim_ttd_da(arma::rowvec x, arma::rowvec loc_rem, double anc1_rem,
         //surv = rsurvC(dot(x, loc_high), anc1_high, dist, anc2_high);
         surv = 0.0;
     }
+  }
+  return surv/cycle_length; // surv is measured in years, so surv/cycle_length is measured in model cycles
+}
+
+// Time to treatment discontinuation all patients
+//' @export
+// [[Rcpp::export]]
+double sim_ttd_all(arma::rowvec x, arma::rowvec loc, double anc1,
+                   int tswitch, std::string dist,
+                  double cycle_length, double ttsi,
+                  double anc2 = 0.0){
+  double surv = 0.0;
+  if (ttsi < 0 || tswitch == 1){
+    surv = 0.0;
+  }
+  else {
+      surv = rsurvC(dot(x, loc), anc1, dist, anc2);
   }
   return surv/cycle_length; // surv is measured in years, so surv/cycle_length is measured in model cycles
 }
@@ -330,6 +347,7 @@ List sim_haqC(arma::mat therapies,
              arma::mat lifetable_male, arma::mat lifetable_female, 
              arma::mat x_mort, arma::mat logor, 
              std::string dur_dist, arma::mat x_dur, 
+             arma::mat ttd_all_loc, arma::vec ttd_all_anc1, arma::vec ttd_all_anc2,
              arma::mat ttd_da_loc_rem, arma::vec ttd_da_anc1_rem, arma::vec ttd_da_anc2_rem,
              arma::mat ttd_da_loc_low, arma::vec ttd_da_anc1_low, arma::vec ttd_da_anc2_low,
              arma::mat ttd_da_loc_mod, arma::vec ttd_da_anc1_mod, arma::vec ttd_da_anc2_mod,
@@ -435,6 +453,11 @@ List sim_haqC(arma::mat therapies,
                                                  ttd_eular_loc_good.row(s), ttd_eular_loc_good(s), 
                                                  sim_h_t1.eular, dur_dist, cycle_length, ttsi_j,
                                                  ttd_eular_anc2_mod(s), ttd_eular_anc2_good(s));
+        }
+        else if (itreat_switch_model == "acr-switch"){
+          ttd_j = sim_ttd_all(x_dur.row(i), ttd_all_loc.row(s), ttd_all_anc1(s),
+                              sim_s_t1.tswitch, dur_dist, cycle_length, ttsi_j,
+                              ttd_all_anc2(s));
         }
         else {
           ttd_j = sim_ttd_da(x_dur.row(i), ttd_da_loc_rem.row(s), ttd_da_anc1_rem(s),
@@ -887,4 +910,5 @@ std::vector<double> qalysC(std::vector<double> &utility, std::vector<double> &yr
   }
   return qalys_vec;
 }
+
 

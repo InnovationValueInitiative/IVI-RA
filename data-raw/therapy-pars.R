@@ -210,6 +210,23 @@ si$exp$loc.index <- seq_len(length(si$exp$est))
 si$exp$anc1.index <- si$exp$anc2.index <- NA
 
 # SAVE PARAMETERS --------------------------------------------------------------
+# We currently don't have NMA results for triple therapy
+tt.indx <- which(therapy.snames == "tt")
+therapy.info <- therapy.info[sname != "tt"]
+nma.acr.naive$mean <- nma.acr.naive$mean[-c(tt.indx + 4)]
+nma.acr.naive$vcov <- nma.acr.naive$vcov[-c(tt.indx + 4), -c(tt.indx + 4)]
+nma.haq.naive$mean <- nma.haq.naive$mean[-c(tt.indx + 1)]
+nma.haq.naive$vcov <- nma.haq.naive$vcov[-c(tt.indx + 1), -c(tt.indx + 1)]
+nma.das28.naive$mean <- nma.das28.naive$mean[-c(tt.indx + 1)]
+nma.das28.naive$vcov <- nma.das28.naive$vcov[-c(tt.indx + 1), -c(tt.indx + 1)]
+nice.nma.acr.naive$p <- nice.nma.acr.naive$p[-tt.indx, ]
+nice.nma.acr.naive$p.overlap <- nice.nma.acr.naive$p.overlap[-tt.indx]
+haq.lprog <- haq.lprog[-tt.indx]
+si$exp$est <- si$exp$est[-tt.indx]
+si$exp$vcov <- si$exp$vcov[-tt.indx, -tt.indx]
+si$exp$loc.index <- seq(1, length(si$exp$est))
+
+# save
 therapy.pars <- list(info = therapy.info,
                     nma.acr.naive = nma.acr.naive,
                     nma.haq.naive = nma.haq.naive,

@@ -5,6 +5,7 @@
 \alias{ttd}
 \alias{ttd.eular}
 \alias{ttd.da}
+\alias{ttd.all}
 \title{Time to treatment discontinuation parameters}
 \format{A list of lists of lists. The top level list is the level of EULAR response or
  disease activity. The second level list is the parametric distribution used. 
@@ -25,11 +26,14 @@ Arthritis care & research 63.12 (2011): 1672-1679.
 ttd.eular
 
 ttd.da
+
+ttd.all
 }
 \description{
 \code{ttd.eular} and \code{ttd.da} are lists of lists containing treatment discontinuation
 parameters stratified by EULAR response (moderate, high) and disease activity 
-(remission, low, moderate, high) respectively.
+(remission, low, moderate, high) respectively; \code{ttd.all} is a list of lists containing
+unstratified (i.e., all patients) treatment discontinuation parameters.
 }
 \details{
 Time to treatment discontinuation paramters for each level of EULAR response or disease activity

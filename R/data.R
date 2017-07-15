@@ -118,7 +118,8 @@
 #'
 #' \code{ttd.eular} and \code{ttd.da} are lists of lists containing treatment discontinuation
 #' parameters stratified by EULAR response (moderate, high) and disease activity 
-#' (remission, low, moderate, high) respectively. 
+#' (remission, low, moderate, high) respectively; \code{ttd.all} is a list of lists containing
+#' unstratified (i.e., all patients) treatment discontinuation parameters.
 
 #' @details 
 #' Time to treatment discontinuation paramters for each level of EULAR response or disease activity
@@ -143,6 +144,8 @@
 "ttd.eular"
 #' @rdname ttd
 "ttd.da"
+#' @rdname ttd
+"ttd.all"
 
 #' ACR to Eular Conversion
 #'
