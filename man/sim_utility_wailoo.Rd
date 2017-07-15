@@ -11,8 +11,9 @@ sim_utility_wailoo(simhaq, input_data, pars, check = TRUE)
 \code{age}, and \code{haq}.}
 
 \item{input_data}{Variables other than those in simhaq needed to simulate model; these are
-\code{Disease duration}, \code{Baseline HAQ}, \code{Male}, and \code{Previous DMARDs}. All variables
-are generated from \link{input_data}.}
+\code{Baseline HAQ}, \code{Male}, and \code{Previous DMARDs}. All variables
+are generated from \link{input_data}. Note that disease duration is set to 18.65 years, which
+is the mean value from the Wailoo (2006) paper used for the parameter estimates.}
 
 \item{pars}{Matrix of coefficients needed to simulate utility using the Wailoo (2006) model. 
 See the documentation in \link{sample_pars} for details. Note that the matrix columns must be in 

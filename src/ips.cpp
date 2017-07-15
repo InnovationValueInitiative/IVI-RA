@@ -642,7 +642,7 @@ List sim_utility_mixtureC(std::vector<int> id, std::vector<int> sim, std::vector
 //' @export
 // [[Rcpp::export]]
 std::vector<double> sim_utility_wailooC(std::vector<int> sim, std::vector<int> id,
-                                        std::vector<double> age, std::vector<double> disease_duration,
+                                        std::vector<double> age, double disease_duration,
                                         std::vector<double> haq0, std::vector<double> male, 
                                         std::vector<double> prev_dmards, std::vector<double> haq, 
                                         std::vector<double> b_int,
@@ -656,7 +656,7 @@ std::vector<double> sim_utility_wailooC(std::vector<int> sim, std::vector<int> i
   double xb = 0.0;
   for (int i = 0; i < N; ++i){
     xb = b_int[sim[i]] + b_age[sim[i]] * age[i] + 
-      b_disease_duration[sim[i]] * disease_duration[id[i]] + b_haq0[sim[i]] * haq0[id[i]] +
+      b_disease_duration[sim[i]] * disease_duration + b_haq0[sim[i]] * haq0[id[i]] +
       b_male[sim[i]] * male[id[i]] + b_prev_dmards[sim[i]] * prev_dmards[id[i]] + 
       b_haq[sim[i]] * haq[i];
     logit_xb.push_back(1/(1 + exp(-xb)));

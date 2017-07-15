@@ -9,8 +9,8 @@ input_data(patdata, vars_mort = "haq0", vars_dur = "1")
 \arguments{
 \item{patdata}{Matrix of patient data. Must contain variables generated from \link{sample_pats}:
  'age' for age, 'haq0' for baseline HAQ, 'male' as a indicator equal to
-1 if the patient is male and 0 if female, 'weight' for patient weight, 'dis_dur' for disease
-duration and 'prev_dmards' for number of previous DMARDs.}
+1 if the patient is male and 0 if female, 'weight' for patient weight, and 'prev_dmards' 
+for number of previous DMARDs.}
 
 \item{vars_mort}{A chararacter vector of variables in \code{patdata} to be used to adjust
 'qx' (using odds ratios) in the lifetables. Use '1' to include an intercept.}

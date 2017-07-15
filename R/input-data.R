@@ -11,8 +11,6 @@
 #' @param haq0_sd Standard deviation of baseline HAQ score.
 #' @param wtmale Male weight.
 #' @param wtfemale Female weight.
-#' @param dis_dur_mean Mean disease duration.
-#' @param dis_dur_sd Standard deviation of disease duration.
 #' @param prev_dmards_mean Mean number of previous DMARDs.
 #' @param prev_dmards_sd Standard deviation of number of previous DMARDs.
 #' @param das28_mean Mean of DAS28.
@@ -33,7 +31,6 @@
 #'   \item{age}{age in years}
 #'   \item{male}{1 = male, 0 = female}
 #'   \item{weight}{Patient weight}
-#'   \item{dis_dur}{Disease duration in years}
 #'   \item{prev_dmards}{Number of previous DMARDs}
 #'   \item{das28}{DAS28 score}
 #'   \item{sdai}{SDAI score}
@@ -43,7 +40,6 @@
 #' @export
 sample_pats <- function(n = 1, type = c("homog", "heterog"), age_mean = 55, age_sd = 13, male_prop = .21,
                       haq0_mean = 1.5, haq0_sd = 0.7, wtmale = 89, wtfemale = 75,
-                      dis_dur_mean = 18.65, dis_dur_sd = 12.25, 
                       prev_dmards_mean = 3.28, prev_dmards_sd = 1.72,
                       das28_mean = 6, das28_sd = 1.2, 
                       sdai_mean = 43, sdai_sd = 13,
@@ -60,8 +56,7 @@ sample_pats <- function(n = 1, type = c("homog", "heterog"), age_mean = 55, age_
   if (type == "homog"){
       age <- rep(age_mean, n)
       haq0 <- rep(haq0_mean, n)
-      dis_dur <- rep(dis_dur_mean, n)
-      prev_dmards <- rep(prev_dmards_mean, n)
+      prev_dmards <- rep(round(prev_dmards_mean, 0), n)
       das28 <- rep(das28_mean, n)
       sdai <- rep(sdai_mean, n)
       cdai <- rep(cdai_mean, n)
@@ -69,7 +64,6 @@ sample_pats <- function(n = 1, type = c("homog", "heterog"), age_mean = 55, age_
   } else if (type == "heterog"){
       age <- msm::rtnorm(n, age_mean, age_sd, lower = 18, upper = 85) 
       haq0 <- msm::rtnorm(n, haq0_mean, haq0_sd, lower = 0, upper = 3)
-      dis_dur <- msm::rtnorm(n, dis_dur_mean, dis_dur_sd, lower = 0)
       prev_dmards <- round(msm::rtnorm(n, prev_dmards_mean, prev_dmards_sd, lower = 0), 0)
       covmat <- matrix(0, nrow = 4, ncol = 4)
       diag(covmat) <- c(das28_sd^2, sdai_sd^2, cdai_sd^2, haq0_sd^2)
@@ -84,10 +78,10 @@ sample_pats <- function(n = 1, type = c("homog", "heterog"), age_mean = 55, age_
                                lower = rep(0, length(mu)),
                                upper = c(9.4, 86, 76, 3))
   }
-  x <- matrix(c(age, male, weight, dis_dur, prev_dmards, 
+  x <- matrix(c(age, male, weight, prev_dmards, 
                 da[, 1], da[, 2], da[, 3], da[, 4]), 
-              nrow = n, ncol = 9, byrow = F)
-  colnames(x) <- c("age", "male", "weight", "dis_dur", "prev_dmards", 
+              nrow = n, ncol = 8, byrow = F)
+  colnames(x) <- c("age", "male", "weight", "prev_dmards", 
                    "das28", "sdai", "cdai", "haq0")
   return(x)
 }
@@ -117,8 +111,8 @@ lt_data <- function(ltfemale, ltmale){
 #' 
 #' @param patdata Matrix of patient data. Must contain variables generated from \link{sample_pats}:
 #'  'age' for age, 'haq0' for baseline HAQ, 'male' as a indicator equal to
-#' 1 if the patient is male and 0 if female, 'weight' for patient weight, 'dis_dur' for disease
-#' duration and 'prev_dmards' for number of previous DMARDs. 
+#' 1 if the patient is male and 0 if female, 'weight' for patient weight, and 'prev_dmards' 
+#' for number of previous DMARDs. 
 #' @param vars_mort A chararacter vector of variables in \code{patdata} to be used to adjust
 #'  'qx' (using odds ratios) in the lifetables. Use '1' to include an intercept. 
 #' @param vars_dur A character vector of variables in \code{patdata} to be used to predict treatment
@@ -148,8 +142,7 @@ input_data <- function(patdata, vars_mort = "haq0", vars_dur = "1"){
   return(list(n = nrow(patdata), haq0 = patdata[, "haq0"], age = patdata[, "age"],
               male = patdata[, "male"], das28 = patdata[, "das28"],
               sdai = patdata[, "sdai"], cdai = patdata[, "cdai"],
-              weight = patdata[, "weight"],
-              dis.dur = patdata[, "dis_dur"], prev.dmards = patdata[, "prev_dmards"],
+              weight = patdata[, "weight"], prev.dmards = patdata[, "prev_dmards"],
               x.mort = x.mort, x.ttd = x.ttd))
 }
 

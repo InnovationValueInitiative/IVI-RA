@@ -307,7 +307,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // sim_utility_wailooC
-std::vector<double> sim_utility_wailooC(std::vector<int> sim, std::vector<int> id, std::vector<double> age, std::vector<double> disease_duration, std::vector<double> haq0, std::vector<double> male, std::vector<double> prev_dmards, std::vector<double> haq, std::vector<double> b_int, std::vector<double> b_age, std::vector<double> b_disease_duration, std::vector<double> b_haq0, std::vector<double> b_male, std::vector<double> b_prev_dmards, std::vector<double> b_haq);
+std::vector<double> sim_utility_wailooC(std::vector<int> sim, std::vector<int> id, std::vector<double> age, double disease_duration, std::vector<double> haq0, std::vector<double> male, std::vector<double> prev_dmards, std::vector<double> haq, std::vector<double> b_int, std::vector<double> b_age, std::vector<double> b_disease_duration, std::vector<double> b_haq0, std::vector<double> b_male, std::vector<double> b_prev_dmards, std::vector<double> b_haq);
 RcppExport SEXP iviRA_sim_utility_wailooC(SEXP simSEXP, SEXP idSEXP, SEXP ageSEXP, SEXP disease_durationSEXP, SEXP haq0SEXP, SEXP maleSEXP, SEXP prev_dmardsSEXP, SEXP haqSEXP, SEXP b_intSEXP, SEXP b_ageSEXP, SEXP b_disease_durationSEXP, SEXP b_haq0SEXP, SEXP b_maleSEXP, SEXP b_prev_dmardsSEXP, SEXP b_haqSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -315,7 +315,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< std::vector<int> >::type sim(simSEXP);
     Rcpp::traits::input_parameter< std::vector<int> >::type id(idSEXP);
     Rcpp::traits::input_parameter< std::vector<double> >::type age(ageSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type disease_duration(disease_durationSEXP);
+    Rcpp::traits::input_parameter< double >::type disease_duration(disease_durationSEXP);
     Rcpp::traits::input_parameter< std::vector<double> >::type haq0(haq0SEXP);
     Rcpp::traits::input_parameter< std::vector<double> >::type male(maleSEXP);
     Rcpp::traits::input_parameter< std::vector<double> >::type prev_dmards(prev_dmardsSEXP);
