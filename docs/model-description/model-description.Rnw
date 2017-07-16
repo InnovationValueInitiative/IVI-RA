@@ -298,17 +298,17 @@ Two default options for the patient population are available. First, a homogeneo
 
 <<pop, echo = FALSE, include = FALSE>>=
 args <- formals(sample_pats)
-mean <- c(args$age_mean, args$male_prop, args$wtfemale, args$wtmale, args$dis_dur_mean,
+mean <- c(args$age_mean, args$male_prop, args$wtfemale, args$wtmale,
           args$prev_dmards_mean, args$das28_mean, args$sdai_mean, args$cdai_mean, args$haq0_mean)
 mean <- formatC(mean, format = "f", digits = 2)
-sd <-  c(args$age_sd, 0, 0, 0, args$dis_dur_sd,
+sd <-  c(args$age_sd, 0, 0, 0,
           args$prev_dmards_sd, args$das28_sd, args$sdai_sd, args$cdai_sd, args$haq0_sd)
 sd <- formatC(sd, format = "f", digits = 2)
 sd[sd == "0.00"] <- "-"
-vars <- c("Age", "Male", "Female weight (kg)", "Male weight (kg)", "Disease duration", 
+vars <- c("Age", "Male", "Female weight (kg)", "Male weight (kg)", 
           "Previous   DMARDs","DAS28", "SDAI", "CDAI", "HAQ") 
-min <- c(18, "-", "-", "-", rep(0, 6))
-max <- c(85, rep("-", 5), 9.4, 86, 76, 3)
+min <- c(18, "-", "-", "-", rep(0, 5))
+max <- c(85, rep("-", 4), 9.4, 86, 76, 3)
 tab <- data.frame(var = vars, mean = mean, sd = sd, min, max)
 tex <- print(xtable(tab), 
       include.rownames = FALSE, include.colnames = FALSE,
@@ -810,8 +810,10 @@ In the moderate, high, and severe groups the rate of HAQ progression is higher i
 Based on the NDB longitudinal study, \citet{wolfe2010loss} estimated the overall annual HAQ progression rate among RA patients who had switched to biologic treatment at -0.001 (95CI: -0.004 to 0.002). In a separate analysis, also based on NDB data, \citet{michaud2011treatment} reported annual HAQ progression rates by treatment adjusted for baseline HAQ score, age, sex, education, smoking, BMI, comorbidity, and RA onset. The average HAQ rate among patients on a biologic was -0.001 as well, which instills confidence that the reported HAQ progression rates for different bDMARDs as reported by \citet{michaud2011treatment} can be directly compared with the overall annual HAQ progression rate of 0.031 reported by \citet{wolfe2010loss}. Accordingly, bDMARD specific HAQ progression rates by \citet{michaud2011treatment} are used in the model. For bDMARD treatments evaluated in the model for which no HAQ progression rate was reported by \citet{michaud2011treatment}, the overall biologic rate of -0.001 is used. 
 
 \subsection{Duration of maintenance treatment}\label{duration-of-maintenance-treatment}
-\subsubsection{CORRONA database}\label{sec:ttd-corrona}
-Time to treatment discontinuation for patients on maintenance treatment for model structures \textbf{S1-S5} is based on analyses from the CORRONA database \citep{strand2013op0064}. The analysis sample consisted of 6,209 patients age 18 or older treated between 2002 and 2011 receiving either TNF inhibitors or other bDMARDs. The mean age was 57.6 years, 43\% of patients were biologic naive, the mean CDAI was 16, and just over 26\% of patients had high disease activity (CDAI $\geq$ 22). 
+The specification used to model time to treatment discontinuation in the maintenance phase depends on the pathway (\textbf{S1-S6}) used to model treatment switching. If \textbf{S1} is selected, a single treatment discontinuation curve based on an analysis from the CORRONA database is used for all patients. In \textbf{S2-S5}, time to treatment discontinuation is stratified by the level of disease activity, and in \textbf{S6} treatment duration depends on EULAR response.  
+
+\subsubsection{Treatment duration from the CORRONA database}\label{ttd-overall}
+Duration of maintenance treatment is based on is based on analyses from the CORRONA database \citep{strand2013op0064}. The analysis sample consisted of 6,209 patients age 18 or older treated between 2002 and 2011 receiving either TNF inhibitors or other bDMARDs. The mean age was 57.6 years, 43\% of patients were biologic naive, the mean CDAI was 16, and just over 26\% of patients had high disease activity (CDAI $\geq$ 22). 
 
 7 parametric survival models (exponential, Weibull, Gompertz, gamma, log-logistic, lognormal, and generalized gamma) were estimated on individual patient data reconstructed from a Kaplan-Meier curve from the CORRONA analysis using the algorithm developed in \citet{guyot2012enhanced}. We compared fit using the Akaike Information Criteria (AIK) and Bayesian Information Criteria (BIC) (\autoref{tbl:ic-ttd-corrona}). The generalized gamma had the lowest AIC and BIC, so we consider it to be the preferred model. A plot of of the generalized gamma distribution against the Kaplan-Meier curve is shown in \autoref{fig:corrona-gg}. As can be seen in the plot, the shape of the survival curve estimated using a generalized gamma distribution tracks the Kaplan-Meier curve closely.  
 
@@ -847,11 +849,19 @@ tex <- print(xtable(tab),
 
 We considered estimating separate time to discontinuation curves for each therapy, but did not for a number of the reasons cited in \citet{stevenson2016adalimumab}. The majority of the literature focuses on anti-TNFs (e.g., infliximab, etanercept, and adalimumab) \citep[e.g.][]{gomez2006switching, yazici2009changing, pan2009comparison}, which makes it difficult to estimate discontinuation curves for the other therapies. Furthermore, studies comparing rates of discontinuation across therapies tend to be observational because clinical trials are of short duration and do not reflect real-world patient populations. However, although observational studies provide accurate predictions on time to discontinuation, it is difficult to avoid bias from confounding when estimating differences across treatments because patients are not randomized into treatment and control groups \citep{souto2015rate} .   
 
-Unlike during the initial treatment phase, we do not condition rates of treatment discontinuation on the level of disease activity. The reason for this is that we could not find studies stratifying treatment duration curves by DAS28, SDAI, or CDAI. As a result, model structures \textbf{S1-S5} assume that conditional on continuing treatment beyond the first 6 months, duration does not depend on baseline disease activity, the change in disease activity from baseline, or whether the patient was biologic naive or experienced. 
-
 We also lack data on treatment duration for patients on cDMARDs. Following \citet{stevenson2016adalimumab}, we assume that, conditional on continuing treatment at 6 months, treatment duration for bDMARDs is applicable to treatment duration for cDMARDs. This is, in turn, based on the assumption that cDMARDs are not likely to be more toxic than biologics used in combination with cDMARDs. 
 
-\subsubsection{BSRBR database}\label{sec:ttd-bsrbr}
+
+\subsubsection{By disease activity level}\label{ttd-da}
+
+\begin{figure}[H]
+\centering
+\includegraphics[max size={.7\textwidth}{.7\textheight}]{../../data-raw/figs/ttd-corrona-ipdsurv-gengamma-by-da.pdf}
+\caption{Generalized gamma time to treatment discontinuation curves by disease activity level}\label{fig:ttd-gg-da}
+\end{figure}
+
+
+\subsubsection{By EULAR response} \label{ttd-eular}
 In model structure \textbf{S6}, we stratify our time to treatment discontinuation by EULAR response based on analyses of the British Society for Rheumatology Biologics Registers (BSRBR) database \citep{stevenson2016adalimumab}. As with the CORRONA based estimates, we fit 7 parametric survival models using individual patient data reconstructed from survival curves using the \citet{guyot2012enhanced} algorithm. We used the survival curves reported in \citet{stevenson2016adalimumab} to create the patient data. The Akaike Information Criteria (AIK) and Bayesian Information Criteria (BIC) of each model by EULAR response category (moderate, good) are shown in \autoref{tbl:ic-dur-eular}.
 
 <<ipdsurv, echo = FALSE, resutls = 'tex'>>=
@@ -1552,7 +1562,7 @@ We used the correlations from the routine cohort (during visit 1) rather than co
 npats <- 1000
 pats <- sample_pats(n = npats, type = "heterog")
 tab <- apply_summary(pats)[, c("Mean", "Lower", "Upper")]
-rownames(tab) <- c("Age", "Male", "Weight (kg)", "Disease duration", "Previous DMARDs",
+rownames(tab) <- c("Age", "Male", "Weight (kg)", "Previous DMARDs",
                    "DAS28", "SDAI", "CDAI", "HAQ")
 tab <- formatC(tab, format = "f", digits = 2)
 tex <- print(xtable(tab), 

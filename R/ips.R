@@ -102,9 +102,7 @@ sim_haq <- function(arminds, input_data, pars,
 
   # survival parameters
   pars.ttd.all <- pars$ttd.all[[ttd_dist]]
-  pars.ttd.da.rem <- pars$ttd.da$remission[[ttd_dist]]
-  pars.ttd.da.low <- pars$ttd.da$low[[ttd_dist]]
-  pars.ttd.da.mod <- pars$ttd.da$moderate[[ttd_dist]]
+  pars.ttd.da <- pars$ttd.da[[ttd_dist]]
   pars.ttd.em <- pars$ttd.eular$moderate[[ttd_dist]]
   pars.ttd.eg <- pars$ttd.eular$good[[ttd_dist]]
   pars.si <- pars$ttsi[[si_dist]]
@@ -127,15 +125,9 @@ sim_haq <- function(arminds, input_data, pars,
                  pars.ttd.all$sample[, pars.ttd.all$loc.index, drop = FALSE],
                  pars.ttd.all$sample[, pars.ttd.all$anc1.index, drop = FALSE],
                  pars.ttd.all$sample[, pars.ttd.all$anc2.index, drop = FALSE],
-                 pars.ttd.da.rem$sample[, pars.ttd.da.rem$loc.index, drop = FALSE],
-                 pars.ttd.da.rem$sample[, pars.ttd.da.rem$anc1.index, drop = FALSE],
-                 pars.ttd.da.rem$sample[, pars.ttd.da.rem$anc2.index, drop = FALSE],
-                 pars.ttd.da.low$sample[, pars.ttd.da.low$loc.index, drop = FALSE],
-                 pars.ttd.da.low$sample[, pars.ttd.da.low$anc1.index, drop = FALSE],
-                 pars.ttd.da.low$sample[, pars.ttd.da.low$anc2.index, drop = FALSE],
-                 pars.ttd.da.mod$sample[, pars.ttd.da.mod$loc.index, drop = FALSE],
-                 pars.ttd.da.mod$sample[, pars.ttd.da.mod$anc1.index, drop = FALSE],
-                 pars.ttd.da.mod$sample[, pars.ttd.da.mod$anc2.index, drop = FALSE],
+                 pars.ttd.da$sample[, pars.ttd.da$loc.index, drop = FALSE],
+                 pars.ttd.da$sample[, pars.ttd.da$anc1.index, drop = FALSE],
+                 pars.ttd.da$sample[, pars.ttd.da$anc2.index, drop = FALSE],
                  pars.ttd.em$sample[, pars.ttd.em$loc.index, drop = FALSE], 
                  pars.ttd.em$sample[, pars.ttd.em$anc1.index, drop = FALSE],
                  pars.ttd.em$sample[, pars.ttd.em$anc2.index, drop = FALSE], 

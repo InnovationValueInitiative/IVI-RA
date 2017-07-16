@@ -241,44 +241,13 @@ double sim_ttd_eular(arma::rowvec x, arma::rowvec loc_mod, double anc1_mod,
   return surv/cycle_length; // surv is measured in years, so surv/cycle_length is measured in model cycles
 }
 
-// Time to treatment discontinuation by disease activity level
+// Time to treatment discontinuation single model
 //' @export
 // [[Rcpp::export]]
-double sim_ttd_da(arma::rowvec x, arma::rowvec loc_rem, double anc1_rem,
-                       arma::rowvec loc_low, double anc1_low, 
-                       arma::rowvec loc_mod, double anc1_mod, 
-                       int da_cat, int tswitch, std::string dist,
-                       double cycle_length, double ttsi,
-                       double anc2_rem = 0.0, double anc2_low = 0.0, double anc2_mod = 0.0){
-  double surv = 0.0;
-  if (ttsi < 0 || tswitch == 1){
-    surv = 0.0;
-  }
-  else {
-    if (da_cat == 0){ // remission
-      surv = rsurvC(dot(x, loc_rem), anc1_rem, dist, anc2_rem);
-    }
-    else if (da_cat == 1){ // low disease activity 
-        surv = rsurvC(dot(x, loc_low), anc1_low, dist, anc2_low);
-    } 
-    else if (da_cat == 2) { // moderate disease activity
-        surv = rsurvC(dot(x, loc_mod), anc1_mod, dist, anc2_mod);
-    }
-    else if (da_cat == 3){ // good disease activity
-        //surv = rsurvC(dot(x, loc_high), anc1_high, dist, anc2_high);
-        surv = 0.0;
-    }
-  }
-  return surv/cycle_length; // surv is measured in years, so surv/cycle_length is measured in model cycles
-}
-
-// Time to treatment discontinuation all patients
-//' @export
-// [[Rcpp::export]]
-double sim_ttd_all(arma::rowvec x, arma::rowvec loc, double anc1,
+double sim_ttd(arma::rowvec x, arma::rowvec loc, double anc1,
                    int tswitch, std::string dist,
                   double cycle_length, double ttsi,
-                  double anc2 = 0.0){
+                  double anc2 = 0.0, int da_cat = 0){
   double surv = 0.0;
   if (ttsi < 0 || tswitch == 1){
     surv = 0.0;
@@ -348,9 +317,7 @@ List sim_haqC(arma::mat therapies,
              arma::mat x_mort, arma::mat logor, 
              std::string dur_dist, arma::mat x_dur, 
              arma::mat ttd_all_loc, arma::vec ttd_all_anc1, arma::vec ttd_all_anc2,
-             arma::mat ttd_da_loc_rem, arma::vec ttd_da_anc1_rem, arma::vec ttd_da_anc2_rem,
-             arma::mat ttd_da_loc_low, arma::vec ttd_da_anc1_low, arma::vec ttd_da_anc2_low,
-             arma::mat ttd_da_loc_mod, arma::vec ttd_da_anc1_mod, arma::vec ttd_da_anc2_mod,
+             arma::mat ttd_da_loc, arma::vec ttd_da_anc1, arma::vec ttd_da_anc2,
              arma::mat ttd_eular_loc_mod, arma::vec ttd_eular_anc1_mod, arma::vec ttd_eular_anc2_mod,
              arma::mat ttd_eular_loc_good, arma::vec ttd_eular_anc1_good, arma::vec ttd_eular_anc2_good,
              double cycle_length, int treat_gap, int cdmards, int nbt, 
@@ -448,24 +415,21 @@ List sim_haqC(arma::mat therapies,
                                               si_dist,as_scalar(si_anc2.row(s).col(therapies_ij))
                                               )) * (12/cycle_length);
         double ttd_j = 0;
-        if (itreat_switch_model == "acr-eular-haq"){
+        if (itreat_switch_model == "acr-eular-switch"){
             ttd_j = sim_ttd_eular(x_dur.row(i), ttd_eular_loc_mod.row(s), ttd_eular_anc1_mod(s), 
-                                                 ttd_eular_loc_good.row(s), ttd_eular_loc_good(s), 
+                                                 ttd_eular_loc_good.row(s), ttd_eular_anc1_good(s), 
                                                  sim_h_t1.eular, dur_dist, cycle_length, ttsi_j,
                                                  ttd_eular_anc2_mod(s), ttd_eular_anc2_good(s));
         }
         else if (itreat_switch_model == "acr-switch"){
-          ttd_j = sim_ttd_all(x_dur.row(i), ttd_all_loc.row(s), ttd_all_anc1(s),
+          ttd_j = sim_ttd(x_dur.row(i), ttd_all_loc.row(s), ttd_all_anc1(s),
                               sim_s_t1.tswitch, dur_dist, cycle_length, ttsi_j,
                               ttd_all_anc2(s));
         }
         else {
-          ttd_j = sim_ttd_da(x_dur.row(i), ttd_da_loc_rem.row(s), ttd_da_anc1_rem(s),
-                                       ttd_da_loc_low.row(s), ttd_da_anc1_low(s),
-                                       ttd_da_loc_mod.row(s), ttd_da_anc1_mod(s),
-                                        sim_s_t1.da_cat, sim_s_t1.tswitch, dur_dist, 
-                                        cycle_length, ttsi_j,
-                                        ttd_da_anc2_rem(s), ttd_da_anc2_low(s), ttd_da_anc2_mod(s));
+          ttd_j = sim_ttd(x_dur.row(i), ttd_da_loc.row(s), ttd_da_anc1(s),
+                          sim_s_t1.tswitch, dur_dist, cycle_length, ttsi_j,
+                          ttd_all_anc2(s));
         }
         
         // Loop over time

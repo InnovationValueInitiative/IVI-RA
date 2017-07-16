@@ -4,7 +4,8 @@
 \alias{input_data}
 \title{Input data for simulation}
 \usage{
-input_data(patdata, vars_mort = "haq0", vars_dur = "1")
+input_data(patdata, vars_mort = NULL, vars_ttd = NULL,
+  itreat_switch = NULL)
 }
 \arguments{
 \item{patdata}{Matrix of patient data. Must contain variables generated from \link{sample_pats}:
@@ -15,8 +16,9 @@ for number of previous DMARDs.}
 \item{vars_mort}{A chararacter vector of variables in \code{patdata} to be used to adjust
 'qx' (using odds ratios) in the lifetables. Use '1' to include an intercept.}
 
-\item{vars_dur}{A character vector of variables in \code{patdata} to be used to predict treatment
-duration. Use '1' to include an intercept.}
+\item{vars_ttd}{A character vector of variables in \code{patdata} to be used to predict treatment
+duration. Use '1' to include an intercept. 
+@param itreat_switch Pathway used to model treatment switching during initial treatment phase.}
 }
 \value{
 A list containing the following data inputs:
@@ -25,7 +27,6 @@ A list containing the following data inputs:
   \item{haq0}{A vector of patient HAQ at baseline.}
   \item{age}{A vector of patient age at baseline.}
   \item{male}{A vector of patient gender (1 = male, 0 = female).}
-  \item{dis.dur}{A vector of disease duration}
   \item{prev.dmards}{A vector of the number of previous DMARDs}
   \item{x.mort}{Design matrix for mortality adjustment with odds ratios}
   \item{x.ttd}{Design matrix for treatment duration.}

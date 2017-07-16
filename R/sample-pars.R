@@ -23,7 +23,8 @@
 #' @param mort_loghr_se_haqdif Standard error of log hazard ratio of impact of change in HAQ from baseline on mortality rate.
 #' @param ttd_all A list containing treatment duration parameters representative of all patients (i.e., unstratified).
 #'  See 'Treatment duration'.
-#' @param ttd_da A list containing treatment duration parameters stratified by disease activity level. See 'Treatment duration'.
+#' @param ttd_da A list containing treatment duration parameters. Covariates for moderate and high
+#' disease activity. See 'Treatment duration'.
 #' @param ttd_eular A list containing treatment duration parameters stratified by EULAR response. See 'Treatment duration'.
 #' @param nma_acr_mean Posterior means for ACR response NMA parameters on probit scale for 
 #' biologic naive patients (i.e., 1st line). ACR response is modeled using an ordered probit model.
@@ -257,7 +258,7 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
   sim$mort.loghr.haqdif <- sample_normals(n, mort_loghr_haqdif, mort_loghr_se_haqdif,
                                          col_names = paste0("month_", c("less6", "6to12", "12to24", "24to36", "36to48")))
   sim$ttd.all <- sample_survpars(n, ttd_all)
-  sim$ttd.da <- sample_stratified_survpars(n, ttd_da)
+  sim$ttd.da <- sample_survpars(n, ttd_da)
   sim$ttd.eular <- sample_stratified_survpars(n, ttd_eular)
   treat_hist <- match.arg(treat_hist)
   sim$acr <- sample_nma_acr(n, nma_acr_mean, nma_acr_vcov, rr_lower = nma_acr_rr_lower,
@@ -830,36 +831,12 @@ par_table <- function(x, pat){
   
   ### treatment duration by disease activity
   # remission
-  ttd.da.remission.summary <- survival_summary(x$ttd.da$remission)
-  ttd.da.remission <- data.table(Group = "Treatment duration - remission",
+  ttd.da.summary <- survival_summary(x$ttd.da)
+  ttd.da <- data.table(Group = "Treatment duration - remission",
                        Distribution = "Multivariate normal",
-                       Parameter = ttd.da.remission.summary$par.names,
+                       Parameter = ttd.da.summary$par.names,
                        Source = "Zhang2011")
-  ttd.da.remission <- cbind(ttd.da.remission, ttd.da.remission.summary$par.summry)
-  
-  # low
-  ttd.da.low.summary <- survival_summary(x$ttd.da$low)
-  ttd.da.low <- data.table(Group = "Treatment duration - low disease activity",
-                                 Distribution = "Multivariate normal",
-                                 Parameter = ttd.da.low.summary$par.names,
-                                 Source = "Zhang2011")
-  ttd.da.low <- cbind(ttd.da.low, ttd.da.low.summary$par.summry)
-  
-  # moderate
-  ttd.da.moderate.summary <- survival_summary(x$ttd.da$moderate)
-  ttd.da.moderate <- data.table(Group = "Treatment duration - moderate disease activity",
-                           Distribution = "Multivariate normal",
-                           Parameter = ttd.da.moderate.summary$par.names,
-                           Source = "Zhang2011")
-  ttd.da.moderate <- cbind(ttd.da.moderate, ttd.da.moderate.summary$par.summry)
-  
-  # high
-  # ttd.da.high.summary <- survival_summary(x$ttd.da$high)
-  # ttd.da.high <- data.table(Group = "Treatment duration - high disease activity",
-  #                               Distribution = "Multivariate normal",
-  #                               Parameter = ttd.da.high.summary$par.names,
-  #                               Source = "Zhang2011")
-  # ttd.da.high <- cbind(ttd.da.high, ttd.da.high.summary$par.summry)
+  ttd.da <- cbind(ttd.da, ttd.da.summary$par.summry)
   
   ### NMA ACR parameters
   ## coefficients
@@ -1135,8 +1112,7 @@ par_table <- function(x, pat){
   util.wailoo <- cbind(util.wailoo, apply_summary(x$wailoo.utility)) 
                     
   # table 
-  table <- rbind(rebound, acr2eular.dt, ttd.all, ttd.em, ttd.eg, 
-                 ttd.da.remission, ttd.da.low, ttd.da.moderate,
+  table <- rbind(rebound, acr2eular.dt, ttd.all, ttd.em, ttd.eg, ttd.da,
                  acr, acr.rr, das28, das28.rr, haq, haq.rr,
                  hce, lhpt, lhpa, haq.lcgm, lo.mort, lhr.mort, lt,
                  tc, hdays, hcost, mgmt, prod.loss, ttsi, si.cost, si.ul, util, util.wailoo)

@@ -115,8 +115,9 @@ lt_data <- function(ltfemale, ltmale){
 #' for number of previous DMARDs. 
 #' @param vars_mort A chararacter vector of variables in \code{patdata} to be used to adjust
 #'  'qx' (using odds ratios) in the lifetables. Use '1' to include an intercept. 
-#' @param vars_dur A character vector of variables in \code{patdata} to be used to predict treatment
+#' @param vars_ttd A character vector of variables in \code{patdata} to be used to predict treatment
 #'  duration. Use '1' to include an intercept. 
+#'  @param itreat_switch Pathway used to model treatment switching during initial treatment phase.
 #' 
 #' @return A list containing the following data inputs:
 #' \describe{
@@ -124,21 +125,23 @@ lt_data <- function(ltfemale, ltmale){
 #'   \item{haq0}{A vector of patient HAQ at baseline.}
 #'   \item{age}{A vector of patient age at baseline.}
 #'   \item{male}{A vector of patient gender (1 = male, 0 = female).}
-#'   \item{dis.dur}{A vector of disease duration}
 #'   \item{prev.dmards}{A vector of the number of previous DMARDs}
 #'   \item{x.mort}{Design matrix for mortality adjustment with odds ratios}
 #'   \item{x.ttd}{Design matrix for treatment duration.}
 #' }
 #' 
 #' @export
-input_data <- function(patdata, vars_mort = "haq0", vars_dur = "1"){
-  if ("1" %in% c(vars_mort, vars_dur)){
-    int <- rep(1, nrow(patdata))
-    patdata <- cbind(int, patdata)
-    colnames(patdata)[1] <- "1"
+input_data <- function(patdata, vars_mort = NULL, vars_ttd = NULL, itreat_switch = NULL){
+  if (is.null(vars_mort)){
+    x.mort <- patdata[, "haq0", drop = FALSE]
   }
-  x.mort <- patdata[, vars_mort, drop = FALSE]
-  x.ttd <- patdata[, vars_dur, drop = FALSE]
+  if (is.null(vars_ttd)){
+    if (itreat_switch %in% c("acr-switch", "acr-eular-switch")){
+        x.ttd <- matrix(1, nrow = nrow(patdata), ncol = 1)
+    } else{
+        x.ttd <- matrix(c(1, 0, 0), nrow = nrow(patdata), ncol = 3, byrow = TRUE)
+    }
+  }
   return(list(n = nrow(patdata), haq0 = patdata[, "haq0"], age = patdata[, "age"],
               male = patdata[, "male"], das28 = patdata[, "das28"],
               sdai = patdata[, "sdai"], cdai = patdata[, "cdai"],

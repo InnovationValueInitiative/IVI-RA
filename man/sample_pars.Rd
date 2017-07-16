@@ -73,7 +73,8 @@ each element denoting (in order) hazard ratio for months 0-6, >6 - 12, >12 - 24,
 \item{ttd_all}{A list containing treatment duration parameters representative of all patients (i.e., unstratified).
 See 'Treatment duration'.}
 
-\item{ttd_da}{A list containing treatment duration parameters stratified by disease activity level. See 'Treatment duration'.}
+\item{ttd_da}{A list containing treatment duration parameters. Covariates for moderate and high
+disease activity. See 'Treatment duration'.}
 
 \item{ttd_eular}{A list containing treatment duration parameters stratified by EULAR response. See 'Treatment duration'.}
 
