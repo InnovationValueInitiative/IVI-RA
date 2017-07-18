@@ -564,7 +564,7 @@ arm.names <- therapy.pars$info[sname %in% arm.snames, mname]
 
 ## simulation function
 sim6_summary <- function(arminds, arm_names, nouter = 1000, ninner = 1000, treat_hist = "naive",
-                         itreat_haq, itreat_switch){
+                         itreat_haq, itreat_switch, das28_mean = 6){
   acr.mean <- matrix(NA, nrow = length(arminds), ncol = 4)
   acr.o.mean <- matrix(NA, nrow = length(arminds), ncol = 3)
   acr.lower <- acr.upper <- acr.mean
@@ -572,7 +572,7 @@ sim6_summary <- function(arminds, arm_names, nouter = 1000, ninner = 1000, treat
   eular.mean <- matrix(NA, nrow = length(arminds), ncol = 3)
   eular.lower <- eular.upper <- eular.mean
   dhaq.mean <- dhaq.lower <- dhaq.upper <- rep(NA, length(arminds))
-  pat <- sample_pats(n = ninner)
+  pat <- sample_pats(n = ninner, das28_mean = das28_mean)
   input.dat <- input_data(patdata = pat, itreat_switch = itreat_switch)
   parsamp <- sample_pars(n = nouter, treat_hist = treat_hist)
   for (i in 1:length(arminds)){
@@ -632,23 +632,28 @@ sim6.acr2haq.naive <- sim6_summary(arminds, arm.names, treat_hist = "naive",
                                     itreat_haq = "acr-haq",
                                    itreat_switch = "acr-switch")
 sim6.haq.naive <- sim6_summary(arminds, arm.names, treat_hist = "naive", itreat_haq = "haq",
-                                   itreat_switch = "das28-switch")
+                                   itreat_switch = "das28-switch", das28_mean = 0)
 sim6.acr2eular2haq.naive <- sim6_summary(arminds, arm.names, treat_hist = "naive", 
                                          itreat_haq = "acr-eular-haq",
                                    itreat_switch = "acr-eular-switch")
 @
 
-<<sim6-haq-tables, cache=TRUE, echo=FALSE, include=FALSE>>=
+<<sim6-haq-tables, cache=FALSE, echo=FALSE, include=FALSE>>=
 summary_table <- function(x, digits = 2){
   # table output
   table.mean <- cbind(x$acr.mean, x$acr.o.mean, x$eular.mean, x$dhaq.mean)
   table.lower <- cbind(x$acr.lower, x$acr.o.lower, x$eular.lower, x$dhaq.lower)
   table.upper <- cbind(x$acr.upper, x$acr.o.upper, x$eular.upper, x$dhaq.upper)
-  ftable.mean <- formatC(table.mean, format = "f", digits = digits)
-  ftable.lower <- formatC(table.lower, format = "f", digits = digits)
-  ftable.upper <- formatC(table.upper, format = "f", digits = digits)
+  ftable.mean <- trimws(formatC(table.mean, format = "f", digits = digits))
+  ftable.lower <- trimws(formatC(table.lower, format = "f", digits = digits))
+  ftable.upper <- trimws(formatC(table.upper, format = "f", digits = digits))
+  ftable.mean[ftable.mean == "NA"] <- ""
+  ftable.lower[ftable.lower == "NA"] <- ""
+  ftable.upper[ftable.upper == "NA"] <- ""
   ftable <- paste0(ftable.mean, " (", ftable.lower, ", ", ftable.upper, ")")
+  ftable[ftable == " (, )"] <- "-"
   ftable <- matrix(ftable, nrow = nrow(ftable.mean), ncol = ncol(ftable.mean))
+  ftable <- trimws(ftable)
   cn <- c("acrl20", "acr20-50", "acr50-70", "acr70+", "acr20", "acr50", "acr70",
                            "eular_nr", "eular_mr", "eular_gr", "dhaq")
   colnames(ftable) <- cn
