@@ -77,7 +77,7 @@ sim_haq <- function(arminds, input_data, pars,
                     cdmards_ind = which(therapy.pars$info$sname == "cdmards"),
                     nbt_ind = which(therapy.pars$info$sname == "nbt"),
                     check = TRUE){
-  if (class(arminds) == "numeric") arminds <- matrix(arminds, nrow = 1)
+  if (class(arminds) %in% c("numeric", "integer")) arminds <- matrix(arminds, nrow = 1)
   if (!nrow(arminds) %in% c(1, length(input_data$haq0))){
     stop("Number of treatment sequences must either be the same for each patient or equal to the number of patients
          in input_data")
