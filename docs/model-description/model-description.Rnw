@@ -123,6 +123,8 @@
 \newcommand\CPP{{C\texttt{++}}}
 \newcommand\R{{\textsf{R}}}
 \newcommand*\sameaff[1][\value{footnote}]{\footnotemark[#1]}
+\newcommand\floor[1]{\lfloor#1\rfloor}
+\newcommand\ceil[1]{\lceil#1\rceil}
 
 % title
 \title{A Description of the IVI-RA Model v0.1}
@@ -156,7 +158,7 @@ return(x)
 
 \section{Overview}\label{overview}
 
-This document describes version 0.1 of the Innovation and Value Initiative's (IVIs) rheumatoid arthritis (RA) cost-effectiveness model. The IVI-RA model is an individual patient simulation (IPS) that simulates patients one at a time. The model reflects a range of perspectives (e.g., health care sector, societal) and structural assumptions. All told, there are 336 different model structures, which allows analysts to account for structural uncertainty. Parameter uncertainty is quantified with probabilistic sensitivity analysis (PSA).
+This document describes version 0.1 of the Innovation and Value Initiative's (IVIs) rheumatoid arthritis (RA) cost-effectiveness model. The IVI-RA model is an individual patient simulation (IPS) that simulates patients one at a time. The model can be run with multiple perspectives (e.g., health care sector, societal) and accounts for both parameter and structural uncertainty. Since the range of defendable scientific approaches is large, the IVI-RA model consists of 336 possible model structures. Structural uncertainty can be quantified by estimating cost-effectiveness across these 336 model structures and parameter uncertainty is quantified using probabilistic sensitivity analysis (PSA). 
 
 % The model is available as an \href{https://cran.r-project.org/}{\R{}} package with documentation available \href{https://innovationvalueinitiative.github.io/IVI-RA/index.html}{online}. The source code can be viewed or downloaded at our \href{https://github.com/InnovationValueInitiative/IVI-RA}{GitHub repository}. The IPS was primarily written in \CPP{} so that PSA and analyses of structural uncertainty can be run in a reasonable amount of time. The model can either be run using \R{} (see \href{https://innovationvalueinitiative.github.io/IVI-RA/index.html}{documentation}) or \href{http://www.shinyapps.io/}{online} with our user-friendly R Shiny web application. 
 
@@ -1215,8 +1217,6 @@ Notes: Baseline HAQ is 1 for the ``Constant HAQ'' and ``HAQ increase of 0.03 per
 
 \subsection{Cost}\label{cost}
 <<treat_cost, echo = FALSE, include = FALSE>>=
-set.seed(100)
-
 # cost for non-weight based dosing
 tab = copy(therapy.pars$cost)
 tab[, init_cost := init_dose_val/strength_val * init_num_doses * wac_per_unit + init_num_doses * infusion_cost]
@@ -1237,14 +1237,16 @@ tab[sname == "ifx", ann_cost := ann.cost.ifx]
 tab1 <- tab[, .(name, dosage, strength_dosage_form)]
 tab2 <- tab[, .(init_num_doses, ann_num_doses, wac_per_unit, infusion_cost, 
                               init_cost, ann_cost)]
+tab2[, ann_num_doses := round(ann_num_doses, 2)]
 tab2f <- matrix(NA, nrow = nrow(tab2), ncol = ncol(tab2))
 for (i in 1:ncol(tab2)){
-  if (names(tab2)[i] == "wac_per_unit"){
+  if (names(tab2)[i] %in% c("ann_num_doses", "wac_per_unit")){
       tab2f[, i] <- formatC(tab2[[i]], format = "f", digits = 2, big.mark = ",")
   } else{
       tab2f[, i] <- formatC(tab2[[i]], format = "d", big.mark = ",") 
   }
 }
+tab2f[, 2] <- sub(".00", "", tab2f[, 2])
 tab <- cbind(tab1, tab2f)
 tab[, name := first_upper(name)]
 tex <- print(xtable(tab), 
@@ -1253,10 +1255,9 @@ tex <- print(xtable(tab),
       file = "tables/treat-cost.txt")
 @
 
-An overview of drug acquisition and administration costs is presented in \autoref{tbl:treat-cost}. Costs are a function of dose and frequency of administration, strength and dosage form, the wholesale acquisition cost (WAC), and infusion costs. Since infliximab dosing depend on patient weight, the costs for infliximab reported in the table average over a patient population that is \Sexpr{male.prop}\% male. The WACs in the table do not include discounts or rebates so they may be higher than actual drug costs.
+An overview of drug acquisition and administration costs is presented in \autoref{tbl:treat-cost}. Costs are a function of dose and frequency of administration, strength and dosage form, the wholesale acquisition cost (WAC), and infusion costs. Since infliximab dosing depend on patient weight, the costs for infliximab reported in the table average over a patient population that is \Sexpr{male.prop}\% male. The WACs in the table do not include discounts or rebates so they may be higher than actual drug costs. The methodology used to calculate drug acquisition and administration costs is described in more detail in \autoref{app:treat-cost}.
 
-\begin{landscape}
-\begin{table}[H]
+\begin{sidewaystable}
 \begin{center}
 \begin{threeparttable}
 \caption{Drug acquisition and administration cost} \label{tbl:treat-cost}
@@ -1279,8 +1280,7 @@ An overview of drug acquisition and administration costs is presented in \autore
 Notes: Costs do not include rebates or discounts. Cost for infliximab are calculated by assuming that \Sexpr{male.prop}\% of patients are male and that the weight of men and women are \Sexpr{wtmale} kg and \Sexpr{wtfemale} kg respectively. Tocilizumab is dosed weekly if weight is greater than 100 kg; costs for tocilizumab reported in the table are for patients weighing less than 100 kg. IV = intravenous; SC = subcutaneous; WAC = wholesale acquisition cost. 
 \end{threeparttable}
 \end{center}
-\end{table}
-\end{landscape}
+\end{sidewaystable}
 
 Parameters associated with resource use are show in in \autoref{tbl:resource-use-pars}. Costs related to physician visits, chest X-rays, tuberculosis tests, and outpatient follow-up are based on \citet{claxton2016economic}. The cost per hospital day and the relationship between the HAQ score and the annual number of hospital days are from \citet{carlson2015economic}. Cost of any serious infection are assumed to be equal to the cost of pneumonia hospitalization at \$5,873, based on Medicare reimbursement rates. \citet{wolfe2005household} provide an estimate of annual income loss in relation to HAQ scores: \$4,372 (95\% CI: 2,078 to 6,607; 2002 dollars) change per unit HAQ change, which are inflated to 2016 dollars.
 
@@ -1915,6 +1915,28 @@ We sampled from the mixture model as follows.
 \end{enumerate}
 \end{enumerate}
 
+\section{Drug acquisition and administration costs}\label{app:treat-cost}
+<<ada_cost, echo = FALSE, include = FALSE>>=
+ada.cost <- therapy.pars$cost[sname == "ada"]
+ifx.cost <- therapy.pars$cost[sname == "ifx"]
+@
+
+Drug acquisition and administration costs are calculated separately during the initial treatment phase and the maintenance phase since dosing typically differs. Costs are separated into acquisition costs and infusion costs. Infusion costs are calculated by multiplying the number of doses in a 6 month period by the cost of an infusion and acquisition costs are calculated as,
+
+\begin{align}
+cost = \left\lceil\frac{dose_{amt}}{strength_{amt}}\right\rceil \cdot doses_{num} \cdot WAC,
+\end{align}
+
+where $\lceil\rceil$ is the ceiling function and implies that products cannot be reused after opening, $dose_{amt}$ is the recommended dose of the drug, $strength_{amt}$ is the strength of the drug, $doses_{num}$ is the number of doses in a 6 month period, and $WAC$ is the WAC. For example, as shown in \autoref{tbl:treat-cost}, both the strength and the dose are 50 mg, so costs are calculated by multiplying the number of doses (\Sexpr{ada.cost$init_num_doses}) by the WAC (\$\Sexpr{formatC(ada.cost$wac_per_unit, format = "f", big.mark = ",", digits = 2)}).
+
+When dosing depends on weight, costs are calculated separately for each patient in the simulation. In particular, costs are calculated as,
+
+\begin{align}
+cost &= \lceil weight \cdot dose_{amt}/strength_{amt}\rceil \cdot doses_{num} \cdot WAC,
+\end{align}
+
+where $\rm{weight}$ is patient weight, $dose_{amt}$ is the dose per weight, and $strength_{amt}$, $WAC$, and $doses_{num}$ are defined in the same way as in the non-weight based scenario. To illustrate, the acquisition cost for infliximab after the first 6 months is calculated by multiplying each patient's weight by the dose (6 mg/kg) and dividing by the size of a vial (100 mg), and then multiplying by the number of doses (\Sexpr{formatC(ifx.cost$ann_num_doses, format = "f", digits = 2)}) and the WAC (\$\Sexpr{formatC(ifx.cost$wac_per_unit, format = "f", big.mark = ",", digits = 2)}).  
+
 \section{Network Meta-Analysis}\label{appendix:NMA}
 
 \subsection{Systematic literature review}\label{systematic-literature-review}
@@ -1927,7 +1949,7 @@ We sampled from the mixture model as follows.
 \textbf{Interventions and comparators}
 
 \begin{itemize}
-\item Biologics as monotherapy or in combination with cDMARDs (adalimumab, certolizumab pegol, etanercept, golimumab, infliximab, abatacept, rituximab, tocilizumab, tofacitinib)
+\item Biologics as monotherapy or in combination with cDMARDs (adalimumab, certolizumab pegol, etanercept, golimumab, infliximab, abatacept, rituximab, tocilizumab, sarilumab, tofacitinib)
 
 \item cDMARDs alone or in combination (MTX, HCQ, SSZ or LEF)
 \end{itemize}
@@ -1964,7 +1986,7 @@ The following criteria were used to select relevant studies to be included in th
 \textbf{Interventions}
 
 \begin{itemize}
-\item Biologics as monotherapy or in combination with cDMARDs (adalimumab, certolizumab pegol, etanercept, golimumab, infliximab, abatacept, rituximab, tocilizumab, tofacitinib)
+\item Biologics as monotherapy or in combination with cDMARDs (adalimumab, certolizumab pegol, etanercept, golimumab, infliximab, abatacept, rituximab, tocilizumab, sarilumab, tofacitinib)
 \end{itemize}
 
 \textbf{Comparators}
@@ -1983,7 +2005,8 @@ The following criteria were used to select relevant studies to be included in th
 \end{itemize}
 
 \subsection{Identified evidence base}\label{identified-evidence-base}
-The evidence network is presented in \autoref{fig:nma-network-acr-naive}. More details about the inclusion criteria to come...
+%The evidence network is presented in \autoref{fig:nma-network-acr-naive}. 
+The evidence network and inclusion criteria to go here.
 
 % \autoref{fig:study-selection} summarizes the study identification and selection process. Of the 181 studies included in the large systematic literature review, 79 studies concerned the bDMARD-naive population (table NMA studies). There were 66 studies evaluating 36 interventions for which ACR response criteria were reported at 6 months (with a tolerability window of \(\pm 4\) weeks).  
 
@@ -2003,12 +2026,12 @@ The evidence network is presented in \autoref{fig:nma-network-acr-naive}. More d
 % \caption{Study identification and selection}\label{fig:study-selection}
 % \end{figure}
 
-\begin{figure}
-\centering
-\includegraphics{nma-network-acr-naive.pdf}
-\caption{Bayesian random effects NMA network diagram for patients naive
-to bDMARDs}\label{fig:nma-network-acr-naive}
-\end{figure}
+% \begin{figure}
+% \centering
+% \includegraphics{nma-network-acr-naive.pdf}
+% \caption{Bayesian random effects NMA network diagram for patients naive
+% to bDMARDs}\label{fig:nma-network-acr-naive}
+% \end{figure}
 
 \subsection{Statistical models for network-meta analysis}\label{app:nma-statistical-models}
 
