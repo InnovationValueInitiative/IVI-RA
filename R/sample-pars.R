@@ -776,18 +776,20 @@ survival_summary <- function(x){
 #' 
 #' @export
 par_table <- function(x, pat){
-  ### rebound factor
+  acr.cats <- c("ACR <20", "ACR 20-50", "ACR 50-70", "ACR 70+")
+  
+  # rebound factor
   rebound <- data.table(Group = "Rebound factor", 
                         Distribution = "Uniform",
                         Parameter = "Increase in HAQ as a fraction of initial response",
                         Source = "Expert opinion")
   rebound <- cbind(rebound, apply_summary(x$rebound))
   
-  ### acr2eular
+  # acr2eular
   n <- dim(x$acr2eular)[3]
   acr2eular.mat <- aperm(x$acr2eular, c(3,2,1))
   dim(acr2eular.mat) <- c(n, nrow(x$acr2eular) * ncol(x$acr2eular))
-  acr2eular.dt <- data.table(Group = "Probability of ACR response given EULAR response", 
+  acr2eular.dt <- data.table(Group = "Probability of EULAR response given ACR response", 
                         Distribution = "Dirichlet",
                         Parameter = c("ACR <20 to EULAR no response",
                                       "ACR <20 to EULAR moderate response",
@@ -804,41 +806,42 @@ par_table <- function(x, pat){
                         Source = "Stevenson2016")
   acr2eular.dt <- cbind(acr2eular.dt, apply_summary(acr2eular.mat))
   
-  ### treatment duration overall
-  ttd.all.summary <- survival_summary(x$ttd.all)
-  ttd.all <- data.table(Group = "Treatment duration - all patients",
-                       Distribution = "Multivariate normal",
-                       Parameter = ttd.all.summary$par.names,
-                       Source = "Strand2013")
-  ttd.all <- cbind(ttd.all, ttd.all.summary$par.summry)
+  # ACR to HAQ
+  acr2haq.dt <- data.table(Group = "HAQ change by ACR response",
+                        Distribution = "Normal",
+                        Parameter = acr.cats,
+                        Source = "Carlson2015")
+  acr2haq.dt <- cbind(acr2haq.dt, apply_summary(x$acr2haq)) 
   
-  ### treatment duration by eular response
-  # moderate response
-  ttd.em.summary <- survival_summary(x$ttd.eular$moderate)
-  ttd.em <- data.table(Group = "Treatment duration - moderate EULAR response",
-                             Distribution = "Multivariate normal",
-                             Parameter = ttd.em.summary$par.names,
-                             Source = "Stevenson2016")
-  ttd.em <- cbind(ttd.em, ttd.em.summary$par.summry)
+  # ACR to DAS28
+  acr2das28.dt <- data.table(Group = "Change in DAS28 by ACR response",
+                          Distribution = "Uniform",
+                          Parameter = acr.cats,
+                          Source = "Aletaha2005")
+  acr2das28.dt <- cbind(acr2das28.dt, apply_summary(x$acr2das28)) 
   
-  # good response
-  ttd.eg.summary <- survival_summary(x$ttd.eular$good)
-  ttd.eg <- data.table(Group = "Treatment duration - good EULAR response",
-                         Distribution = "Multivariate normal",
-                         Parameter = ttd.eg.summary$par.names,
-                         Source = "Stevenson2016")
-  ttd.eg <- cbind(ttd.eg, ttd.eg.summary$par.summry)
+  # ACR to SDAI
+  acr2sdai.dt <- data.table(Group = "Change in SDAI by ACR response",
+                          Distribution = "Uniform",
+                          Parameter = acr.cats,
+                          Source = "Aletaha2005")
+  acr2sdai.dt <- cbind(acr2sdai.dt, apply_summary(x$acr2sdai)) 
   
-  ### treatment duration by disease activity
-  # remission
-  ttd.da.summary <- survival_summary(x$ttd.da)
-  ttd.da <- data.table(Group = "Treatment duration - remission",
-                       Distribution = "Multivariate normal",
-                       Parameter = ttd.da.summary$par.names,
-                       Source = "Zhang2011")
-  ttd.da <- cbind(ttd.da, ttd.da.summary$par.summry)
+  # ACR to CDAI
+  acr2cdai.dt <- data.table(Group = "Change in CDAI by ACR response",
+                         Distribution = "Uniform",
+                         Parameter = acr.cats,
+                         Source = "Aletaha2005")
+  acr2cdai.dt <- cbind(acr2cdai.dt, apply_summary(x$acr2cdai)) 
   
-  ### NMA ACR parameters
+  # EULAR to HAQ
+  eular2haq.dt <- data.table(Group = "HAQ change by EULAR response",
+                          Distribution = "Normal",
+                          Parameter = c("No response", "Moderate response", "Good response"),
+                          Source = "Stevenson2016")
+  eular2haq.dt <- cbind(eular2haq.dt, apply_summary(x$eular2haq))
+  
+  # NMA ACR parameters
   ## coefficients
   acr.pars <- apply_summary(x$acr$pars)
   colnames(acr.pars) <- c("Mean", "SD", "Lower", "Upper")
@@ -857,7 +860,7 @@ par_table <- function(x, pat){
                         Source = "Carlson2015")
   acr.rr <- cbind(acr.rr, apply_summary(x$acr$rr))
   
-  ### NMA DAS28 parameters
+  # NMA DAS28 parameters
   ## coefficients
   das28.pars <- apply_summary(x$das28$pars)
   colnames(das28.pars) <- c("Mean", "SD", "Lower", "Upper")
@@ -875,7 +878,7 @@ par_table <- function(x, pat){
                        Source = "Carlson2015")
   das28.rr <- cbind(das28.rr, apply_summary(x$das28$rr))
   
-  ### NMA haq parameters
+  # NMA haq parameters
   ## coefficients
   haq.pars <- apply_summary(x$haq$pars)
   colnames(haq.pars) <- c("Mean", "SD", "Lower", "Upper")
@@ -893,21 +896,48 @@ par_table <- function(x, pat){
                          Source = "Carlson2015")
   haq.rr <- cbind(haq.rr, apply_summary(x$haq$rr))
   
-  ### haq change eular response
-  hce <- data.table(Group = "HAQ change by Eular response",
-                    Distribution = "Normal",
-                    Parameter = c("No response", "Moderate response", "Good response"),
-                    Source = "Stevenson2016")
-  hce <- cbind(hce, apply_summary(x$eular2haq))
+  # treatment duration overall
+  ttd.all.summary <- survival_summary(x$ttd.all)
+  ttd.all <- data.table(Group = "Treatment duration - all patients",
+                        Distribution = "Multivariate normal",
+                        Parameter = ttd.all.summary$par.names,
+                        Source = "Strand2013")
+  ttd.all <- cbind(ttd.all, ttd.all.summary$par.summry)
   
-  ### constant linear haq progression by therapy
+  # treatment duration by eular response
+  # moderate response
+  ttd.em.summary <- survival_summary(x$ttd.eular$moderate)
+  ttd.em <- data.table(Group = "Treatment duration - moderate EULAR response",
+                       Distribution = "Multivariate normal",
+                       Parameter = ttd.em.summary$par.names,
+                       Source = "Stevenson2016")
+  ttd.em <- cbind(ttd.em, ttd.em.summary$par.summry)
+  
+  ## good response
+  ttd.eg.summary <- survival_summary(x$ttd.eular$good)
+  ttd.eg <- data.table(Group = "Treatment duration - good EULAR response",
+                       Distribution = "Multivariate normal",
+                       Parameter = ttd.eg.summary$par.names,
+                       Source = "Stevenson2016")
+  ttd.eg <- cbind(ttd.eg, ttd.eg.summary$par.summry)
+  
+  # treatment duration by disease activity
+  ## remission
+  ttd.da.summary <- survival_summary(x$ttd.da)
+  ttd.da <- data.table(Group = "Treatment duration by disease activity",
+                       Distribution = "Multivariate normal",
+                       Parameter = ttd.da.summary$par.names,
+                       Source = "Zhang2011")
+  ttd.da <- cbind(ttd.da, ttd.da.summary$par.summry)
+  
+  # Constant linear haq progression by therapy
   lhpt <- data.table(Group = "Yearly HAQ progression by therapy",
                     Distribution = "Normal",
                     Parameter = therapy.pars$info$mname,
                     Source = "Wolfe2010")
   lhpt <- cbind(lhpt, apply_summary(x$haq.lprog.therapy))
   
-  ### constant linear haq progression by age
+  # Constant linear haq progression by age
   lhpa <- data.table(Group = "Yearly HAQ progression by age relative to overall",
                     Distribution = "Normal",
                     Parameter = rownames(haq.lprog.age),
@@ -915,8 +945,8 @@ par_table <- function(x, pat){
   lhpa <- cbind(lhpa, apply_summary(x$haq.lprog.age))
   
   
-  ### haq progression latent class growth model
-  # delta
+  # HAQ progression latent class growth model
+  ## delta
   haq.lcgm.delta <- apply_summary(x$haq.lcgm$delta)
   delta.names <- list()
   delta.vars <- c("Intercept", "Age", "Female", "DAS28", "Disease duration", "Rheumatoid factor", "ACR criteria", "IMDQ4")
@@ -924,7 +954,7 @@ par_table <- function(x, pat){
     delta.names[[i]] <- paste0("Probability of class ", i, " membership - ", delta.vars)
   }
   
-  # beta
+  ## beta
   haq.lcgm.beta <- apply_summary(x$haq.lcgm$beta)
   beta.names <- list()
   beta.vars <- c("Intercept", "Linear", "Quadratic", "Cubic")
@@ -940,14 +970,14 @@ par_table <- function(x, pat){
                      Source = "Norton2014")
   haq.lcgm <- cbind(haq.lcgm, rbind(haq.lcgm.delta, haq.lcgm.beta))
   
-  ### mortality - coefficient baseline HAQ (logit scale)
+  # mortality - coefficient baseline HAQ (logit scale)
   lo.mort <- data.table(Group = "Log odds mortality", 
                         Distribution = "Normal",
                         Parameter = "Baseline HAQ",
                         Source = "Wolfe2003")
   lo.mort <- cbind(lo.mort, apply_summary(x$logor.mort))
   
-  ### mortality - log hazard ratio change in HAQ from baseline
+  # mortality - log hazard ratio change in HAQ from baseline
   lhr.mort.months <- c("0 - 6", ">6 - 12", ">12 - 24", ">24 - 36", ">36")
   lhr.mort <- data.table(Group = "Log hazard ratio mortality", 
                          Distribution = "Normal",
@@ -965,7 +995,7 @@ par_table <- function(x, pat){
                                         x$lt$male[, "qx", drop = FALSE]))))
   lt$SD <- 0
   
-  ### treatment cost
+  # treatment cost
   tc.pars <- rep(c("Cost first 6 months", "Annual cost 6+ months"), 
                    each = nrow(x$treat.cost))
   tc <- data.table(Group = "Treatment cost", 
@@ -973,12 +1003,12 @@ par_table <- function(x, pat){
                    Parameter = paste0(tc.pars, " - ", x$treat.cost$mname),
                    Source = "Label")
   
-  # non-weight based therapies
+  ## non-weight based therapies
   tmp = copy(x$treat.cost)
   tmp[, init_treat_cost := init_infusion_cost + init_rx_cost]
   tmp[, ann_treat_cost := ann_infusion_cost + ann_rx_cost]
   
-  # weight-based therapy
+  ## weight-based therapy
   tmpw <- tmp[sname == "ifxmtx"]
   tmpw.mat <- as.matrix(tmpw[, .(init_wgt_slope, ann_wgt_slope, init_util,
                                  ann_util, strength, price)])
@@ -997,30 +1027,30 @@ par_table <- function(x, pat){
   tmp[sname %in% c("ifxmtx"), init_treat_cost := init.wcost + init_treat_cost]
   tmp[sname %in% c("ifxmtx"), ann_treat_cost := ann.wcost + ann_treat_cost]
   
-  # making table
+  ## making table
   tc2 <- data.table(Mean = c(as.matrix(tmp[, .(init_treat_cost, ann_treat_cost)])))
   tc2[, ':=' (SD = 0, Lower = Mean, Upper = Mean)]
   tc2[, SD := ifelse(is.na(Mean), NA, SD)]
   tc <- cbind(tc, tc2)
   
-  ### hospital cost
+  # hospital cost
   haq.grps <- c("0 - <0.5", "0.5 - <1", "1 - <1.5", "1.5 - <2",
                 "2 - <2.5", ">2.5")
-  ## number of hospital days
+  # number of hospital days
   hdays <- data.table(Group = "Days in hospital per year",
                       Distribution = "Gamma",
                       Parameter = paste0("HAQ: ", haq.grps),
                       Source = "Carlson2015")
   hdays <- cbind(hdays, apply_summary(x$hosp.cost$hosp.days))
     
-  ## cost per hospital day
+  # cost per hospital day
   hcost <- data.table(Group = "Cost per day in hospital",
                       Distribution = "Gamma",
                       Parameter = paste0("HAQ: ", haq.grps),
                       Source = "Carlson2015")
   hcost <- cbind(hcost, apply_summary(x$hosp.cost$cost.pday))
   
-  ### general management cost
+  # general management cost
   mgmt.summary <- apply_summary(x$mgmt.cost)
   mgmt.dist <- ifelse(mgmt.summary[, "SD"] == 0, "Fixed", "Gamma")
   mgmt <- data.table(Group = "General management cost",
@@ -1029,14 +1059,14 @@ par_table <- function(x, pat){
                                    "Outpatient followup", "Mantoux tuberculin skin test"),
                      Source = "Claxton2016", mgmt.summary)
   
-  ### productivity loss
+  # productivity loss
   prod.loss <- data.table(Group = "Productivity loss",
                       Distribution = "Normal",
                       Parameter = "Regression coefficient - HAQ",
                       Source = "Wolfe2005")
   prod.loss <- cbind(prod.loss, apply_summary(x$prod.loss))
   
-  ### serious infection
+  # serious infection
   ## rate
   ttsi.summary <- survival_summary(x$ttsi)
   ttsi <- data.table(Group = "Time to serious infection",
@@ -1059,7 +1089,7 @@ par_table <- function(x, pat){
                         Source = "Stevenson2016")
   si.ul <- cbind(si.ul, apply_summary(x$si.ul)) 
   
-  ### utility mixture model
+  # utility mixture model
   ## labels
   b.vars <- list()
   for (i in 1:4){
@@ -1077,7 +1107,7 @@ par_table <- function(x, pat){
                         "Variance", do.call("c", d.vars)),
                      Source = "Hernandez2013")
   ## extract parameters
-  # predictors - classes
+  ### predictors - classes
   b <- list()
   for (i in 1:4){
     b[[i]] <- apply_summary(cbind(x$mixture.utility[[paste0("alpha", i)]], 
@@ -1085,10 +1115,10 @@ par_table <- function(x, pat){
   }
   b <- do.call("rbind", b)
   
-  # predictor - male
+  ### predictor - male
   alpha.male <- apply_summary(x$mixture.utility$alpha)
   
-  # variance
+  ### variance
   v <- list()
   for (i in 1:4){
     v[[i]] <- apply_summary(x$mixture.utility[[paste0("epsilon", i)]])
@@ -1096,14 +1126,14 @@ par_table <- function(x, pat){
   v <- do.call("rbind", v)
   v <- rbind(v, apply_summary(x$mixture.utility$mu))
   
-  # probability - class membership
+  ### probability - class membership
   d <- apply_summary(x$mixture.utility$delta)
   
   ## combine labels and parameters
   util.parsum <- rbind(b, alpha.male, v, d)
   util <- cbind(util, util.parsum)
   
-  ### utility model wailoo
+  # utility model wailoo
   util.wailoo <- data.table(Group = "Utility model Wailoo",
                       Distribution = "Normal",
                       Parameter =  c("Intercept", "Age", "Disease duration", "Baseline HAQ",
@@ -1112,9 +1142,11 @@ par_table <- function(x, pat){
   util.wailoo <- cbind(util.wailoo, apply_summary(x$wailoo.utility)) 
                     
   # table 
-  table <- rbind(rebound, acr2eular.dt, ttd.all, ttd.em, ttd.eg, ttd.da,
+  table <- rbind(rebound, acr2eular.dt, acr2das28.dt, acr2sdai.dt, acr2cdai.dt,
+                 acr2haq.dt, eular2haq.dt,
+                 ttd.all, ttd.em, ttd.eg, ttd.da,
                  acr, acr.rr, das28, das28.rr, haq, haq.rr,
-                 hce, lhpt, lhpa, haq.lcgm, lo.mort, lhr.mort, lt,
+                 lhpt, lhpa, haq.lcgm, lo.mort, lhr.mort, lt,
                  tc, hdays, hcost, mgmt, prod.loss, ttsi, si.cost, si.ul, util, util.wailoo)
   table <- table[, .(Group, Parameter, Mean, SD, Lower, Upper, Distribution, Source)]
   setnames(table, colnames(table), c("Group", "Parameter", "Posterior mean", "Posterior SD", 

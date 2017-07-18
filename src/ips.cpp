@@ -465,7 +465,11 @@ List sim_haqC(arma::mat therapies,
           
           // Update HAQ score
           if (t == 0){ // initial haq change
-            haq = haq + sim_h_t1.dhaq; 
+            if (ttd_j == 0){ // immediate rebound for patients switching treatment during the initial period
+                haq = haq + sim_h_t1.dhaq - sim_h_t1.dhaq * rebound_factor[s]; 
+            } else{
+              haq = haq + sim_h_t1.dhaq; 
+            }
           }
           else if (t > 0 && t <= ttd_j){
             if(cdmards_haq_model == "lcgm" && (therapies_ij == nbt || therapies_ij == cdmards)){

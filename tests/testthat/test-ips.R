@@ -244,13 +244,13 @@ test_that("itreat_switch", {
 
 # small integration test ------------------------------------------------------
 arms <- c(3, 1)
-pat <- sample_pats(n = 10)
+pat <- sample_pats(n = 100)
 parsamp <- sample_pars(n = 100)
 parsamp.table <- par_table(parsamp, pat)
-itreat.switch <- "acr-eular-switch"
+itreat.switch <- "acr-switch"
 input.dat <- input_data(patdata = pat, itreat_switch = itreat.switch)
 sim.out <- sim_haq(arms, input_data = input.dat, pars = parsamp, 
-                   itreat_haq = "acr-eular-haq", itreat_switch = itreat.switch,
+                   itreat_haq = "acr-haq", itreat_switch = itreat.switch,
                    cdmards_haq_model = "lcgm")
 sim.out <- cbind(sim.out, sim_hc_cost(sim.out, pat[, "weight"], pars = parsamp))
 sim.out[, prod_loss := sim_prod_loss(sim.out, pl_haq = parsamp$prod.loss)]
