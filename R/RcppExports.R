@@ -17,6 +17,10 @@ get_cdai_cat <- function(cdai) {
     .Call('iviRA_get_cdai_cat', PACKAGE = 'iviRA', cdai)
 }
 
+get_da_new <- function(da_old, da_change, lower, upper) {
+    .Call('iviRA_get_da_new', PACKAGE = 'iviRA', da_old, da_change, lower, upper)
+}
+
 #' @export
 test_itreat_switch <- function(itreat_switch_model, line, therapy, nbt, acr, eular, das28, sdai, cdai, acr2das28, acr2sdai, acr2cdai, nma_das28_1, nma_das28_2, p) {
     .Call('iviRA_test_itreat_switch', PACKAGE = 'iviRA', itreat_switch_model, line, therapy, nbt, acr, eular, das28, sdai, cdai, acr2das28, acr2sdai, acr2cdai, nma_das28_1, nma_das28_2, p)

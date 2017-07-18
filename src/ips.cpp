@@ -147,6 +147,17 @@ int get_cdai_cat(double cdai){
   return cat;
 }
 
+// [[Rcpp::export]]
+double get_da_new(double da_old, double da_change, double lower, double upper){
+  double da_new = da_old + da_change;
+  if (da_new < lower){
+    da_new = 0;
+  } else if (da_new >upper){
+    da_new = upper;
+  }
+  return da_new;
+}
+
 ItreatSwitch sim_itreat_switch(std::string itreat_switch_model, int line, int therapy, int nbt,
                   int acr, int eular, double das28, double sdai, double cdai,
                   arma::rowvec acr2das28, arma::rowvec acr2sdai,arma::rowvec acr2cdai,
@@ -168,15 +179,18 @@ ItreatSwitch sim_itreat_switch(std::string itreat_switch_model, int line, int th
            itreat_switch_model == "acr-cdai-switch") {
       if (itreat_switch_model == "acr-das28-switch"){
         da_change = acr2das28(acr);
-        sim.da_cat = get_das28_cat(das28 + da_change);
+        double das28_new = get_da_new(das28, da_change, 0, 9.4);
+        sim.da_cat = get_das28_cat(das28_new);
       }
       else if (itreat_switch_model == "acr-sdai-switch"){
         da_change = acr2sdai(acr);
-        sim.da_cat = get_sdai_cat(sdai + da_change);
+        double sdai_new = get_da_new(sdai, da_change, 0, 86);
+        sim.da_cat = get_sdai_cat(sdai_new);
       }
       else if (itreat_switch_model == "acr-cdai-switch"){
         da_change = acr2cdai(acr);
-        sim.da_cat = get_cdai_cat(cdai + da_change);
+        double cdai_new = get_da_new(cdai, da_change, 0, 76);
+        sim.da_cat = get_cdai_cat(cdai_new);
       }
       sim.tswitch = R::rbinom(1, p(sim.da_cat));
     }
@@ -332,7 +346,7 @@ List sim_haqC(arma::mat therapies,
   
   // Declarations
   int counter = 0;
-  double cage_i = 0; // continuous age
+  double cage_i = 0.0; // continuous age
   int age_i = 0;
   arma::rowvec therapies_i = therapies.row(0);
   int therapies_ij = 0;
@@ -454,8 +468,8 @@ List sim_haqC(arma::mat therapies,
             haq = haq + sim_h_t1.dhaq; 
           }
           else if (t > 0 && t <= ttd_j){
-            if(cdmards_haq_model == "lcgm" && (therapies_ij == nbt | therapies_ij == cdmards)){
-                haq = haq + sim_dhaq_lcgm1C(t_cdmards * cycle_length/12, cycle_length, cage_i, 1 - male[i],
+            if(cdmards_haq_model == "lcgm" && (therapies_ij == nbt || therapies_ij == cdmards)){
+                haq = haq + sim_dhaq_lcgm1C(2.5 + t_cdmards * cycle_length/12, cycle_length, cage_i, 1 - male[i],
                                            das28_0[i], haq_lcgm_delta.slice(s), haq_lcgm_beta.slice(s));
             } else{
               update_haq_t(haq, as_scalar(haq_lprog_therapy.row(s).col(therapies_ij)),

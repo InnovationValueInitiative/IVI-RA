@@ -60,6 +60,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// get_da_new
+double get_da_new(double da_old, double da_change, double lower, double upper);
+RcppExport SEXP iviRA_get_da_new(SEXP da_oldSEXP, SEXP da_changeSEXP, SEXP lowerSEXP, SEXP upperSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type da_old(da_oldSEXP);
+    Rcpp::traits::input_parameter< double >::type da_change(da_changeSEXP);
+    Rcpp::traits::input_parameter< double >::type lower(lowerSEXP);
+    Rcpp::traits::input_parameter< double >::type upper(upperSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_da_new(da_old, da_change, lower, upper));
+    return rcpp_result_gen;
+END_RCPP
+}
 // test_itreat_switch
 List test_itreat_switch(std::string itreat_switch_model, int line, int therapy, int nbt, int acr, int eular, double das28, double sdai, double cdai, arma::rowvec acr2das28, arma::rowvec acr2sdai, arma::rowvec acr2cdai, arma::rowvec nma_das28_1, arma::rowvec nma_das28_2, arma::rowvec p);
 RcppExport SEXP iviRA_test_itreat_switch(SEXP itreat_switch_modelSEXP, SEXP lineSEXP, SEXP therapySEXP, SEXP nbtSEXP, SEXP acrSEXP, SEXP eularSEXP, SEXP das28SEXP, SEXP sdaiSEXP, SEXP cdaiSEXP, SEXP acr2das28SEXP, SEXP acr2sdaiSEXP, SEXP acr2cdaiSEXP, SEXP nma_das28_1SEXP, SEXP nma_das28_2SEXP, SEXP pSEXP) {
@@ -611,6 +625,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"iviRA_get_das28_cat", (DL_FUNC) &iviRA_get_das28_cat, 1},
     {"iviRA_get_sdai_cat", (DL_FUNC) &iviRA_get_sdai_cat, 1},
     {"iviRA_get_cdai_cat", (DL_FUNC) &iviRA_get_cdai_cat, 1},
+    {"iviRA_get_da_new", (DL_FUNC) &iviRA_get_da_new, 4},
     {"iviRA_test_itreat_switch", (DL_FUNC) &iviRA_test_itreat_switch, 15},
     {"iviRA_sim_ttd_eular", (DL_FUNC) &iviRA_sim_ttd_eular, 11},
     {"iviRA_sim_ttd", (DL_FUNC) &iviRA_sim_ttd, 9},
