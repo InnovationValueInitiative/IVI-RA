@@ -466,7 +466,8 @@ List sim_haqC(arma::mat therapies,
           // Update HAQ score
           if (t == 0){ // initial haq change
             if (ttd_j == 0){ // immediate rebound for patients switching treatment during the initial period
-                haq = haq + sim_h_t1.dhaq - sim_h_t1.dhaq * rebound_factor[s]; 
+                // haq = haq + sim_h_t1.dhaq - sim_h_t1.dhaq * rebound_factor[s]; 
+                haq = haq;
             } else{
               haq = haq + sim_h_t1.dhaq; 
             }
