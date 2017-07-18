@@ -17,10 +17,9 @@ Imports:
     Rcpp,
     data.table,
     MASS,
-    tmvtnorm
+    msm,
+    tmvtnorm,
 Suggests:
     testthat,
     flexsurv,
-    msm,
-    truncnorm
 RoxygenNote: 6.0.1
