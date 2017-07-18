@@ -18,8 +18,8 @@ Imports:
     data.table,
     MASS,
     msm,
-    tmvtnorm,
+    tmvtnorm
 Suggests:
     testthat,
-    flexsurv,
+    flexsurv
 RoxygenNote: 6.0.1
