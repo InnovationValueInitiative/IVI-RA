@@ -86,6 +86,23 @@ sample_pats <- function(n = 1, type = c("homog", "heterog"), age_mean = 55, age_
   return(x)
 }
 
+#' Sample disease activity levels and HAQ 
+#'
+#' Sample disease activity levels and HAQ from a truncated multivariate normal distribution.
+#' 
+#' @param n Number of samples.
+#' @param mean Mean vector.
+#' @param sigma Covariance matrix.
+#' @param lower Vector of lower truncation points.
+#' @param upper Vector of upper truncation points. 
+#' @keywords internal
+sample_rtmvnorm_da <- function(n, mean, sigma, lower, upper){
+  da <- tmvtnorm::rtmvnorm(n, mean = mu, sigma = covmat,
+                           lower = rep(-1, length(mu)),
+                           upper = c(9.4, 86, 76, 3),
+                           algorithm = "rejection")
+}
+
 #' Lifetable for simulation
 #' 
 #' Generate lifetable matrix for use in simulation

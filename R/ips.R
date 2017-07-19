@@ -1,3 +1,44 @@
+#' Select model structure
+#'
+#' Select the model structure to be used in the IVI-RA individual patient simulation.
+#' 
+#' @param itreat_haq Model structure relating treatment to HAQ during the first 6 months of 
+#' treatment.
+#' @param itreat_switch Model structure relating treatment to switching during the first
+#' 6 months of treatment.
+#' @param cdmards_haq_model Model used for long-term HAQ progression.
+#' @param utility_model Model used to estimate patient utility as a function of HAQ and patient
+#' characteristics.
+#' @export
+select_model_structure <- function(itreat_haq = c("acr-haq", "acr-eular-haq", "haq"),
+                                   itreat_switch = c("acr-switch", "acr-das28-switch",
+                                                     "acr-sdai-switch", "acr-cdai-switch", 
+                                                     "das28-switch", "acr-eular-switch"),
+                                   cdmards_haq_model = c("lcgm", "linear"), 
+                                   utility_model = c("mixture", "wailoo")){
+  itreat.haq <- match.arg(itreat_haq)
+  itreat.switch <- match.arg(itreat_switch)
+  cdmards.haq_model <- match.arg(cdmards_haq_model)
+  utility.model <- match.arg(utility_model)
+  if (itreat.haq == "acr-haq"){
+      if (itreat.switch == "acr-eular-switch"){
+        stop ("'acr-eular-switch' cannot be used when itreat_haq equals 'acr-haq'.")
+      }
+  }
+  if (itreat.haq == "haq"){
+      if (itreat.switch != "das28-switch"){
+        stop("Only 'das28-swtich' can be used when itreat_haq equals 'haq'")
+      }
+  }
+  model.structure <- c("itreat_haq" = itreat.haq, "itreat_switch" = itreat.switch,
+                       "cdmards_haq_model" = cdmards.haq_model,
+                       "utility_model" = utility.model)
+  class(model.structure) <- "model_structure"
+  return(model.structure)
+}
+
+
+
 #' Simulate HAQ over time
 #'
 #' An individual patient simulation of HAQ scores for rheumatoid arthritis patients given a sequence of J 
