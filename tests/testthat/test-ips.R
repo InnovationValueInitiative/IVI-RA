@@ -4,6 +4,36 @@ library("data.table")
 source("../../data-raw/func.R")
 seed <- runif(1, 0, 1000)
 
+# select_model_structure ------------------------------------------------------
+test_that("sim_duration_eular", {
+  
+  expect_error(
+    select_model_structure(itreat_haq = "acr-haq", 
+                           itreat_switch = "acr-eular-switch")
+  )
+  expect_error(
+    select_model_structure(itreat_haq = "haq", 
+                           itreat_switch = "acr-switch")
+  )
+  expect_error(
+    select_model_structure(itreat_haq = "haq", 
+                           itreat_switch = "acr-das28-switch")
+  )
+  expect_error(
+    select_model_structure(itreat_haq = "haq", 
+                           itreat_switch = "cr-sdai-switch")
+  )
+  expect_error(
+    select_model_structure(itreat_haq = "haq", 
+                           itreat_switch = "cr-sdai-switch")
+  )
+  expect_error(
+    select_model_structure(itreat_haq = "haq", 
+                           itreat_switch = "acr-eular-switch")
+  )
+  
+})
+
 # Test C++ function sim_duration ----------------------------------------------
 # Data for testing
 dists <- c("exp", "weibull", "gompertz", "lnorm", "llogis", "gamma", "gengamma")
@@ -243,8 +273,9 @@ test_that("itreat_switch", {
 })
 
 # small integration test ------------------------------------------------------
+# V1
 arms <- c(3, 1)
-pat <- sample_pats(n = 100)
+pat <- sample_pats(n = 10)
 parsamp <- sample_pars(n = 100)
 parsamp.table <- par_table(parsamp, pat)
 itreat.switch <- "acr-switch"
@@ -258,3 +289,12 @@ sim.out <- cbind(sim.out, sim_utility_mixture(sim.out, male = input.dat$male,
                                       pars = c(pain, parsamp$mixture.utility)))
 sim.out[, qalys := sim_qalys(sim.out, sim.out$utility, si_ul = parsamp$si.ul)]
 util.wailoo <- sim_utility_wailoo(sim.out, input.dat, parsamp$wailoo.utility)
+
+# V2
+mod.struct <- select_model_structure(itreat_haq = "acr-eular-haq",
+                                     itreat_switch = "acr-eular-switch",
+                                     cdmards_haq_model = "lcgm",
+                                     utility_model = "mixture")
+pop <- sample_pats(n = 10)
+parsamp <- sample_pars(n = 100)
+
