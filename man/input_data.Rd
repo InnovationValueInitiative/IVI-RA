@@ -4,8 +4,7 @@
 \alias{input_data}
 \title{Input data for simulation}
 \usage{
-input_data(patdata, vars_mort = NULL, vars_ttd = NULL,
-  itreat_switch = NULL)
+input_data(patdata, vars_mort = NULL, vars_ttd = NULL, model_structure)
 }
 \arguments{
 \item{patdata}{Matrix of patient data. Must contain variables generated from \link{sample_pats}:
@@ -18,7 +17,8 @@ for number of previous DMARDs.}
 
 \item{vars_ttd}{A character vector of variables in \code{patdata} to be used to predict treatment
 duration. Use '1' to include an intercept. 
-@param itreat_switch Pathway used to model treatment switching during initial treatment phase.}
+@param model_structure An object of class \code{model_structure} generated from 
+\link{select_model_structure}.}
 }
 \value{
 A list containing the following data inputs:

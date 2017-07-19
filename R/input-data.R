@@ -117,7 +117,8 @@ lt_data <- function(ltfemale, ltmale){
 #'  'qx' (using odds ratios) in the lifetables. Use '1' to include an intercept. 
 #' @param vars_ttd A character vector of variables in \code{patdata} to be used to predict treatment
 #'  duration. Use '1' to include an intercept. 
-#'  @param itreat_switch Pathway used to model treatment switching during initial treatment phase.
+#'  @param model_structure An object of class \code{model_structure} generated from 
+#'  \link{select_model_structure}.
 #' 
 #' @return A list containing the following data inputs:
 #' \describe{
@@ -131,12 +132,12 @@ lt_data <- function(ltfemale, ltmale){
 #' }
 #' 
 #' @export
-input_data <- function(patdata, vars_mort = NULL, vars_ttd = NULL, itreat_switch = NULL){
+input_data <- function(patdata, vars_mort = NULL, vars_ttd = NULL, model_structure){
   if (is.null(vars_mort)){
     x.mort <- patdata[, "haq0", drop = FALSE]
   }
   if (is.null(vars_ttd)){
-    if (itreat_switch %in% c("acr-switch", "acr-eular-switch")){
+    if (model_stucture["itreat_haq"] %in% c("acr-switch", "acr-eular-switch")){
         x.ttd <- matrix(1, nrow = nrow(patdata), ncol = 1)
     } else{
         x.ttd <- matrix(c(1, 0, 0), nrow = nrow(patdata), ncol = 3, byrow = TRUE)
