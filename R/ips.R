@@ -1,3 +1,113 @@
+#' The IVI-RA simulation
+#'
+#' Run the IVI-RA individual patient simulation model.
+#' 
+#' @param arms Name of arms in the treatment treatment sequence. May be a vector consisting of 
+#' a single treatment sequence or a matrix of unique sequences for each patient.
+#' @param input_data An object of class 'input_data' returned from \link{get_input_data}.
+#' @param pars List of sampled parameter values generated from \link{sample_pars}.
+#' @param model_structure Object of class model structure generated from \link{sample_pars}.
+#' @export 
+sim_iviRA <- function(arms, input_data, pars, model_structure,
+                    ttd_dist = "lnorm", si_dist = "exp", max_months = NULL, 
+                    cdmards_ind = which(therapy.pars$info$sname == "cdmards"),
+                    nbt_ind = which(therapy.pars$info$sname == "nbt"),
+                    check = TRUE){
+  
+  # PREPPING FOR THE SIMULATION
+  ## check correct object types used as arguments
+  if (!inherits(input_data, "input_data")){
+    stop("The argument 'input_data' must be of class 'input_data'")
+  }
+  if (!inherits(model_structure, "model_structure")){
+      stop("The argument 'model_structure' must be of class 'model_structure'")
+  }
+  
+  ## treatment arms
+  arminds <- which(therapy.pars$info$sname %in% arms)
+  if (is.vector(arminds)) arminds <- matrix(arminds, nrow = 1)
+  
+  ## default internal values
+  treat_gap <- 0
+  cycle_length <- 6
+  if (is.null(max_months)){
+    max_months <- 12 * 150
+  }
+  prob.switch.da <- matrix(rep(c(0, 0, 1, 1), each = pars$n), ncol = 4)
+  
+  ## indexing
+  cdmards.ind <- cdmards_ind - 1
+  nbt.ind <- nbt_ind - 1
+  arminds <- arminds - 1
+  
+  ## survival parameters
+  pars.ttd.all <- pars$ttd.all[[ttd_dist]]
+  pars.ttd.da <- pars$ttd.da[[ttd_dist]]
+  pars.ttd.em <- pars$ttd.eular$moderate[[ttd_dist]]
+  pars.ttd.eg <- pars$ttd.eular$good[[ttd_dist]]
+  pars.si <- pars$ttsi[[si_dist]]
+  
+  # RUNNING THE SIMULATION
+  ## simulate HAQ progression
+  sim.out <- sim_haq(arminds, input_data$haq0, input_data$das28,
+                     input_data$sdai, input_data$cdai,
+                     input_data$age, input_data$male, 
+                     input_data$prev.dmards,
+                     model_structure["itreat_haq"], model_structure["itreat_switch"],
+                     pars$acr$p1, pars$acr$p2, pars$haq$dy1, pars$haq$dy2,
+                     pars$das28$dy1, pars$das28$dy2,
+                     pars$acr2eular, pars$acr2haq, pars$eular2haq,
+                     pars$acr2das28, pars$acr2sdai, pars$acr2cdai,
+                     prob.switch.da,
+                     pars$haq.lprog.therapy, pars$haq.lprog.age,
+                     pars$haq.lcgm$delta, pars$haq.lcgm$beta, model_structure["cdmards_haq_model"],
+                     pars$rebound, pars$lt$male, pars$lt$female,
+                     input_data$x.mort, pars$logor, ttd_dist, input_data$x.ttd,
+                     pars.ttd.all$sample[, pars.ttd.all$loc.index, drop = FALSE],
+                     pars.ttd.all$sample[, pars.ttd.all$anc1.index, drop = FALSE],
+                     pars.ttd.all$sample[, pars.ttd.all$anc2.index, drop = FALSE],
+                     pars.ttd.da$sample[, pars.ttd.da$loc.index, drop = FALSE],
+                     pars.ttd.da$sample[, pars.ttd.da$anc1.index, drop = FALSE],
+                     pars.ttd.da$sample[, pars.ttd.da$anc2.index, drop = FALSE],
+                     pars.ttd.em$sample[, pars.ttd.em$loc.index, drop = FALSE], 
+                     pars.ttd.em$sample[, pars.ttd.em$anc1.index, drop = FALSE],
+                     pars.ttd.em$sample[, pars.ttd.em$anc2.index, drop = FALSE], 
+                     pars.ttd.eg$sample[, pars.ttd.eg$loc.index, drop = FALSE], 
+                     pars.ttd.eg$sample[, pars.ttd.eg$anc1.index, drop = FALSE],
+                     pars.ttd.eg$sample[, pars.ttd.eg$anc2.index, drop = FALSE],
+                     cycle_length, treat_gap, cdmards.ind, nbt.ind,
+                     pars.si$sample[, pars.si$loc.index, drop = FALSE], 
+                     pars.si$sample[, pars.si$anc1.index, drop = FALSE],
+                     pars.si$sample[, pars.si$anc2.index, drop = FALSE], 
+                     si_dist, pars$mort.loghr.haqdif, max_months)
+  
+  ## simulate health care costs
+  sim.hc <- sim_hc_cost(simhaq = sim.out, weight = input_data$weight, 
+                        treat_cost = pars$treat.cost, hosp_cost = pars$hosp.cost,
+                        mgmt_cost = pars$mgmt.cost, si_cost = pars$si.cost,
+                        cycle_length = cycle_length)
+  sim.out <- cbind(sim.out, sim.hc)
+  
+  ## simulate productivity losses
+  sim.out[, prod_loss := sim_prod_loss(sim.out, pl_haq = pars$prod.loss)]
+  
+  ## simulate utility
+  if (model_structure["utility_model"] == "mixture"){
+      sim.utility <- sim_utility_mixture(sim.out, male = input_data$male,
+                                         pars = pars$mixture.utility)
+      
+  } else if (model_structure["utility_model"] == "wailoo"){
+      sim.utility <- sim_utility_wailoo(sim.out, haq0 = input_data$haq0,
+                                        male = input_data$male,
+                                        prev_dmards = input_data$prev.dmards,
+                                        coefs = pars$wailoo.utility)
+  }
+  sim.out <- cbind(sim.out, sim.utility)
+  
+  # RETURN
+  return(sim.out)
+}
+
 #' Select model structure
 #'
 #' Select the model structure to be used in the IVI-RA individual patient simulation.
@@ -36,8 +146,6 @@ select_model_structure <- function(itreat_haq = c("acr-haq", "acr-eular-haq", "h
   class(model.structure) <- "model_structure"
   return(model.structure)
 }
-
-
 
 #' Simulate HAQ over time
 #'
@@ -109,81 +217,48 @@ select_model_structure <- function(itreat_haq = c("acr-haq", "acr-eular-haq", "h
 #' \item{yrlen}{Length of a model cycle in years. Equal to 0.5 given 6-month cycles.}
 #'}
 #' @export
-sim_haq <- function(arminds, input_data, pars, 
-                    itreat_haq = c("acr-haq", "acr-eular-haq", "haq"),
-                    itreat_switch = c("acr-switch", "acr-das28-switch", "acr-sdai-switch",
-                                      "acr-cdai-switch", "das28-switch", "acr-eular-switch"),
-                    cdmards_haq_model = c("lcgm", "linear"),
-                    ttd_dist = "lnorm", si_dist = "exp", max_months = NULL, 
-                    cdmards_ind = which(therapy.pars$info$sname == "cdmards"),
-                    nbt_ind = which(therapy.pars$info$sname == "nbt"),
-                    check = TRUE){
-  if (class(arminds) %in% c("numeric", "integer")) arminds <- matrix(arminds, nrow = 1)
-  if (!nrow(arminds) %in% c(1, length(input_data$haq0))){
-    stop("Number of treatment sequences must either be the same for each patient or equal to the number of patients
-         in input_data")
-  }
-  itreat.haq <- match.arg(itreat_haq)
-  itreat.switch <- match.arg(itreat_switch)
-  cdmards.haq.model <- match.arg(cdmards_haq_model)
-  if (check) check_sim_haq(arminds, input_data, pars, itreat.haq, itreat.switch)
-  
-  # default internal values
-  treat_gap <- 0
-  cycle_length <- 6
-  if (is.null(max_months)){
-    max_months <- 12 * 150
-  }
-  prob.switch.da <- matrix(rep(c(0, 0, 1, 1), each = pars$n), ncol = 4)
-  
-  # indexing
-  cdmards.ind <- cdmards_ind - 1
-  nbt.ind <- nbt_ind - 1
-  arminds <- arminds - 1
-
-  # survival parameters
-  pars.ttd.all <- pars$ttd.all[[ttd_dist]]
-  pars.ttd.da <- pars$ttd.da[[ttd_dist]]
-  pars.ttd.em <- pars$ttd.eular$moderate[[ttd_dist]]
-  pars.ttd.eg <- pars$ttd.eular$good[[ttd_dist]]
-  pars.si <- pars$ttsi[[si_dist]]
+sim_haq <- function(arminds, haq0, das28_0, sdai0, cdai0, age0, male, prev_dmards,
+                    itreat_haq, itreat_switch, 
+                    nma_acr1, nma_acr2, nma_dhaq1, nma_dhaq2, nma_das28_1, nma_das28_2,
+                    acr2eular, acr2haq, eular2haq, acr2das28, acr2sdai, acr2cdai,
+                    tswitch_da, 
+                    haq_lprog_therapy, haq_lprog_age,
+                    haq_lcgm_delta, haq_lcgm_beta, cmdards_haq_model,
+                    rebound_factor,
+                    lifetable_male, lifetable_female, 
+                    x_mort, logor,
+                    dur_dist, x_dur,
+                    ttd_all_loc, ttd_all_anc1, ttd_all_anc2,
+                    ttd_da_loc, ttd_da_nac1, ttd_da_anc2,
+                    ttd_eular_loc_mod, ttd_eular_anc1_mod, ttd_eular_anc2_mod,
+                    ttd_eular_loc_good, ttd_eular_anc1_good, ttd_eular_anc2_good,
+                    cycle_length, treat_gap, cdmards, nbt, 
+                    si_loc, si_anc1, si_anc2, si_dist, haqdelta_loghr, max_months){
   
   # run simulation
-  simout <- sim_haqC(arminds, input_data$haq0, input_data$das28,
-                     input_data$sdai, input_data$cdai,
-                     input_data$age, input_data$male, 
-                     input_data$prev.dmards,
-                     itreat.haq, itreat.switch,
-                    pars$acr$p1, pars$acr$p2, pars$haq$dy1, pars$haq$dy2,
-                    pars$das28$dy1, pars$das28$dy2,
-                    pars$acr2eular, pars$acr2haq, pars$eular2haq,
-                    pars$acr2das28, pars$acr2sdai, pars$acr2cdai,
-                    prob.switch.da,
-                  pars$haq.lprog.therapy, pars$haq.lprog.age,
-                  pars$haq.lcgm$delta, pars$haq.lcgm$beta, cdmards.haq.model,
-                  pars$rebound, pars$lt$male, pars$lt$female,
-                 input_data$x.mort, pars$logor, ttd_dist, input_data$x.ttd,
-                 pars.ttd.all$sample[, pars.ttd.all$loc.index, drop = FALSE],
-                 pars.ttd.all$sample[, pars.ttd.all$anc1.index, drop = FALSE],
-                 pars.ttd.all$sample[, pars.ttd.all$anc2.index, drop = FALSE],
-                 pars.ttd.da$sample[, pars.ttd.da$loc.index, drop = FALSE],
-                 pars.ttd.da$sample[, pars.ttd.da$anc1.index, drop = FALSE],
-                 pars.ttd.da$sample[, pars.ttd.da$anc2.index, drop = FALSE],
-                 pars.ttd.em$sample[, pars.ttd.em$loc.index, drop = FALSE], 
-                 pars.ttd.em$sample[, pars.ttd.em$anc1.index, drop = FALSE],
-                 pars.ttd.em$sample[, pars.ttd.em$anc2.index, drop = FALSE], 
-                 pars.ttd.eg$sample[, pars.ttd.eg$loc.index, drop = FALSE], 
-                 pars.ttd.eg$sample[, pars.ttd.eg$anc1.index, drop = FALSE],
-                 pars.ttd.eg$sample[, pars.ttd.eg$anc2.index, drop = FALSE],
-                 cycle_length, treat_gap, cdmards.ind, nbt.ind,
-                 pars.si$sample[, pars.si$loc.index, drop = FALSE], 
-                 pars.si$sample[, pars.si$anc1.index, drop = FALSE],
-                 pars.si$sample[, pars.si$anc2.index, drop = FALSE], 
-                 si_dist, pars$mort.loghr.haqdif, max_months)
+  simout <- sim_haqC(arminds, haq0, das28_0, sdai0, cdai0, age0, male, prev_dmards,
+                     itreat_haq, itreat_switch, 
+                     nma_acr1, nma_acr2, nma_dhaq1, nma_dhaq2, nma_das28_1, nma_das28_2,
+                     acr2eular, acr2haq, eular2haq, acr2das28, acr2sdai, acr2cdai,
+                     tswitch_da, 
+                     haq_lprog_therapy, haq_lprog_age,
+                     haq_lcgm_delta, haq_lcgm_beta, cmdards_haq_model,
+                     rebound_factor,
+                     lifetable_male, lifetable_female, 
+                     x_mort, logor,
+                     dur_dist, x_dur,
+                     ttd_all_loc, ttd_all_anc1, ttd_all_anc2,
+                     ttd_da_loc, ttd_da_nac1, ttd_da_anc2,
+                     ttd_eular_loc_mod, ttd_eular_anc1_mod, ttd_eular_anc2_mod,
+                     ttd_eular_loc_good, ttd_eular_anc1_good, ttd_eular_anc2_good,
+                     cycle_length, treat_gap, cdmards, nbt, 
+                     si_loc, si_anc1, si_anc2, si_dist, haqdelta_loghr, max_months)
   simout <- as.data.table(simout)
   colnames(simout) <- c("sim", "id", "month", "therapy", "therapy_seq", 
                      "therapy_cycle", "death", "age", "ttd", "acr", "eular", 
                      "haq", "ttsi", "si", "yrlen")
+  
+  # C++ to R indices
   simout[, sim := sim + 1]
   simout[, id := id + 1]
   simout[, therapy_seq := therapy_seq + 1]
@@ -358,20 +433,10 @@ check_sim_haq <- function(arminds, input_data, pars, itreat_haq, itreat_switch){
 #' @param simhaq Simulation output from \link{sim_haq}.
 #' @param male Vector indiciating patient gender (1 = male, 0 = female).
 #' @param pars List of parameters needed to simulate utility using the Hernandez (2013) mixture 
-#' model. See section 'pars' below.
+#' model. These are the parameters 'mixture.utility' described in the documentation 
+#' to \link{sample_pars}.
 #' @param check Should the function check parameters and input data passed to the model? Default is TRUE.
 #' 
-#' @section pars:
-#' Parameters in \code{pars} are:
-#' \describe{
-#' \item{pain.mean}{Mean of pain score in the population.}
-#' \item{haq.mean}{Mean of HAQ score in the population.}
-#' \item{pain.var}{Variance of pain score in the population.}
-#' \item{haq.var}{Variance of HAQ in the population.}
-#' \item{painhaq.cor}{Correlation between pain and HAQ in the population.}
-#' \item{mixture.utility}{Parameters sampled from the Hernandez Alva (2013) mixture model. See
-#' the documentation in \link{sample_pars} for details.}
-#' }
 #' @return Matrix. First column is simulated pain score and second column is simulated utility. 
 #' Each row corresponds to a unique patient and time-period (i.e. month) from \link{sim_haq}.
 #'
@@ -379,13 +444,18 @@ check_sim_haq <- function(arminds, input_data, pars, itreat_haq, itreat_switch){
 sim_utility_mixture <- function(simhaq, male, pars, check = TRUE){
   if (check) check_sim_utility_mixture(simhaq, male, pars)
   util <- sim_utility_mixtureC(simhaq$id - 1, simhaq$sim - 1, simhaq$haq, 
-                   pars$pain.mean, pars$haq.mean, pars$pain.var, pars$haq.var, pars$painhaq.cor, 
-                   simhaq$age, male,
-                   pars$beta1, pars$beta2, pars$beta3, pars$beta4, 
-                   pars$alpha1, pars$alpha2, pars$alpha3, pars$alpha4,
-                   pars$alpha,
-                   pars$epsilon1, pars$epsilon2, pars$epsilon3, pars$epsilon4,
-                   pars$mu, pars$delta)
+                               pars$pain$pain.mean, pars$pain$haq.mean, 
+                               pars$pain$pain.var, pars$pain$haq.var, 
+                               pars$pain$painhaq.cor, 
+                               simhaq$age, male,
+                               pars$beta1, pars$beta2, pars$beta3,
+                               pars$beta4, 
+                               pars$alpha1, pars$alpha2, pars$alpha3, 
+                               pars$alpha4,
+                               pars$alpha,
+                               pars$epsilon1, pars$epsilon2, pars$epsilon3, 
+                               pars$epsilon4,
+                               pars$mu, pars$delta)
   util <- as.data.table(util)
   colnames(util) <- c("pain", "utility")
   return(util)
@@ -415,9 +485,9 @@ check_sim_utility_mixture <- function(simhaq, male, pars){
   ## pars
   # pain.mean, haq.mean, pain.var, haq.var, painhaq.cor
   for (i in c("pain.mean", "haq.mean", "pain.var", "haq.var", "painhaq.cor")){
-    if(is.null(pars[[i]]))  stop(paste0("'", i, "'", " element of pars list not given"))
-    if(!is.vector(pars$pain.mean)) stop(paste0("'", i, "'", " element of pars must be a vector"))
-    if(length(pars$pain.mean) > 1) stop(paste0("'", i, "'", " element of pars must be length 1"))
+    if(is.null(pars$pain[[i]]))  stop(paste0("'", i, "'", " element of pars list not given"))
+    if(!is.vector(pars$pain$pain.mean)) stop(paste0("'", i, "'", " element of pars must be a vector"))
+    if(length(pars$pain$pain.mean) > 1) stop(paste0("'", i, "'", " element of pars must be length 1"))
   }
   
   # beta1 - beta4
@@ -463,27 +533,30 @@ check_sim_utility_mixture <- function(simhaq, male, pars){
 #' 
 #' @param simhaq Simulation output from \link{sim_haq}. Variables needed are \code{sim}, \code{id},
 #'  \code{age}, and \code{haq}.
-#' @param input_data Variables other than those in simhaq needed to simulate model; these are
-#' \code{Baseline HAQ}, \code{Male}, and \code{Previous DMARDs}. All variables
-#' are generated from \link{input_data}. Note that disease duration is set to 18.65 years, which
-#' is the mean value from the Wailoo (2006) paper used for the parameter estimates.
-#' @param pars Matrix of coefficients needed to simulate utility using the Wailoo (2006) model. 
+#' @param haq0 HAQ score at baseline.
+#' @param male Indicator = 1 for males and 0 for females.
+#' @param prev_dmards Number of previous DMARDs.
+#' @param coefs Matrix of coefficients needed to simulate utility using the Wailoo (2006) model. 
 #' See the documentation in \link{sample_pars} for details. Note that the matrix columns must be in 
 #' the same order as generated by \link{sample_pars}. 
 #' @param check Should the function check parameters and input data passed to the model? Default is TRUE.
 #' 
+#' @details Note that disease duration is set to 18.65 years, which
+#' is the mean value from the Wailoo (2006) paper used for the parameter estimates. Age and 
+#' the HAQ score are taken from the simulation output.
 #' @return Vector of utility scores. 
 #'
 #' @export
-sim_utility_wailoo <- function(simhaq, input_data, pars, check = TRUE){
-  if (check) check_sim_utility_wailoo(simhaq, input_data, pars)
-  dis.dur <- 18.65 # based on mean disease duration in Wailoo (2006)
+sim_utility_wailoo <- function(simhaq, haq0, male, prev_dmards,
+                               coefs, check = TRUE){
+  if (check) check_sim_utility_wailoo(simhaq, haq0, male, prev_dmards, coefs)
+  DIS.DUR <- 18.65 # based on mean disease duration in Wailoo (2006)
   util <- sim_utility_wailooC(simhaq$sim - 1, simhaq$id - 1, simhaq$age,
-                              dis.dur, input_data$haq0, input_data$male, 
-                              input_data$prev.dmards, simhaq$haq,
-                              pars[, "int"], pars[, "age"], pars[, "dis_dur"], 
-                              pars[, "haq0"], pars[, "male"],
-                              pars[, "prev_dmards"], pars[, "haq"])
+                              DIS.DUR, haq0, male, 
+                              prev_dmards, simhaq$haq,
+                              coefs[, "int"], coefs[, "age"], coefs[, "dis_dur"], 
+                              coefs[, "haq0"], coefs[, "male"],
+                              coefs[, "prev_dmards"], coefs[, "haq"])
   return(util)
 }
 
@@ -495,7 +568,7 @@ sim_utility_wailoo <- function(simhaq, input_data, pars, check = TRUE){
 #' @param male Vector indiciating patient gender (1 = male, 0 = female)
 #' @param pars \code{pars} as passed to \link{sim_utility_mixture}
 #' @keywords internal
-check_sim_utility_wailoo <- function(simhaq, input_data, pars){
+check_sim_utility_wailoo <- function(simhaq, haq0, male, prev_dmards, coefs){
   # simhaq
   if(is.null(simhaq$id)) stop("'id' column of 'simhaq' is missing")
   if(is.null(simhaq$sim)) stop("'sim' column of 'simhaq' is missing")
@@ -503,22 +576,22 @@ check_sim_utility_wailoo <- function(simhaq, input_data, pars){
   if(is.null(simhaq$haq)) stop("'haq' column of 'simhaq' is missing")
   
   # input_data
-  if(is.null(input_data$haq0)) stop("'haq0' element of input_data list not given")
-  if(is.null(input_data$male)) stop("'male' element of input_data list not given")
-  if(is.null(input_data$prev.dmards)) stop("'prev.dmards' element of input_data list not given")
-  n <- input_data$n
-  if(length(input_data$haq0) != n | length(input_data$male) != n | 
-     length(input_data$prev.dmards) != n) {
+  if(is.null(haq0)) stop("'haq0' element of input_data list not given")
+  if(is.null(male)) stop("'male' element of input_data list not given")
+  if(is.null(prev_dmards)) stop("'prev.dmards' element of input_data list not given")
+  n <- length(haq0)
+  if(length(haq0) != n | length(male) != n | 
+     length(prev_dmards) != n) {
     stop(paste0("Number of patients not consistent accross elements of the input_data list.",
                 "Should equal ", n))
   }
   
   # pars
   n <- max(simhaq$sim)
-  if(ncol(pars) != 7) stop("Number of columns in 'pars' must be 7")
-  if(nrow(pars) != n) stop(paste0("Number of rows in 'pars' must be equal to the number of ",
+  if(ncol(coefs) != 7) stop("Number of columns in 'pars' must be 7")
+  if(nrow(coefs) != n) stop(paste0("Number of rows in 'pars' must be equal to the number of ",
                            "sampled parameter sets which equals ", n))
-  if(any(!colnames(pars) %in% c("int", "age", "dis_dur", "haq0", "male", "prev_dmards", "haq"))){
+  if(any(!colnames(coefs) %in% c("int", "age", "dis_dur", "haq0", "male", "prev_dmards", "haq"))){
     stop(paste0("Column names of 'pars' must be (in order) 'int', 'age', 'dis_dur'",
                 "'haq0', 'male', 'prev_dmards', and 'haq'."))
   }
@@ -546,30 +619,39 @@ check_sim_utility_wailoo <- function(simhaq, input_data, pars){
 #' @return Matrix. First column is simulated pain score and second column is simulated utility.
 #'
 #' @export
-sim_hc_cost <- function(simhaq, weight, pars, 
+sim_hc_cost <- function(simhaq, weight, treat_cost, hosp_cost, mgmt_cost, si_cost, 
                         cdmards.ind = which(therapy.pars$info[["sname"]] == "cdmards"),
                         tcz.ind = which(therapy.pars$info[["sname"]] == "tcz"),
                         tczmtx.ind = which(therapy.pars$info[["sname"]] == "tczmtx"),
+                        cycle_length = 6,
                         check = TRUE){
-  if (check) check_sim_hc_cost(simhaq, weight, pars)
-  cycle_length <- 6
-  treat.cost <- treat_costC(simhaq$therapy - 1, simhaq$therapy_cycle - 1, simhaq$id - 1, weight, cycle_length,
-                            pars$treat.cost$ann_infusion_cost, pars$treat.cost$ann_rx_cost, 
-                   pars$treat.cost$init_infusion_cost, pars$treat.cost$init_rx_cost, 
-                   pars$treat.cost$weight_based, 
-                   pars$treat.cost$ann_wgt_slope, pars$treat.cost$init_wgt_slope,
-                   pars$treat.cost$ann_util, pars$treat.cost$init_util, 
-                   pars$treat.cost$strength, pars$treat.cost$price, 
-                   cdmards.ind - 1, tcz.ind - 1, tczmtx.ind - 1)
-  treat.cost <- as.data.table(treat.cost)
-  setnames(treat.cost, colnames(treat.cost), c("infusion_cost", "rx_cost"))
-  treat.cost[, treat_cost := infusion_cost + rx_cost]
-  hosp.cost <- hosp_costC(simhaq$haq, simhaq$yrlen, simhaq$sim - 1, 
-                          pars$hosp.cost$cost.pday, pars$hosp.cost$hosp.days)
-  mgmt.cost <- mgmt_costC(simhaq$yrlen, simhaq$sim - 1, rowSums(pars$mgmt.cost))
-  si.cost <- si_costC(simhaq$si, simhaq$yrlen, simhaq$sim - 1, pars$si.cost)
-  cost <- data.table(treat.cost, hosp_cost = hosp.cost, mgmt_cost = mgmt.cost,
-                      si_cost = si.cost)
+  # treatment costs
+  treat.cost.out <- sim_treat_costC(simhaq$therapy - 1, simhaq$therapy_cycle - 1, simhaq$id - 1, weight, 
+                            cycle_length,
+                            treat_cost$ann_infusion_cost, treat_cost$ann_rx_cost, 
+                            treat_cost$init_infusion_cost, treat_cost$init_rx_cost, 
+                            treat_cost$weight_based, treat_cost$ann_wgt_slope, 
+                            treat_cost$init_wgt_slope,
+                            treat_cost$ann_util, treat_cost$init_util, 
+                            treat_cost$strength, treat_cost$price, 
+                            cdmards.ind - 1, tcz.ind - 1, tczmtx.ind - 1)
+  treat.cost.out <- as.data.table(treat.cost.out)
+  setnames(treat.cost.out, colnames(treat.cost.out), c("infusion_cost", "rx_cost"))
+  treat.cost.out[, treat_cost := infusion_cost + rx_cost]
+  
+  # hospital costs
+  hosp.cost.out <- sim_hosp_costC(simhaq$haq, simhaq$yrlen, simhaq$sim - 1, 
+                          hosp_cost$cost.pday, hosp_cost$hosp.days)
+  
+  # management costs
+  mgmt.cost.out <- sim_mgmt_costC(simhaq$yrlen, simhaq$sim - 1, rowSums(mgmt_cost))
+  
+  # serious infection costs
+  si.cost.out <- sim_si_costC(simhaq$si, simhaq$yrlen, simhaq$sim - 1, si_cost)
+  
+  # combine costs
+  cost <- data.table(treat.cost.out, hosp_cost = hosp.cost.out, mgmt_cost = mgmt.cost.out,
+                      si_cost = si.cost.out)
   cost[, hc_cost := treat_cost + hosp_cost + mgmt_cost + si_cost]
   return(cost)
 }
@@ -666,7 +748,7 @@ check_sim_hc_cost <- function(simhaq, weight, pars){
 #' @export
 sim_prod_loss <- function(simhaq, pl_haq, check = TRUE){
   if(check) check_prod_loss(simhaq, pl_haq)
-  pl <- prod_lossC(simhaq$haq, simhaq$yrlen, simhaq$sim - 1, pl_haq)
+  pl <- sim_prod_lossC(simhaq$haq, simhaq$yrlen, simhaq$sim - 1, pl_haq)
   return(pl)
 }
 

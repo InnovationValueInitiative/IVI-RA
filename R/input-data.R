@@ -130,10 +130,8 @@ lt_data <- function(ltfemale, ltmale){
 #'  'age' for age, 'haq0' for baseline HAQ, 'male' as a indicator equal to
 #' 1 if the patient is male and 0 if female, 'weight' for patient weight, and 'prev_dmards' 
 #' for number of previous DMARDs. 
-#' @param vars_mort A chararacter vector of variables in \code{patdata} to be used to adjust
-#'  'qx' (using odds ratios) in the lifetables. Use '1' to include an intercept. 
-#' @param vars_ttd A character vector of variables in \code{patdata} to be used to predict treatment
-#'  duration. Use '1' to include an intercept. 
+#' @param vars_mort A matrix with each column a variable used to adjust mortality.
+#' @param vars_ttd The design matrix for time to treatment discontinuation.
 #'  @param model_structure An object of class \code{model_structure} generated from 
 #'  \link{select_model_structure}.
 #' 
@@ -149,21 +147,34 @@ lt_data <- function(ltfemale, ltmale){
 #' }
 #' 
 #' @export
-input_data <- function(patdata, vars_mort = NULL, vars_ttd = NULL, model_structure){
-  if (is.null(vars_mort)){
-    x.mort <- patdata[, "haq0", drop = FALSE]
+get_input_data <- function(patdata, x_mort = NULL, x_ttd = NULL, model_structure){
+  npats <- nrow(patdata)
+  if (is.null(x_mort)){
+      x.mort <- patdata[, "haq0", drop = FALSE]
+  } else{
+      if (nrow(x_mort) != npats){
+          stop("Number of rows in 'x.mort' must equal number of simulated patients.")
+      }
+    x.mort <- x_mort
   }
-  if (is.null(vars_ttd)){
-    if (model_stucture["itreat_haq"] %in% c("acr-switch", "acr-eular-switch")){
+  if (is.null(x_ttd)){
+    if (model_structure["itreat_switch"] %in% c("acr-switch", "acr-eular-switch")){
         x.ttd <- matrix(1, nrow = nrow(patdata), ncol = 1)
     } else{
         x.ttd <- matrix(c(1, 0, 0), nrow = nrow(patdata), ncol = 3, byrow = TRUE)
     }
+  } else{
+    if (nrow(x_ttd) != npats){
+      stop("Number of rows in 'x.mort' must equal number of simulated patients.")
+    }
+    x.ttd <- x_ttd
   }
-  return(list(n = nrow(patdata), haq0 = patdata[, "haq0"], age = patdata[, "age"],
+  l <- list(n = nrow(patdata), haq0 = patdata[, "haq0"], age = patdata[, "age"],
               male = patdata[, "male"], das28 = patdata[, "das28"],
               sdai = patdata[, "sdai"], cdai = patdata[, "cdai"],
               weight = patdata[, "weight"], prev.dmards = patdata[, "prev_dmards"],
-              x.mort = x.mort, x.ttd = x.ttd))
+              x.mort = x.mort, x.ttd = x.ttd)
+  class(l) <- "input_data"
+  return(l)
 }
 

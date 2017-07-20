@@ -12,7 +12,8 @@ sim_utility_mixture(simhaq, male, pars, check = TRUE)
 \item{male}{Vector indiciating patient gender (1 = male, 0 = female).}
 
 \item{pars}{List of parameters needed to simulate utility using the Hernandez (2013) mixture 
-model. See section 'pars' below.}
+model. These are the parameters 'mixture.utility' described in the documentation 
+to \link{sample_pars}.}
 
 \item{check}{Should the function check parameters and input data passed to the model? Default is TRUE.}
 }
@@ -24,17 +25,3 @@ Each row corresponds to a unique patient and time-period (i.e. month) from \link
 Simulate utility from HAQ score simulated using \code{sim_haq} using mixture model from
 Hernandez-Alva (2013).
 }
-\section{pars}{
-
-Parameters in \code{pars} are:
-\describe{
-\item{pain.mean}{Mean of pain score in the population.}
-\item{haq.mean}{Mean of HAQ score in the population.}
-\item{pain.var}{Variance of pain score in the population.}
-\item{haq.var}{Variance of HAQ in the population.}
-\item{painhaq.cor}{Correlation between pain and HAQ in the population.}
-\item{mixture.utility}{Parameters sampled from the Hernandez Alva (2013) mixture model. See
-the documentation in \link{sample_pars} for details.}
-}
-}
-

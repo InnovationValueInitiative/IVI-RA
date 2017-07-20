@@ -4,14 +4,14 @@
 \alias{check_sim_utility_wailoo}
 \title{Check parameters of sim_utility_wailoo}
 \usage{
-check_sim_utility_wailoo(simhaq, input_data, pars)
+check_sim_utility_wailoo(simhaq, haq0, male, prev_dmards, coefs)
 }
 \arguments{
 \item{simhaq}{Simulation output from \link{sim_haq}}
 
-\item{pars}{\code{pars} as passed to \link{sim_utility_mixture}}
-
 \item{male}{Vector indiciating patient gender (1 = male, 0 = female)}
+
+\item{pars}{\code{pars} as passed to \link{sim_utility_mixture}}
 }
 \description{
 Error messages when incorrect inputs are passed to sim_utility_wailoo.

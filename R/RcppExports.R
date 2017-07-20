@@ -72,28 +72,28 @@ sim_utility_wailooC <- function(sim, id, age, disease_duration, haq0, male, prev
 }
 
 #' @export
-treat_costC <- function(therapy, therapy_cycle, id, weight, cycle_length, ann_infusion_cost, ann_rx_cost, init_infusion_cost, init_rx_cost, weight_based, ann_wgt_slope, init_wgt_slope, ann_util, init_util, strength, price, cdmards, tcz, tczmtx) {
-    .Call('iviRA_treat_costC', PACKAGE = 'iviRA', therapy, therapy_cycle, id, weight, cycle_length, ann_infusion_cost, ann_rx_cost, init_infusion_cost, init_rx_cost, weight_based, ann_wgt_slope, init_wgt_slope, ann_util, init_util, strength, price, cdmards, tcz, tczmtx)
+sim_treat_costC <- function(therapy, therapy_cycle, id, weight, cycle_length, ann_infusion_cost, ann_rx_cost, init_infusion_cost, init_rx_cost, weight_based, ann_wgt_slope, init_wgt_slope, ann_util, init_util, strength, price, cdmards, tcz, tczmtx) {
+    .Call('iviRA_sim_treat_costC', PACKAGE = 'iviRA', therapy, therapy_cycle, id, weight, cycle_length, ann_infusion_cost, ann_rx_cost, init_infusion_cost, init_rx_cost, weight_based, ann_wgt_slope, init_wgt_slope, ann_util, init_util, strength, price, cdmards, tcz, tczmtx)
 }
 
 #' @export
-hosp_costC <- function(haq, yrlen, sim, unit_cost_mat, hosp_days_mat) {
-    .Call('iviRA_hosp_costC', PACKAGE = 'iviRA', haq, yrlen, sim, unit_cost_mat, hosp_days_mat)
+sim_hosp_costC <- function(haq, yrlen, sim, unit_cost_mat, hosp_days_mat) {
+    .Call('iviRA_sim_hosp_costC', PACKAGE = 'iviRA', haq, yrlen, sim, unit_cost_mat, hosp_days_mat)
 }
 
 #' @export
-prod_lossC <- function(haq, yrlen, sim, beta) {
-    .Call('iviRA_prod_lossC', PACKAGE = 'iviRA', haq, yrlen, sim, beta)
+sim_prod_lossC <- function(haq, yrlen, sim, beta) {
+    .Call('iviRA_sim_prod_lossC', PACKAGE = 'iviRA', haq, yrlen, sim, beta)
 }
 
 #' @export
-si_costC <- function(si, yrlen, sim, cost) {
-    .Call('iviRA_si_costC', PACKAGE = 'iviRA', si, yrlen, sim, cost)
+sim_si_costC <- function(si, yrlen, sim, cost) {
+    .Call('iviRA_sim_si_costC', PACKAGE = 'iviRA', si, yrlen, sim, cost)
 }
 
 #' @export
-mgmt_costC <- function(yrlen, sim, cost) {
-    .Call('iviRA_mgmt_costC', PACKAGE = 'iviRA', yrlen, sim, cost)
+sim_mgmt_costC <- function(yrlen, sim, cost) {
+    .Call('iviRA_sim_mgmt_costC', PACKAGE = 'iviRA', yrlen, sim, cost)
 }
 
 #' @export

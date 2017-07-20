@@ -4,25 +4,17 @@
 \alias{sim_hc_cost}
 \title{Simulate health care sector costs from simulated HAQ score}
 \usage{
-sim_hc_cost(simhaq, weight, pars,
+sim_hc_cost(simhaq, weight, treat_cost, hosp_cost, mgmt_cost, si_cost,
   cdmards.ind = which(therapy.pars$info[["sname"]] == "cdmards"),
   tcz.ind = which(therapy.pars$info[["sname"]] == "tcz"),
   tczmtx.ind = which(therapy.pars$info[["sname"]] == "tczmtx"),
-  check = TRUE)
+  cycle_length = 6, check = TRUE)
 }
 \arguments{
 \item{simhaq}{Simulation output from \link{sim_haq}.}
 
 \item{weight}{Weight of patient. Used to calculate treatment costs when dosing is based
 on weight.}
-
-\item{pars}{List of sampled parameter values. The format is the same as the ouptut produced 
-with \link{sample_pars}. The list must contain:
-\describe{
-\item{treat.cost}{Matrix of treatment cost data.}
-\item{hosp.cost}{List of two matrices used to simulate hospital costs. }
-\item{mgmt.cost}{Matrix of general management costs.}
-}}
 
 \item{cdmards.ind}{Index for cDMARDs.}
 
@@ -31,6 +23,14 @@ with \link{sample_pars}. The list must contain:
 \item{tczmtx.ind}{Index for tocilizuma + methotrexate.}
 
 \item{check}{Should the function check parameters and input data passed to the model? Default is TRUE.}
+
+\item{pars}{List of sampled parameter values. The format is the same as the ouptut produced 
+with \link{sample_pars}. The list must contain:
+\describe{
+\item{treat.cost}{Matrix of treatment cost data.}
+\item{hosp.cost}{List of two matrices used to simulate hospital costs. }
+\item{mgmt.cost}{Matrix of general management costs.}
+}}
 }
 \value{
 Matrix. First column is simulated pain score and second column is simulated utility.

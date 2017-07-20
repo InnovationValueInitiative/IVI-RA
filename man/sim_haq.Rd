@@ -4,26 +4,21 @@
 \alias{sim_haq}
 \title{Simulate HAQ over time}
 \usage{
-sim_haq(arminds, input_data, pars, itreat_haq = c("acr-haq", "acr-eular-haq",
-  "haq"), itreat_switch = c("acr-switch", "acr-das28-switch",
-  "acr-sdai-switch", "acr-cdai-switch", "das28-switch", "acr-eular-switch"),
-  cdmards_haq_model = c("lcgm", "linear"), ttd_dist = "lnorm",
-  si_dist = "exp", max_months = NULL,
-  cdmards_ind = which(therapy.pars$info$sname == "cdmards"),
-  nbt_ind = which(therapy.pars$info$sname == "nbt"), check = TRUE)
+sim_haq(arminds, haq0, das28_0, sdai0, cdai0, age0, male, prev_dmards,
+  itreat_haq, itreat_switch, nma_acr1, nma_acr2, nma_dhaq1, nma_dhaq2,
+  nma_das28_1, nma_das28_2, acr2eular, acr2haq, eular2haq, acr2das28, acr2sdai,
+  acr2cdai, tswitch_da, haq_lprog_therapy, haq_lprog_age, haq_lcgm_delta,
+  haq_lcgm_beta, cmdards_haq_model, rebound_factor, lifetable_male,
+  lifetable_female, x_mort, logor, dur_dist, x_dur, ttd_all_loc, ttd_all_anc1,
+  ttd_all_anc2, ttd_da_loc, ttd_da_nac1, ttd_da_anc2, ttd_eular_loc_mod,
+  ttd_eular_anc1_mod, ttd_eular_anc2_mod, ttd_eular_loc_good,
+  ttd_eular_anc1_good, ttd_eular_anc2_good, cycle_length, treat_gap, cdmards,
+  nbt, si_loc, si_anc1, si_anc2, si_dist, haqdelta_loghr, max_months)
 }
 \arguments{
 \item{arminds}{Indices of treatment arms consisting of sequences of therapies (each element
 is the index of a therapy in \code{therapy.pars$info}. May be a vector consisting of a single treatment sequence or a matrix 
 of unique sequences for each patient.}
-
-\item{input_data}{List of input data. Required inputs are \code{haq0}, \code{age}, \code{male}, \code{x.mort}, 
-and \code{x.ttd} as generated from \link{input_data}.}
-
-\item{pars}{List of parameters. Required parameters are \code{rebound}, \code{acr1}, \code{acr2}, \code{acr2eular}, \code{eular2haq}, 
-\code{haq.lprog.therapy}, \code{haq.lprog.age}, \code{logor.mort}, \code{mort.loghr.haqdif}, \code{ttsi},
-\code{ttd.eular.mod}, \code{ttd.eular.good}, and \code{lt} as generated from \link{sample_pars}. Additionally, if \code{cdmards_prog} is equal 
-to "lcgm", then \code{haq.lcgm} must be included.}
 
 \item{itreat_haq}{How should the relationship between treatment and HAQ during the initial 
 treatment phase (i.e., first 6 months) be modeled? Options, which are equivalent to H1-H3
@@ -42,13 +37,26 @@ S4: Treatment -> ACR -> CDAI -> Switch (\code{acr-cdai-switch}),
 S5: Treatment -> DAS28 -> Switch (\code{das28-switch}),
 S6: Treatment -> ACR -> EULAR -> Switch (\code{acr-eular-switch}).}
 
-\item{ttd_dist}{Survival distribution for treatment duration.}
-
 \item{si_dist}{Survival distribution for serious infections. Currently rate is assumed
 to be constant so an exponential distribution is used.}
 
 \item{max_months}{Maximum number of months to run the model for. Default is NULL which implies that
 the model is simulated over each patient's lifetime.}
+
+\item{input_data}{List of input data. Required inputs are \code{haq0}, \code{age}, \code{male}, \code{x.mort}, 
+and \code{x.ttd} as generated from \link{input_data}.}
+
+\item{pars}{List of parameters. Required parameters are \code{rebound}, \code{acr1}, \code{acr2}, \code{acr2eular}, \code{eular2haq}, 
+\code{haq.lprog.therapy}, \code{haq.lprog.age}, \code{logor.mort}, \code{mort.loghr.haqdif}, \code{ttsi},
+\code{ttd.eular.mod}, \code{ttd.eular.good}, and \code{lt} as generated from \link{sample_pars}. Additionally, if \code{cdmards_prog} is equal 
+to "lcgm", then \code{haq.lcgm} must be included.}
+
+\item{haq_prog_model}{Model used to simulate the progression of HAQ. Options are "lcgm" and "linear", with
+"lcgm" as the default. If "lcgm" is chosen, then a latent class growth model is used for cDMARDs
+and NBT but a constant annual rate is is assumed for all other therapies; otherwise 
+a constant linear HAQ progression is assumed for all therapies including cDMARDs and NBT.}
+
+\item{ttd_dist}{Survival distribution for treatment duration.}
 
 \item{cdmards_ind}{Index for cDMARDs.}
 
@@ -56,11 +64,6 @@ the model is simulated over each patient's lifetime.}
 after the last biologic in a treatment sequence).}
 
 \item{check}{Should the function check parameters and input data passed to the model? Default is TRUE.}
-
-\item{haq_prog_model}{Model used to simulate the progression of HAQ. Options are "lcgm" and "linear", with
-"lcgm" as the default. If "lcgm" is chosen, then a latent class growth model is used for cDMARDs
-and NBT but a constant annual rate is is assumed for all other therapies; otherwise 
-a constant linear HAQ progression is assumed for all therapies including cDMARDs and NBT.}
 }
 \value{
 A \code{data.table} with the following columns:

@@ -199,51 +199,61 @@
 #' of class membership. An array of matrices where each matrix is a random draw. There are three rows in each matrix (one for each class) and
 #' four columns (one for each explanatory variable).}
 #' }
+#' The list also contains summary statistics for pain and HAQ, which is needed to simulate pain. 
+#' In particular, the object 'pain' in the list is a list containing:
+#' \describe{
+#' \item{pain.mean}{Mean of pain score in the population.}
+#' \item{haq.mean}{Mean of HAQ score in the population.}
+#' \item{pain.var}{Variance of pain score in the population.}
+#' \item{haq.var}{Variance of HAQ in the population.}
+#' \item{painhaq.cor}{Correlation between pain and HAQ in the population.}
+#' }
 #' 
 #' @export
 sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
-                       ltfemale = lifetable.female, ltmale = lifetable.male,
-                       acr2eular_mat = acr2eular,
-                       treat_cost = therapy.pars$cost,
-                       mort_logor = mort.or$logor, mort_logor_se = mort.or$logor_se,
-                       mort_loghr_haqdif = mort.hr.haqdif$loghr,
-                       mort_loghr_se_haqdif = mort.hr.haqdif$loghr_se,
-                       ttd_all = ttd.all, ttd_da = ttd.da, ttd_eular = ttd.eular,
-                       nma_acr_mean = therapy.pars$nma.acr.naive$mean,
-                       nma_acr_vcov = therapy.pars$nma.acr.naive$vcov,
+                       ltfemale = iviRA::lifetable.female, ltmale = iviRA::lifetable.male,
+                       acr2eular_mat = iviRA::acr2eular,
+                       treat_cost = iviRA::therapy.pars$cost,
+                       mort_logor = iviRA::mort.or$logor, mort_logor_se = iviRA::mort.or$logor_se,
+                       mort_loghr_haqdif = iviRA::mort.hr.haqdif$loghr,
+                       mort_loghr_se_haqdif = iviRA::mort.hr.haqdif$loghr_se,
+                       ttd_all = iviRA::ttd.all, ttd_da = iviRA::ttd.da, ttd_eular = iviRA::ttd.eular,
+                       nma_acr_mean = iviRA::therapy.pars$nma.acr.naive$mean,
+                       nma_acr_vcov = iviRA::therapy.pars$nma.acr.naive$vcov,
                        nma_acr_rr_lower = .75, nma_acr_rr_upper = .92,
-                       nma_das28_mean = therapy.pars$nma.das28.naive$mean,
-                       nma_das28_vcov = therapy.pars$nma.das28.naive$vcov,
+                       nma_das28_mean = iviRA::therapy.pars$nma.das28.naive$mean,
+                       nma_das28_vcov = iviRA::therapy.pars$nma.das28.naive$vcov,
                        nma_das28_rr_lower = .75, nma_das28_rr_upper = .92,
-                       nma_haq_mean = therapy.pars$nma.haq.naive$mean,
-                       nma_haq_vcov = therapy.pars$nma.haq.naive$vcov,
+                       nma_haq_mean = iviRA::therapy.pars$nma.haq.naive$mean,
+                       nma_haq_vcov = iviRA::therapy.pars$nma.haq.naive$vcov,
                        nma_haq_rr_lower = .75, nma_haq_rr_upper = .92,
                        treat_hist = c("naive", "exp"),
-                       haq_lprog_therapy_mean = therapy.pars$haq.lprog$est,
-                       haq_lprog_therapy_se = therapy.pars$haq.lprog$se,
-                       eular2haq_mean = eular2haq$mean, 
-                       eular2haq_se = eular2haq$se,
-                       acr2haq_mean = acr2haq$mean,
-                       acr2haq_se = acr2haq$se,
-                       acr2sdai_lower = acr2sdai$inception$lower,
-                       acr2sdai_upper = acr2sdai$inception$upper,
-                       acr2cdai_lower = acr2cdai$inception$lower,
-                       acr2cdai_upper = acr2cdai$inception$upper,
-                       acr2das28_lower = acr2das28$inception$lower,
-                       acr2das28_upper = acr2das28$inception$upper,
-                       haq_lprog_age_mean = haq.lprog.age$est,
-                       haq_lprog_age_se = haq.lprog.age$se,
+                       haq_lprog_therapy_mean = iviRA::therapy.pars$haq.lprog$est,
+                       haq_lprog_therapy_se = iviRA::therapy.pars$haq.lprog$se,
+                       eular2haq_mean = iviRA::eular2haq$mean, 
+                       eular2haq_se = iviRA::eular2haq$se,
+                       acr2haq_mean = iviRA::acr2haq$mean,
+                       acr2haq_se = iviRA::acr2haq$se,
+                       acr2sdai_lower = iviRA::acr2sdai$inception$lower,
+                       acr2sdai_upper = iviRA::acr2sdai$inception$upper,
+                       acr2cdai_lower = iviRA::acr2cdai$inception$lower,
+                       acr2cdai_upper = iviRA::acr2cdai$inception$upper,
+                       acr2das28_lower = iviRA::acr2das28$inception$lower,
+                       acr2das28_upper = iviRA::acr2das28$inception$upper,
+                       haq_lprog_age_mean = iviRA::haq.lprog.age$est,
+                       haq_lprog_age_se = iviRA::haq.lprog.age$se,
                        hosp_days_mean = c(.26, .13, .51, .72, 1.86, 4.16),
                        hosp_days_se = c(.5, .5, .5, .5, .5, .5),
                        hosp_cost_mean = rep(1251, 6),
                        hosp_cost_se = rep(191, 6),
-                       mgmt_cost_mean = mgmt.cost$est,
-                       mgmt_cost_se = mgmt.cost$se,
+                       mgmt_cost_mean = iviRA::mgmt.cost$est,
+                       mgmt_cost_se = iviRA::mgmt.cost$se,
                        pl_mean = 5853.30, pl_se = 1526.691,
-                       ttsi = therapy.pars$si,
+                       ttsi = iviRA::therapy.pars$si,
                        si_cost = 5873, si_cost_range = .2,
                        si_ul = .156, si_ul_range = .2,
-                       therapy_names = therapy.pars$info$sname){
+                       therapy_names = iviRA::therapy.pars$info$sname,
+                       util_mixture_pain = iviRA::pain){
   acr.cats <- c("ACR <20", "ACR 20-50", "ACR 50-70", "ACR 70+")
   sim <- list()
   sim$n <- n
@@ -275,8 +285,8 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
   sim$haq.lprog.age <- sample_normals(n, haq_lprog_age_mean, haq_lprog_age_se,
                                      col_names =  c("age_less40", "age40to64", "age_65plus"))
   sim$haq.lcgm <- sample_pars_haq_lcgm(n)
-  sim$mixture.utility <- sample_pars_utility_mixture(n)
-  sim$wailoo.utility <- sample_normals(n, util.wailoo.pars$coef, util.wailoo.pars$se,
+  sim$mixture.utility <- sample_pars_utility_mixture(n, util_mixture_pain)
+  sim$wailoo.utility <- sample_normals(n, iviRA::util.wailoo.pars$coef, iviRA::util.wailoo.pars$se,
                                       col_names = names(util.wailoo.pars$coef))
   hosp.cost.names <- c("haq_less0.5", "haq0.5to1", "haq1to1.5", "haq1.5to2", "haq2to2.5", "haq2.5plus")
   sim$hosp.cost <- list(hosp.days = sample_gammas(n, hosp_days_mean, hosp_days_se,
@@ -625,8 +635,8 @@ sample_pars_haq_lcgm <- function(nsims){
 #' mixture model
 #' 
 #' @export
-sample_pars_utility_mixture <- function(nsims){
-  samp <- MASS::mvrnorm(nsims, util.mixture.pars$coef$coef, util.mixture.pars$vcov)
+sample_pars_utility_mixture <- function(nsims, pain){
+  samp <- MASS::mvrnorm(nsims, iviRA::util.mixture.pars$coef$coef, iviRA::util.mixture.pars$vcov)
   if (class(samp) == "numeric") samp <- t(as.matrix(samp)) 
   lsamp <- list()
   names <- names(util.mixture.pars$index)
@@ -648,6 +658,7 @@ sample_pars_utility_mixture <- function(nsims){
   lsamp[["delta"]] <- aperm(array(c(t(samp[, indx.delta])),
                                   dim = c(4, 3, nsims)),
                             perm = c(2, 1, 3))
+  lsamp[["pain"]] <- pain
   return(lsamp)
 }
 

@@ -273,28 +273,16 @@ test_that("itreat_switch", {
 })
 
 # small integration test ------------------------------------------------------
-# V1
-arms <- c(3, 1)
-pat <- sample_pats(n = 10)
-parsamp <- sample_pars(n = 100)
-parsamp.table <- par_table(parsamp, pat)
-itreat.switch <- "acr-switch"
-input.dat <- input_data(patdata = pat, itreat_switch = itreat.switch)
-sim.out <- sim_haq(arms, input_data = input.dat, pars = parsamp, 
-                   itreat_haq = "acr-haq", itreat_switch = itreat.switch,
-                   cdmards_haq_model = "lcgm")
-sim.out <- cbind(sim.out, sim_hc_cost(sim.out, pat[, "weight"], pars = parsamp))
-sim.out[, prod_loss := sim_prod_loss(sim.out, pl_haq = parsamp$prod.loss)]
-sim.out <- cbind(sim.out, sim_utility_mixture(sim.out, male = input.dat$male, 
-                                      pars = c(pain, parsamp$mixture.utility)))
-sim.out[, qalys := sim_qalys(sim.out, sim.out$utility, si_ul = parsamp$si.ul)]
-util.wailoo <- sim_utility_wailoo(sim.out, input.dat, parsamp$wailoo.utility)
-
-# V2
-mod.struct <- select_model_structure(itreat_haq = "acr-eular-haq",
-                                     itreat_switch = "acr-eular-switch",
-                                     cdmards_haq_model = "lcgm",
-                                     utility_model = "mixture")
 pop <- sample_pats(n = 10)
+arm.names <- c("adamtx", "cdmards")
 parsamp <- sample_pars(n = 100)
+mod.struct <- select_model_structure(itreat_haq = "acr-haq",
+                                     itreat_switch = "acr-switch",
+                                     cdmards_haq_model = "lcgm",
+                                     utility_model = "wailoo")
+input.dat <- get_input_data(patdata = pop, model_structure = mod.struct)
+sim.out <- sim_iviRA(arms = arm.names, input_data = input.dat, pars = parsamp,
+                     model_structure = mod.struct)
+
+
 

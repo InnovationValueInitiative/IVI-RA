@@ -4,7 +4,7 @@
 \alias{sample_pars_utility_mixture}
 \title{Sample parameters for mixture model utility mapping}
 \usage{
-sample_pars_utility_mixture(nsims)
+sample_pars_utility_mixture(nsims, pain)
 }
 \value{
 List containing posterior sample of paramaters from Hernandez Alva (2013) 

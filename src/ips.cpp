@@ -673,7 +673,7 @@ std::vector<double> sim_utility_wailooC(std::vector<int> sim, std::vector<int> i
 // Treatment Costs
 //' @export
 // [[Rcpp::export]]
-List treat_costC(std::vector<int> therapy, std::vector<int> therapy_cycle,
+List sim_treat_costC(std::vector<int> therapy, std::vector<int> therapy_cycle,
               std::vector<double> id, std::vector<double> weight, double cycle_length,
              std::vector<double> ann_infusion_cost, std::vector<double> ann_rx_cost,
              std::vector<double> init_infusion_cost, std::vector<double> init_rx_cost,
@@ -793,7 +793,7 @@ List treat_costC(std::vector<int> therapy, std::vector<int> therapy_cycle,
 // Hospitalization costs
 //' @export
 // [[Rcpp::export]]
-std::vector<double> hosp_costC(std::vector<double> &haq, std::vector<double> &yrlen,
+std::vector<double> sim_hosp_costC(std::vector<double> &haq, std::vector<double> &yrlen,
                                std::vector<int> &sim, arma::mat &unit_cost_mat, 
                                arma::mat &hosp_days_mat){
   int N = haq.size();
@@ -834,7 +834,7 @@ std::vector<double> hosp_costC(std::vector<double> &haq, std::vector<double> &yr
 // Productivity Loss
 //' @export
 // [[Rcpp::export]]
-std::vector<double> prod_lossC(std::vector<double> &haq, std::vector<double> &yrlen,
+std::vector<double> sim_prod_lossC(std::vector<double> &haq, std::vector<double> &yrlen,
                                std::vector<int> &sim, std::vector<double> beta){
   int N = haq.size();
   std::vector<double> prod_loss_vec;
@@ -848,7 +848,7 @@ std::vector<double> prod_lossC(std::vector<double> &haq, std::vector<double> &yr
 // Serious Infection Cost
 //' @export
 // [[Rcpp::export]]
-std::vector<double> si_costC(std::vector<double> si, std::vector<double> &yrlen,
+std::vector<double> sim_si_costC(std::vector<double> si, std::vector<double> &yrlen,
                                std::vector<int> &sim, std::vector<double> cost){
   int N = si.size();
   std::vector<double> si_cost_vec;
@@ -869,7 +869,7 @@ std::vector<double> si_costC(std::vector<double> si, std::vector<double> &yrlen,
 // General management cost
 //' @export
 // [[Rcpp::export]]
-std::vector<double> mgmt_costC(std::vector<double> &yrlen,
+std::vector<double> sim_mgmt_costC(std::vector<double> &yrlen,
                                std::vector<int> &sim, std::vector<double> &cost){
   int N = sim.size();
   std::vector<double> mgmt_cost_vec;

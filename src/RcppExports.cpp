@@ -336,9 +336,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// treat_costC
-List treat_costC(std::vector<int> therapy, std::vector<int> therapy_cycle, std::vector<double> id, std::vector<double> weight, double cycle_length, std::vector<double> ann_infusion_cost, std::vector<double> ann_rx_cost, std::vector<double> init_infusion_cost, std::vector<double> init_rx_cost, std::vector<int> weight_based, std::vector<double> ann_wgt_slope, std::vector<double> init_wgt_slope, std::vector<double> ann_util, std::vector<double> init_util, std::vector<double> strength, std::vector<double> price, int cdmards, int tcz, int tczmtx);
-RcppExport SEXP iviRA_treat_costC(SEXP therapySEXP, SEXP therapy_cycleSEXP, SEXP idSEXP, SEXP weightSEXP, SEXP cycle_lengthSEXP, SEXP ann_infusion_costSEXP, SEXP ann_rx_costSEXP, SEXP init_infusion_costSEXP, SEXP init_rx_costSEXP, SEXP weight_basedSEXP, SEXP ann_wgt_slopeSEXP, SEXP init_wgt_slopeSEXP, SEXP ann_utilSEXP, SEXP init_utilSEXP, SEXP strengthSEXP, SEXP priceSEXP, SEXP cdmardsSEXP, SEXP tczSEXP, SEXP tczmtxSEXP) {
+// sim_treat_costC
+List sim_treat_costC(std::vector<int> therapy, std::vector<int> therapy_cycle, std::vector<double> id, std::vector<double> weight, double cycle_length, std::vector<double> ann_infusion_cost, std::vector<double> ann_rx_cost, std::vector<double> init_infusion_cost, std::vector<double> init_rx_cost, std::vector<int> weight_based, std::vector<double> ann_wgt_slope, std::vector<double> init_wgt_slope, std::vector<double> ann_util, std::vector<double> init_util, std::vector<double> strength, std::vector<double> price, int cdmards, int tcz, int tczmtx);
+RcppExport SEXP iviRA_sim_treat_costC(SEXP therapySEXP, SEXP therapy_cycleSEXP, SEXP idSEXP, SEXP weightSEXP, SEXP cycle_lengthSEXP, SEXP ann_infusion_costSEXP, SEXP ann_rx_costSEXP, SEXP init_infusion_costSEXP, SEXP init_rx_costSEXP, SEXP weight_basedSEXP, SEXP ann_wgt_slopeSEXP, SEXP init_wgt_slopeSEXP, SEXP ann_utilSEXP, SEXP init_utilSEXP, SEXP strengthSEXP, SEXP priceSEXP, SEXP cdmardsSEXP, SEXP tczSEXP, SEXP tczmtxSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -361,13 +361,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type cdmards(cdmardsSEXP);
     Rcpp::traits::input_parameter< int >::type tcz(tczSEXP);
     Rcpp::traits::input_parameter< int >::type tczmtx(tczmtxSEXP);
-    rcpp_result_gen = Rcpp::wrap(treat_costC(therapy, therapy_cycle, id, weight, cycle_length, ann_infusion_cost, ann_rx_cost, init_infusion_cost, init_rx_cost, weight_based, ann_wgt_slope, init_wgt_slope, ann_util, init_util, strength, price, cdmards, tcz, tczmtx));
+    rcpp_result_gen = Rcpp::wrap(sim_treat_costC(therapy, therapy_cycle, id, weight, cycle_length, ann_infusion_cost, ann_rx_cost, init_infusion_cost, init_rx_cost, weight_based, ann_wgt_slope, init_wgt_slope, ann_util, init_util, strength, price, cdmards, tcz, tczmtx));
     return rcpp_result_gen;
 END_RCPP
 }
-// hosp_costC
-std::vector<double> hosp_costC(std::vector<double>& haq, std::vector<double>& yrlen, std::vector<int>& sim, arma::mat& unit_cost_mat, arma::mat& hosp_days_mat);
-RcppExport SEXP iviRA_hosp_costC(SEXP haqSEXP, SEXP yrlenSEXP, SEXP simSEXP, SEXP unit_cost_matSEXP, SEXP hosp_days_matSEXP) {
+// sim_hosp_costC
+std::vector<double> sim_hosp_costC(std::vector<double>& haq, std::vector<double>& yrlen, std::vector<int>& sim, arma::mat& unit_cost_mat, arma::mat& hosp_days_mat);
+RcppExport SEXP iviRA_sim_hosp_costC(SEXP haqSEXP, SEXP yrlenSEXP, SEXP simSEXP, SEXP unit_cost_matSEXP, SEXP hosp_days_matSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -376,13 +376,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< std::vector<int>& >::type sim(simSEXP);
     Rcpp::traits::input_parameter< arma::mat& >::type unit_cost_mat(unit_cost_matSEXP);
     Rcpp::traits::input_parameter< arma::mat& >::type hosp_days_mat(hosp_days_matSEXP);
-    rcpp_result_gen = Rcpp::wrap(hosp_costC(haq, yrlen, sim, unit_cost_mat, hosp_days_mat));
+    rcpp_result_gen = Rcpp::wrap(sim_hosp_costC(haq, yrlen, sim, unit_cost_mat, hosp_days_mat));
     return rcpp_result_gen;
 END_RCPP
 }
-// prod_lossC
-std::vector<double> prod_lossC(std::vector<double>& haq, std::vector<double>& yrlen, std::vector<int>& sim, std::vector<double> beta);
-RcppExport SEXP iviRA_prod_lossC(SEXP haqSEXP, SEXP yrlenSEXP, SEXP simSEXP, SEXP betaSEXP) {
+// sim_prod_lossC
+std::vector<double> sim_prod_lossC(std::vector<double>& haq, std::vector<double>& yrlen, std::vector<int>& sim, std::vector<double> beta);
+RcppExport SEXP iviRA_sim_prod_lossC(SEXP haqSEXP, SEXP yrlenSEXP, SEXP simSEXP, SEXP betaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -390,13 +390,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< std::vector<double>& >::type yrlen(yrlenSEXP);
     Rcpp::traits::input_parameter< std::vector<int>& >::type sim(simSEXP);
     Rcpp::traits::input_parameter< std::vector<double> >::type beta(betaSEXP);
-    rcpp_result_gen = Rcpp::wrap(prod_lossC(haq, yrlen, sim, beta));
+    rcpp_result_gen = Rcpp::wrap(sim_prod_lossC(haq, yrlen, sim, beta));
     return rcpp_result_gen;
 END_RCPP
 }
-// si_costC
-std::vector<double> si_costC(std::vector<double> si, std::vector<double>& yrlen, std::vector<int>& sim, std::vector<double> cost);
-RcppExport SEXP iviRA_si_costC(SEXP siSEXP, SEXP yrlenSEXP, SEXP simSEXP, SEXP costSEXP) {
+// sim_si_costC
+std::vector<double> sim_si_costC(std::vector<double> si, std::vector<double>& yrlen, std::vector<int>& sim, std::vector<double> cost);
+RcppExport SEXP iviRA_sim_si_costC(SEXP siSEXP, SEXP yrlenSEXP, SEXP simSEXP, SEXP costSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -404,20 +404,20 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< std::vector<double>& >::type yrlen(yrlenSEXP);
     Rcpp::traits::input_parameter< std::vector<int>& >::type sim(simSEXP);
     Rcpp::traits::input_parameter< std::vector<double> >::type cost(costSEXP);
-    rcpp_result_gen = Rcpp::wrap(si_costC(si, yrlen, sim, cost));
+    rcpp_result_gen = Rcpp::wrap(sim_si_costC(si, yrlen, sim, cost));
     return rcpp_result_gen;
 END_RCPP
 }
-// mgmt_costC
-std::vector<double> mgmt_costC(std::vector<double>& yrlen, std::vector<int>& sim, std::vector<double>& cost);
-RcppExport SEXP iviRA_mgmt_costC(SEXP yrlenSEXP, SEXP simSEXP, SEXP costSEXP) {
+// sim_mgmt_costC
+std::vector<double> sim_mgmt_costC(std::vector<double>& yrlen, std::vector<int>& sim, std::vector<double>& cost);
+RcppExport SEXP iviRA_sim_mgmt_costC(SEXP yrlenSEXP, SEXP simSEXP, SEXP costSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::vector<double>& >::type yrlen(yrlenSEXP);
     Rcpp::traits::input_parameter< std::vector<int>& >::type sim(simSEXP);
     Rcpp::traits::input_parameter< std::vector<double>& >::type cost(costSEXP);
-    rcpp_result_gen = Rcpp::wrap(mgmt_costC(yrlen, sim, cost));
+    rcpp_result_gen = Rcpp::wrap(sim_mgmt_costC(yrlen, sim, cost));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -636,11 +636,11 @@ static const R_CallMethodDef CallEntries[] = {
     {"iviRA_sim_utility_mixture1C", (DL_FUNC) &iviRA_sim_utility_mixture1C, 18},
     {"iviRA_sim_utility_mixtureC", (DL_FUNC) &iviRA_sim_utility_mixtureC, 25},
     {"iviRA_sim_utility_wailooC", (DL_FUNC) &iviRA_sim_utility_wailooC, 15},
-    {"iviRA_treat_costC", (DL_FUNC) &iviRA_treat_costC, 19},
-    {"iviRA_hosp_costC", (DL_FUNC) &iviRA_hosp_costC, 5},
-    {"iviRA_prod_lossC", (DL_FUNC) &iviRA_prod_lossC, 4},
-    {"iviRA_si_costC", (DL_FUNC) &iviRA_si_costC, 4},
-    {"iviRA_mgmt_costC", (DL_FUNC) &iviRA_mgmt_costC, 3},
+    {"iviRA_sim_treat_costC", (DL_FUNC) &iviRA_sim_treat_costC, 19},
+    {"iviRA_sim_hosp_costC", (DL_FUNC) &iviRA_sim_hosp_costC, 5},
+    {"iviRA_sim_prod_lossC", (DL_FUNC) &iviRA_sim_prod_lossC, 4},
+    {"iviRA_sim_si_costC", (DL_FUNC) &iviRA_sim_si_costC, 4},
+    {"iviRA_sim_mgmt_costC", (DL_FUNC) &iviRA_sim_mgmt_costC, 3},
     {"iviRA_qalysC", (DL_FUNC) &iviRA_qalysC, 5},
     {"iviRA_ologit_probC", (DL_FUNC) &iviRA_ologit_probC, 3},
     {"iviRA_mlogit_probC", (DL_FUNC) &iviRA_mlogit_probC, 2},
