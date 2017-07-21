@@ -62,25 +62,25 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/01-intro.html">Introduction</a>
+      <a href="../articles/01-intro.html">1. Introduction</a>
     </li>
     <li>
-      <a href="../articles/02-population.html">Population</a>
+      <a href="../articles/02-population.html">2. Generate population</a>
     </li>
     <li>
-      <a href="../articles/03-parameters.html">Parameters</a>
+      <a href="../articles/03-parameters.html">3. Sample parameters</a>
     </li>
     <li>
-      <a href="../articles/04-ips.html">Simulate disease progression</a>
+      <a href="../articles/04-structure.html">4. Select model structure</a>
     </li>
     <li>
-      <a href="../articles/05-qalys.html">Utility and QALYs</a>
+      <a href="../articles/05-arms.html">5. Choose treatment arms</a>
     </li>
     <li>
-      <a href="../articles/06-costs.html">Costs</a>
+      <a href="../articles/06-ips.html">6. Run simulation</a>
     </li>
     <li>
-      <a href="../articles/07-cea.html">Cost-effectiveness analysis</a>
+      <a href="../articles/07-cea.html">7. Cost-effectiveness analysis</a>
     </li>
   </ul>
 </li>
@@ -122,7 +122,11 @@
   <dt>var</dt><dd><p>Name of variable</p></dd>
   <dt>or</dt><dd><p>Odds ratio without radiographic data</p></dd>
   <dt>or_se</dt><dd><p>Standard error of odds ratio without radiographic data</p></dd>
+  <dt>or_lower</dt><dd><p>Lower bound of 95 percent CI of odds ratio without radiographic data</p></dd>
+  <dt>or_upper</dt><dd><p>Upper bound of 95 percent CI of odds ratio without radiographic data</p></dd>
   <dt>logor</dt><dd><p>Log odds ratio without radiographic data</p></dd>
+  <dt>logor_lower</dt><dd><p>Lower bound of 95 percent CI of log odds ratio without radiographic data</p></dd>
+  <dt>logor_upper</dt><dd><p>Upper bound of 95 percent CI of log odds ratio without radiographic data</p></dd>
   <dt>logor_se</dt><dd><p>Standard error of log odds ratio without radiographic data</p></dd>
 </dl>
     
@@ -133,11 +137,9 @@ Arthritis &amp; Rheumatism 48.6 (2003): 1530-1542.</p>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>The standard errors of the log odds ratios are derived from the standard error of the 
-odds ratios. By the delta method, \(var(OR) = exp(\beta)var(\beta)exp(\beta)\) where 
-\(\beta\) is the regression coefficient of the logistic regression. Since \(var(\beta)\) 
-is the variance of the log odds ratio, it follows that
- \(var[log(OR)] = [var(OR)/exp(\beta)\)]^2.</p>
+    <p>The standard errors of the log odds ratios are derived from the 95 percent confidence 
+interval for the log odds ratio, which is, in turn, calculated by taking the log of the lower and upper
+bounds of the 95 perent confidence interval for the odds ratio.</p>
     
 
   </div>

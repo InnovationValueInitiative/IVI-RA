@@ -62,25 +62,25 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/01-intro.html">Introduction</a>
+      <a href="../articles/01-intro.html">1. Introduction</a>
     </li>
     <li>
-      <a href="../articles/02-population.html">Population</a>
+      <a href="../articles/02-population.html">2. Generate population</a>
     </li>
     <li>
-      <a href="../articles/03-parameters.html">Parameters</a>
+      <a href="../articles/03-parameters.html">3. Sample parameters</a>
     </li>
     <li>
-      <a href="../articles/04-ips.html">Simulate disease progression</a>
+      <a href="../articles/04-structure.html">4. Select model structure</a>
     </li>
     <li>
-      <a href="../articles/05-qalys.html">Utility and QALYs</a>
+      <a href="../articles/05-arms.html">5. Choose treatment arms</a>
     </li>
     <li>
-      <a href="../articles/06-costs.html">Costs</a>
+      <a href="../articles/06-ips.html">6. Run simulation</a>
     </li>
     <li>
-      <a href="../articles/07-cea.html">Cost-effectiveness analysis</a>
+      <a href="../articles/07-cea.html">7. Cost-effectiveness analysis</a>
     </li>
   </ul>
 </li>
@@ -114,7 +114,7 @@
     <p>Error messages when incorrect inputs are passed to sim_utility_wailoo.</p>
     
 
-    <pre class="usage"><span class='fu'>check_sim_utility_wailoo</span>(<span class='no'>simhaq</span>, <span class='no'>input_data</span>, <span class='no'>pars</span>)</pre>
+    <pre class="usage"><span class='fu'>check_sim_utility_wailoo</span>(<span class='no'>simhaq</span>, <span class='no'>haq0</span>, <span class='no'>male</span>, <span class='no'>prev_dmards</span>, <span class='no'>coefs</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -124,12 +124,12 @@
       <td><p>Simulation output from <a href='sim_haq.html'>sim_haq</a></p></td>
     </tr>
     <tr>
-      <th>pars</th>
-      <td><p><code>pars</code> as passed to <a href='sim_utility_mixture.html'>sim_utility_mixture</a></p></td>
-    </tr>
-    <tr>
       <th>male</th>
       <td><p>Vector indiciating patient gender (1 = male, 0 = female)</p></td>
+    </tr>
+    <tr>
+      <th>pars</th>
+      <td><p><code>pars</code> as passed to <a href='sim_utility_mixture.html'>sim_utility_mixture</a></p></td>
     </tr>
     </table>
     

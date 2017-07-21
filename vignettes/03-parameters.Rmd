@@ -11,8 +11,23 @@ library("iviRA")
 load("output.RData")
 ```
 
-## Random sampling 
-PSA is conducted by sampling the parameters from their (joint) probability distribution and running the IPS for each randomly sampled parameter set. The parameters can be sampled using the function `sample_pars`, which generates a probability distribution for all parameters used within the family of models. 
+## Parameter estimates
+Input parameters and data needed to run the simulation come preloaded with the package. To view the loaded data use the command `data(package = "iviRA")`.
+
+### NMA for ACR response, change in DAS28, and change in HAQ
+
+### Mapping between ACR response, EULAR response, disease activity, and HAQ
+
+### Long-term HAQ progression
+
+### Mortality
+
+### Utility
+
+### Costs
+
+## Random sampling for the PSA
+The PSA is conducted by sampling the parameters from their (joint) probability distribution and running the IPS for each randomly sampled parameter set. The parameters can be sampled using the function `sample_pars`, which generates a probability distribution for all parameters used within the family of models. 
 
 ```{r }
 parsamp <- sample_pars(n = 100)
@@ -28,7 +43,7 @@ parsamp$acr2eular[,,1:2]
 <div>
 <ul class="pager">
   <li class="previous"><a href="02-population.html">Previous</a></li>
-  <li class="next"><a href="04-ips.html">Next</a></li>
+  <li class="next"><a href="04-structure.html">Next</a></li>
 </ul>
 </div>
 

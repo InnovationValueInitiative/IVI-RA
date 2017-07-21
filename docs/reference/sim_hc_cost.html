@@ -62,25 +62,25 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/01-intro.html">Introduction</a>
+      <a href="../articles/01-intro.html">1. Introduction</a>
     </li>
     <li>
-      <a href="../articles/02-population.html">Population</a>
+      <a href="../articles/02-population.html">2. Generate population</a>
     </li>
     <li>
-      <a href="../articles/03-parameters.html">Parameters</a>
+      <a href="../articles/03-parameters.html">3. Sample parameters</a>
     </li>
     <li>
-      <a href="../articles/04-ips.html">Simulate disease progression</a>
+      <a href="../articles/04-structure.html">4. Select model structure</a>
     </li>
     <li>
-      <a href="../articles/05-qalys.html">Utility and QALYs</a>
+      <a href="../articles/05-arms.html">5. Choose treatment arms</a>
     </li>
     <li>
-      <a href="../articles/06-costs.html">Costs</a>
+      <a href="../articles/06-ips.html">6. Run simulation</a>
     </li>
     <li>
-      <a href="../articles/07-cea.html">Cost-effectiveness analysis</a>
+      <a href="../articles/07-cea.html">7. Cost-effectiveness analysis</a>
     </li>
   </ul>
 </li>
@@ -114,11 +114,11 @@
     <p>Simulate health care sector costs from HAQ score simulated using <code>sim_haq</code></p>
     
 
-    <pre class="usage"><span class='fu'>sim_hc_cost</span>(<span class='no'>simhaq</span>, <span class='no'>weight</span>, <span class='no'>pars</span>,
+    <pre class="usage"><span class='fu'>sim_hc_cost</span>(<span class='no'>simhaq</span>, <span class='no'>weight</span>, <span class='no'>treat_cost</span>, <span class='no'>hosp_cost</span>, <span class='no'>mgmt_cost</span>, <span class='no'>si_cost</span>,
   <span class='kw'>cdmards.ind</span> <span class='kw'>=</span> <span class='fu'>which</span>(<span class='no'>therapy.pars</span>$<span class='no'>info</span><span class='kw'>[[</span><span class='st'>"sname"</span>]] <span class='kw'>==</span> <span class='st'>"cdmards"</span>),
   <span class='kw'>tcz.ind</span> <span class='kw'>=</span> <span class='fu'>which</span>(<span class='no'>therapy.pars</span>$<span class='no'>info</span><span class='kw'>[[</span><span class='st'>"sname"</span>]] <span class='kw'>==</span> <span class='st'>"tcz"</span>),
   <span class='kw'>tczmtx.ind</span> <span class='kw'>=</span> <span class='fu'>which</span>(<span class='no'>therapy.pars</span>$<span class='no'>info</span><span class='kw'>[[</span><span class='st'>"sname"</span>]] <span class='kw'>==</span> <span class='st'>"tczmtx"</span>),
-  <span class='kw'>check</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+  <span class='kw'>cycle_length</span> <span class='kw'>=</span> <span class='fl'>6</span>, <span class='kw'>check</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -131,15 +131,6 @@
       <th>weight</th>
       <td><p>Weight of patient. Used to calculate treatment costs when dosing is based
 on weight.</p></td>
-    </tr>
-    <tr>
-      <th>pars</th>
-      <td><p>List of sampled parameter values. The format is the same as the ouptut produced 
-with <a href='sample_pars.html'>sample_pars</a>. The list must contain:</p><dl class='dl-horizontal'>
-<dt>treat.cost</dt><dd><p>Matrix of treatment cost data.</p></dd>
-<dt>hosp.cost</dt><dd><p>List of two matrices used to simulate hospital costs.</p></dd>
-<dt>mgmt.cost</dt><dd><p>Matrix of general management costs.</p></dd>
-</dl></td>
     </tr>
     <tr>
       <th>cdmards.ind</th>
@@ -156,6 +147,15 @@ with <a href='sample_pars.html'>sample_pars</a>. The list must contain:</p><dl c
     <tr>
       <th>check</th>
       <td><p>Should the function check parameters and input data passed to the model? Default is TRUE.</p></td>
+    </tr>
+    <tr>
+      <th>pars</th>
+      <td><p>List of sampled parameter values. The format is the same as the ouptut produced 
+with <a href='sample_pars.html'>sample_pars</a>. The list must contain:</p><dl class='dl-horizontal'>
+<dt>treat.cost</dt><dd><p>Matrix of treatment cost data.</p></dd>
+<dt>hosp.cost</dt><dd><p>List of two matrices used to simulate hospital costs.</p></dd>
+<dt>mgmt.cost</dt><dd><p>Matrix of general management costs.</p></dd>
+</dl></td>
     </tr>
     </table>
     

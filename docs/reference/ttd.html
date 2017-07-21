@@ -62,25 +62,25 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/01-intro.html">Introduction</a>
+      <a href="../articles/01-intro.html">1. Introduction</a>
     </li>
     <li>
-      <a href="../articles/02-population.html">Population</a>
+      <a href="../articles/02-population.html">2. Generate population</a>
     </li>
     <li>
-      <a href="../articles/03-parameters.html">Parameters</a>
+      <a href="../articles/03-parameters.html">3. Sample parameters</a>
     </li>
     <li>
-      <a href="../articles/04-ips.html">Simulate disease progression</a>
+      <a href="../articles/04-structure.html">4. Select model structure</a>
     </li>
     <li>
-      <a href="../articles/05-qalys.html">Utility and QALYs</a>
+      <a href="../articles/05-arms.html">5. Choose treatment arms</a>
     </li>
     <li>
-      <a href="../articles/06-costs.html">Costs</a>
+      <a href="../articles/06-ips.html">6. Run simulation</a>
     </li>
     <li>
-      <a href="../articles/07-cea.html">Cost-effectiveness analysis</a>
+      <a href="../articles/07-cea.html">7. Cost-effectiveness analysis</a>
     </li>
   </ul>
 </li>
@@ -111,31 +111,24 @@
     </div>
 
     
-    <p>A list of parameters estimated in a parametric survival analysis of time to treatment 
-discontinuation. Models were fit using <em>flexsurv</em>. Survival curves were scanned from the 2016 NICE  
-HTA and then converted to individual-level patient dat using the <code>reconstruct_ipd</code>
-function. Survival curves are stratified by patients with moderate and good responses 
-to treatment according to Eular response categories.</p>
+    <p><code>ttd.eular</code> and <code>ttd.da</code> are lists of lists containing treatment discontinuation
+parameters stratified by EULAR response (moderate, high) and disease activity 
+(remission, low, moderate, high) respectively; <code>ttd.all</code> is a list of lists containing
+unstratified (i.e., all patients) treatment discontinuation parameters.</p>
     
 
-    <pre class="usage"><span class='no'>ttd.eular.mod</span>
+    <pre class="usage"><span class='no'>ttd.eular</span>
 
-<span class='no'>ttd.eular.good</span>
+<span class='no'>ttd.da</span>
 
-<span class='no'>ttd.eular.mod.adj</span>
-
-<span class='no'>ttd.eular.good.adj</span></pre>
+<span class='no'>ttd.all</span></pre>
         
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
-    <p>A list of lists. One list for each parametric distribution. Within each distribution
-the list contains parameters produced by <code>flexsurv</code> on real-line scale
- (e.g. after log transformation if they are defined as positive). The parameters are:</p><dl class='dl-horizontal'>
-  <dt>coef</dt><dd><p>Coefficients for all parameters including location parameter and 
-  ancillary parameter(s)</p></dd>
-  <dt>vcov</dt><dd><p>Covariance matrix for all parameters including location parameter and 
-  ancillary parameter(s)</p></dd>
-</dl>
+    <p>A list of lists of lists. The top level list is the level of EULAR response or
+ disease activity. The second level list is the parametric distribution used. 
+ The third level list contains the parameters of a given parametetric fit as described in
+ <a href='sample_pars.html'>sample_pars</a>.</p>
     
     <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
 
@@ -144,6 +137,15 @@ golimumab, tocilizumab and abatacept for the treatment of rheumatoid arthritis n
  treated with disease-modifying antirheumatic drugs and after the failure of conventional 
  disease-modifying antirheumatic drugs only: systematic review and economic evaluation." 
 Health Technology Assessment 20.35 (2016): 1-610.</p>
+<p>Zhang, Jie, et al. "Thresholds in disease activity for switching biologics in rheumatoid 
+arthritis patients: experience from a large US cohort." 
+Arthritis care &amp; research 63.12 (2011): 1672-1679.</p>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Time to treatment discontinuation paramters for each level of EULAR response or disease activity
+are represented with a list as described in <a href='sample_pars.html'>sample_pars</a>. Models were fit using <em>flexsurv</em>.
+Survival curves are based on analyses of reconstructed individual patient data.</p>
     
 
   </div>
@@ -154,6 +156,8 @@ Health Technology Assessment 20.35 (2016): 1-610.</p>
       <li><a href="#format">Format</a></li>
 
       <li><a href="#source">Source</a></li>
+
+      <li><a href="#details">Details</a></li>
           </ul>
 
   </div>

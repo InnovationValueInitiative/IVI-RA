@@ -28,6 +28,6 @@ The functions in `hesim` are designed for subgroup analyses so we must specify a
 
 <div>
 <ul class="pager">
-  <li class="previous"><a href="06-costs.html">Previous</a></li>
+  <li class="previous"><a href="06-ips.html">Previous</a></li>
 </ul>
 </div>

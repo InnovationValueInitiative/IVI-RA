@@ -39,25 +39,25 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/01-intro.html">Introduction</a>
+      <a href="../articles/01-intro.html">1. Introduction</a>
     </li>
     <li>
-      <a href="../articles/02-population.html">Population</a>
+      <a href="../articles/02-population.html">2. Generate population</a>
     </li>
     <li>
-      <a href="../articles/03-parameters.html">Parameters</a>
+      <a href="../articles/03-parameters.html">3. Sample parameters</a>
     </li>
     <li>
-      <a href="../articles/04-ips.html">Simulate disease progression</a>
+      <a href="../articles/04-structure.html">4. Select model structure</a>
     </li>
     <li>
-      <a href="../articles/05-qalys.html">Utility and QALYs</a>
+      <a href="../articles/05-arms.html">5. Choose treatment arms</a>
     </li>
     <li>
-      <a href="../articles/06-costs.html">Costs</a>
+      <a href="../articles/06-ips.html">6. Run simulation</a>
     </li>
     <li>
-      <a href="../articles/07-cea.html">Cost-effectiveness analysis</a>
+      <a href="../articles/07-cea.html">7. Cost-effectiveness analysis</a>
     </li>
   </ul>
 </li>
@@ -91,34 +91,43 @@
     
     
 <div class="contents">
-<div id="loading-the-data" class="section level2">
+<p>An assessment of a health technology is always conditional on the patient population studied. The first step in an analysis should therefore always be to specifiy the population considered. Below, we consider two ways to generate the patient population: first, the cohort can be randomly sampled using one of the <code>iviRA</code> packages built in functions, and, second, you can supply your own patient data.</p>
+<div id="randomly-sampling-a-patient-population" class="section level2">
 <h2 class="hasAnchor">
-<a href="#loading-the-data" class="anchor"></a>Loading the data</h2>
-<p>Input parameters and data needed to run the simulation come preloaded with the package. To view the loaded data use the command <code>data(package = "iviRA")</code>.</p>
+<a href="#randomly-sampling-a-patient-population" class="anchor"></a>Randomly sampling a patient population</h2>
+<p>The simplest way to generate a patient cohort is to use the <code>sample_pats</code> function. The variables included in the cohort are age, gender, haq score at baseline, weight, the number of previous dmards, and three measures of disease activity (DAS28, SDAI, and CDAI). The <code>type</code> argument specifies whether the patient cohort is homogeneous or heterogeneous. If the cohort is homogeneous, then the cohort consists of male and female patients that are identical in all respects other than gender; if the cohort is heterogeneous, then all variables vary across patients.</p>
+<p>We can randomly sample a heterogeneous population with default setting. To examine these settings type <code><a href="../reference/sample_pats.html">?sample_pats</a></code> into the console.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pop &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pats.html">sample_pats</a></span>(<span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">type =</span> <span class="st">"heterog"</span>)
+<span class="kw">head</span>(pop)</code></pre></div>
+<pre><code>##           age male weight prev_dmards    das28     sdai     cdai      haq0
+## [1,] 51.54114    1     89           2 5.229573 40.40202 28.66152 2.2891125
+## [2,] 49.44153    1     89           3 4.756555 31.03145 36.74431 1.3817509
+## [3,] 53.85628    0     75           0 6.014501 45.33357 44.18451 1.8381207
+## [4,] 41.13608    0     75           5 6.079774 36.35170 36.38071 2.3140046
+## [5,] 28.77129    0     75           3 4.966930 38.57402 42.43045 1.4685947
+## [6,] 51.95483    0     75           4 6.529424 39.25431 41.93784 0.8779117</code></pre>
+<p>We can also customize the distribution of patients. For example, suppose we want to study a younger and healthier population. We might then sample patients by customizing arguments in <code>sample_pats</code>,</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pop2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pats.html">sample_pats</a></span>(<span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">type =</span> <span class="st">"heterog"</span>, <span class="dt">age_mean =</span> <span class="dv">45</span>, <span class="dt">das28_mean =</span> <span class="dv">4</span>, <span class="dt">sdai_mean =</span> <span class="dv">20</span>, 
+                    <span class="dt">cdai_mean =</span> <span class="dv">18</span>)
+<span class="kw">head</span>(pop2)</code></pre></div>
+<pre><code>##           age male weight prev_dmards    das28      sdai     cdai
+## [1,] 18.50057    0     75           1 5.708087 33.682383 35.80915
+## [2,] 52.77157    0     75           4 3.934989 16.882168 12.03703
+## [3,] 41.63847    0     75           2 2.749431 10.941974 12.44805
+## [4,] 41.89149    0     75           4 3.747891  9.212177  7.12275
+## [5,] 38.49753    0     75           1 4.815971 21.078200 17.83773
+## [6,] 48.35088    1     89           2 4.248135 27.139612 28.83757
+##           haq0
+## [1,] 1.1262816
+## [2,] 1.7208130
+## [3,] 1.0658988
+## [4,] 1.5501737
+## [5,] 0.7231864
+## [6,] 0.9864411</code></pre>
 </div>
-<div id="generating-a-patient-cohort" class="section level2">
+<div id="using-your-own-patient-population" class="section level2">
 <h2 class="hasAnchor">
-<a href="#generating-a-patient-cohort" class="anchor"></a>Generating a patient cohort</h2>
-<p>Before running the IPS, patient characteristics must be specified. The patient dataset must be a matrix containing information on at least patient age, baseline HAQ, gender, and weight. Additionally, if the <a href="https://www.sheffield.ac.uk/polopoly_fs/1.43356!/file/AHRQ-final-report.pdf">Wailoo (2006)</a> <a href="05-qalys.html">utility agorithm is used</a>, then disease duration and the number of previous DMARDs must be specified as well.</p>
-<p>The patient dataset can be generated using <code><a href="../reference/sample_pats.html">sample_pats()</a></code>. The <code>type</code> argument specifies whether the patient cohort is homogeneous or heterogeneous. If the cohort is homogeneous, then the cohort consists of male and female patients that are identical in all respects other than gender; if the cohort is heterogeneous, then all variables vary across patients.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pats &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pats.html">sample_pats</a></span>(<span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">type =</span> <span class="st">"heterog"</span>)
-<span class="kw">head</span>(pats)</code></pre></div>
-<pre><code>##           age male      haq0 weight  dis_dur prev_dmards
-## [1,] 75.46150    1 2.8575117     89 14.04854   1.3372087
-## [2,] 45.85240    0 0.5448523     75 36.93170   5.2817899
-## [3,] 57.16053    0 0.4392389     75 25.39542   0.1813297
-## [4,] 48.31714    0 0.6804414     75 35.26643   2.4472137
-## [5,] 52.96341    0 1.0453118     75 23.48242   1.0691678
-## [6,] 56.08365    0 1.6704283     75 27.26459   1.9329578</code></pre>
-</div>
-<div id="input-data" class="section level2">
-<h2 class="hasAnchor">
-<a href="#input-data" class="anchor"></a>Input data</h2>
-<p>To transform the patient dataset into a format needed to run the simulation use the <code>input_data</code> function.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">input.dat &lt;-<span class="st"> </span><span class="kw"><a href="../reference/input_data.html">input_data</a></span>(pats)
-<span class="kw">names</span>(input.dat)</code></pre></div>
-<pre><code>## [1] "n"           "haq0"        "age"         "male"        "weight"     
-## [6] "dis.dur"     "prev.dmards" "x.mort"      "x.dur"</code></pre>
+<a href="#using-your-own-patient-population" class="anchor"></a>Using your own patient population</h2>
 <div>
 <ul class="pager">
 <li class="previous">
@@ -138,9 +147,8 @@
       <h2 class="hasAnchor">
 <a href="#tocnav" class="anchor"></a>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
-<li><a href="#loading-the-data">Loading the data</a></li>
-      <li><a href="#generating-a-patient-cohort">Generating a patient cohort</a></li>
-      <li><a href="#input-data">Input data</a></li>
+<li><a href="#randomly-sampling-a-patient-population">Randomly sampling a patient population</a></li>
+      <li><a href="#using-your-own-patient-population">Using your own patient population</a></li>
       </ul>
 </div>
       </div>

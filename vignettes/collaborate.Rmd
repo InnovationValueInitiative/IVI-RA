@@ -18,11 +18,11 @@ Step 3: Create a local repository by typing the following command into the comma
 
 	git clone https://github.com/[github-username]/IVI-RA.git
 
-Step 4: Use to command line to navigate to the local IVI-RA directory.
+Step 4: Use the command line to navigate to the local IVI-RA directory.
 
 Step 5: In order to make it easier to [Push](https://help.github.com/articles/github-glossary/#push) your local work and [pull](https://help.github.com/articles/github-glossary/#pull) changes made by others to the IVI-RA code type the following command into the command line:
 
-	git remote add upstream https://github.com/open-source-economics/IVI-RA.git
+	git remote add upstream https://github.com/InnovationValueInitiative/IVI-RA.git
 
 Step 6: Before editing your local copy of the IVI-RA code, make sure you have the latest version of the code using the following three commands:
 
@@ -63,6 +63,6 @@ If the changes you made to your local branch are in the same section as changes 
 
 Step 9: If the code is ready to be reviewed by other contributors, make a final commit and push your local branch to your remote repository:
 
-	push origin [new-branch-name]
+	git push origin [new-branch-name]
 	
 Step 10: Using the GitHub user interface, [open a pull request](https://help.github.com/articles/creating-a-pull-request/#creating-the-pull-request).

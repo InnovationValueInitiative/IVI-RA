@@ -62,25 +62,25 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/01-intro.html">Introduction</a>
+      <a href="../articles/01-intro.html">1. Introduction</a>
     </li>
     <li>
-      <a href="../articles/02-population.html">Population</a>
+      <a href="../articles/02-population.html">2. Generate population</a>
     </li>
     <li>
-      <a href="../articles/03-parameters.html">Parameters</a>
+      <a href="../articles/03-parameters.html">3. Sample parameters</a>
     </li>
     <li>
-      <a href="../articles/04-ips.html">Simulate disease progression</a>
+      <a href="../articles/04-structure.html">4. Select model structure</a>
     </li>
     <li>
-      <a href="../articles/05-qalys.html">Utility and QALYs</a>
+      <a href="../articles/05-arms.html">5. Choose treatment arms</a>
     </li>
     <li>
-      <a href="../articles/06-costs.html">Costs</a>
+      <a href="../articles/06-ips.html">6. Run simulation</a>
     </li>
     <li>
-      <a href="../articles/07-cea.html">Cost-effectiveness analysis</a>
+      <a href="../articles/07-cea.html">7. Cost-effectiveness analysis</a>
     </li>
   </ul>
 </li>
@@ -131,7 +131,8 @@ Hernandez-Alva (2013).</p>
     <tr>
       <th>pars</th>
       <td><p>List of parameters needed to simulate utility using the Hernandez (2013) mixture 
-model. See section 'pars' below.</p></td>
+model. These are the parameters 'mixture.utility' described in the documentation 
+to <a href='sample_pars.html'>sample_pars</a>.</p></td>
     </tr>
     <tr>
       <th>check</th>
@@ -144,19 +145,6 @@ model. See section 'pars' below.</p></td>
     <p>Matrix. First column is simulated pain score and second column is simulated utility. 
 Each row corresponds to a unique patient and time-period (i.e. month) from <a href='sim_haq.html'>sim_haq</a>.</p>
     
-    <h2 class="hasAnchor" id="pars"><a class="anchor" href="#pars"></a>pars</h2>
-
-    
-    <p>Parameters in <code>pars</code> are:</p><dl class='dl-horizontal'>
-<dt>pain.mean</dt><dd><p>Mean of pain score in the population.</p></dd>
-<dt>haq.mean</dt><dd><p>Mean of HAQ score in the population.</p></dd>
-<dt>pain.var</dt><dd><p>Variance of pain score in the population.</p></dd>
-<dt>haq.var</dt><dd><p>Variance of HAQ in the population.</p></dd>
-<dt>painhaq.cor</dt><dd><p>Correlation between pain and HAQ in the population.</p></dd>
-<dt>mixture.utility</dt><dd><p>Parameters sampled from the Hernandez Alva (2013) mixture model. See
-the documentation in <a href='sample_pars.html'>sample_pars</a> for details.</p></dd>
-</dl>
-    
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -165,8 +153,6 @@ the documentation in <a href='sample_pars.html'>sample_pars</a> for details.</p>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
-
-      <li><a href="#pars">pars</a></li>
           </ul>
 
   </div>

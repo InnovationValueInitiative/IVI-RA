@@ -62,25 +62,25 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/01-intro.html">Introduction</a>
+      <a href="../articles/01-intro.html">1. Introduction</a>
     </li>
     <li>
-      <a href="../articles/02-population.html">Population</a>
+      <a href="../articles/02-population.html">2. Generate population</a>
     </li>
     <li>
-      <a href="../articles/03-parameters.html">Parameters</a>
+      <a href="../articles/03-parameters.html">3. Sample parameters</a>
     </li>
     <li>
-      <a href="../articles/04-ips.html">Simulate disease progression</a>
+      <a href="../articles/04-structure.html">4. Select model structure</a>
     </li>
     <li>
-      <a href="../articles/05-qalys.html">Utility and QALYs</a>
+      <a href="../articles/05-arms.html">5. Choose treatment arms</a>
     </li>
     <li>
-      <a href="../articles/06-costs.html">Costs</a>
+      <a href="../articles/06-ips.html">6. Run simulation</a>
     </li>
     <li>
-      <a href="../articles/07-cea.html">Cost-effectiveness analysis</a>
+      <a href="../articles/07-cea.html">7. Cost-effectiveness analysis</a>
     </li>
   </ul>
 </li>
@@ -111,8 +111,8 @@
     </div>
 
     
-    <p>Regression coefficients from a logistic regression equation predicting the probability of 
-switching treatment at 6 months by disease activity level.</p>
+    <p>Probability of treatment switching at 6 months by disease activity level (remission, low,
+moderate, high)</p>
     
 
     <pre class="usage"><span class='no'>treat.switch</span></pre>
@@ -120,15 +120,13 @@ switching treatment at 6 months by disease activity level.</p>
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
     <p>A data.table containing the following columns:</p><dl class='dl-horizontal'>
-  <dt>variable</dt><dd><p>Name of variable. Includes the intercept, an indicator variable for whether
+  <dt>disease_activity</dt><dd><p>Name of variable. Includes the intercept, an indicator variable for whether
   disease activity is moderate (CDAI 10-22), and an indicator variable for 
   whether disease activity is high (CDAI greater than 22).</p></dd>
-  <dt>or</dt><dd><p>The odds ratio of the coefficients.</p></dd>
-  <dt>or_lower</dt><dd><p>Lower 95 percent confidence interval for the odds ratio.</p></dd>
-  <dt>or_upper</dt><dd><p>Upper 95 percent confidence interval for the odds ratio.</p></dd>
-  <dt>logor</dt><dd><p>Log odds ratio of the coefficents.</p></dd>
-  <dt>logor_lower</dt><dd><p>Lower 95 percent confidence interval for the log of the odds ratio.</p></dd>
-  <dt>logor_upper</dt><dd><p>Upper 95 percent confidence interval for the log of the odds ratio.</p></dd>
+  <dt>p</dt><dd><p>Probability of switching treatment.</p></dd>
+  <dt>p_se</dt><dd><p>Standard error of probability of switching treatment.</p></dd>
+  <dt>alpha</dt><dd><p>Alpha parameter in beta distribution.</p></dd>
+  <dt>beta</dt><dd><p>Beta parameter in a beta distribution.</p></dd>
 </dl>
     
     <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>

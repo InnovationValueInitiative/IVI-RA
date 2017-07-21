@@ -15,7 +15,13 @@ load("output.RData")
 Disease progression depends on the therapies used by patients. The list of potential therapies is available in the object `therapy.pars`, which contains all parameters in the model that vary across therapies.
 
 ```{r }
-print(therapy.pars$info)
+sim.out1 <- sim_iviRA(arms = arm1, input_data = input.dat, pars = parsamp,
+                     model_structure = mod.struct)
+sim.out1[, arm := "Arm 1"]
+sim.out2 <- sim_iviRA(arms = arm2, input_data = input.dat, pars = parsamp,
+                     model_structure = mod.struct)
+sim.out2[, arm := "Arm 2"]
+sim.out <- rbind(sim.out1, sim.out2)
 ```
 
 Therapies are specified within the simulation by providing the indices in `therapy.pars`. A treatment sequence of arbitrary length can be specified which consists of all the therapies used by a patient. Patients can either have same treatment sequence or different sequences. The treatment sequence (or set of treatment sequences) is referred to as an "arm". If the arm consists of a single treatment sequence, then it is specified as a single vector of indices; if each patient has their own treatment sequence, then the arm is specified as a matrix where each row contains the indices of the therapies used by a given patient

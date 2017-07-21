@@ -39,25 +39,25 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/01-intro.html">Introduction</a>
+      <a href="../articles/01-intro.html">1. Introduction</a>
     </li>
     <li>
-      <a href="../articles/02-population.html">Population</a>
+      <a href="../articles/02-population.html">2. Generate population</a>
     </li>
     <li>
-      <a href="../articles/03-parameters.html">Parameters</a>
+      <a href="../articles/03-parameters.html">3. Sample parameters</a>
     </li>
     <li>
-      <a href="../articles/04-ips.html">Simulate disease progression</a>
+      <a href="../articles/04-structure.html">4. Select model structure</a>
     </li>
     <li>
-      <a href="../articles/05-qalys.html">Utility and QALYs</a>
+      <a href="../articles/05-arms.html">5. Choose treatment arms</a>
     </li>
     <li>
-      <a href="../articles/06-costs.html">Costs</a>
+      <a href="../articles/06-ips.html">6. Run simulation</a>
     </li>
     <li>
-      <a href="../articles/07-cea.html">Cost-effectiveness analysis</a>
+      <a href="../articles/07-cea.html">7. Cost-effectiveness analysis</a>
     </li>
   </ul>
 </li>
@@ -91,45 +91,75 @@
     
     
 <div class="contents">
-<div id="random-sampling" class="section level2">
+<div id="parameter-estimates" class="section level2">
 <h2 class="hasAnchor">
-<a href="#random-sampling" class="anchor"></a>Random sampling</h2>
-<p>PSA is conducted by sampling the parameters from their (joint) probability distribution and running the IPS for each randomly sampled parameter set. The parameters can be sampled using the function <code>sample_pars</code>, which generates a probability distribution for all parameters used within the family of models.</p>
+<a href="#parameter-estimates" class="anchor"></a>Parameter estimates</h2>
+<p>Input parameters and data needed to run the simulation come preloaded with the package. To view the loaded data use the command <code>data(package = "iviRA")</code>.</p>
+<div id="nma-for-acr-response-change-in-das28-and-change-in-haq" class="section level3">
+<h3 class="hasAnchor">
+<a href="#nma-for-acr-response-change-in-das28-and-change-in-haq" class="anchor"></a>NMA for ACR response, change in DAS28, and change in HAQ</h3>
+</div>
+<div id="mapping-between-acr-response-eular-response-disease-activity-and-haq" class="section level3">
+<h3 class="hasAnchor">
+<a href="#mapping-between-acr-response-eular-response-disease-activity-and-haq" class="anchor"></a>Mapping between ACR response, EULAR response, disease activity, and HAQ</h3>
+</div>
+<div id="long-term-haq-progression" class="section level3">
+<h3 class="hasAnchor">
+<a href="#long-term-haq-progression" class="anchor"></a>Long-term HAQ progression</h3>
+</div>
+<div id="mortality" class="section level3">
+<h3 class="hasAnchor">
+<a href="#mortality" class="anchor"></a>Mortality</h3>
+</div>
+<div id="utility" class="section level3">
+<h3 class="hasAnchor">
+<a href="#utility" class="anchor"></a>Utility</h3>
+</div>
+<div id="costs" class="section level3">
+<h3 class="hasAnchor">
+<a href="#costs" class="anchor"></a>Costs</h3>
+</div>
+</div>
+<div id="random-sampling-for-the-psa" class="section level2">
+<h2 class="hasAnchor">
+<a href="#random-sampling-for-the-psa" class="anchor"></a>Random sampling for the PSA</h2>
+<p>The PSA is conducted by sampling the parameters from their (joint) probability distribution and running the IPS for each randomly sampled parameter set. The parameters can be sampled using the function <code>sample_pars</code>, which generates a probability distribution for all parameters used within the family of models.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">parsamp &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pars.html">sample_pars</a></span>(<span class="dt">n =</span> <span class="dv">100</span>)
 <span class="kw">names</span>(parsamp)</code></pre></div>
 <pre><code>##  [1] "n"                 "rebound"           "lt"               
-##  [4] "treat.cost"        "switch.logor"      "acr2eular"        
-##  [7] "acr2sdai"          "acr2cdai"          "acr2das28"        
-## [10] "logor.mort"        "mort.loghr.haqdif" "ttd.eular.mod"    
-## [13] "ttd.eular.good"    "acr1"              "acr2"             
-## [16] "eular2haq"         "acr2haq"           "haq.lprog.therapy"
-## [19] "haq.lprog.age"     "mixture.utility"   "wailoo.utility"   
-## [22] "hosp.cost"         "mgmt.cost"         "prod.loss"        
-## [25] "si.surv"           "si.cost"           "si.ul"</code></pre>
+##  [4] "treat.cost"        "acr2eular"         "acr2sdai"         
+##  [7] "acr2cdai"          "acr2das28"         "logor.mort"       
+## [10] "mort.loghr.haqdif" "ttd.all"           "ttd.da"           
+## [13] "ttd.eular"         "acr"               "das28"            
+## [16] "haq"               "eular2haq"         "acr2haq"          
+## [19] "haq.lprog.therapy" "haq.lprog.age"     "haq.lcgm"         
+## [22] "mixture.utility"   "wailoo.utility"    "hosp.cost"        
+## [25] "mgmt.cost"         "prod.loss"         "ttsi"             
+## [28] "si.cost"           "si.ul"</code></pre>
 <p><code>sample_pars</code> returns a list containing random draws of the different parameters used in the IPS. For example <code>parsamp$acr2eular</code> is an array containing two-way frequency matrices randomly sampled from a Dirichlet distribution that describe the probability of a EULAR response category conditional on ACR response.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">parsamp$acr2eular[,,<span class="dv">1</span>:<span class="dv">2</span>]</code></pre></div>
 <pre><code>## , , 1
 ## 
 ##           eular_none eular_moderate eular_good
-## ACR &lt; 20  0.77772777     0.16170974  0.0605625
-## ACR 20-50 0.02580394     0.39844282  0.5757532
-## ACR 50-70 0.15695435     0.06722328  0.7758224
-## ACR 70+   0.00000000     0.22882282  0.7711772
+## ACR &lt; 20  0.77613760     0.16686897 0.05699343
+## ACR 20-50 0.06520118     0.54513322 0.38966560
+## ACR 50-70 0.13825137     0.05589684 0.80585180
+## ACR 70+   0.00000000     0.67911294 0.32088706
 ## 
 ## , , 2
 ## 
 ##           eular_none eular_moderate eular_good
-## ACR &lt; 20  0.79594600      0.1443481 0.05970587
-## ACR 20-50 0.07607557      0.4799510 0.44397341
-## ACR 50-70 0.20276303      0.1223424 0.67489454
-## ACR 70+   0.00000000      0.7825791 0.21742086</code></pre>
+## ACR &lt; 20  0.78685801     0.14644547 0.06669652
+## ACR 20-50 0.06983713     0.39357715 0.53658571
+## ACR 50-70 0.05312846     0.09995407 0.84691747
+## ACR 70+   0.00000000     0.56833677 0.43166323</code></pre>
 <div>
 <ul class="pager">
 <li class="previous">
 <a href="02-population.html">Previous</a>
 </li>
 <li class="next">
-<a href="04-ips.html">Next</a>
+<a href="04-structure.html">Next</a>
 </li>
 </ul>
 </div>
@@ -142,7 +172,8 @@
       <h2 class="hasAnchor">
 <a href="#tocnav" class="anchor"></a>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
-<li><a href="#random-sampling">Random sampling</a></li>
+<li><a href="#parameter-estimates">Parameter estimates</a></li>
+      <li><a href="#random-sampling-for-the-psa">Random sampling for the PSA</a></li>
       </ul>
 </div>
       </div>

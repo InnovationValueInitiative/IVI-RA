@@ -14,14 +14,13 @@ library(devtools)
 devtools::install_github("InnovationValueInitiative/IVI-RA")
 library(iviRA)
 ```
-The model can then be used for cost-effectiveness analysis by following these 6 steps:
+The model can be simulated and used to assess the value of a health technology by following these 5 steps:
 
-1. Generate patient population.
+1. Generate a patient population.
 2. Sample model parameters.
-3. Simulate disease progression using the IPS
-4. Simulate utility and quality-adjusted life-years (QALYs)
-5. Simulate health-care costs and productivity losses.
-6. Analyze the output and conduct a cost-effectiveness analysis. 
+3. Choose a model structure.
+4. Simulate disease progression, mortality, and costs using the IPS.
+5. Analyze the output. 
 
 Click next to learn about step 1 and begin the tutorial.  
 

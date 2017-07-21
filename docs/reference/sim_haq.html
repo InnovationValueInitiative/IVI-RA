@@ -62,25 +62,25 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/01-intro.html">Introduction</a>
+      <a href="../articles/01-intro.html">1. Introduction</a>
     </li>
     <li>
-      <a href="../articles/02-population.html">Population</a>
+      <a href="../articles/02-population.html">2. Generate population</a>
     </li>
     <li>
-      <a href="../articles/03-parameters.html">Parameters</a>
+      <a href="../articles/03-parameters.html">3. Sample parameters</a>
     </li>
     <li>
-      <a href="../articles/04-ips.html">Simulate disease progression</a>
+      <a href="../articles/04-structure.html">4. Select model structure</a>
     </li>
     <li>
-      <a href="../articles/05-qalys.html">Utility and QALYs</a>
+      <a href="../articles/05-arms.html">5. Choose treatment arms</a>
     </li>
     <li>
-      <a href="../articles/06-costs.html">Costs</a>
+      <a href="../articles/06-ips.html">6. Run simulation</a>
     </li>
     <li>
-      <a href="../articles/07-cea.html">Cost-effectiveness analysis</a>
+      <a href="../articles/07-cea.html">7. Cost-effectiveness analysis</a>
     </li>
   </ul>
 </li>
@@ -116,9 +116,16 @@ treatments. An "outer" loop iterates over S draws from sampled parameter sets an
 N patients. Cycle lengths are 6 months long. The simulation is written in C++ for speed.</p>
     
 
-    <pre class="usage"><span class='fu'>sim_haq</span>(<span class='no'>arminds</span>, <span class='no'>input_data</span>, <span class='no'>pars</span>, <span class='kw'>dur_dist</span> <span class='kw'>=</span> <span class='st'>"lnorm"</span>, <span class='kw'>si_dist</span> <span class='kw'>=</span> <span class='st'>"exp"</span>,
-  <span class='kw'>max_months</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>nbt_ind</span> <span class='kw'>=</span> <span class='fu'>which</span>(<span class='no'>therapy.pars</span>$<span class='no'>info</span>$<span class='no'>sname</span> <span class='kw'>==</span> <span class='st'>"nbt"</span>),
-  <span class='kw'>check</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>sim_haq</span>(<span class='no'>arminds</span>, <span class='no'>haq0</span>, <span class='no'>das28_0</span>, <span class='no'>sdai0</span>, <span class='no'>cdai0</span>, <span class='no'>age0</span>, <span class='no'>male</span>, <span class='no'>prev_dmards</span>,
+  <span class='no'>itreat_haq</span>, <span class='no'>itreat_switch</span>, <span class='no'>nma_acr1</span>, <span class='no'>nma_acr2</span>, <span class='no'>nma_dhaq1</span>, <span class='no'>nma_dhaq2</span>,
+  <span class='no'>nma_das28_1</span>, <span class='no'>nma_das28_2</span>, <span class='no'>acr2eular</span>, <span class='no'>acr2haq</span>, <span class='no'>eular2haq</span>, <span class='no'>acr2das28</span>, <span class='no'>acr2sdai</span>,
+  <span class='no'>acr2cdai</span>, <span class='no'>tswitch_da</span>, <span class='no'>haq_lprog_therapy</span>, <span class='no'>haq_lprog_age</span>, <span class='no'>haq_lcgm_delta</span>,
+  <span class='no'>haq_lcgm_beta</span>, <span class='no'>cmdards_haq_model</span>, <span class='no'>rebound_factor</span>, <span class='no'>lifetable_male</span>,
+  <span class='no'>lifetable_female</span>, <span class='no'>x_mort</span>, <span class='no'>logor</span>, <span class='no'>dur_dist</span>, <span class='no'>x_dur</span>, <span class='no'>ttd_all_loc</span>, <span class='no'>ttd_all_anc1</span>,
+  <span class='no'>ttd_all_anc2</span>, <span class='no'>ttd_da_loc</span>, <span class='no'>ttd_da_nac1</span>, <span class='no'>ttd_da_anc2</span>, <span class='no'>ttd_eular_loc_mod</span>,
+  <span class='no'>ttd_eular_anc1_mod</span>, <span class='no'>ttd_eular_anc2_mod</span>, <span class='no'>ttd_eular_loc_good</span>,
+  <span class='no'>ttd_eular_anc1_good</span>, <span class='no'>ttd_eular_anc2_good</span>, <span class='no'>cycle_length</span>, <span class='no'>treat_gap</span>, <span class='no'>cdmards</span>,
+  <span class='no'>nbt</span>, <span class='no'>si_loc</span>, <span class='no'>si_anc1</span>, <span class='no'>si_anc2</span>, <span class='no'>si_dist</span>, <span class='no'>haqdelta_loghr</span>, <span class='no'>max_months</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -130,21 +137,25 @@ is the index of a therapy in <code>therapy.pars$info</code>. May be a vector con
 of unique sequences for each patient.</p></td>
     </tr>
     <tr>
-      <th>input_data</th>
-      <td><p>List of input data. Required inputs are <code>haq0</code>, <code>age</code>, <code>male</code>, <code>x.mort</code>, 
-and <code>x.dur</code> as generated from <a href='input_data.html'>input_data</a>.</p></td>
+      <th>itreat_haq</th>
+      <td><p>How should the relationship between treatment and HAQ during the initial 
+treatment phase (i.e., first 6 months) be modeled? Options, which are equivalent to H1-H3
+in the documentation are
+H1: Treatment -&gt; ACR -&gt; HAQ (<code>acr-haq</code>), 
+H2: Treatment -&gt; ACR -&gt; EULAR -&gt; HAQ (<code>acr-eular-haq</code>), or
+H3:Treatment -&gt; HAQ (<code>haq</code>).</p></td>
     </tr>
     <tr>
-      <th>pars</th>
-      <td><p>List of parameters. Required parameters are <code>rebound</code>, <code>acr1</code>, <code>acr2</code>, <code>acr2eular</code>, <code>eular2haq</code>, 
-<code>haq.lprog.therapy</code>, <code>haq.lprog.age</code>, <code>logor.mort</code>, <code>mort.loghr.haqdif</code>, <code>si.surv</code>,
-<code>ttd.eular.mod</code>, <code>ttd.eular.good
-</code>, and <code>lt</code> as
-generated from <a href='sample_pars.html'>sample_pars</a>.</p></td>
-    </tr>
-    <tr>
-      <th>dur_dist</th>
-      <td><p>Survival distribution for treatment duration.</p></td>
+      <th>itreat_switch</th>
+      <td><p>How should the relationship between treatment and switching to a new 
+treatment during the initial treatment phase (i.e., first 6 months) be modeled. Options, which
+are equivalent to S1-S6 in the documentation are
+S1: Treatment -&gt; ACR -&gt; Switch (<code>acr-switch</code>), 
+S2: Treatment -&gt; ACR -&gt; DAS28 -&gt; Switch (<code>acr-das28-switch</code>),
+S3: Treatment -&gt; ACR -&gt; SDAI -&gt; Switch (<code>acr-sdai-switch</code>),
+S4: Treatment -&gt; ACR -&gt; CDAI -&gt; Switch (<code>acr-cdai-switch</code>),
+S5: Treatment -&gt; DAS28 -&gt; Switch (<code>das28-switch</code>),
+S6: Treatment -&gt; ACR -&gt; EULAR -&gt; Switch (<code>acr-eular-switch</code>).</p></td>
     </tr>
     <tr>
       <th>si_dist</th>
@@ -155,6 +166,33 @@ to be constant so an exponential distribution is used.</p></td>
       <th>max_months</th>
       <td><p>Maximum number of months to run the model for. Default is NULL which implies that
 the model is simulated over each patient's lifetime.</p></td>
+    </tr>
+    <tr>
+      <th>input_data</th>
+      <td><p>List of input data. Required inputs are <code>haq0</code>, <code>age</code>, <code>male</code>, <code>x.mort</code>, 
+and <code>x.ttd</code> as generated from input_data.</p></td>
+    </tr>
+    <tr>
+      <th>pars</th>
+      <td><p>List of parameters. Required parameters are <code>rebound</code>, <code>acr1</code>, <code>acr2</code>, <code>acr2eular</code>, <code>eular2haq</code>, 
+<code>haq.lprog.therapy</code>, <code>haq.lprog.age</code>, <code>logor.mort</code>, <code>mort.loghr.haqdif</code>, <code>ttsi</code>,
+<code>ttd.eular.mod</code>, <code>ttd.eular.good</code>, and <code>lt</code> as generated from <a href='sample_pars.html'>sample_pars</a>. Additionally, if <code>cdmards_prog</code> is equal 
+to "lcgm", then <code>haq.lcgm</code> must be included.</p></td>
+    </tr>
+    <tr>
+      <th>haq_prog_model</th>
+      <td><p>Model used to simulate the progression of HAQ. Options are "lcgm" and "linear", with
+"lcgm" as the default. If "lcgm" is chosen, then a latent class growth model is used for cDMARDs
+and NBT but a constant annual rate is is assumed for all other therapies; otherwise 
+a constant linear HAQ progression is assumed for all therapies including cDMARDs and NBT.</p></td>
+    </tr>
+    <tr>
+      <th>ttd_dist</th>
+      <td><p>Survival distribution for treatment duration.</p></td>
+    </tr>
+    <tr>
+      <th>cdmards_ind</th>
+      <td><p>Index for cDMARDs.</p></td>
     </tr>
     <tr>
       <th>nbt_ind</th>

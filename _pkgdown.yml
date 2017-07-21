@@ -8,33 +8,33 @@ articles:
     - 01-intro
     - 02-population
     - 03-parameters
-    - 04-ips
-    - 05-qalys
-    - 06-costs
+    - 04-structure
+    - 05-arms
+    - 06-ips
     - 07-cea
+    - collaborate
 
 reference:
   - title: "Model inputs"
     contents:
+      - lifetable
       - acr2eular
-      - acr2haq
       - acr2sdai
       - acr2cdai
       - acr2das28
+      - acr2haq
       - eular2haq
-      - treat.switch
       - ttd
       - haq.lprog.age
-      - lifetable
+      - haq.lcgm.pars
       - mgmt.cost
       - pain
       - therapy.pars
       - util.mixture.pars
       - util.wailoo.pars
-  - title: "Generate input data"
+  - title: "Generate patient population"
     contents:
       - sample_pats
-      - input_data
   - title: "Sample parameters for PSA"
     contents:
       - sample_pars
@@ -46,8 +46,12 @@ reference:
       - sample_gammas
       - sample_survpars
       - sample_pars_utility_mixture
+  - title: "Model structure"
+    contents:
+      - select_model_structure
   - title: "Individual patient simulation"
     contents:
+      - get_input_data
       - sim_haq
       - sim_hc_cost
       - sim_prod_loss
@@ -65,19 +69,19 @@ navbar:
     href: reference/index.html
   - text: "Run the model"
     menu:
-      - text: "Introduction"
+      - text: "1. Introduction"
         href: articles/01-intro.html
-      - text: "Population"
+      - text: "2. Generate population"
         href: articles/02-population.html
-      - text: "Parameters"
+      - text: "3. Sample parameters"
         href: articles/03-parameters.html
-      - text: "Simulate disease progression"
-        href: articles/04-ips.html
-      - text: "Utility and QALYs"
-        href: articles/05-qalys.html
-      - text: "Costs"
-        href: articles/06-costs.html
-      - text: "Cost-effectiveness analysis"
+      - text: "4. Select model structure"
+        href: articles/04-structure.html
+      - text: "5. Choose treatment arms"
+        href: articles/05-arms.html
+      - text: "6. Run simulation"
+        href: articles/06-ips.html
+      - text: "7. Cost-effectiveness analysis"
         href: articles/07-cea.html
   - text: "Collaborate"
     href: articles/collaborate.html

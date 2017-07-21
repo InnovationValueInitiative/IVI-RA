@@ -91,7 +91,7 @@ sim_iviRA <- function(arms, input_data, pars, model_structure,
   ## simulate productivity losses
   sim.out[, prod_loss := sim_prod_loss(sim.out, pl_haq = pars$prod.loss)]
   
-  ## simulate utility
+  ## simulate utility and calculate QALYs
   if (model_structure["utility_model"] == "mixture"){
       sim.utility <- sim_utility_mixture(sim.out, male = input_data$male,
                                          pars = pars$mixture.utility)
@@ -103,6 +103,10 @@ sim_iviRA <- function(arms, input_data, pars, model_structure,
                                         coefs = pars$wailoo.utility)
   }
   sim.out <- cbind(sim.out, sim.utility)
+  sim.out[, qalys := sim_qalys(simhaq = sim.out, utility = sim.out$utility, 
+                               si_ul = pars$si.ul)]
+  
+  ##
   
   # RETURN
   return(sim.out)

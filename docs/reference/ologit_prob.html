@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Bayesian predicted probabilities for ordered logistic regression — ologit_prob • iviRA</title>
+<title>Predicted probabilities for ordered logistic regression — ologit_prob • iviRA</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -62,25 +62,25 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/01-intro.html">Introduction</a>
+      <a href="../articles/01-intro.html">1. Introduction</a>
     </li>
     <li>
-      <a href="../articles/02-population.html">Population</a>
+      <a href="../articles/02-population.html">2. Generate population</a>
     </li>
     <li>
-      <a href="../articles/03-parameters.html">Parameters</a>
+      <a href="../articles/03-parameters.html">3. Sample parameters</a>
     </li>
     <li>
-      <a href="../articles/04-ips.html">Simulate disease progression</a>
+      <a href="../articles/04-structure.html">4. Select model structure</a>
     </li>
     <li>
-      <a href="../articles/05-qalys.html">Utility and QALYs</a>
+      <a href="../articles/05-arms.html">5. Choose treatment arms</a>
     </li>
     <li>
-      <a href="../articles/06-costs.html">Costs</a>
+      <a href="../articles/06-ips.html">6. Run simulation</a>
     </li>
     <li>
-      <a href="../articles/07-cea.html">Cost-effectiveness analysis</a>
+      <a href="../articles/07-cea.html">7. Cost-effectiveness analysis</a>
     </li>
   </ul>
 </li>
@@ -107,11 +107,12 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Bayesian predicted probabilities for ordered logistic regression</h1>
+    <h1>Predicted probabilities for ordered logistic regression</h1>
     </div>
 
     
-    <p>Posterior distribution of predicted probabilitities from an ordered logistic regression</p>
+    <p>Predicted probabilitities from an ordered logistic regression for a single individual. This function
+is currently not vectorized.</p>
     
 
     <pre class="usage"><span class='fu'>ologit_prob</span>(<span class='no'>x</span>, <span class='no'>beta</span>, <span class='no'>cut</span>)</pre>
@@ -121,23 +122,21 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>Matrix containing variables in the model (i.e. the design matrix)</p></td>
+      <td><p>Row vector containing variables in the model for a single individual.</p></td>
     </tr>
     <tr>
       <th>beta</th>
-      <td><p>Matrix of coefficients where each row contains random draws of the coefficients
-from their posterior distribution</p></td>
+      <td><p>Vector of coefficients.</p></td>
     </tr>
     <tr>
       <th>cut</th>
-      <td><p>Matrix of cutpoints, one for each category, where each row contains random draws
-from their posterior distribution</p></td>
+      <td><p>Vector of cutpoints, one for each category.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Matrix of predicted probabilities for each individual and simulation.</p>
+    <p>Vector of predicted probabilities for the individual.</p>
     
 
   </div>

@@ -3,9 +3,10 @@ DATA=../data
 
 # all datasets for package
 all: $(DATA)/therapy-pars.rda $(DATA)/pain.rda $(DATA)/util-mixture-pars.rda $(DATA)/ttd-pars.rda
+all: $(DATA)/acr2das28.rda $(DATA)/acr2sdai.rda $(DATA)/acr2cdai.rda 
 all: $(DATA)/acr2eular.rda $(DATA)/eular2haq.rda $(DATA)/acr2haq.rda $(DATA)/haq-lprog-age.rda 
 all: $(DATA)/mort-or.rda $(DATA)/mort-hr-haqdif.rda $(DATA)/lifetable-male.rda $(DATA)/lifetable-female.rda 
-all: $(DATA)/mgmt-cost.rda $(DATA)/haq-lcgm-pars.rda
+all: $(DATA)/mgmt-cost.rda $(DATA)/treat-cost.rda $(DATA)/haq-lcgm-pars.rda
 
 # parameters that vary by treatment
 TP_DEPS := therapy-pars.R func.R cost.xlsx 
@@ -30,13 +31,11 @@ $(TD_TARGET): $(TD_DEPS)
 	Rscript ttd.R
 		
 # Mappings
-$(DATA)/acr2haq.rda $(DATA)/acr2eular.rda: mappings.R
+TD_TARGET := := $(DATA)/acr2das28.rda $(DATA)/acr2sdai.rda $(DATA)/acr2cdai.rda 
+TD_TARGET += $(DATA)/acr2eular.rda $(DATA)/eular2haq.rda $(DATA)/acr2haq.rda
+$(TD_TARGET): mappings.R
 	Rscript mappings.R
-	
-# HAQ change by EULAR response
-$(DATA)/eular2haq.rda: eular2haq.R
-	Rscript eular2haq.R
-	
+
 # HAQ progression rates by age
 $(DATA)/haq-lprog-age.rda: haq-lprog-age.R
 	Rscript haq-lprog-age.R
@@ -55,7 +54,7 @@ $(DATA)/lifetable-male.rda: lifetable.R
 $(DATA)/lifetable-female.rda: lifetable.R
 	Rscript lifetable.R
 	
-# Management costs
-$(DATA)/mgmt-cost.rda: mgmt-cost.R
-	Rscript mgmt-cost.R
+# Costs
+$(DATA)/treat-cost.rda $(DATA)/mgmt-cost.rda: cost.R
+	Rscript cost.R
 	

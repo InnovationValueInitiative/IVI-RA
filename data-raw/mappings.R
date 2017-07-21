@@ -7,13 +7,6 @@ acr2eular <- matrix(c(755, 4, 2, 0, 136, 27, 2, 2, 57, 26, 10, 2),
                     nrow = 4, ncol = 3, byrow = FALSE)
 rownames(acr2eular) <- acr.cats
 colnames(acr2eular) <- c("eular_none", "eular_moderate", "eular_good")
-save(acr2eular, file = "../data/acr2eular.rda", compress = "bzip2")
-
-# ACR TO HAQ -------------------------------------------------------------------
-acr2haq <- data.table(acr = acr.cats,
-                      mean = c(-.11, -.44, -.76, -1.07),
-                      se = c(.06765, .05657, .09059, .07489))
-save(acr2haq, file = "../data/acr2haq.rda", compress = "bzip2")
 
 # ACR TO SDAI/CDAI/DAS28 -------------------------------------------------------
 ## calculate mean in group 1 given overall mean, n in each group, and mean in group 2
@@ -86,6 +79,20 @@ acr2das28 <- list(inception = data.table(acr = acr.cats,
                                                  acr50.das28.inc, acr70.das28.inc)))
 acr2das28$inception[, lower := mean * 1.2]
 acr2das28$inception[, upper := mean * .8]
+
+# ACR TO HAQ -------------------------------------------------------------------
+acr2haq <- data.table(acr = acr.cats,
+                      mean = c(-.11, -.44, -.76, -1.07),
+                      se = c(.06765, .05657, .09059, .07489))
+
+# EULAR TO HAQ -----------------------------------------------------------------
+eular2haq <- data.table(eular = c("None", "Moderate", "Good"),
+                        mean = c(0, -.317, -.672),
+                        se = c(0, .048, .112))
+
+# SAVE -------------------------------------------------------------------------
+save(acr2eular, file = "../data/acr2eular.rda", compress = "bzip2")
+save(acr2haq, file = "../data/acr2haq.rda", compress = "bzip2")
 save(acr2sdai, file = "../data/acr2sdai.rda", compress = "bzip2")
 save(acr2cdai, file = "../data/acr2cdai.rda", compress = "bzip2")
 save(acr2das28, file = "../data/acr2das28.rda", compress = "bzip2")

@@ -62,25 +62,25 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/01-intro.html">Introduction</a>
+      <a href="../articles/01-intro.html">1. Introduction</a>
     </li>
     <li>
-      <a href="../articles/02-population.html">Population</a>
+      <a href="../articles/02-population.html">2. Generate population</a>
     </li>
     <li>
-      <a href="../articles/03-parameters.html">Parameters</a>
+      <a href="../articles/03-parameters.html">3. Sample parameters</a>
     </li>
     <li>
-      <a href="../articles/04-ips.html">Simulate disease progression</a>
+      <a href="../articles/04-structure.html">4. Select model structure</a>
     </li>
     <li>
-      <a href="../articles/05-qalys.html">Utility and QALYs</a>
+      <a href="../articles/05-arms.html">5. Choose treatment arms</a>
     </li>
     <li>
-      <a href="../articles/06-costs.html">Costs</a>
+      <a href="../articles/06-ips.html">6. Run simulation</a>
     </li>
     <li>
-      <a href="../articles/07-cea.html">Cost-effectiveness analysis</a>
+      <a href="../articles/07-cea.html">7. Cost-effectiveness analysis</a>
     </li>
   </ul>
 </li>
@@ -115,9 +115,12 @@
     
 
     <pre class="usage"><span class='fu'>sample_pats</span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"homog"</span>, <span class='st'>"heterog"</span>), <span class='kw'>age_mean</span> <span class='kw'>=</span> <span class='fl'>55</span>,
-  <span class='kw'>age_sd</span> <span class='kw'>=</span> <span class='fl'>13</span>, <span class='kw'>male_prop</span> <span class='kw'>=</span> <span class='fl'>0.21</span>, <span class='kw'>bhaq0_mean</span> <span class='kw'>=</span> <span class='fl'>1.5</span>, <span class='kw'>bhaq0_sd</span> <span class='kw'>=</span> <span class='fl'>0.7</span>,
-  <span class='kw'>wtmale</span> <span class='kw'>=</span> <span class='fl'>89</span>, <span class='kw'>wtfemale</span> <span class='kw'>=</span> <span class='fl'>75</span>, <span class='kw'>dis_dur_mean</span> <span class='kw'>=</span> <span class='fl'>18.65</span>, <span class='kw'>dis_dur_sd</span> <span class='kw'>=</span> <span class='fl'>12.25</span>,
-  <span class='kw'>prev_dmards_mean</span> <span class='kw'>=</span> <span class='fl'>3.28</span>, <span class='kw'>prev_dmards_sd</span> <span class='kw'>=</span> <span class='fl'>1.72</span>)</pre>
+  <span class='kw'>age_sd</span> <span class='kw'>=</span> <span class='fl'>13</span>, <span class='kw'>male_prop</span> <span class='kw'>=</span> <span class='fl'>0.21</span>, <span class='kw'>haq0_mean</span> <span class='kw'>=</span> <span class='fl'>1.5</span>, <span class='kw'>haq0_sd</span> <span class='kw'>=</span> <span class='fl'>0.7</span>,
+  <span class='kw'>wtmale</span> <span class='kw'>=</span> <span class='fl'>89</span>, <span class='kw'>wtfemale</span> <span class='kw'>=</span> <span class='fl'>75</span>, <span class='kw'>prev_dmards_mean</span> <span class='kw'>=</span> <span class='fl'>3.28</span>,
+  <span class='kw'>prev_dmards_sd</span> <span class='kw'>=</span> <span class='fl'>1.72</span>, <span class='kw'>das28_mean</span> <span class='kw'>=</span> <span class='fl'>6</span>, <span class='kw'>das28_sd</span> <span class='kw'>=</span> <span class='fl'>1.2</span>, <span class='kw'>sdai_mean</span> <span class='kw'>=</span> <span class='fl'>43</span>,
+  <span class='kw'>sdai_sd</span> <span class='kw'>=</span> <span class='fl'>13</span>, <span class='kw'>cdai_mean</span> <span class='kw'>=</span> <span class='fl'>41</span>, <span class='kw'>cdai_sd</span> <span class='kw'>=</span> <span class='fl'>13</span>, <span class='kw'>cor_das28_sdai</span> <span class='kw'>=</span> <span class='fl'>0.86</span>,
+  <span class='kw'>cor_das28_cdai</span> <span class='kw'>=</span> <span class='fl'>0.86</span>, <span class='kw'>cor_das28_haq</span> <span class='kw'>=</span> <span class='fl'>0.38</span>, <span class='kw'>cor_sdai_cdai</span> <span class='kw'>=</span> <span class='fl'>0.94</span>,
+  <span class='kw'>cor_sdai_haq</span> <span class='kw'>=</span> <span class='fl'>0.34</span>, <span class='kw'>cor_cdai_haq</span> <span class='kw'>=</span> <span class='fl'>0.34</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -143,11 +146,11 @@
       <td><p>Proportion male.</p></td>
     </tr>
     <tr>
-      <th>bhaq0_mean</th>
+      <th>haq0_mean</th>
       <td><p>Mean baseline HAQ score.</p></td>
     </tr>
     <tr>
-      <th>bhaq0_sd</th>
+      <th>haq0_sd</th>
       <td><p>Standard deviation of baseline HAQ score.</p></td>
     </tr>
     <tr>
@@ -159,20 +162,60 @@
       <td><p>Female weight.</p></td>
     </tr>
     <tr>
-      <th>dis_dur_mean</th>
-      <td><p>Mean disease duration</p></td>
-    </tr>
-    <tr>
-      <th>dis_dur_sd</th>
-      <td><p>Standard deviation of disease duration</p></td>
-    </tr>
-    <tr>
       <th>prev_dmards_mean</th>
-      <td><p>Mean number of previous DMARDs</p></td>
+      <td><p>Mean number of previous DMARDs.</p></td>
     </tr>
     <tr>
       <th>prev_dmards_sd</th>
-      <td><p>Standard deviation of number of previous DMARDs</p></td>
+      <td><p>Standard deviation of number of previous DMARDs.</p></td>
+    </tr>
+    <tr>
+      <th>das28_mean</th>
+      <td><p>Mean of DAS28.</p></td>
+    </tr>
+    <tr>
+      <th>das28_sd</th>
+      <td><p>Standard deviation of DAS28.</p></td>
+    </tr>
+    <tr>
+      <th>sdai_mean</th>
+      <td><p>Mean of SDAI.</p></td>
+    </tr>
+    <tr>
+      <th>sdai_sd</th>
+      <td><p>Standard deviation of SDAI.</p></td>
+    </tr>
+    <tr>
+      <th>cdai_mean</th>
+      <td><p>Mean of CDAI.</p></td>
+    </tr>
+    <tr>
+      <th>cdai_sd</th>
+      <td><p>Standard deviation of CDAI.</p></td>
+    </tr>
+    <tr>
+      <th>cor_das28_sdai</th>
+      <td><p>Correlation between DAS28 and SDAI.</p></td>
+    </tr>
+    <tr>
+      <th>cor_das28_cdai</th>
+      <td><p>Correlation between DAS28 and CDAI.</p></td>
+    </tr>
+    <tr>
+      <th>cor_das28_haq</th>
+      <td><p>Correlation between DAS28 and baseline HAQ.</p></td>
+    </tr>
+    <tr>
+      <th>cor_sdai_cdai</th>
+      <td><p>Correlation between SDAI and CDAI.</p></td>
+    </tr>
+    <tr>
+      <th>cor_sdai_haq</th>
+      <td><p>Correlation between SDAI and HAQ.</p></td>
+    </tr>
+    <tr>
+      <th>cor_cdai_haq</th>
+      <td><p>Correlation between CDAI and HAQ.</p></td>
     </tr>
     </table>
     
@@ -182,8 +225,12 @@
 for each variable. Current variables are:</p><dl class='dl-horizontal'>
   <dt>age</dt><dd><p>age in years</p></dd>
   <dt>male</dt><dd><p>1 = male, 0 = female</p></dd>
-  <dt>haq0</dt><dd><p>Baseline HAQ score</p></dd>
   <dt>weight</dt><dd><p>Patient weight</p></dd>
+  <dt>prev_dmards</dt><dd><p>Number of previous DMARDs</p></dd>
+  <dt>das28</dt><dd><p>DAS28 score</p></dd>
+  <dt>sdai</dt><dd><p>SDAI score</p></dd>
+  <dt>cdai</dt><dd><p>CDAI score</p></dd>
+  <dt>haq0</dt><dd><p>Baseline HAQ score</p></dd>
 </dl>
 
     

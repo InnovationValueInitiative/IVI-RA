@@ -310,7 +310,7 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
 #' 
 #' @export
 calc_treat_cost <- function(x){
-  
+
   # cost first 6 months
   x[!sname %in% c("ifx", "abtsc"), ':=' (init_infusion_cost = init_num_doses * infusion_cost,
        init_rx_cost =  init_dose_val/strength_val * init_num_doses * wac_per_unit)]
