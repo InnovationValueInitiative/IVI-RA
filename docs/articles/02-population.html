@@ -39,25 +39,25 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/01-intro.html">1. Introduction</a>
+      <a href="../articles/01-intro.html">0. Introduction</a>
     </li>
     <li>
-      <a href="../articles/02-population.html">2. Generate population</a>
+      <a href="../articles/02-population.html">1. Generate population</a>
     </li>
     <li>
-      <a href="../articles/03-parameters.html">3. Sample parameters</a>
+      <a href="../articles/03-arms.html">2. Select treatment sequences</a>
     </li>
     <li>
-      <a href="../articles/04-structure.html">4. Select model structure</a>
+      <a href="../articles/04-parameters.html">3. Sample parameters</a>
     </li>
     <li>
-      <a href="../articles/05-arms.html">5. Choose treatment arms</a>
+      <a href="../articles/05-structure.html">4. Select model structure</a>
     </li>
     <li>
-      <a href="../articles/06-ips.html">6. Run simulation</a>
+      <a href="../articles/06-ips.html">5. Run simulation</a>
     </li>
     <li>
-      <a href="../articles/07-cea.html">7. Cost-effectiveness analysis</a>
+      <a href="../articles/07-cea.html">6. Cost-effectiveness analysis</a>
     </li>
   </ul>
 </li>
@@ -91,50 +91,54 @@
     
     
 <div class="contents">
-<p>An assessment of a health technology is always conditional on the patient population studied. The first step in an analysis should therefore always be to specifiy the population considered. Below, we consider two ways to generate the patient population: first, the cohort can be randomly sampled using one of the <code>iviRA</code> packages built in functions, and, second, you can supply your own patient data.</p>
+<p>An assessment of a health technology is always conditional on the patient population studied. The first step in an analysis is thus to specifiy the population considered. Below, we consider two ways to generate the patient population: first, the cohort can be randomly sampled using the <code>sample_pats</code> function from the <code>iviRA</code> package, and, second, a user can supply their own patient data.</p>
 <div id="randomly-sampling-a-patient-population" class="section level2">
 <h2 class="hasAnchor">
 <a href="#randomly-sampling-a-patient-population" class="anchor"></a>Randomly sampling a patient population</h2>
-<p>The simplest way to generate a patient cohort is to use the <code>sample_pats</code> function. The variables included in the cohort are age, gender, haq score at baseline, weight, the number of previous dmards, and three measures of disease activity (DAS28, SDAI, and CDAI). The <code>type</code> argument specifies whether the patient cohort is homogeneous or heterogeneous. If the cohort is homogeneous, then the cohort consists of male and female patients that are identical in all respects other than gender; if the cohort is heterogeneous, then all variables vary across patients.</p>
+<p>The simplest way to generate a patient cohort is to use the <code>sample_pats</code> function. The variables included in the cohort are age, gender, haq score at baseline, weight, the number of previous dmards, and three measures of disease activity (Disease Activity Score with 28-joint counts (DAS28), Simple Disease Activity Index (SDAI), and the Clinical Disease Activity Index (CDAI)). The <code>type</code> argument specifies whether the patient cohort is homogeneous or heterogeneous. If the cohort is homogeneous, then the cohort consists of male and female patients that are identical in all respects other than gender; if the cohort is heterogeneous, then all variables vary across patients.</p>
 <p>We can randomly sample a heterogeneous population with default setting. To examine these settings type <code><a href="../reference/sample_pats.html">?sample_pats</a></code> into the console.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pop &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pats.html">sample_pats</a></span>(<span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">type =</span> <span class="st">"heterog"</span>)
 <span class="kw">head</span>(pop)</code></pre></div>
 <pre><code>##           age male weight prev_dmards    das28     sdai     cdai      haq0
-## [1,] 51.54114    1     89           2 5.229573 40.40202 28.66152 2.2891125
-## [2,] 49.44153    1     89           3 4.756555 31.03145 36.74431 1.3817509
-## [3,] 53.85628    0     75           0 6.014501 45.33357 44.18451 1.8381207
-## [4,] 41.13608    0     75           5 6.079774 36.35170 36.38071 2.3140046
-## [5,] 28.77129    0     75           3 4.966930 38.57402 42.43045 1.4685947
-## [6,] 51.95483    0     75           4 6.529424 39.25431 41.93784 0.8779117</code></pre>
+## [1,] 81.45024    0     75           3 6.348001 55.39851 48.11720 0.9933450
+## [2,] 42.87894    0     75           0 4.241921 30.83091 19.95814 0.2171389
+## [3,] 71.31697    0     75           2 4.649305 24.21065 24.88122 0.7378063
+## [4,] 72.30189    0     75           4 5.691727 41.30733 45.51641 2.7120995
+## [5,] 50.47603    0     75           3 7.169612 41.71395 44.12972 0.8956845
+## [6,] 56.89636    0     75           2 6.369089 48.14787 51.09767 1.0209832</code></pre>
 <p>We can also customize the distribution of patients. For example, suppose we want to study a younger and healthier population. We might then sample patients by customizing arguments in <code>sample_pats</code>,</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pop2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pats.html">sample_pats</a></span>(<span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">type =</span> <span class="st">"heterog"</span>, <span class="dt">age_mean =</span> <span class="dv">45</span>, <span class="dt">das28_mean =</span> <span class="dv">4</span>, <span class="dt">sdai_mean =</span> <span class="dv">20</span>, 
                     <span class="dt">cdai_mean =</span> <span class="dv">18</span>)
 <span class="kw">head</span>(pop2)</code></pre></div>
-<pre><code>##           age male weight prev_dmards    das28      sdai     cdai
-## [1,] 18.50057    0     75           1 5.708087 33.682383 35.80915
-## [2,] 52.77157    0     75           4 3.934989 16.882168 12.03703
-## [3,] 41.63847    0     75           2 2.749431 10.941974 12.44805
-## [4,] 41.89149    0     75           4 3.747891  9.212177  7.12275
-## [5,] 38.49753    0     75           1 4.815971 21.078200 17.83773
-## [6,] 48.35088    1     89           2 4.248135 27.139612 28.83757
+<pre><code>##           age male weight prev_dmards    das28     sdai      cdai
+## [1,] 55.74292    0     75           4 4.608230 24.96150 23.714248
+## [2,] 23.66177    1     89           4 2.536933 13.03129  8.980855
+## [3,] 58.66501    0     75           2 3.786020 21.77628 25.632504
+## [4,] 26.76890    1     89           5 5.359869 35.77722 34.795101
+## [5,] 58.00182    0     75           2 5.571239 42.83829 36.427100
+## [6,] 42.60025    0     75           2 6.433525 49.43171 49.133978
 ##           haq0
-## [1,] 1.1262816
-## [2,] 1.7208130
-## [3,] 1.0658988
-## [4,] 1.5501737
-## [5,] 0.7231864
-## [6,] 0.9864411</code></pre>
+## [1,] 0.8055220
+## [2,] 0.8623512
+## [3,] 0.8897342
+## [4,] 2.3627977
+## [5,] 2.4027880
+## [6,] 2.5263583</code></pre>
 </div>
 <div id="using-your-own-patient-population" class="section level2">
 <h2 class="hasAnchor">
 <a href="#using-your-own-patient-population" class="anchor"></a>Using your own patient population</h2>
+<p>Users who have data on their own patient population may wish to run the simulation using their own data. To do this, users can simply load their own data and convert it to an R matrix. The matrix must have 1 row for each patient and the same columns as returned by <code>sample_pats</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">colnames</span>(pop)</code></pre></div>
+<pre><code>## [1] "age"         "male"        "weight"      "prev_dmards" "das28"      
+## [6] "sdai"        "cdai"        "haq0"</code></pre>
 <div>
 <ul class="pager">
 <li class="previous">
 <a href="01-intro.html">Previous</a>
 </li>
 <li class="next">
-<a href="03-parameters.html">Next</a>
+<a href="03-arms.html">Next</a>
 </li>
 </ul>
 </div>

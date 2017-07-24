@@ -6,7 +6,8 @@ all: $(DATA)/therapy-pars.rda $(DATA)/pain.rda $(DATA)/util-mixture-pars.rda $(D
 all: $(DATA)/acr2das28.rda $(DATA)/acr2sdai.rda $(DATA)/acr2cdai.rda 
 all: $(DATA)/acr2eular.rda $(DATA)/eular2haq.rda $(DATA)/acr2haq.rda $(DATA)/haq-lprog-age.rda 
 all: $(DATA)/mort-or.rda $(DATA)/mort-hr-haqdif.rda $(DATA)/lifetable-male.rda $(DATA)/lifetable-female.rda 
-all: $(DATA)/mgmt-cost.rda $(DATA)/treat-cost.rda $(DATA)/haq-lcgm-pars.rda
+all: $(DATA)/treat-cost.rda $(DATA)/hosp-cost.rda $(DATA)/mgmt-cost.rda $(DATA)/prod-loss.rda 
+all: $(DATA)/haq-lcgm-pars.rda
 
 # parameters that vary by treatment
 TP_DEPS := therapy-pars.R func.R cost.xlsx 
@@ -55,6 +56,6 @@ $(DATA)/lifetable-female.rda: lifetable.R
 	Rscript lifetable.R
 	
 # Costs
-$(DATA)/treat-cost.rda $(DATA)/mgmt-cost.rda: cost.R
+$(DATA)/treat-cost.rda $(DATA)/hosp-cost.rda $(DATA)/mgmt-cost.rda $(DATA)/prod-loss.rda: cost.R
 	Rscript cost.R
 	

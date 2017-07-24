@@ -4,8 +4,7 @@
 \alias{sim_iviRA}
 \title{The IVI-RA simulation}
 \usage{
-sim_iviRA(arms, input_data, pars, model_structure, ttd_dist = "lnorm",
-  si_dist = "exp", max_months = NULL,
+sim_iviRA(arms, input_data, pars, model_structure, max_months = NULL,
   cdmards_ind = which(therapy.pars$info$sname == "cdmards"),
   nbt_ind = which(therapy.pars$info$sname == "nbt"), check = TRUE)
 }
@@ -18,6 +17,14 @@ a single treatment sequence or a matrix of unique sequences for each patient.}
 \item{pars}{List of sampled parameter values generated from \link{sample_pars}.}
 
 \item{model_structure}{Object of class model structure generated from \link{sample_pars}.}
+
+\item{max_months}{Maximum number of months to run the model for. Default is NULL which implies that
+the model is simulated over each patient's lifetime.}
+
+\item{cdmards_ind}{Index for cDMARDs.}
+
+\item{nbt_ind}{Index for the non-biologic (i.e. a term used to define a selection of treatments clinicians use
+after the last biologic in a treatment sequence).}
 }
 \description{
 Run the IVI-RA individual patient simulation model.

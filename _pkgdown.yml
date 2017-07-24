@@ -5,13 +5,13 @@ template:
 articles:
   - title: "How to run the model"
     contents:
-    - 01-intro
-    - 02-population
-    - 03-parameters
-    - 04-structure
-    - 05-arms
-    - 06-ips
-    - 07-cea
+    - 00-intro
+    - 01-population
+    - 02-arms
+    - 03-structure
+    - 04-parameters
+    - 05-ips
+    - 06-cea
     - collaborate
 
 reference:
@@ -30,8 +30,8 @@ reference:
       - mgmt.cost
       - pain
       - therapy.pars
-      - util.mixture.pars
-      - util.wailoo.pars
+      - utility.mixture.pars
+      - utility.wailoo.pars
   - title: "Generate patient population"
     contents:
       - sample_pats
@@ -69,19 +69,19 @@ navbar:
     href: reference/index.html
   - text: "Run the model"
     menu:
-      - text: "1. Introduction"
-        href: articles/01-intro.html
-      - text: "2. Generate population"
-        href: articles/02-population.html
-      - text: "3. Sample parameters"
-        href: articles/03-parameters.html
-      - text: "4. Select model structure"
-        href: articles/04-structure.html
-      - text: "5. Choose treatment arms"
-        href: articles/05-arms.html
-      - text: "6. Run simulation"
-        href: articles/06-ips.html
-      - text: "7. Cost-effectiveness analysis"
-        href: articles/07-cea.html
+      - text: "0. Introduction"
+        href: articles/00-intro.html
+      - text: "1. Generate population"
+        href: articles/01-population.html
+      - text: "2. Select treatment sequences"
+        href: articles/02-arms.html
+      - text: "3. Select model structure"
+        href: articles/03-structure.html
+      - text: "4. Sample parameters"
+        href: articles/04-parameters.html
+      - text: "5. Run simulation"
+        href: articles/05-ips.html
+      - text: "6. Cost-effectiveness analysis"
+        href: articles/06-cea.html
   - text: "Collaborate"
     href: articles/collaborate.html

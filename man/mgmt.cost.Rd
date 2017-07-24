@@ -4,7 +4,7 @@
 \name{mgmt.cost}
 \alias{mgmt.cost}
 \title{Cost of general management of RA}
-\format{A data frame with 4 variables.
+\format{A data table with 4 variables.
 \describe{
   \item{service}{Medical service performed}
   \item{est}{Point estimate for cost}
@@ -20,6 +20,6 @@ care & specialty pharmacy 22.9 (2016): 1088-1102.}
 mgmt.cost
 }
 \description{
-Cost of general management of RA
+Cost of general management of RA.
 }
 \keyword{datasets}

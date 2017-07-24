@@ -7,8 +7,9 @@
 select_model_structure(itreat_haq = c("acr-haq", "acr-eular-haq", "haq"),
   itreat_switch = c("acr-switch", "acr-das28-switch", "acr-sdai-switch",
   "acr-cdai-switch", "das28-switch", "acr-eular-switch"),
-  cdmards_haq_model = c("lcgm", "linear"), utility_model = c("mixture",
-  "wailoo"))
+  cdmards_haq_model = c("lcgm", "linear"), ttd_dist = c("exponential",
+  "weibull", "gompertz", "gamma", "llogis", "lnorm", "gengamma"),
+  utility_model = c("mixture", "wailoo"))
 }
 \arguments{
 \item{itreat_haq}{Model structure relating treatment to HAQ during the first 6 months of 
@@ -18,6 +19,11 @@ treatment.}
 6 months of treatment.}
 
 \item{cdmards_haq_model}{Model used for long-term HAQ progression.}
+
+\item{ttd_dist}{Distribution used to model time to treatment discontinuaton. Options are the
+ exponential (\code{exponential}), Weibull (\code{weibull}), Gompertz (\code{gompertz}),
+gamma (\code{gamma}), log-logistic (\code{llogis}), lognormal (\code{lnorm}), 
+and generalized gamma (\code{gengamma}) distributions.}
 
 \item{utility_model}{Model used to estimate patient utility as a function of HAQ and patient
 characteristics.}

@@ -12,7 +12,7 @@ sim_utility_mixture(simhaq, male, pars, check = TRUE)
 \item{male}{Vector indiciating patient gender (1 = male, 0 = female).}
 
 \item{pars}{List of parameters needed to simulate utility using the Hernandez (2013) mixture 
-model. These are the parameters 'mixture.utility' described in the documentation 
+model. These are the parameters 'utility.mixture' described in the documentation 
 to \link{sample_pars}.}
 
 \item{check}{Should the function check parameters and input data passed to the model? Default is TRUE.}

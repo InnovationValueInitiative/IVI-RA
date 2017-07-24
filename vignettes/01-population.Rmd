@@ -1,0 +1,50 @@
+---
+title: The patient population
+output: 
+   html_document:
+    toc: true
+    toc_depth: 1
+--- 
+
+```{r include=FALSE}
+library("iviRA")
+```
+
+An assessment of a health technology is always conditional on the patient population studied. The first step in an analysis is thus to specifiy the population considered. Below, we consider two ways to generate the patient population: first, the cohort can be randomly sampled using the `sample_pats` function from the `iviRA` package, and, second, a user can supply their own patient data. 
+
+## Randomly sampling a patient population 
+The simplest way to generate a patient cohort is to use the `sample_pats` function. The variables included in the cohort are age, gender, haq score at baseline, weight, the number of previous dmards, and three measures of disease activity (Disease Activity
+Score with 28-joint counts (DAS28), Simple Disease Activity Index (SDAI), and the Clinical Disease Activity Index (CDAI)). The `type` argument specifies whether the patient cohort is homogeneous or heterogeneous. If the cohort is homogeneous, then the cohort consists of male and female patients that are identical in all respects other than gender; if the cohort is heterogeneous, then all variables vary across patients.
+
+We can randomly sample a heterogeneous population with default setting. To examine these settings type `?sample_pats` into the console. 
+
+```{r }
+pop <- sample_pats(n = 100, type = "heterog")
+head(pop)
+```
+
+We can also customize the distribution of patients. For example, suppose we want to study a younger and healthier population. We might then sample patients by customizing arguments in `sample_pats`,
+
+```{r }
+pop2 <- sample_pats(n = 100, type = "heterog", age_mean = 45, das28_mean = 4, sdai_mean = 20, 
+                    cdai_mean = 18)
+head(pop2)
+```
+
+## Using your own patient population
+Users who have data on their own patient population may wish to run the simulation using their own data. To do this, users can simply load their own data and convert it to an R matrix. The matrix must have 1 row for each patient and the same columns as returned by `sample_pats`.
+
+```{r }
+colnames(pop)
+```
+
+<div>
+<ul class="pager">
+  <li class="previous"><a href="00-intro.html">Previous</a></li>
+  <li class="next"><a href="02-arms.html">Next</a></li>
+</ul>
+</div>
+
+```{r include=FALSE}
+save.image("output.RData")
+```

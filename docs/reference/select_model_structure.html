@@ -62,25 +62,25 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/01-intro.html">1. Introduction</a>
+      <a href="../articles/00-intro.html">0. Introduction</a>
     </li>
     <li>
-      <a href="../articles/02-population.html">2. Generate population</a>
+      <a href="../articles/01-population.html">1. Generate population</a>
     </li>
     <li>
-      <a href="../articles/03-parameters.html">3. Sample parameters</a>
+      <a href="../articles/02-arms.html">2. Select treatment sequences</a>
     </li>
     <li>
-      <a href="../articles/04-structure.html">4. Select model structure</a>
+      <a href="../articles/03-structure.html">3. Select model structure</a>
     </li>
     <li>
-      <a href="../articles/05-arms.html">5. Choose treatment arms</a>
+      <a href="../articles/04-parameters.html">4. Sample parameters</a>
     </li>
     <li>
-      <a href="../articles/06-ips.html">6. Run simulation</a>
+      <a href="../articles/05-ips.html">5. Run simulation</a>
     </li>
     <li>
-      <a href="../articles/07-cea.html">7. Cost-effectiveness analysis</a>
+      <a href="../articles/06-cea.html">6. Cost-effectiveness analysis</a>
     </li>
   </ul>
 </li>
@@ -117,8 +117,9 @@
     <pre class="usage"><span class='fu'>select_model_structure</span>(<span class='kw'>itreat_haq</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"acr-haq"</span>, <span class='st'>"acr-eular-haq"</span>, <span class='st'>"haq"</span>),
   <span class='kw'>itreat_switch</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"acr-switch"</span>, <span class='st'>"acr-das28-switch"</span>, <span class='st'>"acr-sdai-switch"</span>,
   <span class='st'>"acr-cdai-switch"</span>, <span class='st'>"das28-switch"</span>, <span class='st'>"acr-eular-switch"</span>),
-  <span class='kw'>cdmards_haq_model</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"lcgm"</span>, <span class='st'>"linear"</span>), <span class='kw'>utility_model</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"mixture"</span>,
-  <span class='st'>"wailoo"</span>))</pre>
+  <span class='kw'>cdmards_haq_model</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"lcgm"</span>, <span class='st'>"linear"</span>), <span class='kw'>ttd_dist</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"exponential"</span>,
+  <span class='st'>"weibull"</span>, <span class='st'>"gompertz"</span>, <span class='st'>"gamma"</span>, <span class='st'>"llogis"</span>, <span class='st'>"lnorm"</span>, <span class='st'>"gengamma"</span>),
+  <span class='kw'>utility_model</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"mixture"</span>, <span class='st'>"wailoo"</span>))</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -136,6 +137,13 @@ treatment.</p></td>
     <tr>
       <th>cdmards_haq_model</th>
       <td><p>Model used for long-term HAQ progression.</p></td>
+    </tr>
+    <tr>
+      <th>ttd_dist</th>
+      <td><p>Distribution used to model time to treatment discontinuaton. Options are the
+ exponential (<code>exponential</code>), Weibull (<code>weibull</code>), Gompertz (<code>gompertz</code>),
+gamma (<code>gamma</code>), log-logistic (<code>llogis</code>), lognormal (<code>lnorm</code>), 
+and generalized gamma (<code>gengamma</code>) distributions.</p></td>
     </tr>
     <tr>
       <th>utility_model</th>

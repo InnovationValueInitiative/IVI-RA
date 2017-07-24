@@ -4,8 +4,8 @@
 \name{haq.lcgm.pars}
 \alias{haq.lcgm.pars}
 \title{Parameters for Latent Class Growth Model (LCGM)}
-\format{List containing coefficient vector, variance-covariance matrix, and indices for 
-parameters.}
+\format{List containing coefficients (point estimates and parameter names)
+ and variance-covariance matrix.}
 \source{
 Norton, Sam, et al. "Health Assessment Questionnaire disability progression in early
  rheumatoid arthritis: systematic review and analysis of two inception cohorts." 

@@ -279,6 +279,7 @@ parsamp <- sample_pars(n = 100)
 mod.struct <- select_model_structure(itreat_haq = "acr-haq",
                                      itreat_switch = "acr-switch",
                                      cdmards_haq_model = "lcgm",
+                                     ttd_dist = "gengamma",
                                      utility_model = "wailoo")
 input.dat <- get_input_data(patdata = pop, model_structure = mod.struct)
 sim.out <- sim_iviRA(arms = arm.names, input_data = input.dat, pars = parsamp,

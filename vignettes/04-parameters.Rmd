@@ -1,0 +1,217 @@
+---
+title: Sampling the model parameters
+output: 
+   html_document:
+    toc: true
+    toc_depth: 1
+--- 
+
+```{r include=FALSE}
+library("iviRA")
+load("output.RData")
+```
+
+## Default parameter estimates
+Parameters needed to run the simulation come preloaded with the package. To view the loaded data use the command `data(package = "iviRA")`. The parameters can be separated into 8 main categories: treatment effects estimated from a network meta-analysis (NMA); mappings between various measured of treatment response, disease activivity, and/or function; long-term progression of disease, treatment duration, serious infections, mortality, utility, and costs. 
+
+### NMA for ACR response, change in DAS28, and change in HAQ
+The effect of treatment on ACR response at 6 months, change in DAS28 at 6 months, and the change in the HAQ score at 6 months are estimated using a NMA. Default NMA parameter estimates come preloaded with the package and are based on results from an NMA conduced by IVI using a Bayesian random effects approach.
+
+```{r }
+names(iviRA::therapy.pars$nma.acr.naive)
+names(iviRA::therapy.pars$nma.das28.naive)
+names(iviRA::therapy.pars$nma.haq.naive)
+```
+
+Each object is a list containing information on the mean of the NMA and the sample variance-covariance matrix. In the PSA, we use a multivariate normal distribution to sample parameters estimated using a NMA. The advantage of this approach is that we do not have to load the entire posterior distribution of the parameters with the package. The justification is the Bayesian central limit theorem, which states that under large samples, the posterior distribution will approach a multivariate normal distribution.  
+
+### Mapping between ACR response, EULAR response, disease activity, and HAQ
+There are various mapping between treatment response measures, disease activity, and functional status that can be used within the IVI-RA model. The exact mapping utilized for a given model run will depend on the model structure select. Default parameter estimates for these mappings come preloaded with the `iviRA` package.
+
+The first set of mappings relates ACR response to the three measure of disease activity. The ACR response to SDAI mapping can either be based on the Leflunomide dataset or the inception cohort (see [Aletaha and Smolen](http://www.clinexprheumatol.org/article.asp?a=2694)) while mapping for DAS28 and CDAI can only be based on the inception cohort. The mappings correspond to model structures where `itreat_switch =  "acr-das28-switch"`, `itreat_switch = "acr-sdai-switch"`, and `itreat_switch = "acr-cdai-switch"`. Here, we show parameters estimated from the inception cohort.  
+
+```{r }
+iviRA::acr2das28$inception
+iviRA::acr2sdai$inception
+iviRA::acr2cdai$inception
+```
+
+The relationship between ACR response and HAQ is used when a model structure uses `itreat_haq = "acr-haq"`. Evidence on mean HAQ by ACR response category is based on evidence reported in [Carlson 2015](https://www.ncbi.nlm.nih.gov/pubmed/25773552). 
+
+```{r }
+iviRA::acr2haq
+```
+
+When `itreat_haq = "acr-eular-haq"` is selected, the model must simulate the relationship between ACR response and EULAR response. The estimated relationship is based on the number of patients in each ACR response category for a given EULAR response category in the Veterans Affairs Rheumatoid Arthritis (VARA) database as reported in the [2016 NICE health technology assessment (HTA)](https://www.journalslibrary.nihr.ac.uk/hta/hta20350/#/s1). 
+
+```{r }
+iviRA::acr2eular
+```
+
+When the **H2** pathway is used, the change in HAQ at 6 months must be simulated after EULAR response is simulated. We base this relationship on statistical analyis of the British Society for Rheumatology Biologics Register (BSRBR) data by [NICE (2016)](https://www.journalslibrary.nihr.ac.uk/hta/hta20350/#/s1). In particular, the 2016 NICE HTA reported mean changes in HAQ by EULAR response category at 6 months for all patients. 
+
+```{r }
+iviRA::eular2haq
+```
+
+### Long-term HAQ progression
+The progression of HAQ over time is modeled in two ways: first, assuming a constant annual rate, and second, by using a LCGM. The LCGM can currently only be used to model progression in the absence of bDMARDs while a constant annual rate can be used for all treatments. 
+
+The constant annual rate of progression for patients on cDMARDs (and NBT) are based on [Wolfe and Michaud's (2010)](https://arthritis-research.biomedcentral.com/articles/10.1186/ar2944) analysis of 3,829 RA patients who switched from non-biologic treatment to biologic treatment and participated in the National Data Bank for Rheumatic Diseases (NDB). The progression rate for patients on biologics are based on treatment-specific rates from [Michaud et al. (2011)](http://onlinelibrary.wiley.com/doi/10.1002/acr.20405/full) adjusted for baseline HAQ score, age, sex, education, smoking, BMI, comorbidity, and RA onset. Importantly, The average HAQ rate among patients on a biologic was -0.001 in the Michaud et al. analysis, which instills confidence that the reported HAQ progression rates for different bDMARDs can be directly compared with the overall annual HAQ progression rate of 0.031 reported in the 2010 Wolfe and Michaud analysis. 
+
+```{r }
+iviRA::therapy.pars$haq.lprog
+```
+
+The constant anuual rate of HAQ progression is also adjusted by age based on differences between overall and age specific rates as reported by Michaud et al. (2011).
+
+```{r }
+iviRA::haq.lprog.age
+```
+
+The LCGM is based on the analysis by [Norton et al.](http://www.sciencedirect.com/science/article/pii/S0049017214000730). The parameters from the LCGM are contained in the list `iviRA::haq.lcgm.pars`. The coefficient estimates are stored in `iviRA::haq.lcgm.pars$coef`. 
+
+```{r }
+iviRA::haq.lcgm.pars$coef
+```
+
+The coefficient vectors `beta1`, `beta2`, `beta3`, and `beta4`, contain coefficients from a third order polynomial regression predicting the growth of the HAQ score over time for members of class 1, 2, 3, and 4, respectively; `delta2`, `delta3`, and `delta4` are coefficient vectors containing predictors of membership in classes 2-4 with class 1 being the reference group. A variance-covariance matrix, `iviRA::haq.lcgm.pars$vcov`, is used to sample parameters from a multivariate normal distribution. The indices of the parameters of the variance-covariance matrix correspond to the row numbers in `iviRA::haq.lcgm.pars$coef`.
+
+### Treatment duration
+Time to treatment discontinuation depends on the pathway (**S1-S6**) used to model treatment switching. If **S1** is selected, a single treatment discontinuation curve is used for all patients. The parameters needed to simulate this curve are stored in. In **S2-S5**, time to treatment discontinuation is stratified by the level of disease activity, and in **S6** treatment duration depends on EULAR response (st. The parameters used to simulate treatment duration based on **S1**, **S2-S5**, and **S6** are stored in `iviRA::ttd.all`, `iviRA::ttd.da`, and `iviRA::ttd.eular`, respectively. 
+
+The treatment duration curves are estimated using parametric survival models with the `flexsurv` package. Parameters from the survival analyses used in the IVI-RA model are stored in two-level lists. The names in the first level correspond to the name of the parametric survival model.
+
+```{r }
+names(iviRA::ttd.all)
+```
+
+7 parametric distributions are currently supported including the exponential, weibull, gompertz, gamma, log-logistic, lognormal, and generalized gamma distributions. The parameter of the survival model are stored in the second level of the list. For example, we can examine results from a Weibull fit. 
+
+```{r }
+names(iviRA::ttd.all$weibull)
+```
+
+Point estimates are stored in the element `est` and the variance-covaraince matrix is stored in the element `vcov`. 
+
+```{r }
+iviRA::ttd.all$weibull$est
+iviRA::ttd.all$weibull$vcov
+```
+
+The parametric distributions are characterized according to a location parameter governing the mean of the distribution. Models can also contain ancillarly parameters which describe the shape, variance, or higher moments of a distribution. The location and ancillary parameters associated with each distribution are shown in the table below.   
+
+```{r , echo = FALSE}
+library(knitr)
+exp <- c("Exponential", "rate", "-", "-", "exponential")
+weibull <- c("Weibull", "scale", "shape", "-", "weibull")
+gompertz <- c("Gompertz", "rate", "shape", "-", "gompertz")
+gamma <- c("Gamma", "rate", "shape", "-", "gamma")
+llogis <- c("Log-logistic", "scale", "shape", "-", "llogis")
+lnorm <- c("Lognormal", "meanlog", "sdlog", "-", "lnorm")
+gengamma <- c("Generalized gamma", "mu", "sigma", "Q", "gengamma")
+survdist.table <- data.frame(rbind(exp, weibull, gompertz, gamma, llogis, lnorm, gengamma))
+colnames(survdist.table) <- c("Distribution", "Location", "Ancillary 1", "Ancillary 2",
+                              "iviRA name")
+kable(survdist.table)
+
+```
+
+The `iviRA` package currently only allows for models in which the location parameter, but not the ancillary parameters, depends on covariates. The indies of the location parameter, first ancillarly parameter, and second ancillary parameter in the `est` and `vcov` objects are contained in the `loc.index`, `anc1.index`, and `anc2.index` objects, respectively. For example, in a regression model with no covariates, the location parameter is stored `r iviRA::ttd.all$weibull$loc.index` and the index of the first ancillary parameter is `r iviRA::ttd.all$weibull$anc1.index`.  
+
+```{r }
+iviRA::ttd.all$weibull$loc.index
+iviRA::ttd.all$weibull$anc1.index
+iviRA::ttd.all$weibull$anc2.index
+```
+
+### Serious infections
+
+### Mortality
+Baseline mortality for patients without RA are based on gender-specific US lifetables. More specifically, we use the probability of mortality, `qx`, between ages $x$ and $x+1$.
+
+```{r }
+head(iviRA::lifetable.male)
+head(iviRA::lifetable.female)
+```
+
+The probability of mortality is adjusted according to a patient's baseline HAQ score as well as changes in the HAQ score from baseline. We use the log odds ratio of the effect of baseline HAQ on mortality of `r round(iviRA::mort.or$logor, 3)` from [Wolfe et al. (2003)](http://onlinelibrary.wiley.com/doi/10.1002/art.11024/full). 
+
+```{r }
+iviRA::mort.or
+```
+
+The effect of a change in HAQ from baseline on mortality is based on the effect of 0.25 change in the HAQ score on log hazard of mortality as reported in [Michaud et al. (2012)](http://www.jrheum.org/content/39/1/54.short). The log hazard ratios are stratified by time-period, as reported in the original paper. 
+
+```{r }
+iviRA::mort.hr.haqdif
+```
+
+### Utility
+Two models can be used to simulate utility. If the model structure `utility_model = "mixure"` is chosen, then the [Hernandez Alava et al. (2013)](https://academic.oup.com/rheumatology/article/52/5/944/1816557) model is used; otherwise, if `utility_model = "wailoo"`, the logistic regression equation reported in [Wailoo et al. (2006)](https://www.sheffield.ac.uk/polopoly_fs/1.43356!/file/AHRQ-final-report.pdf) is used. 
+
+Point estimates (i.e., log odds ratios) and standard errors associated with each variable in the Wailoo model are available in the `iviRA::utility.wailoo.pars` object.
+
+```{r }
+iviRA::utility.wailoo.pars
+```
+
+The information needed to sample from the mixture model are stored in the list `iviRA::utility.mixture.pars`. The setup is the same as with the LCGM in that the list contains a table of coefficient estimates as well as the correspoding variance covariance matrix. 
+
+```{r }
+names(iviRA::utility.mixture.pars)
+iviRA::utility.mixture.pars$coef
+```
+
+### Costs
+The model incorporates 3 main types of health care sector costs: (1) drug acquisition and administration costs, (2) hospitalization costs, and (3) general management costs. Productivity losses can also be included in the analysis if the analyst would like to take a societal perspective. 
+
+Drug acquisition and administration costs are separated into costs associated with the first 6 months of treatment and costs after the first 6 months. Costs are a function of the FDA recommended dose and frequency of administration, strength and dosage form, the wholesale acquisition cost (WAC), and infusion. If dosing is weight based, then the dose is calculated by multipling the dose value (e.g., `init_dose_val` and `ann_dose_val`) by each patients weight in kilograms; otherwise the dose is simply equal to the dose value. For example, the dose for infliximab during the first six months is equal to 3 multiplied by the weight of the patient. 
+
+```{r }
+library(knitr)
+kable(iviRA::therapy.pars$cost)
+```
+
+Hospitalization costs are estimated as a function of the HAQ score. In particular, [Carlson 2015](https://www.ncbi.nlm.nih.gov/pubmed/25773552), report estimates of the number of days in the hospital for a given HAQ score range as well as the cost of a single day in the hospital. 
+
+```{r }
+iviRA::hosp.cost
+```
+
+Management costs are based on mean costs and cost ranges reported in [Claxton (2016)](http://www.jmcp.org/doi/full/10.18553/jmcp.2016.22.9.1088).
+
+```{r }
+iviRA::mgmt.cost
+```
+
+Finally, we use estimates of productivity loss from [Wolfe et al. (2005)](http://www.jrheum.org/content/32/10/1875.short). The authors provide estimates of the annual loss in earnings associated with a 1-unit increase in HAQ, which we convert to 2017 dollars. 
+
+```{r }
+iviRA::prod.loss
+```
+
+## Random sampling for the PSA
+The PSA is conducted by sampling the parameters from their (joint) probability distribution and running the IPS for each randomly sampled parameter set. The parameters can be sampled using the function `sample_pars`, which generates a probability distribution for all parameters used within the family of models. 
+
+```{r }
+parsamp <- sample_pars(n = 100)
+names(parsamp)
+```
+
+`sample_pars` returns a list containing random draws of the different parameters used in the IPS. For example `parsamp$acr2eular` is an array containing two-way frequency matrices randomly sampled from a Dirichlet distribution that describe the probability of a EULAR response category conditional on ACR response.
+
+```{r }
+parsamp$acr2eular[,,1:2]
+```
+
+<div>
+<ul class="pager">
+  <li class="previous"><a href="03-structure.html">Previous</a></li>
+  <li class="next"><a href="05-ips.html">Next</a></li>
+</ul>
+</div>
+
+```{r include=FALSE}
+save.image("output.RData")
+```

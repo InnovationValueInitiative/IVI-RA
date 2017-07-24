@@ -39,25 +39,25 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/01-intro.html">1. Introduction</a>
+      <a href="../articles/01-intro.html">0. Introduction</a>
     </li>
     <li>
-      <a href="../articles/02-population.html">2. Generate population</a>
+      <a href="../articles/02-population.html">1. Generate population</a>
     </li>
     <li>
-      <a href="../articles/03-parameters.html">3. Sample parameters</a>
+      <a href="../articles/03-arms.html">2. Select treatment sequences</a>
     </li>
     <li>
-      <a href="../articles/04-structure.html">4. Select model structure</a>
+      <a href="../articles/04-parameters.html">3. Sample parameters</a>
     </li>
     <li>
-      <a href="../articles/05-arms.html">5. Choose treatment arms</a>
+      <a href="../articles/05-structure.html">4. Select model structure</a>
     </li>
     <li>
-      <a href="../articles/06-ips.html">6. Run simulation</a>
+      <a href="../articles/06-ips.html">5. Run simulation</a>
     </li>
     <li>
-      <a href="../articles/07-cea.html">7. Cost-effectiveness analysis</a>
+      <a href="../articles/07-cea.html">6. Cost-effectiveness analysis</a>
     </li>
   </ul>
 </li>
@@ -91,20 +91,40 @@
     
     
 <div class="contents">
-<p>This “Run the model” tutorial described how to use the model to peform a cost-effectiveness analyis. First, install the package and load it into R.</p>
+<div id="overview" class="section level2">
+<h2 class="hasAnchor">
+<a href="#overview" class="anchor"></a>Overview</h2>
+<p>This “Run the model” tutorial describes how to run the IVI-RA model. The model is a discrete-time individual patient simulation (IPS) that simulates patients outcomes over a lifetime. The primary measure of disease burden is the health assessment questionnaire (HAQ) score, which is a measure of function among patients with rheumatoid arthritis. Since the model is designed for cost-effectiveness analysis, it also simulates quality-adjusted life-years (QALYs) and various types of costs.</p>
+<p>The model accounts for both parameter and structural uncertainty. Parameter uncertainty is quantified using probabilistic sensitivity analysis (PSA), which propagates uncertainty in input parameters throughout the model by randomly sampling the parameters from their (join) probability distribution and running the model for each sampled parameter set. Unlike most models, the IVI-RA model does not commit to a single model structure, but instead allows for a number of scientifically defensible model structures. Since the model can be run for any of the model structures, structural uncertainty can be evaluated by comparing estimates of value across the different structures.</p>
+<p>Users wishing to learn more about the model should consult the <a href="https://innovationvalueinitiative.github.io/IVI-RA/model-description/model-description.pdf">model description</a>.</p>
+</div>
+<div id="installation" class="section level2">
+<h2 class="hasAnchor">
+<a href="#installation" class="anchor"></a>Installation</h2>
+<p>The <code>iviRA</code> package can be installed from GitHub using the <code>devtools</code> package.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># install.packages("devtools")</span>
 <span class="kw">library</span>(devtools)
-devtools::<span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"InnovationValueInitiative/IVI-RA"</span>)
-<span class="kw">library</span>(iviRA)</code></pre></div>
-<p>The model can be simulated and used to assess the value of a health technology by following these 5 steps:</p>
+devtools::<span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"InnovationValueInitiative/IVI-RA"</span>)</code></pre></div>
+</div>
+<div id="usage" class="section level2">
+<h2 class="hasAnchor">
+<a href="#usage" class="anchor"></a>Usage</h2>
+<p>To use the model, simply load the installed package into R.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(iviRA)</code></pre></div>
+<p>The model can be simulated within the <code>iviRA</code> package using the <code>sim_iviRA</code> function. The simulation depends on three primary factors: (1) the population considered, (2) the values of the parameters, and (3) the selected model structure. The steps needed to run the model can consequently be summarized as follows:</p>
 <ol style="list-style-type: decimal">
 <li>Generate a patient population.</li>
+<li>Select treatment arms</li>
 <li>Sample model parameters.</li>
 <li>Choose a model structure.</li>
 <li>Simulate disease progression, mortality, and costs using the IPS.</li>
 <li>Analyze the output.</li>
 </ol>
-<p>Click next to learn about step 1 and begin the tutorial.</p>
+</div>
+<div id="continue-tutorial" class="section level2">
+<h2 class="hasAnchor">
+<a href="#continue-tutorial" class="anchor"></a>Continue tutorial</h2>
+<p>Click next to continue the tutorial and learn about step 1.</p>
 <div>
 <ul class="pager">
 <li class="next">
@@ -113,9 +133,20 @@ devtools::<span class="kw"><a href="http://www.rdocumentation.org/packages/devto
 </ul>
 </div>
 </div>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+        <div id="tocnav">
+      <h2 class="hasAnchor">
+<a href="#tocnav" class="anchor"></a>Contents</h2>
+      <ul class="nav nav-pills nav-stacked">
+<li><a href="#overview">Overview</a></li>
+      <li><a href="#installation">Installation</a></li>
+      <li><a href="#usage">Usage</a></li>
+      <li><a href="#continue-tutorial">Continue tutorial</a></li>
+      </ul>
+</div>
       </div>
 
 </div>

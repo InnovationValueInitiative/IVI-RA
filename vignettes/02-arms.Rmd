@@ -1,0 +1,56 @@
+---
+title: Selecting treatment sequences
+output: 
+   html_document:
+    toc: true
+    toc_depth: 1
+---
+
+```{r include=FALSE}
+library("iviRA")
+load("output.RData")
+```
+
+## Available treatments
+The primary purpose of the model is to simulate health and cost outcomes for patients with RA treated as a function of the treatments use. Since patients typically use multiple treatments over a lifetime, the model is capable of simulating a treatment sequence of any arbitrary length. Treatments that can be included in a sequence include conventional disease-modifying anti-rheumatic drugs (cDMARDs) such as methotrexate and biologic DMARDs (bDMARDs). 
+
+A dataset of available treatments comes preloaded with the `iviRA` package. The `name`, `mname`, and `sname` columns are long-form, medium-form, and short-form names, respectively. The column `biologic` is an indicator equal to 1 if the drug is a biologic and 0 otherwise. 
+
+```{r }
+print(iviRA::therapy.pars$info)
+```
+
+## Selecting treatments
+To run the model, we must specify a treatment sequence. The treatment sequence can consist of a single sequence of treatments for all patients in the population or can vary for each patient. 
+
+For example, suppose that we want to simulate a treatment sequence of three biologics: adalimumab + methotrexate, etanercept + methotrexate, and infliximab + methotrexate. They should be specified as a vector with elements matching the `sname` in `therapy.pars$info`. For comparison purposes, we might want to also simulate outcomes for a non-biologic treatment sequence of only cDMARDs.
+
+
+```{r }
+arm1 <- c("adamtx", "etnmtx", "ifxmtx")
+arm2 <- c("cdmards")
+```
+
+In some cases, it might also be useful to allow therapies to differ accorss patients. This could be useful wheh, for example, comparing treatment strategies that tailor treatment to individuals against one size fits all strategies. This can be done by creating a matrix of treatment sequences where the number of rows is equal to the number of patients in the cohort. Below we consider a scenario where some patients receive one of two sequences
+
+1. adalimumab + methotrexate -> etanercept + methotrexate -> infliximab + methotrexate 
+2. etanercept + methotrexate -> adalimumab + methotrexate -> infliximab + methotrexate 
+
+```{r }
+arm1.mat <- matrix(c("adamtx", "etnmtx", "ifxmtx", "etnmtx", "adamtx", "ifxmtx"), 
+                     nrow = nrow(pop), ncol = 3, byrow = TRUE)
+head(arm1.mat)
+nrow(arm1.mat)
+nrow(pop)
+```
+
+<div>
+<ul class="pager">
+  <li class="previous"><a href="02-population.html">Previous</a></li>
+  <li class="next"><a href="03-structure.html">Next</a></li>
+</ul>
+</div>
+
+```{r include=FALSE}
+save.image("output.RData")
+```

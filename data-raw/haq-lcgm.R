@@ -48,16 +48,11 @@ beta4.se <- c(.063, .073, .027, .003)
 beta.var <- paste0(c("intercept_", "linear_", "quadratic_", "cubic_"), rep(seq(1,4), each = 4))
 beta.parameter <- rep(c("beta1", "beta2", "beta3", "beta4"), each = 4)
 beta.dt <- data.table(var = beta.var, data = "eras", parameter = beta.parameter, 
-                      coef = c(beta1, beta2, beta3, beta4),
+                      est = c(beta1, beta2, beta3, beta4),
                       se = c(beta1.se, beta2.se, beta3.se, beta4.se))
 coefs <- rbind(beta.dt, coefs)
-index <- list()
-parameters <- unique(coefs$parameter)
-for (par in parameters){
-  index[[par]] <- which(coefs$parameter == par)
-}
 
 # save
-haq.lcgm.pars <- list(coef = coefs, vcov = diag(coefs$se^2), index = index)
+haq.lcgm.pars <- list(coef = coefs, vcov = diag(coefs$se^2))
 save(haq.lcgm.pars, 
      file = "../data/haq-lcgm-pars.rda", compress = "bzip2")

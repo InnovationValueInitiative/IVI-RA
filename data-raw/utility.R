@@ -1,4 +1,5 @@
 rm(list = ls())
+library("data.table")
 
 # ALAVA (2013) MIXTURE MODEL --------------------------------------------------
 nice <- read.csv("nice-painhaq.csv")
@@ -41,22 +42,22 @@ vcov <- read.csv("vcov-alava-2013.csv")
 vcov.names <- vcov[, 1]
 vcov <- as.matrix(vcov[, -1])
 rownames(vcov) <- vcov.names
-index <- list()
-delta.names <- paste0("delta", c(1, 2, 3))
-parameters <- unique(coef$parameter)
-parameters <- parameters[!parameters %in% delta.names]
-for (par in parameters){
-  index[[par]] <- which(coef$parameter == par)
-}
-index[["delta"]] <- which(coef$parameter %in% delta.names)
-util.mixture.pars <- list(coef = coef, vcov = vcov, index = index)
-save(util.mixture.pars, 
+# index <- list()
+# delta.names <- paste0("delta", c(1, 2, 3))
+# parameters <- unique(coef$parameter)
+# parameters <- parameters[!parameters %in% delta.names]
+# for (par in parameters){
+#   index[[par]] <- which(coef$parameter == par)
+# }
+# index[["delta"]] <- which(coef$parameter %in% delta.names)
+utility.mixture.pars <- list(coef = coef, vcov = vcov)
+save(utility.mixture.pars, 
      file = "../data/util-mixture-pars.rda", compress = "bzip2")
 
 # WAILOO (2006) LOGIT MODEL ---------------------------------------------------
-coef <- c(2.0734, .0058, .0023, -.2004, -.2914, .0249, -.8647)
+est <- c(2.0734, .0058, .0023, -.2004, -.2914, .0249, -.8647)
 se <- c(.0263, .0004, .0004, .0101, .0118, .0028, .0103)
-names(coef) <- names(se) <- c("int", "age", "dis_dur", "haq0", "male", "prev_dmards", "haq")
-util.wailoo.pars <- list(coef = coef, se = se)
-save(util.wailoo.pars, 
+vars <- c("int", "age", "dis_dur", "haq0", "male", "prev_dmards", "haq")
+utility.wailoo.pars <- data.table(var = vars, est = est, se = se)
+save(utility.wailoo.pars, 
      file = "../data/util-wailoo-pars.rda", compress = "bzip2")

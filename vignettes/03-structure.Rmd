@@ -1,0 +1,73 @@
+---
+title: Competing model structures
+output: 
+   html_document:
+    toc: true
+    toc_depth: 1
+--- 
+
+```{r include=FALSE}
+library("iviRA")
+library(knitr)
+load("output.RData")
+```
+
+## Available model structures
+The model allows for 336 possible model structures related to the effect of treatment on HAQ during the 1st 6 months, causes of treatment switching during the 1st 6 months, the model used to simulate the long-term progression of HAQ, the probability distribution used to measure time to treatment discontinuation, and the algorithm used to simulate utility. 
+
+There are 3 possible pathways linking treatment to HAQ.
+
++ **H1**: Treatment -> ACR -> HAQ
++ **H2**: Treatment -> ACR -> EULAR -> HAQ
++ **H3**: Treatment -> HAQ
+
+There are 6 possible pathways related to treatment switching:
+
++ **S1**: Treatment -> ACR -> Switch
++ **S2**: Treatment -> ACR -> $\Delta$DAS28 -> DAS28 -> Switch
++ **S3**: Treatment -> ACR -> $\Delta$SDAI -> SDAI -> Switch
++ **S4**: Treatment -> ACR -> $\Delta$CDAI -> SDAI -> Switch
++ **S5**: Treatment ->  $\Delta$DAS28 -> DAS28 -> Switch
++ **S6**: Treatment -> ACR -> EULAR -> Switch
+
+Not all model structures **S1-S6** can be used with each of **H1-H3**. If **H1** is used, then **S1-S5** are available, but **S6** is not because EULAR response is not simulated. In **H2**, **S1-S6** are all available while in **H3** only **S5** can be used since ACR response is not simulated. The 12 possible model structures and the number of each structure are outlined in the table below. 
+
+```{r kable, echo = FALSE}
+nums <- c(seq(1, 5), "-", seq(6, 11), rep("-", 4), 12, "-")
+tab <- matrix(nums, nrow = 3, ncol = 6, byrow = TRUE)
+colnames(tab) <- paste0("H", seq(1, 6))
+rownames(tab) <- paste0("S", seq(1, 3))
+kable(tab)
+```
+
+HAQ progression for patients in the absence of bDMARDs can be modeled in one of two ways. First, progression can be modeled at a constant annual rate or second, progression can be modeled using a latent class growth model (LCGM). The advantage of the LCGM is that it allows for different classes of patients with different HAQ trajectories and that within each trajectory, the rate of HAQ progression decreases at a non-linear rate over time.
+
+The parametric distribution used to model time to treat discontinuation can also be varied. 7 possible distributions are possible: exponential, Weibull, Gompertz, gamma, log-logistic, lognormal, and generalized gamma. 
+
+Finally, there are two ways to estimate utility. Our preferred method is mixture model estimated by [Hernandez Alava et al. (2013)](https://academic.oup.com/rheumatology/article/52/5/944/1816557) that has been shown to significantly outpeform existing models. The mixture model simulates utility as a function of age, pain, and HAQ for four separate classes that are, in turn, dependent on age, gender, pain, HAQ, and an unobserved random intercept term. The second algorithm is based on the logistic regression equation relating HAQ and other patient characteristics to utility by [Wailoo et al. (2006)](https://www.sheffield.ac.uk/polopoly_fs/1.43356!/file/AHRQ-final-report.pdf). 
+
+
+## Select a model structure
+A model structure is chosen with R using the `select_model_structure` function. The function returns an object of class `model_structure`, which is used as an input to functions needed to run the simulation. Here, we choose a model structure that models the effect of treatment on HAQ using **H1**, switching using **S1**, the LCGM for HAQ progression in the absence of bDMARDs, the generalized gamma distribution for time to treatment discontinuation, and the mixture model to simulate utility. 
+
+```{r }
+mod.struct <- select_model_structure(itreat_haq = "acr-haq",
+                                     itreat_switch = "acr-switch",
+                                     cdmards_haq_model = "lcgm",
+                                     ttd_dist = "gengamma",
+                                     utility_model = "mixture")
+print(mod.struct)
+```
+
+
+
+<div>
+<ul class="pager">
+  <li class="previous"><a href="02-arms.html">Previous</a></li>
+  <li class="next"><a href="04-parameters.html">Next</a></li>
+</ul>
+</div>
+
+```{r include=FALSE}
+save.image("output.RData")
+```

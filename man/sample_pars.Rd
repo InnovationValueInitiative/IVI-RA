@@ -25,6 +25,7 @@ sample_pars(n = 100, rebound_lower = 0.7, rebound_upper = 1,
   treat_hist = c("naive", "exp"),
   haq_lprog_therapy_mean = iviRA::therapy.pars$haq.lprog$est,
   haq_lprog_therapy_se = iviRA::therapy.pars$haq.lprog$se,
+  haq_lcgm_pars = iviRA::haq.lcgm.pars,
   eular2haq_mean = iviRA::eular2haq$mean,
   eular2haq_se = iviRA::eular2haq$se, acr2haq_mean = iviRA::acr2haq$mean,
   acr2haq_se = iviRA::acr2haq$se,
@@ -35,12 +36,15 @@ sample_pars(n = 100, rebound_lower = 0.7, rebound_upper = 1,
   acr2das28_lower = iviRA::acr2das28$inception$lower,
   acr2das28_upper = iviRA::acr2das28$inception$upper,
   haq_lprog_age_mean = iviRA::haq.lprog.age$est,
-  haq_lprog_age_se = iviRA::haq.lprog.age$se, hosp_days_mean = c(0.26, 0.13,
-  0.51, 0.72, 1.86, 4.16), hosp_days_se = c(0.5, 0.5, 0.5, 0.5, 0.5, 0.5),
-  hosp_cost_mean = rep(1251, 6), hosp_cost_se = rep(191, 6),
+  haq_lprog_age_se = iviRA::haq.lprog.age$se,
+  hosp_days_mean = iviRA::hosp.cost$days_mean,
+  hosp_days_se = iviRA::hosp.cost$days_se,
+  hosp_cost_mean = iviRA::hosp.cost$cost_pday_mean,
+  hosp_cost_se = iviRA::hosp.cost$cost_pday_se,
   mgmt_cost_mean = iviRA::mgmt.cost$est, mgmt_cost_se = iviRA::mgmt.cost$se,
-  pl_mean = 5853.3, pl_se = 1526.691, ttsi = iviRA::therapy.pars$si,
-  si_cost = 5873, si_cost_range = 0.2, si_ul = 0.156, si_ul_range = 0.2,
+  pl_mean = iviRA::prod.loss$est, pl_se = iviRA::prod.loss$se,
+  ttsi = iviRA::therapy.pars$si, si_cost = 5873, si_cost_range = 0.2,
+  si_ul = 0.156, si_ul_range = 0.2,
   therapy_names = iviRA::therapy.pars$info$sname,
   util_mixture_pain = iviRA::pain)
 }
@@ -129,6 +133,8 @@ experienced patients are using during 1st and subsequent lines.}
 \item{haq_lprog_therapy_mean}{Point estimate of linear yearly HAQ progression rate by therapy.}
 
 \item{haq_lprog_therapy_se}{Standard error of linear yearly HAQ progression rate by therapy.}
+
+\item{haq_lcgm_pars}{Parameters of LCGM for HAQ progression.}
 
 \item{eular2haq_mean}{Mean HAQ change by Eular response category.}
 
@@ -238,9 +244,9 @@ List containing samples for the following model parameters:
     variables. \code{beta} is similar to \code{delta}, but each matrix contains coefficients 
     predicting HAQ as a function of time using a quadratic polynomial model.
    }
-   \item{mixture.utility}{A list containing samples of all parameters in the Hernandez Alva (2013) mixture model. See 'Sampled mixture model parameters'
+   \item{utility.mixture}{A list containing samples of all parameters in the Hernandez Alva (2013) mixture model. See 'Sampled mixture model parameters'
    for details.}
-   \item{wailoo.utility}{A matrix of sampled regression coefficients from the model mapping HAQ to EQ5D utility in Wailoo (2006). Variables are
+   \item{utility.wailoo}{A matrix of sampled regression coefficients from the model mapping HAQ to EQ5D utility in Wailoo (2006). Variables are
    (in order) "int" (intercept), "age" (patient age), "dis_dur" (disease duration), "haq0" (baseline HAQ), "male" (1 = male, 0 = female),
    "prev_dmards" (number of previous DMARDs), and "haq" (current HAQ).}
    \item{hosp.cost}{A list of two matrices \code{hosp.days} and \code{cost.pday}. \code{hosp.days} is sample of hospital days by HAQ category; the 

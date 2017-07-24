@@ -62,25 +62,25 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/01-intro.html">1. Introduction</a>
+      <a href="../articles/00-intro.html">0. Introduction</a>
     </li>
     <li>
-      <a href="../articles/02-population.html">2. Generate population</a>
+      <a href="../articles/01-population.html">1. Generate population</a>
     </li>
     <li>
-      <a href="../articles/03-parameters.html">3. Sample parameters</a>
+      <a href="../articles/02-arms.html">2. Select treatment sequences</a>
     </li>
     <li>
-      <a href="../articles/04-structure.html">4. Select model structure</a>
+      <a href="../articles/03-structure.html">3. Select model structure</a>
     </li>
     <li>
-      <a href="../articles/05-arms.html">5. Choose treatment arms</a>
+      <a href="../articles/04-parameters.html">4. Sample parameters</a>
     </li>
     <li>
-      <a href="../articles/06-ips.html">6. Run simulation</a>
+      <a href="../articles/05-ips.html">5. Run simulation</a>
     </li>
     <li>
-      <a href="../articles/07-cea.html">7. Cost-effectiveness analysis</a>
+      <a href="../articles/06-cea.html">6. Cost-effectiveness analysis</a>
     </li>
   </ul>
 </li>
@@ -114,8 +114,7 @@
     <p>Run the IVI-RA individual patient simulation model.</p>
     
 
-    <pre class="usage"><span class='fu'>sim_iviRA</span>(<span class='no'>arms</span>, <span class='no'>input_data</span>, <span class='no'>pars</span>, <span class='no'>model_structure</span>, <span class='kw'>ttd_dist</span> <span class='kw'>=</span> <span class='st'>"lnorm"</span>,
-  <span class='kw'>si_dist</span> <span class='kw'>=</span> <span class='st'>"exp"</span>, <span class='kw'>max_months</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+    <pre class="usage"><span class='fu'>sim_iviRA</span>(<span class='no'>arms</span>, <span class='no'>input_data</span>, <span class='no'>pars</span>, <span class='no'>model_structure</span>, <span class='kw'>max_months</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>cdmards_ind</span> <span class='kw'>=</span> <span class='fu'>which</span>(<span class='no'>therapy.pars</span>$<span class='no'>info</span>$<span class='no'>sname</span> <span class='kw'>==</span> <span class='st'>"cdmards"</span>),
   <span class='kw'>nbt_ind</span> <span class='kw'>=</span> <span class='fu'>which</span>(<span class='no'>therapy.pars</span>$<span class='no'>info</span>$<span class='no'>sname</span> <span class='kw'>==</span> <span class='st'>"nbt"</span>), <span class='kw'>check</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
@@ -138,6 +137,20 @@ a single treatment sequence or a matrix of unique sequences for each patient.</p
     <tr>
       <th>model_structure</th>
       <td><p>Object of class model structure generated from <a href='sample_pars.html'>sample_pars</a>.</p></td>
+    </tr>
+    <tr>
+      <th>max_months</th>
+      <td><p>Maximum number of months to run the model for. Default is NULL which implies that
+the model is simulated over each patient's lifetime.</p></td>
+    </tr>
+    <tr>
+      <th>cdmards_ind</th>
+      <td><p>Index for cDMARDs.</p></td>
+    </tr>
+    <tr>
+      <th>nbt_ind</th>
+      <td><p>Index for the non-biologic (i.e. a term used to define a selection of treatments clinicians use
+after the last biologic in a treatment sequence).</p></td>
     </tr>
     </table>
     

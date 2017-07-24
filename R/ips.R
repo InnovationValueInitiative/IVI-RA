@@ -7,9 +7,14 @@
 #' @param input_data An object of class 'input_data' returned from \link{get_input_data}.
 #' @param pars List of sampled parameter values generated from \link{sample_pars}.
 #' @param model_structure Object of class model structure generated from \link{sample_pars}.
+#' @param max_months Maximum number of months to run the model for. Default is NULL which implies that
+#' the model is simulated over each patient's lifetime.
+#' @param cdmards_ind Index for cDMARDs.
+#' @param nbt_ind Index for the non-biologic (i.e. a term used to define a selection of treatments clinicians use
+#' after the last biologic in a treatment sequence).
 #' @export 
 sim_iviRA <- function(arms, input_data, pars, model_structure,
-                    ttd_dist = "lnorm", si_dist = "exp", max_months = NULL, 
+                    max_months = NULL, 
                     cdmards_ind = which(therapy.pars$info$sname == "cdmards"),
                     nbt_ind = which(therapy.pars$info$sname == "nbt"),
                     check = TRUE){
@@ -41,11 +46,13 @@ sim_iviRA <- function(arms, input_data, pars, model_structure,
   arminds <- arminds - 1
   
   ## survival parameters
-  pars.ttd.all <- pars$ttd.all[[ttd_dist]]
-  pars.ttd.da <- pars$ttd.da[[ttd_dist]]
-  pars.ttd.em <- pars$ttd.eular$moderate[[ttd_dist]]
-  pars.ttd.eg <- pars$ttd.eular$good[[ttd_dist]]
-  pars.si <- pars$ttsi[[si_dist]]
+  ttd.dist <- model_structure[["ttd_dist"]]
+  pars.ttd.all <- pars$ttd.all[[ttd.dist]]
+  pars.ttd.da <- pars$ttd.da[[ttd.dist]]
+  pars.ttd.em <- pars$ttd.eular$moderate[[ttd.dist]]
+  pars.ttd.eg <- pars$ttd.eular$good[[ttd.dist]]
+  si.dist <- "exp"
+  pars.si <- pars$ttsi[[si.dist]]
   
   # RUNNING THE SIMULATION
   ## simulate HAQ progression
@@ -62,7 +69,7 @@ sim_iviRA <- function(arms, input_data, pars, model_structure,
                      pars$haq.lprog.therapy, pars$haq.lprog.age,
                      pars$haq.lcgm$delta, pars$haq.lcgm$beta, model_structure["cdmards_haq_model"],
                      pars$rebound, pars$lt$male, pars$lt$female,
-                     input_data$x.mort, pars$logor, ttd_dist, input_data$x.ttd,
+                     input_data$x.mort, pars$logor, ttd.dist, input_data$x.ttd,
                      pars.ttd.all$sample[, pars.ttd.all$loc.index, drop = FALSE],
                      pars.ttd.all$sample[, pars.ttd.all$anc1.index, drop = FALSE],
                      pars.ttd.all$sample[, pars.ttd.all$anc2.index, drop = FALSE],
@@ -79,7 +86,7 @@ sim_iviRA <- function(arms, input_data, pars, model_structure,
                      pars.si$sample[, pars.si$loc.index, drop = FALSE], 
                      pars.si$sample[, pars.si$anc1.index, drop = FALSE],
                      pars.si$sample[, pars.si$anc2.index, drop = FALSE], 
-                     si_dist, pars$mort.loghr.haqdif, max_months)
+                     si.dist, pars$mort.loghr.haqdif, max_months)
   
   ## simulate health care costs
   sim.hc <- sim_hc_cost(simhaq = sim.out, weight = input_data$weight, 
@@ -93,16 +100,15 @@ sim_iviRA <- function(arms, input_data, pars, model_structure,
   
   ## simulate utility and calculate QALYs
   if (model_structure["utility_model"] == "mixture"){
-      sim.utility <- sim_utility_mixture(sim.out, male = input_data$male,
-                                         pars = pars$mixture.utility)
+      sim.out <- cbind(sim.out, sim_utility_mixture(sim.out, male = input_data$male,
+                                         pars = pars$utility.mixture))
       
   } else if (model_structure["utility_model"] == "wailoo"){
-      sim.utility <- sim_utility_wailoo(sim.out, haq0 = input_data$haq0,
+      sim.out[, utility := sim_utility_wailoo(sim.out, haq0 = input_data$haq0,
                                         male = input_data$male,
                                         prev_dmards = input_data$prev.dmards,
-                                        coefs = pars$wailoo.utility)
+                                        coefs = pars$utility.wailoo)]
   }
-  sim.out <- cbind(sim.out, sim.utility)
   sim.out[, qalys := sim_qalys(simhaq = sim.out, utility = sim.out$utility, 
                                si_ul = pars$si.ul)]
   
@@ -121,6 +127,10 @@ sim_iviRA <- function(arms, input_data, pars, model_structure,
 #' @param itreat_switch Model structure relating treatment to switching during the first
 #' 6 months of treatment.
 #' @param cdmards_haq_model Model used for long-term HAQ progression.
+#' @param ttd_dist Distribution used to model time to treatment discontinuaton. Options are the
+#'  exponential (\code{exponential}), Weibull (\code{weibull}), Gompertz (\code{gompertz}),
+#' gamma (\code{gamma}), log-logistic (\code{llogis}), lognormal (\code{lnorm}), 
+#' and generalized gamma (\code{gengamma}) distributions.
 #' @param utility_model Model used to estimate patient utility as a function of HAQ and patient
 #' characteristics.
 #' @export
@@ -129,10 +139,13 @@ select_model_structure <- function(itreat_haq = c("acr-haq", "acr-eular-haq", "h
                                                      "acr-sdai-switch", "acr-cdai-switch", 
                                                      "das28-switch", "acr-eular-switch"),
                                    cdmards_haq_model = c("lcgm", "linear"), 
+                                   ttd_dist = c("exponential", "weibull", "gompertz", 
+                                           "gamma", "llogis", "lnorm", "gengamma"),
                                    utility_model = c("mixture", "wailoo")){
   itreat.haq <- match.arg(itreat_haq)
   itreat.switch <- match.arg(itreat_switch)
   cdmards.haq_model <- match.arg(cdmards_haq_model)
+  ttd.dist <- match.arg(ttd_dist) 
   utility.model <- match.arg(utility_model)
   if (itreat.haq == "acr-haq"){
       if (itreat.switch == "acr-eular-switch"){
@@ -146,6 +159,7 @@ select_model_structure <- function(itreat_haq = c("acr-haq", "acr-eular-haq", "h
   }
   model.structure <- c("itreat_haq" = itreat.haq, "itreat_switch" = itreat.switch,
                        "cdmards_haq_model" = cdmards.haq_model,
+                       "ttd_dist" = ttd.dist,
                        "utility_model" = utility.model)
   class(model.structure) <- "model_structure"
   return(model.structure)
@@ -437,7 +451,7 @@ check_sim_haq <- function(arminds, input_data, pars, itreat_haq, itreat_switch){
 #' @param simhaq Simulation output from \link{sim_haq}.
 #' @param male Vector indiciating patient gender (1 = male, 0 = female).
 #' @param pars List of parameters needed to simulate utility using the Hernandez (2013) mixture 
-#' model. These are the parameters 'mixture.utility' described in the documentation 
+#' model. These are the parameters 'utility.mixture' described in the documentation 
 #' to \link{sample_pars}.
 #' @param check Should the function check parameters and input data passed to the model? Default is TRUE.
 #' 

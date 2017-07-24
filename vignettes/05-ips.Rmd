@@ -32,8 +32,8 @@ sim.out <- rbind(sim.out1, sim.out2)
 
 <div>
 <ul class="pager">
-  <li class="previous"><a href="05-arms.html">Previous</a></li>
-  <li class="next"><a href="07-cea.html">Next</a></li>
+  <li class="previous"><a href="04-parameters.html">Previous</a></li>
+  <li class="next"><a href="06-cea.html">Next</a></li>
 </ul>
 </div>
 

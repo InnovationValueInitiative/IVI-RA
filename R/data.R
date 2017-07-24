@@ -262,8 +262,8 @@
 #' Parameters for Norton (2014) LCGM used to simulate non-linear HAQ trajectories for
 #' 4 latent classes.
 #'
-#' @format List containing coefficient vector, variance-covariance matrix, and indices for 
-#' parameters.
+#' @format List containing coefficients (point estimates and parameter names)
+#'  and variance-covariance matrix.
 #' @source Norton, Sam, et al. "Health Assessment Questionnaire disability progression in early
 #'  rheumatoid arthritis: systematic review and analysis of two inception cohorts." 
 #'  Seminars in arthritis and rheumatism. Vol. 44. No. 2. WB Saunders, 2014.
@@ -274,23 +274,29 @@
 #' Coefficients and variance-covariance matrix from the Alava (2013) mixture model
 #' used to map HAQ score to utilities.
 #'
-#' @format List containing coefficient vector, variance-covariance matrix, and indices for
-#' parameters.
+#' @format List containing coefficient vector (point estimates and parameter names) and 
+#' variance-covariance matrix, and indices for parameters.
 #'
 #' @source Alava, Monica Hernandez, et al. "The relationship between EQ-5D, 
 #'  HAQ and pain in patients with rheumatoid arthritis." Rheumatology 52.5 (2013): 944-950.
-"util.mixture.pars"
+"utility.mixture.pars"
 
 #' Wailoo (2006) utility mapping
 #'
-#' Coefficients and standard errors from Wailoo (2006) model used to map HAQ score to utilities.
+#' Coefficients and standard errors from Wailoo (2006) logistic regression equation
+#'  used to map HAQ score to utilities.
 #'
-#' @format List containing vectors of coefficients and standard errors
+#' @format A data.table containing the following columns.
+#' \describe{
+#'   \item{var}{Name of the variable.}
+#'   \item{est}{Point estimate on the log odds scale.}
+#'   \item{loghr_se}{Standard error of the point estimate.}
+#' } 
 #'
 #' @source Wailoo, A., et al. "Modeling the cost effectiveness of etanercept, adalimumab and 
 #' anakinra compared to infliximab in the treatment of patients with rheumatoid arthritis in the
 #'  Medicare program." Rockville, MD: Agency for Healthcare Research and Quality (2006).
-"util.wailoo.pars"
+"utility.wailoo.pars"
 
 #' Correlation between HAQ and pain
 #'
@@ -304,11 +310,27 @@
 #'  BMC musculoskeletal disorders 3.1 (2002): 1..
 "pain"
 
+#' Hospitalization costs
+#'
+#' Hospitalization costs due to RA.
+#'
+#' @format A data table with 5 variables.
+#' \describe{
+#'   \item{haq}{HAQ score range.}
+#'   \item{days_mean}{Mean number of days in the hospital for a given HAQ score range.}
+#'   \item{days_se}{Standard error of number of days in the hospital for a given HAQ score range.}
+#'   \item{cost_pday_mean}{Mean number of costs per day in the hospital for a given HAQ score range.}
+#'   \item{cost_pday_se}{Standard error of costs per day in the hospital for a given HAQ score range.}
+#' }
+#' @source Carlson, Josh J., et al. "Economic evaluation of tocilizumab monotherapy compared to adalimumab monotherapy 
+#' in the treatment of severe active rheumatoid arthritis." Value in Health 18.2 (2015): 173-179.
+"hosp.cost"
+
 #' Cost of general management of RA
 #'
-#' Cost of general management of RA
+#' Cost of general management of RA.
 #'
-#' @format A data frame with 4 variables.
+#' @format A data table with 4 variables.
 #' \describe{
 #'   \item{service}{Medical service performed}
 #'   \item{est}{Point estimate for cost}
@@ -319,5 +341,18 @@
 #' Arthritis: Modeling the Cost of Treatment Strategies in the United States." Journal of managed
 #'care & specialty pharmacy 22.9 (2016): 1088-1102.}
 "mgmt.cost"
+
+#' Productivity loss 
+#'
+#' Annual earnings loss from a 1-unit change in the HAQ score.
+#'
+#' @format A data table with 2 variables.
+#' \describe{
+#'   \item{est}{Estimate of the impact of 1-unit change in HAQ on annual lost earnings.}
+#'   \item{se}{Standard error of point estimate of lost earnings.}
+#' }
+#' @source {Wolfe, Frederick, et al. "Household income and earnings losses among 6,396 persons
+#'  with rheumatoid arthritis." The Journal of Rheumatology 32.10 (2005): 1875-1883.}
+"prod.loss"
 
 

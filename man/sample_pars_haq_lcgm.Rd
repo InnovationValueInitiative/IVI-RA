@@ -4,7 +4,7 @@
 \alias{sample_pars_haq_lcgm}
 \title{Sample parameters for the LCGM}
 \usage{
-sample_pars_haq_lcgm(nsims)
+sample_pars_haq_lcgm(nsims, pars)
 }
 \value{
 List containing posterior sample of paramaters from the Norton(2014)

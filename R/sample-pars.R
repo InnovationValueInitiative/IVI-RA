@@ -58,6 +58,7 @@
 #' experienced patients are using during 1st and subsequent lines.
 #' @param haq_lprog_therapy_mean Point estimate of linear yearly HAQ progression rate by therapy.
 #' @param haq_lprog_therapy_se Standard error of linear yearly HAQ progression rate by therapy.
+#' @param haq_lcgm_pars Parameters of LCGM for HAQ progression.
 #' @param eular2haq_mean Mean HAQ change by Eular response category.
 #' @param eular2haq_se Standard error of mean HAQ change by Eular response category.
 #' @param acr2haq_mean Mean HAQ change by ACR response category.
@@ -140,9 +141,9 @@
 #'     variables. \code{beta} is similar to \code{delta}, but each matrix contains coefficients 
 #'     predicting HAQ as a function of time using a quadratic polynomial model.
 #'    }
-#'    \item{mixture.utility}{A list containing samples of all parameters in the Hernandez Alva (2013) mixture model. See 'Sampled mixture model parameters'
+#'    \item{utility.mixture}{A list containing samples of all parameters in the Hernandez Alva (2013) mixture model. See 'Sampled mixture model parameters'
 #'    for details.}
-#'    \item{wailoo.utility}{A matrix of sampled regression coefficients from the model mapping HAQ to EQ5D utility in Wailoo (2006). Variables are
+#'    \item{utility.wailoo}{A matrix of sampled regression coefficients from the model mapping HAQ to EQ5D utility in Wailoo (2006). Variables are
 #'    (in order) "int" (intercept), "age" (patient age), "dis_dur" (disease duration), "haq0" (baseline HAQ), "male" (1 = male, 0 = female),
 #'    "prev_dmards" (number of previous DMARDs), and "haq" (current HAQ).}
 #'    \item{hosp.cost}{A list of two matrices \code{hosp.days} and \code{cost.pday}. \code{hosp.days} is sample of hospital days by HAQ category; the 
@@ -230,6 +231,7 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
                        treat_hist = c("naive", "exp"),
                        haq_lprog_therapy_mean = iviRA::therapy.pars$haq.lprog$est,
                        haq_lprog_therapy_se = iviRA::therapy.pars$haq.lprog$se,
+                       haq_lcgm_pars = iviRA::haq.lcgm.pars,
                        eular2haq_mean = iviRA::eular2haq$mean, 
                        eular2haq_se = iviRA::eular2haq$se,
                        acr2haq_mean = iviRA::acr2haq$mean,
@@ -242,13 +244,13 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
                        acr2das28_upper = iviRA::acr2das28$inception$upper,
                        haq_lprog_age_mean = iviRA::haq.lprog.age$est,
                        haq_lprog_age_se = iviRA::haq.lprog.age$se,
-                       hosp_days_mean = c(.26, .13, .51, .72, 1.86, 4.16),
-                       hosp_days_se = c(.5, .5, .5, .5, .5, .5),
-                       hosp_cost_mean = rep(1251, 6),
-                       hosp_cost_se = rep(191, 6),
+                       hosp_days_mean = iviRA::hosp.cost$days_mean,
+                       hosp_days_se = iviRA::hosp.cost$days_se,
+                       hosp_cost_mean = iviRA::hosp.cost$cost_pday_mean,
+                       hosp_cost_se = iviRA::hosp.cost$cost_pday_se,
                        mgmt_cost_mean = iviRA::mgmt.cost$est,
                        mgmt_cost_se = iviRA::mgmt.cost$se,
-                       pl_mean = 5853.30, pl_se = 1526.691,
+                       pl_mean = iviRA::prod.loss$est, pl_se = iviRA::prod.loss$se,
                        ttsi = iviRA::therapy.pars$si,
                        si_cost = 5873, si_cost_range = .2,
                        si_ul = .156, si_ul_range = .2,
@@ -284,10 +286,10 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
                                                   haq_lprog_therapy_se)
   sim$haq.lprog.age <- sample_normals(n, haq_lprog_age_mean, haq_lprog_age_se,
                                      col_names =  c("age_less40", "age40to64", "age_65plus"))
-  sim$haq.lcgm <- sample_pars_haq_lcgm(n)
-  sim$mixture.utility <- sample_pars_utility_mixture(n, util_mixture_pain)
-  sim$wailoo.utility <- sample_normals(n, iviRA::util.wailoo.pars$coef, iviRA::util.wailoo.pars$se,
-                                      col_names = names(util.wailoo.pars$coef))
+  sim$haq.lcgm <- sample_pars_haq_lcgm(n, pars = haq_lcgm_pars)
+  sim$utility.mixture <- sample_pars_utility_mixture(n, util_mixture_pain)
+  sim$utility.wailoo <- sample_normals(n, iviRA::utility.wailoo.pars$est, iviRA::utility.wailoo.pars$se,
+                                      col_names = utility.wailoo.pars$var)
   hosp.cost.names <- c("haq_less0.5", "haq0.5to1", "haq1to1.5", "haq1.5to2", "haq2to2.5", "haq2.5plus")
   sim$hosp.cost <- list(hosp.days = sample_gammas(n, hosp_days_mean, hosp_days_se,
                                                  col_names = hosp.cost.names),
@@ -611,17 +613,16 @@ sample_stratified_survpars <- function(nsims, x){
 #' LCGM.
 #' 
 #' @export
-sample_pars_haq_lcgm <- function(nsims){
-  samp <- MASS::mvrnorm(nsims, haq.lcgm.pars$coef$coef, haq.lcgm.pars$vcov)
-  if (class(samp) == "numeric") samp <- t(as.matrix(samp)) 
+sample_pars_haq_lcgm <- function(nsims, pars){
+  samp <- MASS::mvrnorm(nsims, pars$coef$est, pars$vcov)
+  if (is.vector(samp)) samp <- t(as.matrix(samp)) 
+  index.delta <- which(pars$coef$parameter %in% paste0("delta", seq(2, 4)))
+  index.beta <- which(pars$coef$parameter %in% paste0("beta", seq(1, 4)))
   lsamp <- list()
-  indx.beta <- c()
-  indx.delta <- unlist(haq.lcgm.pars$index[c("delta2", "delta3", "delta4")])
-  indx.beta <- unlist(haq.lcgm.pars$index[paste0("beta", seq(1, 4))])
-  lsamp[["delta"]] <- aperm(array(c(t(samp[, indx.delta])),
+  lsamp[["delta"]] <- aperm(array(c(t(samp[, index.delta])),
                                  dim = c(8, 3, nsims)),
                            perm = c(2, 1, 3))
-  lsamp[["beta"]] <- aperm(array(c(t(samp[, indx.beta])),
+  lsamp[["beta"]] <- aperm(array(c(t(samp[, index.beta])),
                                   dim = c(4, 4, nsims)),
                             perm = c(2, 1, 3))
   return(lsamp)
@@ -636,29 +637,43 @@ sample_pars_haq_lcgm <- function(nsims){
 #' 
 #' @export
 sample_pars_utility_mixture <- function(nsims, pain){
-  samp <- MASS::mvrnorm(nsims, iviRA::util.mixture.pars$coef$coef, iviRA::util.mixture.pars$vcov)
-  if (class(samp) == "numeric") samp <- t(as.matrix(samp)) 
+  # sample
+  samp <- MASS::mvrnorm(nsims, iviRA::utility.mixture.pars$coef$est,
+                        iviRA::utility.mixture.pars$vcov)
+  if (is.vector(samp)) samp <- t(as.matrix(samp)) 
+  
+  # separate sampels into parameter sets
+  ## parameters except delta
   lsamp <- list()
-  names <- names(util.mixture.pars$index)
+  names <- unique(iviRA::utility.mixture.pars$coef$parameter)
   names <- names[!names %in% "delta"]
   for (n in names){
-    indx <- util.mixture.pars$index[[n]]
+    indx <- which(iviRA::utility.mixture.pars$coef$parameter %in% n)
     if (n %in% c("beta1", "beta2", "beta3", "beta4")){
       lsamp[[n]] <- samp[, indx, drop = FALSE] 
     } else{
       lsamp[[n]] <- samp[, indx]
     }
   }
+  
+  ### variance cannot be negative
   var.pars <- c(paste0("epsilon", seq(1, 4)), "mu")
   for (v in var.pars){
     lsamp[[v]] <- ifelse(lsamp[[v]] <= 0, 0, lsamp[[v]])
     lsamp[[v]] <- sqrt(lsamp[[v]])
   }
-  indx.delta <- util.mixture.pars$index[["delta"]]
+
+  ## delta
+  delta.names <- paste0("delta", seq(1, 3))
+  indx.delta <- which(iviRA::utility.mixture.pars$coef$parameter %in% delta.names)
   lsamp[["delta"]] <- aperm(array(c(t(samp[, indx.delta])),
                                   dim = c(4, 3, nsims)),
                             perm = c(2, 1, 3))
+  
+  ## pain
   lsamp[["pain"]] <- pain
+  
+  # return
   return(lsamp)
 }
 
@@ -1121,24 +1136,24 @@ par_table <- function(x, pat){
   ### predictors - classes
   b <- list()
   for (i in 1:4){
-    b[[i]] <- apply_summary(cbind(x$mixture.utility[[paste0("alpha", i)]], 
-                                             x$mixture.utility[[paste0("beta", i)]]))
+    b[[i]] <- apply_summary(cbind(x$utility.mixture[[paste0("alpha", i)]], 
+                                             x$utility.mixture[[paste0("beta", i)]]))
   }
   b <- do.call("rbind", b)
   
   ### predictor - male
-  alpha.male <- apply_summary(x$mixture.utility$alpha)
+  alpha.male <- apply_summary(x$utility.mixture$alpha)
   
   ### variance
   v <- list()
   for (i in 1:4){
-    v[[i]] <- apply_summary(x$mixture.utility[[paste0("epsilon", i)]])
+    v[[i]] <- apply_summary(x$utility.mixture[[paste0("epsilon", i)]])
   }
   v <- do.call("rbind", v)
-  v <- rbind(v, apply_summary(x$mixture.utility$mu))
+  v <- rbind(v, apply_summary(x$utility.mixture$mu))
   
   ### probability - class membership
-  d <- apply_summary(x$mixture.utility$delta)
+  d <- apply_summary(x$utility.mixture$delta)
   
   ## combine labels and parameters
   util.parsum <- rbind(b, alpha.male, v, d)
@@ -1150,7 +1165,7 @@ par_table <- function(x, pat){
                       Parameter =  c("Intercept", "Age", "Disease duration", "Baseline HAQ",
                                       "Male", "Previous DMARDs", "Current HAQ"),
                       Source = "Wailoo2006")
-  util.wailoo <- cbind(util.wailoo, apply_summary(x$wailoo.utility)) 
+  util.wailoo <- cbind(util.wailoo, apply_summary(x$utility.wailoo)) 
                     
   # table 
   table <- rbind(rebound, acr2eular.dt, acr2das28.dt, acr2sdai.dt, acr2cdai.dt,

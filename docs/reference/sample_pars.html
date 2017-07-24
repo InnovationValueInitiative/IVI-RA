@@ -62,25 +62,25 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/01-intro.html">1. Introduction</a>
+      <a href="../articles/00-intro.html">0. Introduction</a>
     </li>
     <li>
-      <a href="../articles/02-population.html">2. Generate population</a>
+      <a href="../articles/01-population.html">1. Generate population</a>
     </li>
     <li>
-      <a href="../articles/03-parameters.html">3. Sample parameters</a>
+      <a href="../articles/02-arms.html">2. Select treatment sequences</a>
     </li>
     <li>
-      <a href="../articles/04-structure.html">4. Select model structure</a>
+      <a href="../articles/03-structure.html">3. Select model structure</a>
     </li>
     <li>
-      <a href="../articles/05-arms.html">5. Choose treatment arms</a>
+      <a href="../articles/04-parameters.html">4. Sample parameters</a>
     </li>
     <li>
-      <a href="../articles/06-ips.html">6. Run simulation</a>
+      <a href="../articles/05-ips.html">5. Run simulation</a>
     </li>
     <li>
-      <a href="../articles/07-cea.html">7. Cost-effectiveness analysis</a>
+      <a href="../articles/06-cea.html">6. Cost-effectiveness analysis</a>
     </li>
   </ul>
 </li>
@@ -135,6 +135,7 @@
   <span class='kw'>treat_hist</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"naive"</span>, <span class='st'>"exp"</span>),
   <span class='kw'>haq_lprog_therapy_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/therapy.pars'>therapy.pars</a></span>$<span class='no'>haq.lprog</span>$<span class='no'>est</span>,
   <span class='kw'>haq_lprog_therapy_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/therapy.pars'>therapy.pars</a></span>$<span class='no'>haq.lprog</span>$<span class='no'>se</span>,
+  <span class='kw'>haq_lcgm_pars</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/haq.lcgm.pars'>haq.lcgm.pars</a></span>,
   <span class='kw'>eular2haq_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/eular2haq'>eular2haq</a></span>$<span class='no'>mean</span>,
   <span class='kw'>eular2haq_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/eular2haq'>eular2haq</a></span>$<span class='no'>se</span>, <span class='kw'>acr2haq_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/acr2haq'>acr2haq</a></span>$<span class='no'>mean</span>,
   <span class='kw'>acr2haq_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/acr2haq'>acr2haq</a></span>$<span class='no'>se</span>,
@@ -145,12 +146,15 @@
   <span class='kw'>acr2das28_lower</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/acr2das28'>acr2das28</a></span>$<span class='no'>inception</span>$<span class='no'>lower</span>,
   <span class='kw'>acr2das28_upper</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/acr2das28'>acr2das28</a></span>$<span class='no'>inception</span>$<span class='no'>upper</span>,
   <span class='kw'>haq_lprog_age_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/haq.lprog.age'>haq.lprog.age</a></span>$<span class='no'>est</span>,
-  <span class='kw'>haq_lprog_age_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/haq.lprog.age'>haq.lprog.age</a></span>$<span class='no'>se</span>, <span class='kw'>hosp_days_mean</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>0.26</span>, <span class='fl'>0.13</span>,
-  <span class='fl'>0.51</span>, <span class='fl'>0.72</span>, <span class='fl'>1.86</span>, <span class='fl'>4.16</span>), <span class='kw'>hosp_days_se</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>0.5</span>, <span class='fl'>0.5</span>, <span class='fl'>0.5</span>, <span class='fl'>0.5</span>, <span class='fl'>0.5</span>, <span class='fl'>0.5</span>),
-  <span class='kw'>hosp_cost_mean</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='fl'>1251</span>, <span class='fl'>6</span>), <span class='kw'>hosp_cost_se</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='fl'>191</span>, <span class='fl'>6</span>),
+  <span class='kw'>haq_lprog_age_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/haq.lprog.age'>haq.lprog.age</a></span>$<span class='no'>se</span>,
+  <span class='kw'>hosp_days_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/hosp.cost'>hosp.cost</a></span>$<span class='no'>days_mean</span>,
+  <span class='kw'>hosp_days_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/hosp.cost'>hosp.cost</a></span>$<span class='no'>days_se</span>,
+  <span class='kw'>hosp_cost_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/hosp.cost'>hosp.cost</a></span>$<span class='no'>cost_pday_mean</span>,
+  <span class='kw'>hosp_cost_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/hosp.cost'>hosp.cost</a></span>$<span class='no'>cost_pday_se</span>,
   <span class='kw'>mgmt_cost_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/mgmt.cost'>mgmt.cost</a></span>$<span class='no'>est</span>, <span class='kw'>mgmt_cost_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/mgmt.cost'>mgmt.cost</a></span>$<span class='no'>se</span>,
-  <span class='kw'>pl_mean</span> <span class='kw'>=</span> <span class='fl'>5853.3</span>, <span class='kw'>pl_se</span> <span class='kw'>=</span> <span class='fl'>1526.691</span>, <span class='kw'>ttsi</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/therapy.pars'>therapy.pars</a></span>$<span class='no'>si</span>,
-  <span class='kw'>si_cost</span> <span class='kw'>=</span> <span class='fl'>5873</span>, <span class='kw'>si_cost_range</span> <span class='kw'>=</span> <span class='fl'>0.2</span>, <span class='kw'>si_ul</span> <span class='kw'>=</span> <span class='fl'>0.156</span>, <span class='kw'>si_ul_range</span> <span class='kw'>=</span> <span class='fl'>0.2</span>,
+  <span class='kw'>pl_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/prod.loss'>prod.loss</a></span>$<span class='no'>est</span>, <span class='kw'>pl_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/prod.loss'>prod.loss</a></span>$<span class='no'>se</span>,
+  <span class='kw'>ttsi</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/therapy.pars'>therapy.pars</a></span>$<span class='no'>si</span>, <span class='kw'>si_cost</span> <span class='kw'>=</span> <span class='fl'>5873</span>, <span class='kw'>si_cost_range</span> <span class='kw'>=</span> <span class='fl'>0.2</span>,
+  <span class='kw'>si_ul</span> <span class='kw'>=</span> <span class='fl'>0.156</span>, <span class='kw'>si_ul_range</span> <span class='kw'>=</span> <span class='fl'>0.2</span>,
   <span class='kw'>therapy_names</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/therapy.pars'>therapy.pars</a></span>$<span class='no'>info</span>$<span class='no'>sname</span>,
   <span class='kw'>util_mixture_pain</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/pain'>pain</a></span>)</pre>
     
@@ -299,6 +303,10 @@ experienced patients are using during 1st and subsequent lines.</p></td>
     <tr>
       <th>haq_lprog_therapy_se</th>
       <td><p>Standard error of linear yearly HAQ progression rate by therapy.</p></td>
+    </tr>
+    <tr>
+      <th>haq_lcgm_pars</th>
+      <td><p>Parameters of LCGM for HAQ progression.</p></td>
     </tr>
     <tr>
       <th>eular2haq_mean</th>
@@ -460,9 +468,9 @@ for general management of RA.</p></td>
      each matrix containing coefficients predicting class membership. Rows are classes and columns index
     variables. <code>beta</code> is similar to <code>delta</code>, but each matrix contains coefficients 
     predicting HAQ as a function of time using a quadratic polynomial model.</p></dd>
-   <dt>mixture.utility</dt><dd><p>A list containing samples of all parameters in the Hernandez Alva (2013) mixture model. See 'Sampled mixture model parameters'
+   <dt>utility.mixture</dt><dd><p>A list containing samples of all parameters in the Hernandez Alva (2013) mixture model. See 'Sampled mixture model parameters'
    for details.</p></dd>
-   <dt>wailoo.utility</dt><dd><p>A matrix of sampled regression coefficients from the model mapping HAQ to EQ5D utility in Wailoo (2006). Variables are
+   <dt>utility.wailoo</dt><dd><p>A matrix of sampled regression coefficients from the model mapping HAQ to EQ5D utility in Wailoo (2006). Variables are
    (in order) "int" (intercept), "age" (patient age), "dis_dur" (disease duration), "haq0" (baseline HAQ), "male" (1 = male, 0 = female),
    "prev_dmards" (number of previous DMARDs), and "haq" (current HAQ).</p></dd>
    <dt>hosp.cost</dt><dd><p>A list of two matrices <code>hosp.days</code> and <code>cost.pday</code>. <code>hosp.days</code> is sample of hospital days by HAQ category; the 
