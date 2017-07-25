@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Using the IPS to simulate disease progression • iviRA</title>
+<title>Run the IPS • iviRA</title>
 <!-- jquery --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/simplex/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 <!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
@@ -84,29 +84,87 @@
       </header><div class="row">
   <div class="col-md-9">
     <div class="page-header toc-ignore">
-      <h1>Using the IPS to simulate disease progression</h1>
+      <h1>Run the IPS</h1>
             
           </div>
 
     
     
 <div class="contents">
+<p>Once treatment arms have been select, the model structure has been defined, and parameter values have been sampled, the IPS can be run. However, first, we must derive data inputs for the model specific to the model structure chosen.</p>
 <div id="generate-input-data" class="section level2">
 <h2 class="hasAnchor">
 <a href="#generate-input-data" class="anchor"></a>Generate input data</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">input.dat &lt;-<span class="st"> </span><span class="kw"><a href="../reference/get_input_data.html">get_input_data</a></span>(<span class="dt">patdata =</span> pop, <span class="dt">model_structure =</span> mod.struct)</code></pre></div>
+<p>Data inputs are model inputs that are fixed at baseline. Given a patient population and model strucutre, we can generate the required data with the function <code>get_input_data</code></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">input.dat &lt;-<span class="st"> </span><span class="kw"><a href="../reference/get_input_data.html">get_input_data</a></span>(<span class="dt">patdata =</span> pop, <span class="dt">model_structure =</span> mod.struct)
+<span class="kw">names</span>(input.dat)</code></pre></div>
+<pre><code>##  [1] "n"           "haq0"        "age"         "male"        "das28"      
+##  [6] "sdai"        "cdai"        "weight"      "prev.dmards" "x.mort"     
+## [11] "x.ttd"</code></pre>
+<p>The function returns all patient characteristics needed to run the simulation (HAQ score at baseline, age, gender, DAS28, SDAI, CDAI, weight, and the number of previous DMARDs). It also stores two matrices of explanatory variables. The first matrix, <code>x.mort</code>, contains all patient characteristics known at baseline used to adjust mortality with a log odds ratio. By default, only the baseline HAQ score is used to adjust mortality.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(input.dat$x.mort)</code></pre></div>
+<pre><code>##           haq0
+## [1,] 0.1430960
+## [2,] 1.3716961
+## [3,] 1.0643199
+## [4,] 0.9628729
+## [5,] 1.2583120
+## [6,] 2.7052381</code></pre>
+<p>The second matrix, <code>x.ttd</code>, is the design matrix used to simulate time to treamtment discontinuation. This matrix depends on the the model structure chosen since treatment duration depends on the pathway <strong>S1-S6</strong> used for treatment switching. In the current model structure, <code>itreat_switch = acr-switch</code>, the design matrix is a single column of ones since the model parameters used to simulate treatment duration do not differ across patients.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(input.dat$x.ttd)</code></pre></div>
+<pre><code>##      [,1]
+## [1,]    1
+## [2,]    1
+## [3,]    1
+## [4,]    1
+## [5,]    1
+## [6,]    1</code></pre>
 </div>
 <div id="run-the-ips" class="section level2">
 <h2 class="hasAnchor">
 <a href="#run-the-ips" class="anchor"></a>Run the IPS</h2>
-<p>Disease progression depends on the therapies used by patients. The list of potential therapies is available in the object <code>therapy.pars</code>, which contains all parameters in the model that vary across therapies.</p>
+<p>We run the IPS using the function <code>sim_iviRA</code>. The main arguments are the selected treatment arms, the input data, the parameter samples, and the model structure. Here, we simulate outcomes for Arm 1 (adamtx, etnmtx, ifxmtx) and Arm 2</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sim.out1 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sim_iviRA.html">sim_iviRA</a></span>(<span class="dt">arms =</span> arm1, <span class="dt">input_data =</span> input.dat, <span class="dt">pars =</span> parsamp,
                      <span class="dt">model_structure =</span> mod.struct)
 sim.out1[, arm :<span class="er">=</span><span class="st"> "Arm 1"</span>]
 sim.out2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sim_iviRA.html">sim_iviRA</a></span>(<span class="dt">arms =</span> arm2, <span class="dt">input_data =</span> input.dat, <span class="dt">pars =</span> parsamp,
                      <span class="dt">model_structure =</span> mod.struct)
 sim.out2[, arm :<span class="er">=</span><span class="st"> "Arm 2"</span>]
-sim.out &lt;-<span class="st"> </span><span class="kw">rbind</span>(sim.out1, sim.out2)</code></pre></div>
+sim.out &lt;-<span class="st"> </span><span class="kw">rbind</span>(sim.out1, sim.out2)
+<span class="kw">head</span>(sim.out)</code></pre></div>
+<pre><code>##    sim id month therapy therapy_seq therapy_cycle death      age      ttd
+## 1:   1  1     6       3           1             1     0 51.84709  0.00000
+## 2:   1  1    12       5           2             1     0 52.34709 16.83391
+## 3:   1  1    18       5           2             2     0 52.84709 15.83391
+## 4:   1  1    24       5           2             3     0 53.34709 14.83391
+## 5:   1  1    30       5           2             4     0 53.84709 13.83391
+## 6:   1  1    36       5           2             5     0 54.34709 12.83391
+##    acr eular      haq     ttsi si yrlen infusion_cost  rx_cost treat_cost
+## 1:   0     0 0.143096 27.94089  0   0.5             0 29710.95   29710.95
+## 2:   1     1 0.000000 43.71238  0   0.5             0 29715.89   29715.89
+## 3:   1     1 0.000000 42.71238  0   0.5             0 29715.89   29715.89
+## 4:   1     1 0.000000 41.71238  0   0.5             0 29715.89   29715.89
+## 5:   1     1 0.000000 40.71238  0   0.5             0 29715.89   29715.89
+## 6:   1     1 0.000000 39.71238  0   0.5             0 29715.89   29715.89
+##    hosp_cost mgmt_cost si_cost  hc_cost prod_loss     pain   utility
+## 1: 0.2505538  185.3009       0 29896.50  542.0631 61.61325 0.7932646
+## 2: 0.2505538  185.3009       0 29901.44    0.0000 32.82152 0.8373980
+## 3: 0.2505538  185.3009       0 29901.44    0.0000 74.80359 0.8354114
+## 4: 0.2505538  185.3009       0 29901.44    0.0000 20.15570 1.0000000
+## 5: 0.2505538  185.3009       0 29901.44    0.0000 37.58615 0.8375131
+## 6: 0.2505538  185.3009       0 29901.44    0.0000  9.24304 0.8373400
+##        qalys   arm
+## 1: 0.3966323 Arm 1
+## 2: 0.4186990 Arm 1
+## 3: 0.4177057 Arm 1
+## 4: 0.5000000 Arm 1
+## 5: 0.4187565 Arm 1
+## 6: 0.4186700 Arm 1</code></pre>
+<p><code>sim_iviRA</code> returns a data.table which is an enhanced data.frame from the data.table package designed for fast data manipulation. For a given sampled parameter set (<code>sim</code>) a sampled patient (<code>id</code>) remains on a given therapy until time to treatment discontinuation (<code>ttd</code>) becomes less than zero in a given month. Treatment discontinuation is caused by a serious infection (<code>si = 1</code>) if the sampled time to serious infection at treatment initiation is less than the sampled time to discontinuation. After discontinuation, a patient switches to the next therapy and <code>therapy_seq</code> increments by one. Patient age increases in 6-month increments.</p>
+<p>The HAQ score (<code>haq</code>) during the initial 6-month period (<code>therapy_cycle = 1</code>) and <code>ttd</code> depend on the model structure chosen. In our chosen structure, itreat_haq = acr-eular-haq and itreat_switch = acr-eular-switch, HAQ and time to treatment discontinuation depend on ACR response (<code>acr</code>) and in turn, EULAR response (<code>eular</code>). For patients on cDMARDs, the HAQ score progresses according to the LCGM while HAQ progresses linearly for patients on bDMARDs. The simulation ends when a patient dies (<code>death = 1</code>).</p>
+<p>An important component of health care sector costs (<code>hc_cost</code>) are the costs associated with treatment (<code>treat_cost</code>), which consist of infusion costs (<code>infusion_cost</code>) and drug acquisition costs (<code>rx_cost</code>). Other health care sector costs are hospital costs (<code>hosp_cost</code>), which increase with the HAQ score; general management costs (<code>mgmt_cost</code>); and the costs of caused by serious infections (<code>si_cost</code>).</p>
+<p>The model currently only supports non-health care sector costs due to lost wages. Analyses performed from a societal perspective should include these productivity losses (<code>prod_loss</code>).</p>
+<p>If utility is simulated using the mixture model, then both pain (<code>pain</code>) and utility (<code>utility</code>) are returned. If, on the other hand, the Wailoo model is used, then only utility is returned. In both cases, QALYs (<code>qalys</code>) are calculated as a function of utility and the estimated utility loss from a serious infection.</p>
 <div>
 <ul class="pager">
 <li class="previous">

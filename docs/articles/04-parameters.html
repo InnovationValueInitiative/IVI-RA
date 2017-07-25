@@ -91,13 +91,34 @@
     
     
 <div class="contents">
-<div id="default-parameter-estimates" class="section level2">
+<p>The <code>iviRA</code> package does not allow users to run the IPS with parameters set to fixed values, but instead recognizes that parameter values are inherently uncertain. As such, all parameters are randomly sampled from their (joint) probability distribution and the IPS is run for each randomly sampled parameter set. The parameters are sampled using the function <code>sample_pars</code>, which generates a probability distribution for all model parameters.</p>
+<p>The random samples depend on the underlying statistical estimates of the distribution of the parameters. We can generate a sample of size 100 using default values.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">parsamp &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pars.html">sample_pars</a></span>(<span class="dt">n =</span> <span class="dv">100</span>)</code></pre></div>
+<p>The object <code>parsamp</code> returned from <code>sample_pars</code> is a list of random draws of the parameters used in the IPS.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">names</span>(parsamp)</code></pre></div>
+<pre><code>##  [1] "n"                 "rebound"           "lt"               
+##  [4] "treat.cost"        "acr2eular"         "acr2sdai"         
+##  [7] "acr2cdai"          "acr2das28"         "logor.mort"       
+## [10] "mort.loghr.haqdif" "ttd.all"           "ttd.da"           
+## [13] "ttd.eular"         "acr"               "das28"            
+## [16] "haq"               "eular2haq"         "acr2haq"          
+## [19] "haq.lprog.therapy" "haq.lprog.age"     "haq.lcgm"         
+## [22] "utility.mixture"   "utility.wailoo"    "hosp.cost"        
+## [25] "mgmt.cost"         "prod.loss"         "ttsi"             
+## [28] "si.cost"           "si.ul"</code></pre>
+<p>The number of samples is also returned for convenience.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">parsamp$n</code></pre></div>
+<pre><code>## [1] 100</code></pre>
+<p>Users can generate samples with <code>iviRA</code> defaults or feed custom inputs into <code>sample_pars</code>. For example, we can generate a sample in which the cost of a serious infection is $7,000 instead of its default value of $5,873.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">parsamp2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pars.html">sample_pars</a></span>(<span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">si_cost =</span> <span class="dv">7000</span>)
+<span class="kw">summary</span>(parsamp2$si.cost)</code></pre></div>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##    5604    6230    6730    6897    7580    8363</code></pre>
+<p>To view the full list of arguments in <code>sample_pars</code> that can changed by the user view the documentation by typing <code><a href="../reference/sample_pars.html">?sample_pars</a></code>. All default arguments come preloaded with the package and are based on IVI’s statistical estimates and synthesis of the literature. The preloaded parameter estimates can be viewed by typing the command <code>data(package = "iviRA")</code> into the R console.</p>
+<p>Below we describe these parmater estimates and separate them into 8 main categories: treatment effects estimated from a network meta-analysis (NMA); mappings between various measured of treatment response, disease activity, and/or function; long-term progression of disease, treatment duration, serious infections, mortality, utility, and costs.</p>
+<div id="nma" class="section level2">
 <h2 class="hasAnchor">
-<a href="#default-parameter-estimates" class="anchor"></a>Default parameter estimates</h2>
-<p>Parameters needed to run the simulation come preloaded with the package. To view the loaded data use the command <code>data(package = "iviRA")</code>. The parameters can be separated into 8 main categories: treatment effects estimated from a network meta-analysis (NMA); mappings between various measured of treatment response, disease activivity, and/or function; long-term progression of disease, treatment duration, serious infections, mortality, utility, and costs.</p>
-<div id="nma-for-acr-response-change-in-das28-and-change-in-haq" class="section level3">
-<h3 class="hasAnchor">
-<a href="#nma-for-acr-response-change-in-das28-and-change-in-haq" class="anchor"></a>NMA for ACR response, change in DAS28, and change in HAQ</h3>
+<a href="#nma" class="anchor"></a>NMA</h2>
 <p>The effect of treatment on ACR response at 6 months, change in DAS28 at 6 months, and the change in the HAQ score at 6 months are estimated using a NMA. Default NMA parameter estimates come preloaded with the package and are based on results from an NMA conduced by IVI using a Bayesian random effects approach.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">names</span>(iviRA::therapy.pars$nma.acr.naive)</code></pre></div>
 <pre><code>## [1] "mean" "vcov"</code></pre>
@@ -107,9 +128,9 @@
 <pre><code>## [1] "mean" "vcov"</code></pre>
 <p>Each object is a list containing information on the mean of the NMA and the sample variance-covariance matrix. In the PSA, we use a multivariate normal distribution to sample parameters estimated using a NMA. The advantage of this approach is that we do not have to load the entire posterior distribution of the parameters with the package. The justification is the Bayesian central limit theorem, which states that under large samples, the posterior distribution will approach a multivariate normal distribution.</p>
 </div>
-<div id="mapping-between-acr-response-eular-response-disease-activity-and-haq" class="section level3">
-<h3 class="hasAnchor">
-<a href="#mapping-between-acr-response-eular-response-disease-activity-and-haq" class="anchor"></a>Mapping between ACR response, EULAR response, disease activity, and HAQ</h3>
+<div id="mappings" class="section level2">
+<h2 class="hasAnchor">
+<a href="#mappings" class="anchor"></a>Mappings</h2>
 <p>There are various mapping between treatment response measures, disease activity, and functional status that can be used within the IVI-RA model. The exact mapping utilized for a given model run will depend on the model structure select. Default parameter estimates for these mappings come preloaded with the <code>iviRA</code> package.</p>
 <p>The first set of mappings relates ACR response to the three measure of disease activity. The ACR response to SDAI mapping can either be based on the Leflunomide dataset or the inception cohort (see <a href="http://www.clinexprheumatol.org/article.asp?a=2694">Aletaha and Smolen</a>) while mapping for DAS28 and CDAI can only be based on the inception cohort. The mappings correspond to model structures where <code>itreat_switch =  "acr-das28-switch"</code>, <code>itreat_switch = "acr-sdai-switch"</code>, and <code>itreat_switch = "acr-cdai-switch"</code>. Here, we show parameters estimated from the inception cohort.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iviRA::acr2das28$inception</code></pre></div>
@@ -151,9 +172,9 @@
 ## 2: Moderate -0.317 0.048
 ## 3:     Good -0.672 0.112</code></pre>
 </div>
-<div id="long-term-haq-progression" class="section level3">
-<h3 class="hasAnchor">
-<a href="#long-term-haq-progression" class="anchor"></a>Long-term HAQ progression</h3>
+<div id="long-term-haq-progression" class="section level2">
+<h2 class="hasAnchor">
+<a href="#long-term-haq-progression" class="anchor"></a>Long-term HAQ progression</h2>
 <p>The progression of HAQ over time is modeled in two ways: first, assuming a constant annual rate, and second, by using a LCGM. The LCGM can currently only be used to model progression in the absence of bDMARDs while a constant annual rate can be used for all treatments.</p>
 <p>The constant annual rate of progression for patients on cDMARDs (and NBT) are based on <a href="https://arthritis-research.biomedcentral.com/articles/10.1186/ar2944">Wolfe and Michaud’s (2010)</a> analysis of 3,829 RA patients who switched from non-biologic treatment to biologic treatment and participated in the National Data Bank for Rheumatic Diseases (NDB). The progression rate for patients on biologics are based on treatment-specific rates from <a href="http://onlinelibrary.wiley.com/doi/10.1002/acr.20405/full">Michaud et al. (2011)</a> adjusted for baseline HAQ score, age, sex, education, smoking, BMI, comorbidity, and RA onset. Importantly, The average HAQ rate among patients on a biologic was -0.001 in the Michaud et al. analysis, which instills confidence that the reported HAQ progression rates for different bDMARDs can be directly compared with the overall annual HAQ progression rate of 0.031 reported in the 2010 Wolfe and Michaud analysis.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iviRA::therapy.pars$haq.lprog</code></pre></div>
@@ -184,8 +205,8 @@
 ## 1: -0.020 0.004152837 -0.02813941 -0.01186059
 ## 2: -0.008 0.001082326 -0.01012132 -0.00587868
 ## 3:  0.017 0.002179633  0.01272800  0.02127200</code></pre>
-<p>The LCGM is based on the analysis by <a href="http://www.sciencedirect.com/science/article/pii/S0049017214000730">Norton et al.</a>. The parameters from the LCGM are contained in the list <code><a href="http://www.rdocumentation.org/packages/iviRA/topics/haq.lcgm.pars">iviRA::haq.lcgm.pars</a></code>. The coefficient estimates are stored in <code>iviRA::haq.lcgm.pars$coef</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iviRA::haq.lcgm.pars$coef</code></pre></div>
+<p>The LCGM is based on the analysis by <a href="http://www.sciencedirect.com/science/article/pii/S0049017214000730">Norton et al. (2014)</a>. The parameters from the LCGM are contained in the list <code><a href="http://www.rdocumentation.org/packages/iviRA/topics/haq.lcgm">iviRA::haq.lcgm</a></code>. The coefficient estimates are stored in <code>iviRA::haq.lcgm$coef</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iviRA::haq.lcgm$coef</code></pre></div>
 <pre><code>##                    var data parameter         est    se
 ##  1:        intercept_1 eras     beta1   0.6377896 0.058
 ##  2:           linear_1 eras     beta1  -1.0086461 0.074
@@ -228,11 +249,11 @@
 ## 39:     acr_criteria_4 eras    delta4   0.9390000 0.316
 ## 40:            imdq4_4 eras    delta4   1.4290000 0.381
 ##                    var data parameter         est    se</code></pre>
-<p>The coefficient vectors <code>beta1</code>, <code>beta2</code>, <code>beta3</code>, and <code>beta4</code>, contain coefficients from a third order polynomial regression predicting the growth of the HAQ score over time for members of class 1, 2, 3, and 4, respectively; <code>delta2</code>, <code>delta3</code>, and <code>delta4</code> are coefficient vectors containing predictors of membership in classes 2-4 with class 1 being the reference group. A variance-covariance matrix, <code>iviRA::haq.lcgm.pars$vcov</code>, is used to sample parameters from a multivariate normal distribution. The indices of the parameters of the variance-covariance matrix correspond to the row numbers in <code>iviRA::haq.lcgm.pars$coef</code>.</p>
+<p>The coefficient vectors <code>beta1</code>, <code>beta2</code>, <code>beta3</code>, and <code>beta4</code>, contain coefficients from a third order polynomial regression predicting the growth of the HAQ score over time for members of class 1, 2, 3, and 4, respectively; <code>delta2</code>, <code>delta3</code>, and <code>delta4</code> are coefficient vectors containing predictors of membership in classes 2-4 with class 1 being the reference group. A variance-covariance matrix, <code>iviRA::haq.lcgm$vcov</code>, is used to sample parameters from a multivariate normal distribution. The indices of the parameters of the variance-covariance matrix correspond to the row numbers in <code>iviRA::haq.lcgm$coef</code>.</p>
 </div>
-<div id="treatment-duration" class="section level3">
-<h3 class="hasAnchor">
-<a href="#treatment-duration" class="anchor"></a>Treatment duration</h3>
+<div id="treatment-duration" class="section level2">
+<h2 class="hasAnchor">
+<a href="#treatment-duration" class="anchor"></a>Treatment duration</h2>
 <p>Time to treatment discontinuation depends on the pathway (<strong>S1-S6</strong>) used to model treatment switching. If <strong>S1</strong> is selected, a single treatment discontinuation curve is used for all patients. The parameters needed to simulate this curve are stored in. In <strong>S2-S5</strong>, time to treatment discontinuation is stratified by the level of disease activity, and in <strong>S6</strong> treatment duration depends on EULAR response (st. The parameters used to simulate treatment duration based on <strong>S1</strong>, <strong>S2-S5</strong>, and <strong>S6</strong> are stored in <code><a href="http://www.rdocumentation.org/packages/iviRA/topics/ttd">iviRA::ttd.all</a></code>, <code><a href="http://www.rdocumentation.org/packages/iviRA/topics/ttd">iviRA::ttd.da</a></code>, and <code><a href="http://www.rdocumentation.org/packages/iviRA/topics/ttd">iviRA::ttd.eular</a></code>, respectively.</p>
 <p>The treatment duration curves are estimated using parametric survival models with the <code>flexsurv</code> package. Parameters from the survival analyses used in the IVI-RA model are stored in two-level lists. The names in the first level correspond to the name of the parametric survival model.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">names</span>(iviRA::ttd.all)</code></pre></div>
@@ -318,7 +339,7 @@
 </tr>
 </tbody>
 </table>
-<p>The <code>iviRA</code> package currently only allows for models in which the location parameter, but not the ancillary parameters, depends on covariates. The indies of the location parameter, first ancillarly parameter, and second ancillary parameter in the <code>est</code> and <code>vcov</code> objects are contained in the <code>loc.index</code>, <code>anc1.index</code>, and <code>anc2.index</code> objects, respectively. For example, in a regression model with no covariates, the location parameter is stored 2 and the index of the first ancillary parameter is 1.</p>
+<p>The <code>iviRA</code> package currently only allows for models in which the location parameter, but not the ancillary parameters, depends on covariates. The indies of the location parameter, first ancillarly parameter, and second ancillary parameter in the <code>est</code> and <code>vcov</code> objects are contained in the <code>loc.index</code>, <code>anc1.index</code>, and <code>anc2.index</code> objects, respectively. For example, in a regression model with no covariates, the index of the location parameter is 2 and the index of the first ancillary parameter is 1.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iviRA::ttd.all$weibull$loc.index</code></pre></div>
 <pre><code>## [1] 2</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iviRA::ttd.all$weibull$anc1.index</code></pre></div>
@@ -326,13 +347,38 @@
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iviRA::ttd.all$weibull$anc2.index</code></pre></div>
 <pre><code>## [1] NA</code></pre>
 </div>
-<div id="serious-infections" class="section level3">
-<h3 class="hasAnchor">
-<a href="#serious-infections" class="anchor"></a>Serious infections</h3>
+<div id="serious-infections" class="section level2">
+<h2 class="hasAnchor">
+<a href="#serious-infections" class="anchor"></a>Serious infections</h2>
+<p>Serious infection rates are based on the NMA and Cochrane review by <a href="http://onlinelibrary.wiley.com/doi/10.1002/14651858.CD008794/full">Singh et al. (2011)</a>. In accordance with the 2016 NICE report we assume a constant serious infection rate of 0.026 for patients using cDMARDs and a constant rate of <code>exp(iviRA::therapy.pars$si$exp$est["etnmtx"])</code> for patient using bDMARDs. A such we constantly assume that the time to a serious infection is exponentially distributed and that it does not vary across bDMARDs.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><a href="http://www.rdocumentation.org/packages/iviRA/topics/ttsi">iviRA::ttsi</a></code></pre></div>
+<pre><code>##        sname    lograte lograte_se
+##  1:  cdmards  -3.649659   0.135922
+##  2: abtivmtx  -3.352407   0.135922
+##  3:   adamtx  -3.352407   0.135922
+##  4:      ada  -3.352407   0.135922
+##  5:       tt  -3.649659   0.135922
+##  6:   etnmtx  -3.352407   0.135922
+##  7:      etn  -3.352407   0.135922
+##  8:   golmtx  -3.352407   0.135922
+##  9:   ifxmtx  -3.352407   0.135922
+## 10:  placebo -23.025851   0.135922
+## 11:   tczmtx  -3.352407   0.135922
+## 12:      tcz  -3.352407   0.135922
+## 13:   czpmtx  -3.352407   0.135922
+## 14: abtscmtx  -3.352407   0.135922
+## 15:      nbt -23.025851   0.135922
+## 16:   rtxmtx  -3.352407   0.135922
+## 17:   tofmtx  -3.352407   0.135922
+## 18:      rtx  -3.352407   0.135922
+## 19:      tof  -3.352407   0.135922
+## 20:      czp  -3.352407   0.135922
+## 21:      gol  -3.352407   0.135922
+##        sname    lograte lograte_se</code></pre>
 </div>
-<div id="mortality" class="section level3">
-<h3 class="hasAnchor">
-<a href="#mortality" class="anchor"></a>Mortality</h3>
+<div id="mortality" class="section level2">
+<h2 class="hasAnchor">
+<a href="#mortality" class="anchor"></a>Mortality</h2>
 <p>Baseline mortality for patients without RA are based on gender-specific US lifetables. More specifically, we use the probability of mortality, <code>qx</code>, between ages <span class="math inline">\(x\)</span> and <span class="math inline">\(x+1\)</span>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(iviRA::lifetable.male)</code></pre></div>
 <pre><code>##    age       qx     lx  dx     L      Tx   ex
@@ -371,12 +417,12 @@
 ## 4: 0.02954948
 ## 5: 0.03435188</code></pre>
 </div>
-<div id="utility" class="section level3">
-<h3 class="hasAnchor">
-<a href="#utility" class="anchor"></a>Utility</h3>
+<div id="utility" class="section level2">
+<h2 class="hasAnchor">
+<a href="#utility" class="anchor"></a>Utility</h2>
 <p>Two models can be used to simulate utility. If the model structure <code>utility_model = "mixure"</code> is chosen, then the <a href="https://academic.oup.com/rheumatology/article/52/5/944/1816557">Hernandez Alava et al. (2013)</a> model is used; otherwise, if <code>utility_model = "wailoo"</code>, the logistic regression equation reported in <a href="https://www.sheffield.ac.uk/polopoly_fs/1.43356!/file/AHRQ-final-report.pdf">Wailoo et al. (2006)</a> is used.</p>
-<p>Point estimates (i.e., log odds ratios) and standard errors associated with each variable in the Wailoo model are available in the <code><a href="http://www.rdocumentation.org/packages/iviRA/topics/utility.wailoo.pars">iviRA::utility.wailoo.pars</a></code> object.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><a href="http://www.rdocumentation.org/packages/iviRA/topics/utility.wailoo.pars">iviRA::utility.wailoo.pars</a></code></pre></div>
+<p>Point estimates (i.e., log odds ratios) and standard errors associated with each variable in the Wailoo model are available in the <code><a href="http://www.rdocumentation.org/packages/iviRA/topics/utility.wailoo">iviRA::utility.wailoo</a></code> object.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><a href="http://www.rdocumentation.org/packages/iviRA/topics/utility.wailoo">iviRA::utility.wailoo</a></code></pre></div>
 <pre><code>##            var     est     se
 ## 1:         int  2.0734 0.0263
 ## 2:         age  0.0058 0.0004
@@ -385,10 +431,10 @@
 ## 5:        male -0.2914 0.0118
 ## 6: prev_dmards  0.0249 0.0028
 ## 7:         haq -0.8647 0.0103</code></pre>
-<p>The information needed to sample from the mixture model are stored in the list <code><a href="http://www.rdocumentation.org/packages/iviRA/topics/utility.mixture.pars">iviRA::utility.mixture.pars</a></code>. The setup is the same as with the LCGM in that the list contains a table of coefficient estimates as well as the correspoding variance covariance matrix.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">names</span>(iviRA::utility.mixture.pars)</code></pre></div>
+<p>The information needed to sample from the mixture model are stored in the list <code><a href="http://www.rdocumentation.org/packages/iviRA/topics/utility.mixture">iviRA::utility.mixture</a></code>. The setup is the same as with the LCGM in that the list contains a table of coefficient estimates as well as the correspoding variance covariance matrix.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">names</span>(iviRA::utility.mixture)</code></pre></div>
 <pre><code>## [1] "coef" "vcov"</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iviRA::utility.mixture.pars$coef</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iviRA::utility.mixture$coef</code></pre></div>
 <pre><code>##            var parameter           est
 ## 1          HAQ     beta1  -0.089819885
 ## 2         HAQ2     beta1   0.000525916
@@ -433,9 +479,9 @@
 ## 41    Pain/100    delta3  25.339552780
 ## 42   Pain/1002    delta3 -16.962219250</code></pre>
 </div>
-<div id="costs" class="section level3">
-<h3 class="hasAnchor">
-<a href="#costs" class="anchor"></a>Costs</h3>
+<div id="costs" class="section level2">
+<h2 class="hasAnchor">
+<a href="#costs" class="anchor"></a>Costs</h2>
 <p>The model incorporates 3 main types of health care sector costs: (1) drug acquisition and administration costs, (2) hospitalization costs, and (3) general management costs. Productivity losses can also be included in the analysis if the analyst would like to take a societal perspective.</p>
 <p>Drug acquisition and administration costs are separated into costs associated with the first 6 months of treatment and costs after the first 6 months. Costs are a function of the FDA recommended dose and frequency of administration, strength and dosage form, the wholesale acquisition cost (WAC), and infusion. If dosing is weight based, then the dose is calculated by multipling the dose value (e.g., <code>init_dose_val</code> and <code>ann_dose_val</code>) by each patients weight in kilograms; otherwise the dose is simply equal to the dose value. For example, the dose for infliximab during the first six months is equal to 3 multiplied by the weight of the patient.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(knitr)
@@ -688,41 +734,6 @@
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><a href="http://www.rdocumentation.org/packages/iviRA/topics/prod.loss">iviRA::prod.loss</a></code></pre></div>
 <pre><code>##         est       se
 ## 1: 5965.952 1576.608</code></pre>
-</div>
-</div>
-<div id="random-sampling-for-the-psa" class="section level2">
-<h2 class="hasAnchor">
-<a href="#random-sampling-for-the-psa" class="anchor"></a>Random sampling for the PSA</h2>
-<p>The PSA is conducted by sampling the parameters from their (joint) probability distribution and running the IPS for each randomly sampled parameter set. The parameters can be sampled using the function <code>sample_pars</code>, which generates a probability distribution for all parameters used within the family of models.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">parsamp &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pars.html">sample_pars</a></span>(<span class="dt">n =</span> <span class="dv">100</span>)
-<span class="kw">names</span>(parsamp)</code></pre></div>
-<pre><code>##  [1] "n"                 "rebound"           "lt"               
-##  [4] "treat.cost"        "acr2eular"         "acr2sdai"         
-##  [7] "acr2cdai"          "acr2das28"         "logor.mort"       
-## [10] "mort.loghr.haqdif" "ttd.all"           "ttd.da"           
-## [13] "ttd.eular"         "acr"               "das28"            
-## [16] "haq"               "eular2haq"         "acr2haq"          
-## [19] "haq.lprog.therapy" "haq.lprog.age"     "haq.lcgm"         
-## [22] "utility.mixture"   "utility.wailoo"    "hosp.cost"        
-## [25] "mgmt.cost"         "prod.loss"         "ttsi"             
-## [28] "si.cost"           "si.ul"</code></pre>
-<p><code>sample_pars</code> returns a list containing random draws of the different parameters used in the IPS. For example <code>parsamp$acr2eular</code> is an array containing two-way frequency matrices randomly sampled from a Dirichlet distribution that describe the probability of a EULAR response category conditional on ACR response.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">parsamp$acr2eular[,,<span class="dv">1</span>:<span class="dv">2</span>]</code></pre></div>
-<pre><code>## , , 1
-## 
-##           eular_none eular_moderate eular_good
-## ACR &lt; 20   0.7871519      0.1505169 0.06233118
-## ACR 20-50  0.1704074      0.4993604 0.33023218
-## ACR 50-70  0.1911691      0.1370676 0.67176322
-## ACR 70+    0.0000000      0.5012519 0.49874809
-## 
-## , , 2
-## 
-##           eular_none eular_moderate eular_good
-## ACR &lt; 20  0.79716414      0.1487457 0.05409015
-## ACR 20-50 0.01417144      0.3786076 0.60722098
-## ACR 50-70 0.11919634      0.3604449 0.52035872
-## ACR 70+   0.00000000      0.2825249 0.71747515</code></pre>
 <div>
 <ul class="pager">
 <li class="previous">
@@ -742,8 +753,14 @@
       <h2 class="hasAnchor">
 <a href="#tocnav" class="anchor"></a>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
-<li><a href="#default-parameter-estimates">Default parameter estimates</a></li>
-      <li><a href="#random-sampling-for-the-psa">Random sampling for the PSA</a></li>
+<li><a href="#nma">NMA</a></li>
+      <li><a href="#mappings">Mappings</a></li>
+      <li><a href="#long-term-haq-progression">Long-term HAQ progression</a></li>
+      <li><a href="#treatment-duration">Treatment duration</a></li>
+      <li><a href="#serious-infections">Serious infections</a></li>
+      <li><a href="#mortality">Mortality</a></li>
+      <li><a href="#utility">Utility</a></li>
+      <li><a href="#costs">Costs</a></li>
       </ul>
 </div>
       </div>

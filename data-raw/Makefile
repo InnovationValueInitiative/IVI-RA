@@ -2,12 +2,13 @@
 DATA=../data
 
 # all datasets for package
-all: $(DATA)/therapy-pars.rda $(DATA)/pain.rda $(DATA)/util-mixture-pars.rda $(DATA)/ttd-pars.rda
+all: $(DATA)/therapy-pars.rda $(DATA)/pain.rda $(DATA)/utility-mixture.rda $(DATA)/utility-wailoo.rda 
 all: $(DATA)/acr2das28.rda $(DATA)/acr2sdai.rda $(DATA)/acr2cdai.rda 
-all: $(DATA)/acr2eular.rda $(DATA)/eular2haq.rda $(DATA)/acr2haq.rda $(DATA)/haq-lprog-age.rda 
+all: $(DATA)/haq-lprog-age.rda  $(DATA)/haq-lcgm.rda
+all: $(DATA)/acr2eular.rda $(DATA)/eular2haq.rda $(DATA)/acr2haq.rda 
+all: $(DATA)/ttd.rda $(DATA)/ttsi.rda
 all: $(DATA)/mort-or.rda $(DATA)/mort-hr-haqdif.rda $(DATA)/lifetable-male.rda $(DATA)/lifetable-female.rda 
 all: $(DATA)/treat-cost.rda $(DATA)/hosp-cost.rda $(DATA)/mgmt-cost.rda $(DATA)/prod-loss.rda 
-all: $(DATA)/haq-lcgm-pars.rda
 
 # parameters that vary by treatment
 TP_DEPS := therapy-pars.R func.R cost.xlsx 
@@ -15,22 +16,6 @@ TP_TARGET := $(DATA)/therapy-pars.rda figs/infections-grijalva-cumhaz.pdf figs/i
 $(TP_TARGET): $(TP_DEPS)
 	Rscript therapy-pars.R
 
-# HAQ LCGM
-$(DATA)/haq-lcgm-pars.rda: haq-lcgm.R coef-norton-2014.csv
-	Rscript haq-lcgm.R
-
-# utility
-$(DATA)/pain.rda $(DATA)/util-mixture-pars.rda $(DATA)/util-wailoo-pars.rda: utility.R coef-alava-2013.csv vcov-alava-2013.csv
-	Rscript utility.R 
-
-# treatment duration
-TD_DEPS := ttd.R func.R ttd-bsrbr-eular-good-ggamma.csv ttd-bsrbr-eular-good-risk.csv 
-TD_DEPS += ttd-bsrbr-eular-moderate-ggamma.csv ttd-bsrbr-eular-moderate-risk.csv
-TD_DEPS += ttd-corrona-allpat.csv ttd-corrona-allpat-risk.csv
-TD_TARGET := $(DATA)/ttd-pars.rda 
-$(TD_TARGET): $(TD_DEPS)
-	Rscript ttd.R
-		
 # Mappings
 TD_TARGET := := $(DATA)/acr2das28.rda $(DATA)/acr2sdai.rda $(DATA)/acr2cdai.rda 
 TD_TARGET += $(DATA)/acr2eular.rda $(DATA)/eular2haq.rda $(DATA)/acr2haq.rda
@@ -40,6 +25,22 @@ $(TD_TARGET): mappings.R
 # HAQ progression rates by age
 $(DATA)/haq-lprog-age.rda: haq-lprog-age.R
 	Rscript haq-lprog-age.R
+	
+# HAQ LCGM
+$(DATA)/haq-lcgm.rda: haq-lcgm.R coef-norton-2014.csv
+	Rscript haq-lcgm.R
+	
+# treatment duration
+TD_DEPS := ttd.R func.R ttd-bsrbr-eular-good-ggamma.csv ttd-bsrbr-eular-good-risk.csv 
+TD_DEPS += ttd-bsrbr-eular-moderate-ggamma.csv ttd-bsrbr-eular-moderate-risk.csv
+TD_DEPS += ttd-corrona-allpat.csv ttd-corrona-allpat-risk.csv
+TD_TARGET := $(DATA)/ttd.rda 
+$(TD_TARGET): $(TD_DEPS)
+	Rscript ttd.R
+	
+# serious infections
+$(DATA)/ttsi.rda:	ttsi.R treatments.csv
+	Rscript ttsi.R
 	
 # Mortality odds ratios
 $(DATA)/mort-or.rda: mort-or.R
@@ -54,6 +55,10 @@ $(DATA)/lifetable-male.rda: lifetable.R
 	Rscript lifetable.R
 $(DATA)/lifetable-female.rda: lifetable.R
 	Rscript lifetable.R
+	
+# utility
+$(DATA)/pain.rda $(DATA)/utility-mixture.rda $(DATA)/utility-wailoo.rda: utility.R coef-alava-2013.csv vcov-alava-2013.csv
+	Rscript utility.R 
 	
 # Costs
 $(DATA)/treat-cost.rda $(DATA)/hosp-cost.rda $(DATA)/mgmt-cost.rda $(DATA)/prod-loss.rda: cost.R

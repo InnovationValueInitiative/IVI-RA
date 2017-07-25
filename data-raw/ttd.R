@@ -300,7 +300,6 @@ for (i in 1:length(mods)){
 ttd.eular.uk <- list(moderate = ttd.eular.mod, good = ttd.eular.good)
 ttd.eular <- list(moderate = ttd.eular.mod.adj, good = ttd.eular.good.adj) # us version
 
-
 # SAVE PARAMETERS --------------------------------------------------------------
 save(ttd.all, ttd.eular, ttd.da,
-     file = "../data/ttd-pars.rda", compress = "bzip2")
+     file = "../data/ttd.rda", compress = "bzip2")

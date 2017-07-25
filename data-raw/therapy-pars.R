@@ -23,6 +23,7 @@ therapy.info <- data.table(name = therapy.names, mname = therapy.mnames,
                            sname = therapy.snames)
 therapy.info[, biologic := ifelse(sname %in% c("cdmards", "tt", "placebo",
                                                "nbt"), 0, 1)]
+
 nther <- nrow(therapy.info)
 
 # LOAD DATA --------------------------------------------------------------------

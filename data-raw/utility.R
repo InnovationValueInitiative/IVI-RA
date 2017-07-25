@@ -50,14 +50,14 @@ rownames(vcov) <- vcov.names
 #   index[[par]] <- which(coef$parameter == par)
 # }
 # index[["delta"]] <- which(coef$parameter %in% delta.names)
-utility.mixture.pars <- list(coef = coef, vcov = vcov)
-save(utility.mixture.pars, 
-     file = "../data/util-mixture-pars.rda", compress = "bzip2")
+utility.mixture <- list(coef = coef, vcov = vcov)
+save(utility.mixture, 
+     file = "../data/utility-mixture.rda", compress = "bzip2")
 
 # WAILOO (2006) LOGIT MODEL ---------------------------------------------------
 est <- c(2.0734, .0058, .0023, -.2004, -.2914, .0249, -.8647)
 se <- c(.0263, .0004, .0004, .0101, .0118, .0028, .0103)
 vars <- c("int", "age", "dis_dur", "haq0", "male", "prev_dmards", "haq")
-utility.wailoo.pars <- data.table(var = vars, est = est, se = se)
-save(utility.wailoo.pars, 
-     file = "../data/util-wailoo-pars.rda", compress = "bzip2")
+utility.wailoo <- data.table(var = vars, est = est, se = se)
+save(utility.wailoo, 
+     file = "../data/utility-wailoo.rda", compress = "bzip2")

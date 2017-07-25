@@ -26,12 +26,12 @@ reference:
       - eular2haq
       - ttd
       - haq.lprog.age
-      - haq.lcgm.pars
+      - haq.lcgm
       - mgmt.cost
       - pain
       - therapy.pars
-      - utility.mixture.pars
-      - utility.wailoo.pars
+      - utility.mixture
+      - utility.wailoo
   - title: "Generate patient population"
     contents:
       - sample_pats

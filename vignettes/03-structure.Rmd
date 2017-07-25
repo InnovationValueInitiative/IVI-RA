@@ -51,8 +51,8 @@ Finally, there are two ways to estimate utility. Our preferred method is mixture
 A model structure is chosen with R using the `select_model_structure` function. The function returns an object of class `model_structure`, which is used as an input to functions needed to run the simulation. Here, we choose a model structure that models the effect of treatment on HAQ using **H1**, switching using **S1**, the LCGM for HAQ progression in the absence of bDMARDs, the generalized gamma distribution for time to treatment discontinuation, and the mixture model to simulate utility. 
 
 ```{r }
-mod.struct <- select_model_structure(itreat_haq = "acr-haq",
-                                     itreat_switch = "acr-switch",
+mod.struct <- select_model_structure(itreat_haq = "acr-eular-haq",
+                                     itreat_switch = "acr-eular-switch",
                                      cdmards_haq_model = "lcgm",
                                      ttd_dist = "gengamma",
                                      utility_model = "mixture")

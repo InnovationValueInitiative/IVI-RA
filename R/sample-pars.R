@@ -231,7 +231,7 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
                        treat_hist = c("naive", "exp"),
                        haq_lprog_therapy_mean = iviRA::therapy.pars$haq.lprog$est,
                        haq_lprog_therapy_se = iviRA::therapy.pars$haq.lprog$se,
-                       haq_lcgm_pars = iviRA::haq.lcgm.pars,
+                       haq_lcgm_pars = iviRA::haq.lcgm,
                        eular2haq_mean = iviRA::eular2haq$mean, 
                        eular2haq_se = iviRA::eular2haq$se,
                        acr2haq_mean = iviRA::acr2haq$mean,
@@ -288,8 +288,8 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
                                      col_names =  c("age_less40", "age40to64", "age_65plus"))
   sim$haq.lcgm <- sample_pars_haq_lcgm(n, pars = haq_lcgm_pars)
   sim$utility.mixture <- sample_pars_utility_mixture(n, util_mixture_pain)
-  sim$utility.wailoo <- sample_normals(n, iviRA::utility.wailoo.pars$est, iviRA::utility.wailoo.pars$se,
-                                      col_names = utility.wailoo.pars$var)
+  sim$utility.wailoo <- sample_normals(n, iviRA::utility.wailoo$est, iviRA::utility.wailoo$se,
+                                      col_names = utility.wailoo$var)
   hosp.cost.names <- c("haq_less0.5", "haq0.5to1", "haq1to1.5", "haq1.5to2", "haq2to2.5", "haq2.5plus")
   sim$hosp.cost <- list(hosp.days = sample_gammas(n, hosp_days_mean, hosp_days_se,
                                                  col_names = hosp.cost.names),
@@ -638,17 +638,17 @@ sample_pars_haq_lcgm <- function(nsims, pars){
 #' @export
 sample_pars_utility_mixture <- function(nsims, pain){
   # sample
-  samp <- MASS::mvrnorm(nsims, iviRA::utility.mixture.pars$coef$est,
-                        iviRA::utility.mixture.pars$vcov)
+  samp <- MASS::mvrnorm(nsims, iviRA::utility.mixture$coef$est,
+                        iviRA::utility.mixture$vcov)
   if (is.vector(samp)) samp <- t(as.matrix(samp)) 
   
   # separate sampels into parameter sets
   ## parameters except delta
   lsamp <- list()
-  names <- unique(iviRA::utility.mixture.pars$coef$parameter)
+  names <- unique(iviRA::utility.mixture$coef$parameter)
   names <- names[!names %in% "delta"]
   for (n in names){
-    indx <- which(iviRA::utility.mixture.pars$coef$parameter %in% n)
+    indx <- which(iviRA::utility.mixture$coef$parameter %in% n)
     if (n %in% c("beta1", "beta2", "beta3", "beta4")){
       lsamp[[n]] <- samp[, indx, drop = FALSE] 
     } else{
@@ -665,7 +665,7 @@ sample_pars_utility_mixture <- function(nsims, pain){
 
   ## delta
   delta.names <- paste0("delta", seq(1, 3))
-  indx.delta <- which(iviRA::utility.mixture.pars$coef$parameter %in% delta.names)
+  indx.delta <- which(iviRA::utility.mixture$coef$parameter %in% delta.names)
   lsamp[["delta"]] <- aperm(array(c(t(samp[, indx.delta])),
                                   dim = c(4, 3, nsims)),
                             perm = c(2, 1, 3))

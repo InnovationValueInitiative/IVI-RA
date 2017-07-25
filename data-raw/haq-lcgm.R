@@ -53,6 +53,6 @@ beta.dt <- data.table(var = beta.var, data = "eras", parameter = beta.parameter,
 coefs <- rbind(beta.dt, coefs)
 
 # save
-haq.lcgm.pars <- list(coef = coefs, vcov = diag(coefs$se^2))
-save(haq.lcgm.pars, 
-     file = "../data/haq-lcgm-pars.rda", compress = "bzip2")
+haq.lcgm <- list(coef = coefs, vcov = diag(coefs$se^2))
+save(haq.lcgm, 
+     file = "../data/haq-lcgm.rda", compress = "bzip2")

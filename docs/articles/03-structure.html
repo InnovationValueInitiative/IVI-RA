@@ -168,16 +168,16 @@
 <h2 class="hasAnchor">
 <a href="#select-a-model-structure" class="anchor"></a>Select a model structure</h2>
 <p>A model structure is chosen with R using the <code>select_model_structure</code> function. The function returns an object of class <code>model_structure</code>, which is used as an input to functions needed to run the simulation. Here, we choose a model structure that models the effect of treatment on HAQ using <strong>H1</strong>, switching using <strong>S1</strong>, the LCGM for HAQ progression in the absence of bDMARDs, the generalized gamma distribution for time to treatment discontinuation, and the mixture model to simulate utility.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod.struct &lt;-<span class="st"> </span><span class="kw"><a href="../reference/select_model_structure.html">select_model_structure</a></span>(<span class="dt">itreat_haq =</span> <span class="st">"acr-haq"</span>,
-                                     <span class="dt">itreat_switch =</span> <span class="st">"acr-switch"</span>,
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod.struct &lt;-<span class="st"> </span><span class="kw"><a href="../reference/select_model_structure.html">select_model_structure</a></span>(<span class="dt">itreat_haq =</span> <span class="st">"acr-eular-haq"</span>,
+                                     <span class="dt">itreat_switch =</span> <span class="st">"acr-eular-switch"</span>,
                                      <span class="dt">cdmards_haq_model =</span> <span class="st">"lcgm"</span>,
                                      <span class="dt">ttd_dist =</span> <span class="st">"gengamma"</span>,
                                      <span class="dt">utility_model =</span> <span class="st">"mixture"</span>)
 <span class="kw">print</span>(mod.struct)</code></pre></div>
-<pre><code>##        itreat_haq     itreat_switch cdmards_haq_model          ttd_dist 
-##         "acr-haq"      "acr-switch"            "lcgm"        "gengamma" 
-##     utility_model 
-##         "mixture" 
+<pre><code>##         itreat_haq      itreat_switch  cdmards_haq_model 
+##    "acr-eular-haq" "acr-eular-switch"             "lcgm" 
+##           ttd_dist      utility_model 
+##         "gengamma"          "mixture" 
 ## attr(,"class")
 ## [1] "model_structure"</code></pre>
 <div>

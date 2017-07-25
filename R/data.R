@@ -120,7 +120,6 @@
 #' parameters stratified by EULAR response (moderate, high) and disease activity 
 #' (remission, low, moderate, high) respectively; \code{ttd.all} is a list of lists containing
 #' unstratified (i.e., all patients) treatment discontinuation parameters.
-
 #' @details 
 #' Time to treatment discontinuation paramters for each level of EULAR response or disease activity
 #' are represented with a list as described in \link{sample_pars}. Models were fit using \emph{flexsurv}.
@@ -146,6 +145,19 @@
 "ttd.da"
 #' @rdname ttd
 "ttd.all"
+
+#' Time to serious infection parameters
+#'
+#' Parameters for sampling serious infections using an exponential distribution.
+#' @format A data.table with three columns:
+#' \describe{
+#' \item{sname}{Short name of treatment.}
+#' \item{lograte}{Log of serious infection rate.}
+#' \item{lograte_se}{Standard error of log of serious infection rate.}
+#' }
+#' @source Singh, Jasvinder A., et al. "Adverse effects of biologics: a network meta-analysis 
+#' and Cochrane overview." Cochrane Database of Systematic Reviews 2 (2010).
+"ttsi"
 
 #' ACR to Eular Conversion
 #'
@@ -257,7 +269,7 @@
 #'  Arthritis care & research 63.3 (2011): 366-372.
 "haq.lprog.age"
 
-#' Parameters for Latent Class Growth Model (LCGM)
+#' Latent Class Growth Model (LCGM) for HAQ progression
 #'
 #' Parameters for Norton (2014) LCGM used to simulate non-linear HAQ trajectories for
 #' 4 latent classes.
@@ -267,7 +279,7 @@
 #' @source Norton, Sam, et al. "Health Assessment Questionnaire disability progression in early
 #'  rheumatoid arthritis: systematic review and analysis of two inception cohorts." 
 #'  Seminars in arthritis and rheumatism. Vol. 44. No. 2. WB Saunders, 2014.
-"haq.lcgm.pars"
+"haq.lcgm"
 
 #' Mixture model utility mapping
 #'
@@ -279,7 +291,7 @@
 #'
 #' @source Alava, Monica Hernandez, et al. "The relationship between EQ-5D, 
 #'  HAQ and pain in patients with rheumatoid arthritis." Rheumatology 52.5 (2013): 944-950.
-"utility.mixture.pars"
+"utility.mixture"
 
 #' Wailoo (2006) utility mapping
 #'
@@ -296,7 +308,7 @@
 #' @source Wailoo, A., et al. "Modeling the cost effectiveness of etanercept, adalimumab and 
 #' anakinra compared to infliximab in the treatment of patients with rheumatoid arthritis in the
 #'  Medicare program." Rockville, MD: Agency for Healthcare Research and Quality (2006).
-"utility.wailoo.pars"
+"utility.wailoo"
 
 #' Correlation between HAQ and pain
 #'

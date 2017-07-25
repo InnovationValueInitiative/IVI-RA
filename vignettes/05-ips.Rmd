@@ -1,5 +1,5 @@
 ---
-title: Using the IPS to simulate disease progression
+title: Run the IPS
 output: 
    html_document:
     toc: true
@@ -11,13 +11,30 @@ library("iviRA")
 load("output.RData")
 ```
 
+Once treatment arms have been select, the model structure has been defined, and parameter values have been sampled, the IPS can be run. However, first, we must derive data inputs for the model specific to the model structure chosen.    
+
 ## Generate input data
+Data inputs are model inputs that are fixed at baseline. Given a patient population and model strucutre, we can generate the required data with the function `get_input_data`
+
 ```{r, cache = TRUE }
 input.dat <- get_input_data(patdata = pop, model_structure = mod.struct)
+names(input.dat)
+```
+
+The function returns all patient characteristics needed to run the simulation (HAQ score at baseline, age, gender, DAS28, SDAI, CDAI, weight, and the number of previous DMARDs). It also stores two matrices of explanatory variables. The first matrix, `x.mort`, contains all patient characteristics known at baseline used to adjust mortality with a log odds ratio. By default, only the baseline HAQ score is used to adjust mortality. 
+
+```{r, cache = TRUE }
+head(input.dat$x.mort)
+```
+
+The second matrix, `x.ttd`, is the design matrix used to simulate time to treamtment discontinuation. This matrix depends on the the model structure chosen since treatment duration depends on the pathway **S1-S6** used for treatment switching. In the current model structure, `itreat_switch = acr-switch`, the design matrix is a single column of ones since the model parameters used to simulate treatment duration do not differ across patients. 
+
+```{r, cache = TRUE }
+head(input.dat$x.ttd)
 ```
 
 ## Run the IPS
-Disease progression depends on the therapies used by patients. The list of potential therapies is available in the object `therapy.pars`, which contains all parameters in the model that vary across therapies.
+We run the IPS using the function `sim_iviRA`. The main arguments are the selected treatment arms, the input data, the parameter samples, and the model structure. Here, we simulate outcomes for Arm 1 (`r arm1`) and Arm 2
 
 ```{r }
 sim.out1 <- sim_iviRA(arms = arm1, input_data = input.dat, pars = parsamp,
@@ -27,8 +44,18 @@ sim.out2 <- sim_iviRA(arms = arm2, input_data = input.dat, pars = parsamp,
                      model_structure = mod.struct)
 sim.out2[, arm := "Arm 2"]
 sim.out <- rbind(sim.out1, sim.out2)
+head(sim.out)
 ```
 
+`sim_iviRA` returns a data.table which is an enhanced data.frame from the data.table package designed for fast data manipulation. For a given sampled parameter set (`sim`) a sampled patient (`id`) remains on a given therapy until time to treatment discontinuation (`ttd`) becomes less than zero in a given month. Treatment discontinuation is caused by a serious infection (`si = 1`) if the sampled time to serious infection at treatment initiation is less than the sampled time to discontinuation. After discontinuation, a patient switches to the next therapy and `therapy_seq` increments by one. Patient age increases in 6-month increments. 
+
+The HAQ score (`haq`) during the initial 6-month period (`therapy_cycle = 1`) and `ttd` depend on the model structure chosen. In our chosen structure, `r paste0("itreat_haq = ", mod.struct["itreat_haq"])` and `r paste0("itreat_switch = ", mod.struct["itreat_switch"])`, HAQ and time to treatment discontinuation depend on ACR response (`acr`) and in turn, EULAR response (`eular`). For patients on cDMARDs, the HAQ score progresses according to the LCGM while HAQ progresses linearly for patients on bDMARDs. The simulation ends when a patient dies (`death = 1`).
+
+An important component of health care sector costs (`hc_cost`) are the costs associated with treatment (`treat_cost`), which consist of infusion costs (`infusion_cost`) and drug acquisition costs (`rx_cost`). Other health care sector costs are hospital costs (`hosp_cost`), which increase with the HAQ score; general management costs (`mgmt_cost`); and the costs of caused by serious infections (`si_cost`).
+
+The model currently only supports non-health care sector costs due to lost wages. Analyses performed from a societal perspective should include these productivity losses (`prod_loss`). 
+
+If utility is simulated using the mixture model, then both pain (`pain`) and utility (`utility`) are returned. If, on the other hand, the Wailoo model is used, then only utility is returned. In both cases, QALYs (`qalys`) are calculated as a function of utility and the estimated utility loss from a serious infection.  
 
 <div>
 <ul class="pager">
