@@ -113,25 +113,48 @@
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">parsamp2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pars.html">sample_pars</a></span>(<span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">si_cost =</span> <span class="dv">7000</span>)
 <span class="kw">summary</span>(parsamp2$si.cost)</code></pre></div>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##    5604    6230    6730    6897    7580    8363</code></pre>
-<p>To view the full list of arguments in <code>sample_pars</code> that can changed by the user view the documentation by typing <code><a href="../reference/sample_pars.html">?sample_pars</a></code>. All default arguments come preloaded with the package and are based on IVI’s statistical estimates and synthesis of the literature. The preloaded parameter estimates can be viewed by typing the command <code>data(package = "iviRA")</code> into the R console.</p>
-<p>Below we describe these parmater estimates and separate them into 8 main categories: treatment effects estimated from a network meta-analysis (NMA); mappings between various measured of treatment response, disease activity, and/or function; long-term progression of disease, treatment duration, serious infections, mortality, utility, and costs.</p>
+##    5630    6185    6866    6863    7503    8363</code></pre>
+<p>To view the full list of arguments in <code>sample_pars</code> that can changed by the user view the documentation by typing <code><a href="../reference/sample_pars.html">?sample_pars</a></code>. All default arguments are loaded with the package and are based on IVI’s statistical estimates and synthesis of the literature. The parameter estimates can be viewed by typing the command <code>data(package = "iviRA")</code> into the R console.</p>
+<p>Below we describe these parameter estimates and separate them into 8 main categories: treatment effects estimated from a network meta-analysis (NMA); mappings between various measured of treatment response, disease activity, and/or function; long-term progression of disease, treatment duration, serious infections, mortality, utility, and costs.</p>
 <div id="nma" class="section level2">
 <h2 class="hasAnchor">
 <a href="#nma" class="anchor"></a>NMA</h2>
-<p>The effect of treatment on ACR response at 6 months, change in DAS28 at 6 months, and the change in the HAQ score at 6 months are estimated using a NMA. Default NMA parameter estimates come preloaded with the package and are based on results from an NMA conduced by IVI using a Bayesian random effects approach.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">names</span>(iviRA::therapy.pars$nma.acr.naive)</code></pre></div>
+<p>The effect of treatment on ACR response at 6 months, change in DAS28 at 6 months, and the change in the HAQ score at 6 months are estimated using a NMA. Default NMA parameter estimates are based on results from an NMA conduced by IVI using a Bayesian random effects approach. Each object is a list containing the mean and variance-covariance matrix of the posterior distribution of the parameters.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">names</span>(iviRA::nma.acr.naive)</code></pre></div>
 <pre><code>## [1] "mean" "vcov"</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">names</span>(iviRA::therapy.pars$nma.das28.naive)</code></pre></div>
-<pre><code>## [1] "mean" "vcov"</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">names</span>(iviRA::therapy.pars$nma.haq.naive)</code></pre></div>
-<pre><code>## [1] "mean" "vcov"</code></pre>
-<p>Each object is a list containing information on the mean of the NMA and the sample variance-covariance matrix. In the PSA, we use a multivariate normal distribution to sample parameters estimated using a NMA. The advantage of this approach is that we do not have to load the entire posterior distribution of the parameters with the package. The justification is the Bayesian central limit theorem, which states that under large samples, the posterior distribution will approach a multivariate normal distribution.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iviRA::nma.acr.naive$mean</code></pre></div>
+<pre><code>##          A         z1         z2         z3  d_cdmards d_abtivmtx 
+##  0.6273637  0.0000000  0.6417251  1.2245888  0.0000000 -0.7753397 
+##   d_adamtx      d_ada   d_etnmtx      d_etn   d_golmtx   d_ifxmtx 
+## -0.7875047 -0.4107226 -1.0076928 -0.5977020 -0.8797987 -1.0660008 
+##  d_placebo   d_tczmtx      d_tcz   d_czpmtx d_abtscmtx      d_nbt 
+##  0.4528425 -0.7735399 -0.5715521 -1.3021889 -0.7969700  0.0000000 
+##   d_rtxmtx   d_tofmtx      d_rtx      d_tof      d_czp      d_gol 
+## -0.7970470 -0.9127201 -0.6046671 -0.3396374 -0.7263098         NA</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iviRA::nma.das28.naive$mean</code></pre></div>
+<pre><code>##          A  d_cdmards d_abtivmtx   d_adamtx      d_ada   d_etnmtx 
+## -1.1476728  0.0000000 -1.1080009         NA -0.2724578 -1.4991627 
+##      d_etn   d_golmtx   d_ifxmtx  d_placebo   d_tczmtx      d_tcz 
+## -0.7522454 -1.4523362 -0.7985418  0.6490591 -1.8565031 -0.8073415 
+##   d_czpmtx d_abtscmtx      d_nbt   d_rtxmtx   d_tofmtx      d_rtx 
+## -2.0027996 -1.1278729  0.0000000 -1.3506815         NA -0.9309089 
+##      d_tof      d_czp      d_gol 
+##         NA -0.2470987         NA</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iviRA::nma.haq.naive$mean</code></pre></div>
+<pre><code>##           A   d_cdmards  d_abtivmtx    d_adamtx       d_ada    d_etnmtx 
+## -0.23168206  0.00000000 -0.21627688 -0.32184249 -0.05857289 -0.29663120 
+##       d_etn    d_golmtx    d_ifxmtx   d_placebo    d_tczmtx       d_tcz 
+## -0.21746986 -0.27121892 -0.20753609  0.23967998 -0.26800217  0.05922509 
+##    d_czpmtx  d_abtscmtx       d_nbt    d_rtxmtx    d_tofmtx       d_rtx 
+## -0.32437647 -0.20718500  0.00000000 -0.28532245 -0.24164645          NA 
+##       d_tof       d_czp       d_gol 
+## -0.07234310 -0.25137107          NA</code></pre>
+<p>In the PSA, we use a multivariate normal distribution to sample the NMA parameters. The advantage of this approach is that we do not have to load the entire posterior distribution with the package. The justification is the Bayesian central limit theorem, which states that under large samples, the posterior distribution will approach a multivariate normal distribution.</p>
 </div>
 <div id="mappings" class="section level2">
 <h2 class="hasAnchor">
 <a href="#mappings" class="anchor"></a>Mappings</h2>
-<p>There are various mapping between treatment response measures, disease activity, and functional status that can be used within the IVI-RA model. The exact mapping utilized for a given model run will depend on the model structure select. Default parameter estimates for these mappings come preloaded with the <code>iviRA</code> package.</p>
+<p>There are various mapping between treatment response measures, disease activity, and functional status that can be used within the IVI-RA model. The exact mapping utilized for a given model run will depend on the model structure select.</p>
 <p>The first set of mappings relates ACR response to the three measure of disease activity. The ACR response to SDAI mapping can either be based on the Leflunomide dataset or the inception cohort (see <a href="http://www.clinexprheumatol.org/article.asp?a=2694">Aletaha and Smolen</a>) while mapping for DAS28 and CDAI can only be based on the inception cohort. The mappings correspond to model structures where <code>itreat_switch =  "acr-das28-switch"</code>, <code>itreat_switch = "acr-sdai-switch"</code>, and <code>itreat_switch = "acr-cdai-switch"</code>. Here, we show parameters estimated from the inception cohort.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iviRA::acr2das28$inception</code></pre></div>
 <pre><code>##          acr      mean     lower     upper
@@ -165,7 +188,7 @@
 ## ACR 20-50          4             27         26
 ## ACR 50-70          2              2         10
 ## ACR 70+            0              2          2</code></pre>
-<p>When the <strong>H2</strong> pathway is used, the change in HAQ at 6 months must be simulated after EULAR response is simulated. We base this relationship on statistical analyis of the British Society for Rheumatology Biologics Register (BSRBR) data by <a href="https://www.journalslibrary.nihr.ac.uk/hta/hta20350/#/s1">NICE (2016)</a>. In particular, the 2016 NICE HTA reported mean changes in HAQ by EULAR response category at 6 months for all patients.</p>
+<p>When the <strong>H2</strong> pathway is used, the change in HAQ at 6 months must be simulated after EULAR response is simulated. We base this relationship on statistical analysis of the British Society for Rheumatology Biologics Register (BSRBR) data by <a href="https://www.journalslibrary.nihr.ac.uk/hta/hta20350/#/s1">NICE (2016)</a>. In particular, the 2016 NICE HTA reported mean changes in HAQ by EULAR response category at 6 months for all patients.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><a href="http://www.rdocumentation.org/packages/iviRA/topics/eular2haq">iviRA::eular2haq</a></code></pre></div>
 <pre><code>##       eular   mean    se
 ## 1:     None  0.000 0.000
@@ -177,34 +200,36 @@
 <a href="#long-term-haq-progression" class="anchor"></a>Long-term HAQ progression</h2>
 <p>The progression of HAQ over time is modeled in two ways: first, assuming a constant annual rate, and second, by using a LCGM. The LCGM can currently only be used to model progression in the absence of bDMARDs while a constant annual rate can be used for all treatments.</p>
 <p>The constant annual rate of progression for patients on cDMARDs (and NBT) are based on <a href="https://arthritis-research.biomedcentral.com/articles/10.1186/ar2944">Wolfe and Michaud’s (2010)</a> analysis of 3,829 RA patients who switched from non-biologic treatment to biologic treatment and participated in the National Data Bank for Rheumatic Diseases (NDB). The progression rate for patients on biologics are based on treatment-specific rates from <a href="http://onlinelibrary.wiley.com/doi/10.1002/acr.20405/full">Michaud et al. (2011)</a> adjusted for baseline HAQ score, age, sex, education, smoking, BMI, comorbidity, and RA onset. Importantly, The average HAQ rate among patients on a biologic was -0.001 in the Michaud et al. analysis, which instills confidence that the reported HAQ progression rates for different bDMARDs can be directly compared with the overall annual HAQ progression rate of 0.031 reported in the 2010 Wolfe and Michaud analysis.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iviRA::therapy.pars$haq.lprog</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iviRA::haq.lprog$tx</code></pre></div>
 <pre><code>##        sname    est          se   lower  upper
 ##  1:  cdmards  0.031 0.002551067  0.0260 0.0360
 ##  2: abtivmtx -0.001 0.001530640 -0.0040 0.0020
 ##  3:   adamtx -0.003 0.007398095 -0.0175 0.0115
 ##  4:      ada  0.012 0.006887882 -0.0015 0.0255
-##  5:   etnmtx -0.005 0.003316387 -0.0115 0.0015
-##  6:      etn -0.003 0.003826601 -0.0105 0.0045
-##  7:   golmtx -0.001 0.001530640 -0.0040 0.0020
-##  8:   ifxmtx -0.001 0.003571494 -0.0080 0.0060
-##  9:  placebo  0.031 0.002551067  0.0260 0.0360
-## 10:   tczmtx -0.001 0.001530640 -0.0040 0.0020
-## 11:      tcz -0.001 0.001530640 -0.0040 0.0020
-## 12:   czpmtx -0.001 0.001530640 -0.0040 0.0020
-## 13: abtscmtx -0.001 0.001530640 -0.0040 0.0020
-## 14:      nbt  0.031 0.002551067  0.0260 0.0360
-## 15:   rtxmtx -0.001 0.001530640 -0.0040 0.0020
-## 16:   tofmtx -0.001 0.001530640 -0.0040 0.0020
-## 17:      rtx -0.001 0.001530640 -0.0040 0.0020
-## 18:      tof -0.001 0.001530640 -0.0040 0.0020
-## 19:      czp -0.001 0.001530640 -0.0040 0.0020
-## 20:      gol -0.001 0.001530640 -0.0040 0.0020</code></pre>
-<p>The constant anuual rate of HAQ progression is also adjusted by age based on differences between overall and age specific rates as reported by Michaud et al. (2011).</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><a href="http://www.rdocumentation.org/packages/iviRA/topics/haq.lprog.age">iviRA::haq.lprog.age</a></code></pre></div>
-<pre><code>##       est          se       lower       upper
-## 1: -0.020 0.004152837 -0.02813941 -0.01186059
-## 2: -0.008 0.001082326 -0.01012132 -0.00587868
-## 3:  0.017 0.002179633  0.01272800  0.02127200</code></pre>
+##  5:       tt  0.031 0.002551067  0.0260 0.0360
+##  6:   etnmtx -0.005 0.003316387 -0.0115 0.0015
+##  7:      etn -0.003 0.003826601 -0.0105 0.0045
+##  8:   golmtx -0.001 0.001530640 -0.0040 0.0020
+##  9:   ifxmtx -0.001 0.003571494 -0.0080 0.0060
+## 10:  placebo  0.031 0.002551067  0.0260 0.0360
+## 11:   tczmtx -0.001 0.001530640 -0.0040 0.0020
+## 12:      tcz -0.001 0.001530640 -0.0040 0.0020
+## 13:   czpmtx -0.001 0.001530640 -0.0040 0.0020
+## 14: abtscmtx -0.001 0.001530640 -0.0040 0.0020
+## 15:      nbt  0.031 0.002551067  0.0260 0.0360
+## 16:   rtxmtx -0.001 0.001530640 -0.0040 0.0020
+## 17:   tofmtx -0.001 0.001530640 -0.0040 0.0020
+## 18:      rtx -0.001 0.001530640 -0.0040 0.0020
+## 19:      tof -0.001 0.001530640 -0.0040 0.0020
+## 20:      czp -0.001 0.001530640 -0.0040 0.0020
+## 21:      gol -0.001 0.001530640 -0.0040 0.0020
+##        sname    est          se   lower  upper</code></pre>
+<p>The constant annual rate of HAQ progression is also adjusted by age based on differences between overall and age specific rates as reported by Michaud et al. (2011).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iviRA::haq.lprog$diff.age</code></pre></div>
+<pre><code>##       age    est          se       lower       upper
+## 1:   &lt; 40 -0.020 0.004152837 -0.02813941 -0.01186059
+## 2:  40-64 -0.008 0.001082326 -0.01012132 -0.00587868
+## 3:  &gt;= 65  0.017 0.002179633  0.01272800  0.02127200</code></pre>
 <p>The LCGM is based on the analysis by <a href="http://www.sciencedirect.com/science/article/pii/S0049017214000730">Norton et al. (2014)</a>. The parameters from the LCGM are contained in the list <code><a href="http://www.rdocumentation.org/packages/iviRA/topics/haq.lcgm">iviRA::haq.lcgm</a></code>. The coefficient estimates are stored in <code>iviRA::haq.lcgm$coef</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iviRA::haq.lcgm$coef</code></pre></div>
 <pre><code>##                    var data parameter         est    se
@@ -259,10 +284,10 @@
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">names</span>(iviRA::ttd.all)</code></pre></div>
 <pre><code>## [1] "exponential" "weibull"     "gompertz"    "gamma"       "llogis"     
 ## [6] "lnorm"       "gengamma"</code></pre>
-<p>7 parametric distributions are currently supported including the exponential, weibull, gompertz, gamma, log-logistic, lognormal, and generalized gamma distributions. The parameter of the survival model are stored in the second level of the list. For example, we can examine results from a Weibull fit.</p>
+<p>7 parametric distributions are currently supported including the exponential, Weibull, Gompertz, gamma, log-logistic, lognormal, and generalized gamma distributions. The parameter of the survival model are stored in the second level of the list. For example, we can examine results from a Weibull fit.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">names</span>(iviRA::ttd.all$weibull)</code></pre></div>
 <pre><code>## [1] "est"        "vcov"       "loc.index"  "anc1.index" "anc2.index"</code></pre>
-<p>Point estimates are stored in the element <code>est</code> and the variance-covaraince matrix is stored in the element <code>vcov</code>.</p>
+<p>Point estimates are stored in the element <code>est</code> and the variance-covariance matrix is stored in the element <code>vcov</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iviRA::ttd.all$weibull$est</code></pre></div>
 <pre><code>##      shape      scale 
 ## -0.1028306  3.7576710</code></pre>
@@ -270,7 +295,7 @@
 <pre><code>##               shape         scale
 ## shape  1.871894e-04 -5.220527e-05
 ## scale -5.220527e-05  3.644134e-04</code></pre>
-<p>The parametric distributions are characterized according to a location parameter governing the mean of the distribution. Models can also contain ancillarly parameters which describe the shape, variance, or higher moments of a distribution. The location and ancillary parameters associated with each distribution are shown in the table below.</p>
+<p>The parametric distributions are characterized according to a location parameter governing the mean of the distribution. Models can also contain ancillary parameters which describe the shape, variance, or higher moments of a distribution. The location and ancillary parameters associated with each distribution are shown in the table below.</p>
 <table class="table">
 <thead><tr class="header">
 <th></th>
@@ -339,7 +364,7 @@
 </tr>
 </tbody>
 </table>
-<p>The <code>iviRA</code> package currently only allows for models in which the location parameter, but not the ancillary parameters, depends on covariates. The indies of the location parameter, first ancillarly parameter, and second ancillary parameter in the <code>est</code> and <code>vcov</code> objects are contained in the <code>loc.index</code>, <code>anc1.index</code>, and <code>anc2.index</code> objects, respectively. For example, in a regression model with no covariates, the index of the location parameter is 2 and the index of the first ancillary parameter is 1.</p>
+<p>The <code>iviRA</code> package currently only allows for models in which the location parameter, but not the ancillary parameters, depends on covariates. The indies of the location parameter, first ancillary parameter, and second ancillary parameter in the <code>est</code> and <code>vcov</code> objects are contained in the <code>loc.index</code>, <code>anc1.index</code>, and <code>anc2.index</code> objects, respectively. For example, in a regression model with no covariates, the index of the location parameter is 2 and the index of the first ancillary parameter is 1.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iviRA::ttd.all$weibull$loc.index</code></pre></div>
 <pre><code>## [1] 2</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iviRA::ttd.all$weibull$anc1.index</code></pre></div>
@@ -379,7 +404,7 @@
 <div id="mortality" class="section level2">
 <h2 class="hasAnchor">
 <a href="#mortality" class="anchor"></a>Mortality</h2>
-<p>Baseline mortality for patients without RA are based on gender-specific US lifetables. More specifically, we use the probability of mortality, <code>qx</code>, between ages <span class="math inline">\(x\)</span> and <span class="math inline">\(x+1\)</span>.</p>
+<p>Baseline mortality for patients without RA are based on gender-specific US life tables. More specifically, we use the probability of mortality, <code>qx</code>, between ages <span class="math inline">\(x\)</span> and <span class="math inline">\(x+1\)</span>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(iviRA::lifetable.male)</code></pre></div>
 <pre><code>##    age       qx     lx  dx     L      Tx   ex
 ## 1:   0 0.006575 100000 658 99427 7629389 76.3
@@ -431,7 +456,7 @@
 ## 5:        male -0.2914 0.0118
 ## 6: prev_dmards  0.0249 0.0028
 ## 7:         haq -0.8647 0.0103</code></pre>
-<p>The information needed to sample from the mixture model are stored in the list <code><a href="http://www.rdocumentation.org/packages/iviRA/topics/utility.mixture">iviRA::utility.mixture</a></code>. The setup is the same as with the LCGM in that the list contains a table of coefficient estimates as well as the correspoding variance covariance matrix.</p>
+<p>The information needed to sample from the mixture model are stored in the list <code><a href="http://www.rdocumentation.org/packages/iviRA/topics/utility.mixture">iviRA::utility.mixture</a></code>. The setup is the same as with the LCGM in that the list contains a table of coefficient estimates as well as the corresponding variance covariance matrix.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">names</span>(iviRA::utility.mixture)</code></pre></div>
 <pre><code>## [1] "coef" "vcov"</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iviRA::utility.mixture$coef</code></pre></div>
@@ -483,9 +508,9 @@
 <h2 class="hasAnchor">
 <a href="#costs" class="anchor"></a>Costs</h2>
 <p>The model incorporates 3 main types of health care sector costs: (1) drug acquisition and administration costs, (2) hospitalization costs, and (3) general management costs. Productivity losses can also be included in the analysis if the analyst would like to take a societal perspective.</p>
-<p>Drug acquisition and administration costs are separated into costs associated with the first 6 months of treatment and costs after the first 6 months. Costs are a function of the FDA recommended dose and frequency of administration, strength and dosage form, the wholesale acquisition cost (WAC), and infusion. If dosing is weight based, then the dose is calculated by multipling the dose value (e.g., <code>init_dose_val</code> and <code>ann_dose_val</code>) by each patients weight in kilograms; otherwise the dose is simply equal to the dose value. For example, the dose for infliximab during the first six months is equal to 3 multiplied by the weight of the patient.</p>
+<p>Drug acquisition and administration costs are separated into costs associated with the first 6 months of treatment and costs after the first 6 months. Costs are a function of the FDA recommended dose and frequency of administration, strength and dosage form, the wholesale acquisition cost (WAC), and infusion. If dosing is weight based, then the dose is calculated by multiplying the dose value (e.g., <code>init_dose_val</code> and <code>ann_dose_val</code>) by each patients weight in kilograms; otherwise the dose is simply equal to the dose value. For example, the dose for infliximab during the first six months is equal to 3 multiplied by the weight of the patient.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(knitr)
-<span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(iviRA::therapy.pars$cost)</code></pre></div>
+<span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(iviRA::treat.cost)</code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">name</th>
@@ -501,7 +526,6 @@
 <th align="left">strength_unit</th>
 <th align="right">wac_per_unit</th>
 <th align="right">infusion_cost</th>
-<th align="right">dose_escalation</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
@@ -518,7 +542,6 @@
 <td align="left">mg</td>
 <td align="right">1110.50000</td>
 <td align="right">0</td>
-<td align="right">0.004700</td>
 </tr>
 <tr class="even">
 <td align="left">adalimumab</td>
@@ -534,7 +557,6 @@
 <td align="left">mg</td>
 <td align="right">2220.62000</td>
 <td align="right">0</td>
-<td align="right">0.087552</td>
 </tr>
 <tr class="odd">
 <td align="left">infliximab</td>
@@ -550,7 +572,6 @@
 <td align="left">mg</td>
 <td align="right">1113.27000</td>
 <td align="right">164</td>
-<td align="right">0.103250</td>
 </tr>
 <tr class="even">
 <td align="left">golimumab</td>
@@ -566,7 +587,6 @@
 <td align="left">mg</td>
 <td align="right">3811.18000</td>
 <td align="right">0</td>
-<td align="right">0.004700</td>
 </tr>
 <tr class="odd">
 <td align="left">certolizumab pegol</td>
@@ -582,7 +602,6 @@
 <td align="left">mg</td>
 <td align="right">3679.87000</td>
 <td align="right">0</td>
-<td align="right">0.004700</td>
 </tr>
 <tr class="even">
 <td align="left">abatacept IV</td>
@@ -598,7 +617,6 @@
 <td align="left">mg</td>
 <td align="right">931.16000</td>
 <td align="right">164</td>
-<td align="right">0.004700</td>
 </tr>
 <tr class="odd">
 <td align="left">abatacept SC</td>
@@ -614,7 +632,6 @@
 <td align="left">mg</td>
 <td align="right">957.14000</td>
 <td align="right">0</td>
-<td align="right">0.004700</td>
 </tr>
 <tr class="even">
 <td align="left">tocilizumab</td>
@@ -630,7 +647,6 @@
 <td align="left">mg</td>
 <td align="right">898.31000</td>
 <td align="right">0</td>
-<td align="right">0.004700</td>
 </tr>
 <tr class="odd">
 <td align="left">rituximab</td>
@@ -646,7 +662,6 @@
 <td align="left">mg</td>
 <td align="right">4176.10000</td>
 <td align="right">164</td>
-<td align="right">0.004700</td>
 </tr>
 <tr class="even">
 <td align="left">tofaticinib citrate</td>
@@ -662,7 +677,6 @@
 <td align="left">mg</td>
 <td align="right">63.26000</td>
 <td align="right">0</td>
-<td align="right">0.004700</td>
 </tr>
 <tr class="odd">
 <td align="left">methotrexate monotherapy</td>
@@ -678,7 +692,6 @@
 <td align="left">mg</td>
 <td align="right">32.41875</td>
 <td align="right">0</td>
-<td align="right">0.004700</td>
 </tr>
 <tr class="even">
 <td align="left">hydroxychlorquine sulfate</td>
@@ -694,7 +707,6 @@
 <td align="left">mg</td>
 <td align="right">3.18000</td>
 <td align="right">0</td>
-<td align="right">0.004700</td>
 </tr>
 <tr class="odd">
 <td align="left">sulfazalazine</td>
@@ -710,7 +722,6 @@
 <td align="left">g</td>
 <td align="right">0.47000</td>
 <td align="right">0</td>
-<td align="right">0.004700</td>
 </tr>
 </tbody>
 </table>

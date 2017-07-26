@@ -95,7 +95,7 @@
 <div id="generate-input-data" class="section level2">
 <h2 class="hasAnchor">
 <a href="#generate-input-data" class="anchor"></a>Generate input data</h2>
-<p>Data inputs are model inputs that are fixed at baseline. Given a patient population and model strucutre, we can generate the required data with the function <code>get_input_data</code></p>
+<p>Data inputs are model inputs that are fixed at baseline. Given a patient population and model structure, we can generate the required data with the function <code>get_input_data</code></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">input.dat &lt;-<span class="st"> </span><span class="kw"><a href="../reference/get_input_data.html">get_input_data</a></span>(<span class="dt">patdata =</span> pop, <span class="dt">model_structure =</span> mod.struct)
 <span class="kw">names</span>(input.dat)</code></pre></div>
 <pre><code>##  [1] "n"           "haq0"        "age"         "male"        "das28"      
@@ -110,7 +110,7 @@
 ## [4,] 0.9628729
 ## [5,] 1.2583120
 ## [6,] 2.7052381</code></pre>
-<p>The second matrix, <code>x.ttd</code>, is the design matrix used to simulate time to treamtment discontinuation. This matrix depends on the the model structure chosen since treatment duration depends on the pathway <strong>S1-S6</strong> used for treatment switching. In the current model structure, <code>itreat_switch = acr-switch</code>, the design matrix is a single column of ones since the model parameters used to simulate treatment duration do not differ across patients.</p>
+<p>The second matrix, <code>x.ttd</code>, is the design matrix used to simulate time to treatment discontinuation. This matrix depends on the the model structure chosen since treatment duration depends on the pathway <strong>S1-S6</strong> used for treatment switching. In the current model structure, <code>itreat_switch = acr-switch</code>, the design matrix is a single column of ones since the model parameters used to simulate treatment duration do not differ across patients.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(input.dat$x.ttd)</code></pre></div>
 <pre><code>##      [,1]
 ## [1,]    1
@@ -120,9 +120,9 @@
 ## [5,]    1
 ## [6,]    1</code></pre>
 </div>
-<div id="run-the-ips" class="section level2">
+<div id="simulate" class="section level2">
 <h2 class="hasAnchor">
-<a href="#run-the-ips" class="anchor"></a>Run the IPS</h2>
+<a href="#simulate" class="anchor"></a>Simulate</h2>
 <p>We run the IPS using the function <code>sim_iviRA</code>. The main arguments are the selected treatment arms, the input data, the parameter samples, and the model structure. Here, we simulate outcomes for Arm 1 (adamtx, etnmtx, ifxmtx) and Arm 2</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sim.out1 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sim_iviRA.html">sim_iviRA</a></span>(<span class="dt">arms =</span> arm1, <span class="dt">input_data =</span> input.dat, <span class="dt">pars =</span> parsamp,
                      <span class="dt">model_structure =</span> mod.struct)
@@ -134,32 +134,32 @@ sim.out &lt;-<span class="st"> </span><span class="kw">rbind</span>(sim.out1, si
 <span class="kw">head</span>(sim.out)</code></pre></div>
 <pre><code>##    sim id month therapy therapy_seq therapy_cycle death      age      ttd
 ## 1:   1  1     6       3           1             1     0 51.84709  0.00000
-## 2:   1  1    12       5           2             1     0 52.34709 16.83391
-## 3:   1  1    18       5           2             2     0 52.84709 15.83391
-## 4:   1  1    24       5           2             3     0 53.34709 14.83391
-## 5:   1  1    30       5           2             4     0 53.84709 13.83391
-## 6:   1  1    36       5           2             5     0 54.34709 12.83391
-##    acr eular      haq     ttsi si yrlen infusion_cost  rx_cost treat_cost
-## 1:   0     0 0.143096 27.94089  0   0.5             0 29710.95   29710.95
-## 2:   1     1 0.000000 43.71238  0   0.5             0 29715.89   29715.89
-## 3:   1     1 0.000000 42.71238  0   0.5             0 29715.89   29715.89
-## 4:   1     1 0.000000 41.71238  0   0.5             0 29715.89   29715.89
-## 5:   1     1 0.000000 40.71238  0   0.5             0 29715.89   29715.89
-## 6:   1     1 0.000000 39.71238  0   0.5             0 29715.89   29715.89
+## 2:   1  1    12       5           2             1     0 52.34709  0.00000
+## 3:   1  1    18       8           3             1     0 52.84709 20.14139
+## 4:   1  1    24       8           3             2     0 53.34709 19.14139
+## 5:   1  1    30       8           3             3     0 53.84709 18.14139
+## 6:   1  1    36       8           3             4     0 54.34709 17.14139
+##    acr eular      haq      ttsi si yrlen infusion_cost  rx_cost treat_cost
+## 1:   0     0 0.143096  27.82103  0   0.5        0.0000 29710.95   29710.95
+## 2:   0     0 0.143096  38.15975  0   0.5        0.0000 29715.89   29715.89
+## 3:   3     1 0.000000 207.47849  0   0.5      820.0000 17541.94   18361.94
+## 4:   3     1 0.000000 206.47849  0   0.5      710.6667 24963.74   25674.40
+## 5:   3     1 0.000000 205.47849  0   0.5      710.6667 24963.74   25674.40
+## 6:   3     1 0.000000 204.47849  0   0.5      710.6667 24963.74   25674.40
 ##    hosp_cost mgmt_cost si_cost  hc_cost prod_loss     pain   utility
-## 1: 0.2505538  185.3009       0 29896.50  542.0631 61.61325 0.7932646
-## 2: 0.2505538  185.3009       0 29901.44    0.0000 32.82152 0.8373980
-## 3: 0.2505538  185.3009       0 29901.44    0.0000 74.80359 0.8354114
-## 4: 0.2505538  185.3009       0 29901.44    0.0000 20.15570 1.0000000
-## 5: 0.2505538  185.3009       0 29901.44    0.0000 37.58615 0.8375131
-## 6: 0.2505538  185.3009       0 29901.44    0.0000  9.24304 0.8373400
+## 1:  0.990815  179.7458       0 29891.68  508.2048 24.03872 1.0000000
+## 2:  0.990815  179.7458       0 29896.62  508.2048 56.69622 1.0000000
+## 3:  0.990815  179.7458       0 18542.67    0.0000 19.10238 1.0000000
+## 4:  0.990815  179.7458       0 25855.14    0.0000 44.17775 0.7925293
+## 5:  0.990815  179.7458       0 25855.14    0.0000 29.02227 1.0000000
+## 6:  0.990815  179.7458       0 25855.14    0.0000 27.44282 0.8543271
 ##        qalys   arm
-## 1: 0.3966323 Arm 1
-## 2: 0.4186990 Arm 1
-## 3: 0.4177057 Arm 1
-## 4: 0.5000000 Arm 1
-## 5: 0.4187565 Arm 1
-## 6: 0.4186700 Arm 1</code></pre>
+## 1: 0.5000000 Arm 1
+## 2: 0.5000000 Arm 1
+## 3: 0.5000000 Arm 1
+## 4: 0.3962646 Arm 1
+## 5: 0.5000000 Arm 1
+## 6: 0.4271636 Arm 1</code></pre>
 <p><code>sim_iviRA</code> returns a data.table which is an enhanced data.frame from the data.table package designed for fast data manipulation. For a given sampled parameter set (<code>sim</code>) a sampled patient (<code>id</code>) remains on a given therapy until time to treatment discontinuation (<code>ttd</code>) becomes less than zero in a given month. Treatment discontinuation is caused by a serious infection (<code>si = 1</code>) if the sampled time to serious infection at treatment initiation is less than the sampled time to discontinuation. After discontinuation, a patient switches to the next therapy and <code>therapy_seq</code> increments by one. Patient age increases in 6-month increments.</p>
 <p>The HAQ score (<code>haq</code>) during the initial 6-month period (<code>therapy_cycle = 1</code>) and <code>ttd</code> depend on the model structure chosen. In our chosen structure, itreat_haq = acr-eular-haq and itreat_switch = acr-eular-switch, HAQ and time to treatment discontinuation depend on ACR response (<code>acr</code>) and in turn, EULAR response (<code>eular</code>). For patients on cDMARDs, the HAQ score progresses according to the LCGM while HAQ progresses linearly for patients on bDMARDs. The simulation ends when a patient dies (<code>death = 1</code>).</p>
 <p>An important component of health care sector costs (<code>hc_cost</code>) are the costs associated with treatment (<code>treat_cost</code>), which consist of infusion costs (<code>infusion_cost</code>) and drug acquisition costs (<code>rx_cost</code>). Other health care sector costs are hospital costs (<code>hosp_cost</code>), which increase with the HAQ score; general management costs (<code>mgmt_cost</code>); and the costs of caused by serious infections (<code>si_cost</code>).</p>
@@ -185,7 +185,7 @@ sim.out &lt;-<span class="st"> </span><span class="kw">rbind</span>(sim.out1, si
 <a href="#tocnav" class="anchor"></a>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
 <li><a href="#generate-input-data">Generate input data</a></li>
-      <li><a href="#run-the-ips">Run the IPS</a></li>
+      <li><a href="#simulate">Simulate</a></li>
       </ul>
 </div>
       </div>

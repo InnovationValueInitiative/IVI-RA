@@ -91,32 +91,39 @@
     
     
 <div class="contents">
-<p>An assessment of a health technology is always conditional on the patient population studied. The first step in an analysis is thus to specifiy the population considered. Below, we consider two ways to generate the patient population: first, the cohort can be randomly sampled using the <code>sample_pats</code> function from the <code>iviRA</code> package, and, second, a user can supply their own patient data.</p>
+<p>An assessment of a health technology is always conditional on the patient population studied. The first step in an analysis is thus to specify the population considered. Below, we consider two ways to generate the patient population: first, the cohort can be randomly sampled using the <code>sample_pats</code> function from the <code>iviRA</code> package, and, second, a user can supply their own patient data.</p>
 <div id="randomly-sampling-a-patient-population" class="section level2">
 <h2 class="hasAnchor">
 <a href="#randomly-sampling-a-patient-population" class="anchor"></a>Randomly sampling a patient population</h2>
-<p>The simplest way to generate a patient cohort is to use the <code>sample_pats</code> function. The variables included in the cohort are age, gender, haq score at baseline, weight, the number of previous dmards, and three measures of disease activity (Disease Activity Score with 28-joint counts (DAS28), Simple Disease Activity Index (SDAI), and the Clinical Disease Activity Index (CDAI)). The <code>type</code> argument specifies whether the patient cohort is homogeneous or heterogeneous. If the cohort is homogeneous, then the cohort consists of male and female patients that are identical in all respects other than gender; if the cohort is heterogeneous, then all variables vary across patients.</p>
+<p>The simplest way to generate a patient cohort is to use the <code>sample_pats</code> function. The variables included in the cohort are age, gender, HAQ score at baseline, weight, the number of previous DMARDs, and three measures of disease activity (Disease Activity Score with 28-joint counts (DAS28), Simple Disease Activity Index (SDAI), and the Clinical Disease Activity Index (CDAI)). The <code>type</code> argument specifies whether the patient cohort is homogeneous or heterogeneous. If the cohort is homogeneous, then the cohort consists of male and female patients that are identical in all respects other than gender; if the cohort is heterogeneous, then all variables vary across patients.</p>
 <p>We can randomly sample a heterogeneous population with default setting. To examine these settings type <code><a href="../reference/sample_pats.html">?sample_pats</a></code> into the console.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pop &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pats.html">sample_pats</a></span>(<span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">type =</span> <span class="st">"heterog"</span>)
 <span class="kw">head</span>(pop)</code></pre></div>
 <pre><code>##           age male weight prev_dmards    das28     sdai     cdai      haq0
-## [1,] 31.72452    0     75           4 6.969264 43.70742 44.75299 1.5154558
-## [2,] 45.52210    0     75           6 5.395277 33.05668 33.54439 1.0672027
-## [3,] 44.86020    1     89           6 6.525702 32.20777 31.29509 2.1625150
-## [4,] 67.44423    1     89           3 3.970936 25.05944 23.88278 0.9905335
-## [5,] 59.52838    0     75           1 6.387904 40.56698 36.14198 1.9908720
-## [6,] 56.51792    1     89           5 5.175650 36.63419 39.56797 1.2691210</code></pre>
+## [1,] 67.10427    0     75           7 8.918745 69.84030 73.07848 2.2046982
+## [2,] 24.41051    0     75           6 5.311153 45.45573 44.00306 1.3311660
+## [3,] 46.09923    0     75           3 3.489221 22.43043 12.40941 0.6889258
+## [4,] 38.88361    0     75           4 5.418130 32.29695 28.98627 1.1663385
+## [5,] 75.81311    1     89           6 6.425414 45.37651 44.29013 1.8673568
+## [6,] 47.40419    1     89           3 6.228224 48.53115 54.02921 1.2043087</code></pre>
 <p>We can also customize the distribution of patients. For example, suppose we want to study a younger and healthier population. We might then sample patients by customizing arguments in <code>sample_pats</code>,</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pop2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pats.html">sample_pats</a></span>(<span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">type =</span> <span class="st">"heterog"</span>, <span class="dt">age_mean =</span> <span class="dv">45</span>, <span class="dt">das28_mean =</span> <span class="dv">4</span>, <span class="dt">sdai_mean =</span> <span class="dv">20</span>, 
                     <span class="dt">cdai_mean =</span> <span class="dv">18</span>)
 <span class="kw">head</span>(pop2)</code></pre></div>
-<pre><code>##           age male weight prev_dmards    das28     sdai     cdai      haq0
-## [1,] 52.61984    0     75           4 4.145166 10.74766 12.21730 2.3217282
-## [2,] 39.60453    0     75           2 3.762689 19.01516 21.23911 1.0921611
-## [3,] 29.76740    0     75           3 3.100706 18.97949 10.50610 1.4453850
-## [4,] 45.34345    0     75           4 4.636310 23.28304 25.95622 1.4913934
-## [5,] 34.46475    0     75           2 4.638120 27.07955 26.27697 1.2895625
-## [6,] 60.92980    0     75           3 4.607296 32.53560 31.78572 0.9776659</code></pre>
+<pre><code>##           age male weight prev_dmards    das28      sdai      cdai
+## [1,] 49.86897    0     75           2 5.231353 32.191560 29.923017
+## [2,] 52.79940    0     75           2 2.115876  7.128770 10.537563
+## [3,] 46.22891    0     75           3 5.026694 36.067331 39.592513
+## [4,] 40.82998    0     75           3 2.701999  8.063591  6.972356
+## [5,] 58.19770    1     89           5 4.895615 27.369466 24.946994
+## [6,] 40.64257    0     75           2 5.099531 22.030798 18.574617
+##           haq0
+## [1,] 1.1097586
+## [2,] 0.9826075
+## [3,] 1.5431187
+## [4,] 2.0965041
+## [5,] 2.8339730
+## [6,] 1.8418560</code></pre>
 </div>
 <div id="using-your-own-patient-population" class="section level2">
 <h2 class="hasAnchor">

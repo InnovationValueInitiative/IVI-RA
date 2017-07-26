@@ -12,24 +12,31 @@ articles:
     - 04-parameters
     - 05-ips
     - 06-cea
+  - title: "Collaborate"
+    contents:
     - collaborate
 
 reference:
   - title: "Model inputs"
     contents:
-      - lifetable
-      - acr2eular
+      - nma
+      - acr2das28
       - acr2sdai
       - acr2cdai
-      - acr2das28
       - acr2haq
+      - acr2eular
       - eular2haq
-      - ttd
-      - haq.lprog.age
+      - haq.lprog
       - haq.lcgm
+      - ttd
+      - ttsi
+      - lifetable
+      - mort.or
+      - mort.hr.haqdif
+      - treat.cost
+      - hosp.cost
       - mgmt.cost
       - pain
-      - therapy.pars
       - utility.mixture
       - utility.wailoo
   - title: "Generate patient population"
@@ -52,12 +59,7 @@ reference:
   - title: "Individual patient simulation"
     contents:
       - get_input_data
-      - sim_haq
-      - sim_hc_cost
-      - sim_prod_loss
-      - sim_utility_mixture
-      - sim_utility_wailoo
-      - sim_qalys
+      - sim_iviRA
   - title: "Other useful functions"
     contents:
       - sim_survtime

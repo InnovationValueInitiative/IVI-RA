@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Articles • iviRA</title>
+<title>NMA estimates — nma • iviRA</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -37,7 +37,7 @@
   </head>
 
   <body>
-    <div class="container template-vignette-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -104,34 +104,48 @@
       
       </header>
 
-      <div class="page-header">
-  <h1>Articles <small>version&nbsp;0.1.0</small></h1>
-</div>
-
-<div class="row">
-  <div class="col-md-9">
-    <div class="section ">
-      <h3>How to run the model</h3>
-      <p class="section-desc"></p>
-
-      <ul>
-        <li><a href="00-intro.html">Introduction</a></li>
-        <li><a href="01-population.html">The patient population</a></li>
-        <li><a href="02-arms.html">Selecting treatment sequences</a></li>
-        <li><a href="03-structure.html">Competing model structures</a></li>
-        <li><a href="04-parameters.html">Sampling the model parameters</a></li>
-        <li><a href="05-ips.html">Run the IPS</a></li>
-        <li><a href="06-cea.html">Performing a cost-effectiveness analysis</a></li>
-      </ul>
+      <div class="row">
+  <div class="col-md-9 contents">
+    <div class="page-header">
+    <h1>NMA estimates</h1>
     </div>
-    <div class="section ">
-      <h3>Collaborate</h3>
-      <p class="section-desc"></p>
 
-      <ul>
-        <li><a href="collaborate.html">Contribute to the model</a></li>
-      </ul>
-    </div>
+    
+    <p>Estimates of ACR response, change in DAS28, and change in HAQ at 6 months for 
+bDMARD naive patients from Bayesian random effects NMAs.</p>
+    
+
+    <pre class="usage"><span class='no'>nma.acr.naive</span>
+
+<span class='no'>nma.das28.naive</span>
+
+<span class='no'>nma.haq.naive</span></pre>
+        
+    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
+
+    <p>Each dataset is a list with two elements</p><dl class='dl-horizontal'>
+  <dt>mean</dt><dd><p>Mean of the parameters.</p></dd>
+  <dt>vcov</dt><dd><p>Variance-covariance matrix of the parameters.</p></dd>
+</dl>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>ACR response parameters were estimated using an ordered probit model. Parameters for
+DAS28 and HAQ were estimated using models for continuous data with a normal likelihood and 
+identity link. The mean and variance-covariance matrix were estimated using the sample means
+and sample covariance matrices from the posterior distributions of the Bayesian analyses.</p>
+    
+
+  </div>
+  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+    <h2>Contents</h2>
+    <ul class="nav nav-pills nav-stacked">
+      
+      <li><a href="#format">Format</a></li>
+
+      <li><a href="#details">Details</a></li>
+          </ul>
+
   </div>
 </div>
 

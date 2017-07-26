@@ -95,38 +95,40 @@
 <h2 class="hasAnchor">
 <a href="#available-treatments" class="anchor"></a>Available treatments</h2>
 <p>The primary purpose of the model is to simulate health and cost outcomes for patients with RA treated as a function of the treatments use. Since patients typically use multiple treatments over a lifetime, the model is capable of simulating a treatment sequence of any arbitrary length. Treatments that can be included in a sequence include conventional disease-modifying anti-rheumatic drugs (cDMARDs) such as methotrexate and biologic DMARDs (bDMARDs).</p>
-<p>A dataset of available treatments comes preloaded with the <code>iviRA</code> package. The <code>name</code>, <code>mname</code>, and <code>sname</code> columns are long-form, medium-form, and short-form names, respectively. The column <code>biologic</code> is an indicator equal to 1 if the drug is a biologic and 0 otherwise.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(iviRA::therapy.pars$info)</code></pre></div>
-<pre><code>##                                   name        mname    sname biologic
-##  1:                            cDMARDs      cDMARDs  cdmards        0
-##  2:        abatacept IV + methotrexate ABT IV + MTX abtivmtx        1
-##  3:          adalimumab + methotrexate    ADA + MTX   adamtx        1
-##  4:                         adalimumab          ADA      ada        1
-##  5:          etanercept + methotrexate    ETN + MTX   etnmtx        1
-##  6:                         etanercept          ETN      etn        1
-##  7:           golimumab + methotrexate    GOL + MTX   golmtx        1
-##  8:          infliximab + methotrexate    IFX + MTX   ifxmtx        1
-##  9:                            placebo      Placebo  placebo        0
-## 10:         tocilizumab + methotrexate    TCZ + MTX   tczmtx        1
-## 11:                        tocilizumab          TCZ      tcz        1
-## 12:  certolizumab pegol + methotrexate    CZP + MTX   czpmtx        1
-## 13:        abatacept SC + methotrexate ABT SC + MTX abtscmtx        1
-## 14:                       non-biologic          NBT      nbt        0
-## 15:           rituximab + methotrexate    RTX + MTX   rtxmtx        1
-## 16: tofacitinib citrate + methotrexate    TOF + MTX   tofmtx        1
-## 17:                          rituximab          RTX      rtx        1
-## 18:                tofacitinib citrate          TOF      tof        1
-## 19:                 certolizumab pegol          CZP      czp        1
-## 20:                          golimumab          GOL      gol        1</code></pre>
+<p>A dataset of available treatments loads with the <code>iviRA</code> package. The <code>name</code>, <code>mname</code>, and <code>sname</code> columns are long-form, medium-form, and short-form names, respectively. The column <code>biologic</code> is an indicator equal to 1 if the drug is a biologic and 0 otherwise.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><a href="http://www.rdocumentation.org/packages/iviRA/topics/treatments">iviRA::treatments</a></code></pre></div>
+<pre><code>##                                   name          mname    sname biologic
+##  1:                            cDMARDs        cDMARDs  cdmards        0
+##  2:        abatacept IV + methotrexate   ABT IV + MTX abtivmtx        1
+##  3:          adalimumab + methotrexate      ADA + MTX   adamtx        1
+##  4:                         adalimumab            ADA      ada        1
+##  5:                     Triple therapy Triple therapy       tt        0
+##  6:          etanercept + methotrexate      ETN + MTX   etnmtx        1
+##  7:                         etanercept            ETN      etn        1
+##  8:           golimumab + methotrexate      GOL + MTX   golmtx        1
+##  9:          infliximab + methotrexate      IFX + MTX   ifxmtx        1
+## 10:                            placebo        Placebo  placebo        0
+## 11:         tocilizumab + methotrexate      TCZ + MTX   tczmtx        1
+## 12:                        tocilizumab            TCZ      tcz        1
+## 13:  certolizumab pegol + methotrexate      CZP + MTX   czpmtx        1
+## 14:        abatacept SC + methotrexate   ABT SC + MTX abtscmtx        1
+## 15:                       non-biologic            NBT      nbt        0
+## 16:           rituximab + methotrexate      RTX + MTX   rtxmtx        1
+## 17: tofacitinib citrate + methotrexate      TOF + MTX   tofmtx        1
+## 18:                          rituximab            RTX      rtx        1
+## 19:                tofacitinib citrate            TOF      tof        1
+## 20:                 certolizumab pegol            CZP      czp        1
+## 21:                          golimumab            GOL      gol        1
+##                                   name          mname    sname biologic</code></pre>
 </div>
 <div id="selecting-treatments" class="section level2">
 <h2 class="hasAnchor">
 <a href="#selecting-treatments" class="anchor"></a>Selecting treatments</h2>
 <p>To run the model, we must specify a treatment sequence. The treatment sequence can consist of a single sequence of treatments for all patients in the population or can vary for each patient.</p>
-<p>For example, suppose that we want to simulate a treatment sequence of three biologics: adalimumab + methotrexate, etanercept + methotrexate, and infliximab + methotrexate. They should be specified as a vector with elements matching the <code>sname</code> in <code>therapy.pars$info</code>. For comparison purposes, we might want to also simulate outcomes for a non-biologic treatment sequence of only cDMARDs.</p>
+<p>For example, suppose that we want to simulate a treatment sequence of three biologics: adalimumab + methotrexate, etanercept + methotrexate, and infliximab + methotrexate. They should be specified as a vector with elements matching the <code>sname</code> in <code><a href="http://www.rdocumentation.org/packages/iviRA/topics/treatments">iviRA::treatments</a></code>. For comparison purposes, we might want to also simulate outcomes for a non-biologic treatment sequence of only cDMARDs.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">arm1 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">"adamtx"</span>, <span class="st">"etnmtx"</span>, <span class="st">"ifxmtx"</span>)
 arm2 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">"cdmards"</span>)</code></pre></div>
-<p>In some cases, it might also be useful to allow therapies to differ accorss patients. This could be useful wheh, for example, comparing treatment strategies that tailor treatment to individuals against one size fits all strategies. This can be done by creating a matrix of treatment sequences where the number of rows is equal to the number of patients in the cohort. Below we consider a scenario where some patients receive one of two sequences</p>
+<p>In some cases, it might also be useful to allow therapies to differ across patients. This could be useful when, for example, comparing treatment strategies that tailor treatment to individuals against one size fits all strategies. This can be done by creating a matrix of treatment sequences where the number of rows is equal to the number of patients in the cohort. Below we consider a scenario where some patients receive one of two sequences</p>
 <ol style="list-style-type: decimal">
 <li>adalimumab + methotrexate -&gt; etanercept + methotrexate -&gt; infliximab + methotrexate</li>
 <li>etanercept + methotrexate -&gt; adalimumab + methotrexate -&gt; infliximab + methotrexate</li>

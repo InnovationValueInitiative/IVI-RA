@@ -44,7 +44,7 @@ HAQ progression for patients in the absence of bDMARDs can be modeled in one of 
 
 The parametric distribution used to model time to treat discontinuation can also be varied. 7 possible distributions are possible: exponential, Weibull, Gompertz, gamma, log-logistic, lognormal, and generalized gamma. 
 
-Finally, there are two ways to estimate utility. Our preferred method is mixture model estimated by [Hernandez Alava et al. (2013)](https://academic.oup.com/rheumatology/article/52/5/944/1816557) that has been shown to significantly outpeform existing models. The mixture model simulates utility as a function of age, pain, and HAQ for four separate classes that are, in turn, dependent on age, gender, pain, HAQ, and an unobserved random intercept term. The second algorithm is based on the logistic regression equation relating HAQ and other patient characteristics to utility by [Wailoo et al. (2006)](https://www.sheffield.ac.uk/polopoly_fs/1.43356!/file/AHRQ-final-report.pdf). 
+Finally, there are two ways to estimate utility. Our preferred method is mixture model estimated by [Hernandez Alava et al. (2013)](https://academic.oup.com/rheumatology/article/52/5/944/1816557) that has been shown to significantly outperform existing models. The mixture model simulates utility as a function of age, pain, and HAQ for four separate classes that are, in turn, dependent on age, gender, pain, HAQ, and an unobserved random intercept term. The second algorithm is based on the logistic regression equation relating HAQ and other patient characteristics to utility by [Wailoo et al. (2006)](https://www.sheffield.ac.uk/polopoly_fs/1.43356!/file/AHRQ-final-report.pdf). 
 
 
 ## Select a model structure

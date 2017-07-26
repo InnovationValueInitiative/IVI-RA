@@ -91,42 +91,45 @@
     
     
 <div class="contents">
-<p>There are two ways to collaborate with IVI. First, you can comment on the structure of the model or the evidence considered at [url]. IVI and a technical panel will review the comments and determine whether they should be incorporated into the model. Second, you can make changes to the code itself and make a <a href="https://help.github.com/articles/about-pull-requests/">pull request</a>. Code changes that affect the structure of the model or parameter values will only be incoporated after a review by the technical panel but other changes such as bug fixes or performance improvements may be immediately accepted.</p>
+<p>There are two ways to collaborate with IVI. First, you can comment on the structure of the model or the evidence considered at [url]. IVI and a technical panel will review the comments and determine whether they should be incorporated into the model. Second, you can make changes to the code itself and make a <a href="https://help.github.com/articles/about-pull-requests/">pull request</a>. Code changes that affect the structure of the model or parameter values will only be incorporated after a review by the technical panel but other changes such as bug fixes or performance improvements may be immediately accepted.</p>
 <p>The purpose of this page is to help you make changes to the code. We use <a href="https://git-scm.com/">Git</a> and host our code on <a href="https://github.com/">GitHub</a>. To collaborate, you will therefore need to create a GitHub account and <a href="https://help.github.com/articles/set-up-git/">install</a> Git on your machine. Once your setup you can then follow the steps outlined below to contribute to the model.</p>
-<p>Step 1: After signing into <a href="https://github.com/">GitHub</a>, you need to create your own remote repository of the IVI model. Click the “Fork” button in the upper right corner of the <a href="https://github.com/InnovationValueInitiative/IVI-RA">IVI-RA Github</a> page. When asked “Where should we fork this repository?” select your username.</p>
-<p>Step 2: Use the command line to create a directory where you would like your local repositoy to live, and navigate to this directory.</p>
-<p>Step 3: Create a local repository by typing the following command into the command line:</p>
+<p><strong>Step 1</strong>: After signing into <a href="https://github.com/">GitHub</a>, you need to create your own remote repository of the IVI model. Click the “Fork” button in the upper right corner of the <a href="https://github.com/InnovationValueInitiative/IVI-RA">IVI-RA Github</a> page. When asked “Where should we fork this repository?” select your username.</p>
+<p><strong>Step 2</strong>: Use the command line to create a directory where you would like your local repository to live, and navigate to this directory.</p>
+<p><strong>Step 3</strong>: Create a local repository by typing the following command into the command line:</p>
 <pre><code>git clone https://github.com/[github-username]/IVI-RA.git</code></pre>
-<p>Step 4: Use the command line to navigate to the local IVI-RA directory.</p>
-<p>Step 5: In order to make it easier to <a href="https://help.github.com/articles/github-glossary/#push">Push</a> your local work and <a href="https://help.github.com/articles/github-glossary/#pull">pull</a> changes made by others to the IVI-RA code type the following command into the command line:</p>
+<p><strong>Step 4</strong>: Use the command line to navigate to the local IVI-RA directory.</p>
+<p><strong>Step 5</strong>: In order to make it easier to <a href="https://help.github.com/articles/github-glossary/#push">Push</a> your local work and <a href="https://help.github.com/articles/github-glossary/#pull">pull</a> changes made by others to the IVI-RA code type the following command into the command line:</p>
 <pre><code>git remote add upstream https://github.com/InnovationValueInitiative/IVI-RA.git</code></pre>
-<p>Step 6: Before editing your local copy of the IVI-RA code, make sure you have the latest version of the code using the following three commands:</p>
-<pre><code>Step a: Download all content from the central IVI-RA repository. Navigate to your local IVI-RA repository and type the following command into the command line:
-
-    git fetch upstream
-
-Step b: Switch to the master branch in your local IVI-RA repository by typing the following command into the command line:
-
-    git checkout master
-
-Step c: Update your local master IVI-RA branch to the latest version of the central IVI-RA master branch by using the [merge](https://help.github.com/articles/github-glossary/#merge) command:
-
-    git merge upstream/master</code></pre>
-<p>Step 7: Create a new <a href="https://help.github.com/articles/github-glossary/#branch">branch</a> on your local machine. Branches are a way to organize your project. To create a new branch type the following command into the command line:</p>
+<p><strong>Step 6</strong>: Before editing your local copy of the IVI-RA code, make sure you have the latest version of the code using the following three commands:</p>
+<ul>
+<li>
+<p>Step 6a: Download all content from the central IVI-RA repository. Navigate to your local IVI-RA repository and type the following command into the command line:</p>
+<pre><code>git fetch upstream</code></pre>
+</li>
+<li>
+<p>Step 6b: Switch to the master branch in your local IVI-RA repository by typing the following command into the command line:</p>
+<pre><code>git checkout master</code></pre>
+</li>
+<li>
+<p>Step 6c: Update your local master IVI-RA branch to the latest version of the central IVI-RA master branch by using the <a href="https://help.github.com/articles/github-glossary/#merge">merge</a> command:</p>
+<pre><code>git merge upstream/master</code></pre>
+</li>
+</ul>
+<p><strong>Step 7</strong>: Create a new <a href="https://help.github.com/articles/github-glossary/#branch">branch</a> on your local machine. Branches are a way to organize your project. To create a new branch type the following command into the command line:</p>
 <pre><code>git checkout -b [new-branch-name]</code></pre>
-<p>Step 8: After making changes to your local IVI-RA repository, <a href="https://help.github.com/articles/github-glossary/#commit">commit</a> your changes to the central IVI-RA repository. To add a new file type the following command into the command file:</p>
+<p><strong>Step 8</strong>: After making changes to your local IVI-RA repository, <a href="https://help.github.com/articles/github-glossary/#commit">commit</a> your changes to the central IVI-RA repository. To add a new file type the following command into the command file:</p>
 <pre><code>git add [filename]</code></pre>
 <p>To commit the added file or an edited file type the following command into the command line:</p>
-<pre><code>git commit -m"[description-of-the-changes-you-made]</code></pre>
+<pre><code>git commit -m "[description-of-the-changes-you-made]"</code></pre>
 <p>To find all files that were edited or new files that were created, but not yet committed, type the following command into the command line:</p>
 <pre><code>git status</code></pre>
-<p>Step 8: Periodically check whether the branch created in Step 7 is in synch with changes made by other contributors by fetching upstream and merging upstream master into your branch:</p>
+<p><strong>Step 9</strong>: Periodically check whether the branch created in Step 7 is in sync with changes made by other contributors by fetching upstream and merging upstream master into your branch:</p>
 <pre><code>git fetch upstream
 git merge upstream/master</code></pre>
 <p>If the changes you made to your local branch are in the same section as changes made by other contributors, you may need to resolve conflicts.</p>
-<p>Step 9: If the code is ready to be reviewed by other contributors, make a final commit and push your local branch to your remote repository:</p>
+<p><strong>Step 10</strong>: If the code is ready to be reviewed by other contributors, make a final commit and push your local branch to your remote repository:</p>
 <pre><code>git push origin [new-branch-name]</code></pre>
-<p>Step 10: Using the GitHub user interface, <a href="https://help.github.com/articles/creating-a-pull-request/#creating-the-pull-request">open a pull request</a>.</p>
+<p><strong>Step 11</strong>: Using the GitHub user interface, <a href="https://help.github.com/articles/creating-a-pull-request/#creating-the-pull-request">open a pull request</a>.</p>
 </div>
   </div>
 

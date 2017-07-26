@@ -10,10 +10,10 @@ output:
 library("iviRA")
 ```
 
-An assessment of a health technology is always conditional on the patient population studied. The first step in an analysis is thus to specifiy the population considered. Below, we consider two ways to generate the patient population: first, the cohort can be randomly sampled using the `sample_pats` function from the `iviRA` package, and, second, a user can supply their own patient data. 
+An assessment of a health technology is always conditional on the patient population studied. The first step in an analysis is thus to specify the population considered. Below, we consider two ways to generate the patient population: first, the cohort can be randomly sampled using the `sample_pats` function from the `iviRA` package, and, second, a user can supply their own patient data. 
 
 ## Randomly sampling a patient population 
-The simplest way to generate a patient cohort is to use the `sample_pats` function. The variables included in the cohort are age, gender, haq score at baseline, weight, the number of previous dmards, and three measures of disease activity (Disease Activity
+The simplest way to generate a patient cohort is to use the `sample_pats` function. The variables included in the cohort are age, gender, HAQ score at baseline, weight, the number of previous DMARDs, and three measures of disease activity (Disease Activity
 Score with 28-joint counts (DAS28), Simple Disease Activity Index (SDAI), and the Clinical Disease Activity Index (CDAI)). The `type` argument specifies whether the patient cohort is homogeneous or heterogeneous. If the cohort is homogeneous, then the cohort consists of male and female patients that are identical in all respects other than gender; if the cohort is heterogeneous, then all variables vary across patients.
 
 We can randomly sample a heterogeneous population with default setting. To examine these settings type `?sample_pats` into the console. 
