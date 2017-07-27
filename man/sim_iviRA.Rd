@@ -5,6 +5,7 @@
 \title{The IVI-RA simulation}
 \usage{
 sim_iviRA(arms, input_data, pars, model_structure, max_months = NULL,
+  treatment_lookup = iviRA::treatments$sname,
   cdmards_ind = which(therapy.pars$info$sname == "cdmards"),
   nbt_ind = which(therapy.pars$info$sname == "nbt"), check = TRUE)
 }
@@ -25,6 +26,11 @@ the model is simulated over each patient's lifetime.}
 
 \item{nbt_ind}{Index for the non-biologic (i.e. a term used to define a selection of treatments clinicians use
 after the last biologic in a treatment sequence).}
+
+\item{treatments_lookup}{Vector of names of all treatments included in the parameter
+estimates. Index of of treatments in \code{arms} are matched against treatments in
+\code{treatments_lookup} by name. Indices of treatment-specific parameter estimates must be 
+in the same order as treatments in \code{treatments_lookup}.}
 }
 \description{
 Run the IVI-RA individual patient simulation model.

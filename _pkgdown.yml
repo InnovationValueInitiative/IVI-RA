@@ -45,7 +45,6 @@ reference:
   - title: "Sample parameters for PSA"
     contents:
       - sample_pars
-      - par_table
       - sample_uniforms
       - sample_normals
       - sample_mvnorm

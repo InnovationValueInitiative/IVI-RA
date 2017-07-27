@@ -4,7 +4,7 @@ library("data.table")
 library("MCMCpack")
 source("func.R")
 treatments <- fread("treatments.csv")
-nther <- nrow(treatments)
+ntreats <- nrow(treatments)
 
 # LOAD DATA --------------------------------------------------------------------
 nma.acr.naive.coda <- fread("nma-acr-naive-re-coda.csv")
@@ -19,7 +19,7 @@ nma.das28.naive.crosswalk <- fread("nma-das28-naive-re-crosswalk.csv")
 ### bio naive
 ## table 37 Stevenson (also assuming RTX is equal to 
 # i.v. ABT per p. 248 in NICE report)
-po <- vector(mode = "list", nther)
+po <- vector(mode = "list", ntreats)
 names(po) <- treatments$sname 
 po[["cdmards"]] <- c(0.298, 0.123, 0.042)
 po[["abtivmtx"]] <- c(0.573, 0.328, 0.156)
@@ -44,9 +44,10 @@ po[["czp"]] <- c(NA, NA, NA)
 po[["gol"]] <- c(NA, NA, NA)
 po <- do.call("rbind", po)
 po <- cbind(1 - po[, 1], po)
+po <- po[match(treatments$sname, rownames(po)), ]
 
 ## probabilities in mutually exclusive categories
-p <- matrix(NA, nrow = nther, ncol = 4)
+p <- matrix(NA, nrow = ntreats, ncol = 4)
 rownames(p) <- rownames(po)
 p[, 1] <- 1 - po[, 2] 
 p[, 2] <- po[, 2] - po[, 3]
@@ -130,17 +131,6 @@ nma.das28.naive <- list(mean = apply(nma.das28.naive.coda, 2, mean),
                       vcov = cov(nma.das28.naive.coda))
 
 # SAVE PARAMETERS --------------------------------------------------------------
-# We currently don't have NMA results for triple therapy
-tt.indx <- which(treatments$sname == "tt")
-nma.acr.naive$mean <- nma.acr.naive$mean[-c(tt.indx + 4)]
-nma.acr.naive$vcov <- nma.acr.naive$vcov[-c(tt.indx + 4), -c(tt.indx + 4)]
-nma.haq.naive$mean <- nma.haq.naive$mean[-c(tt.indx + 1)]
-nma.haq.naive$vcov <- nma.haq.naive$vcov[-c(tt.indx + 1), -c(tt.indx + 1)]
-nma.das28.naive$mean <- nma.das28.naive$mean[-c(tt.indx + 1)]
-nma.das28.naive$vcov <- nma.das28.naive$vcov[-c(tt.indx + 1), -c(tt.indx + 1)]
-nma.acr.naive.nice$p <- nma.acr.naive.nice$p[-tt.indx, ]
-nma.acr.naive.nice$p.overlap <- nma.acr.naive.nice$p.overlap[-tt.indx, ]
-
 # save
 save(nma.acr.naive, file = "../data/nma-acr-naive.rda", compress = "bzip2")
 save(nma.acr.naive.nice, file = "../data/nma-acr-naive-nice.rda", compress = "bzip2")

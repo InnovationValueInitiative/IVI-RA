@@ -15,7 +15,7 @@
 #' @param ltmale Identical to \code{ltfemale} but for men.
 #' @param acr2eular_mat A two-way frequency matrix with columns denoting EULAR response
 #'  (none, moderate, good) and rows denoting ACR response  (<20, 20-50, 50-70, 70+).
-#' @param treat_cost Treatment cost matrix in format of therapy.pars$cost.
+#' @param treat_cost Treatment cost matrix in format of iviRA::treat.cost.
 #' @param mort_logor Log odds ratio of impact of baseline HAQ on probability of mortality.
 #' @param mort_logor_se Standard error of log odds ratio of impact of baseline HAQ on probability of mortality.
 #' @param mort_loghr_haqdif Log hazard ratio of impact of change in HAQ from baseline on mortality rate. A vector with
@@ -56,8 +56,8 @@
 #' naive patients are used during 1st line and biologic experienced NMA results are used
 #' for subsequent lines. If experienced, NMA results for biologic
 #' experienced patients are using during 1st and subsequent lines.
-#' @param haq_lprog_therapy_mean Point estimate of linear yearly HAQ progression rate by therapy.
-#' @param haq_lprog_therapy_se Standard error of linear yearly HAQ progression rate by therapy.
+#' @param haq_lprog_tx_mean Point estimate of linear yearly HAQ progression rate by treatment.
+#' @param haq_lprog_tx_se Standard error of linear yearly HAQ progression rate by treatment.
 #' @param haq_lcgm_pars Parameters of LCGM for HAQ progression.
 #' @param eular2haq_mean Mean HAQ change by Eular response category.
 #' @param eular2haq_se Standard error of mean HAQ change by Eular response category.
@@ -90,7 +90,7 @@
 #' @param si_cost Cost of a serious infection.
 #' @param si_cost_range Range used to vary serious infection cost. Default is to calculate upper and lower bound by multiplying 
 #' \code{si_cost} by 1 +/- 0.2 (i.e. a 20\% change).
-#' @param therapy_names Vector of therapy names.
+#' @param tx_names Vector of treatment names.
 #' 
 #' @return List containing samples for the following model parameters:
 #' 
@@ -131,8 +131,8 @@
 #'    three columns for no response, moderate response, and good response.}
 #'    \item{acr2haq}{A matrix of sampled HAQ changes by ACR response category. The matrix has
 #'    four columns for ACR < 20, ACR 20-50, ACR 50-70, and ACR 70+.}
-#'   \item{haq.lprog.therapy}{A matrix of sampled yearly linear change in HAQ by therapy. The matrix has one column
-#'    for each therapy in \code{therapy.pars}.}
+#'   \item{haq.lprog.tx}{A matrix of sampled yearly linear change in HAQ by treatment.
+#'    The matrix has one column for each treatment in \code{iviRA::treatments}.}
 #'    \item{haq.lprog.age}{A matrix of sampled yearly linear change in HAQ by age. The matrix
 #'    has three columns for age < 40, age 40-64, and age 65+.}
 #'    \item{haq.lcgm}{A list of two elements containing parameters from the latent class growth
@@ -214,23 +214,23 @@
 sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
                        ltfemale = iviRA::lifetable.female, ltmale = iviRA::lifetable.male,
                        acr2eular_mat = iviRA::acr2eular,
-                       treat_cost = iviRA::therapy.pars$cost,
+                       treat_cost = iviRA::treat.cost,
                        mort_logor = iviRA::mort.or$logor, mort_logor_se = iviRA::mort.or$logor_se,
                        mort_loghr_haqdif = iviRA::mort.hr.haqdif$loghr,
                        mort_loghr_se_haqdif = iviRA::mort.hr.haqdif$loghr_se,
                        ttd_all = iviRA::ttd.all, ttd_da = iviRA::ttd.da, ttd_eular = iviRA::ttd.eular,
-                       nma_acr_mean = iviRA::therapy.pars$nma.acr.naive$mean,
-                       nma_acr_vcov = iviRA::therapy.pars$nma.acr.naive$vcov,
+                       nma_acr_mean = iviRA::nma.acr.naive$mean,
+                       nma_acr_vcov = iviRA::nma.acr.naive$vcov,
                        nma_acr_rr_lower = .75, nma_acr_rr_upper = .92,
-                       nma_das28_mean = iviRA::therapy.pars$nma.das28.naive$mean,
-                       nma_das28_vcov = iviRA::therapy.pars$nma.das28.naive$vcov,
+                       nma_das28_mean = iviRA::nma.das28.naive$mean,
+                       nma_das28_vcov = iviRA::nma.das28.naive$vcov,
                        nma_das28_rr_lower = .75, nma_das28_rr_upper = .92,
-                       nma_haq_mean = iviRA::therapy.pars$nma.haq.naive$mean,
-                       nma_haq_vcov = iviRA::therapy.pars$nma.haq.naive$vcov,
+                       nma_haq_mean = iviRA::nma.haq.naive$mean,
+                       nma_haq_vcov = iviRA::nma.haq.naive$vcov,
                        nma_haq_rr_lower = .75, nma_haq_rr_upper = .92,
                        treat_hist = c("naive", "exp"),
-                       haq_lprog_therapy_mean = iviRA::therapy.pars$haq.lprog$est,
-                       haq_lprog_therapy_se = iviRA::therapy.pars$haq.lprog$se,
+                       haq_lprog_tx_mean = iviRA::haq.lprog$tx$est,
+                       haq_lprog_tx_se = iviRA::haq.lprog$tx$se,
                        haq_lcgm_pars = iviRA::haq.lcgm,
                        eular2haq_mean = iviRA::eular2haq$mean, 
                        eular2haq_se = iviRA::eular2haq$se,
@@ -251,10 +251,10 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
                        mgmt_cost_mean = iviRA::mgmt.cost$est,
                        mgmt_cost_se = iviRA::mgmt.cost$se,
                        pl_mean = iviRA::prod.loss$est, pl_se = iviRA::prod.loss$se,
-                       ttsi = iviRA::therapy.pars$si,
+                       ttsi = iviRA::ttsi,
                        si_cost = 5873, si_cost_range = .2,
                        si_ul = .156, si_ul_range = .2,
-                       therapy_names = iviRA::therapy.pars$info$sname,
+                       tx_names = iviRA::treatments$sname,
                        util_mixture_pain = iviRA::pain){
   acr.cats <- c("ACR <20", "ACR 20-50", "ACR 50-70", "ACR 70+")
   sim <- list()
@@ -274,16 +274,19 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
   sim$ttd.eular <- sample_stratified_survpars(n, ttd_eular)
   treat_hist <- match.arg(treat_hist)
   sim$acr <- sample_nma_acr(n, nma_acr_mean, nma_acr_vcov, rr_lower = nma_acr_rr_lower,
-                              rr_upper = nma_acr_rr_upper, hist = treat_hist)
+                            rr_upper = nma_acr_rr_upper, hist = treat_hist,
+                            tx_names = tx_names)
   sim$das28 <- sample_nma_lm(n, nma_das28_mean, nma_das28_vcov, rr_lower = nma_das28_rr_lower,
-                                 rr_upper = nma_das28_rr_upper, hist = treat_hist)
+                             rr_upper = nma_das28_rr_upper, hist = treat_hist,
+                             tx_names = tx_names)
   sim$haq <- sample_nma_lm(n, nma_haq_mean, nma_haq_vcov, rr_lower = nma_haq_rr_lower,
-                            rr_upper = nma_haq_rr_upper, hist = treat_hist)
+                           rr_upper = nma_haq_rr_upper, hist = treat_hist,
+                           tx_names = tx_names)
   sim$eular2haq <- sample_normals(n, eular2haq_mean, eular2haq_se,
                                  col_names = c("no_response", "moderate_response", "good_response"))
   sim$acr2haq <- sample_normals(n, acr2haq_mean, acr2haq_se, acr.cats)
-  sim$haq.lprog.therapy <- sample_normals(n, haq_lprog_therapy_mean,
-                                                  haq_lprog_therapy_se)
+  sim$haq.lprog.tx <- sample_normals(n, haq_lprog_tx_mean,
+                                                  haq_lprog_tx_se)
   sim$haq.lprog.age <- sample_normals(n, haq_lprog_age_mean, haq_lprog_age_se,
                                      col_names =  c("age_less40", "age40to64", "age_65plus"))
   sim$haq.lcgm <- sample_pars_haq_lcgm(n, pars = haq_lcgm_pars)
@@ -298,7 +301,8 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
   sim$mgmt.cost <- sample_gammas(n, mgmt_cost_mean, mgmt_cost_se,
                                 col_names = c("chest_xray", "xray_visit", "outpatient_followup", "tuberculin_test"))
   sim$prod.loss <- rnorm(n, pl_mean, pl_se)
-  sim$ttsi <- sample_survpars(n, ttsi)
+  sim$ttsi <- sample_normals(n, mean = ttsi$lograte, sd = ttsi$lograte_se,
+                             col_names = tx_names)
   sim$si.cost <- runif(n, si_cost * (1 - si_cost_range),  si_cost * (1 + si_cost_range))
   sim$si.ul <- runif(n, si_ul * (1 - si_ul_range), si_ul * (1 + si_ul_range))
   return(sim)
@@ -506,7 +510,7 @@ sample_uniforms <- function(n, lower, upper, col_names = NULL){
 #' @return List containing posterior samples of changes in outcomes.
 #' 
 #' @export
-sample_nma_lm <- function(nsims, m, vcov, rr_lower, rr_upper, hist){
+sample_nma_lm <- function(nsims, m, vcov, rr_lower, rr_upper, hist, tx_names){
   rr.sim <- runif(nsims, rr_lower, rr_upper)
   sim <- sample_mvnorm(nsims, m, vcov)
   if (hist == "naive"){
@@ -515,7 +519,7 @@ sample_nma_lm <- function(nsims, m, vcov, rr_lower, rr_upper, hist){
   } else if (hist == "exp"){
     dy1 <- dy2 <- nma_lm2prob(A = sim[, "A"], delta = sim[, 2:ncol(sim), drop = FALSE]) * rr.sim
   }
-  colnames(dy1) <- colnames(dy2) <- therapy.pars$info$sname
+  colnames(dy1) <- colnames(dy2) <- tx_names
   return(list(dy1 = dy1, dy2 = dy2, pars = sim, rr = rr.sim))
 }
 
@@ -535,7 +539,7 @@ sample_nma_lm <- function(nsims, m, vcov, rr_lower, rr_upper, hist){
 #' @return List containing posterior sample of ACR response for each therapy
 #' 
 #' @export
-sample_nma_acr <- function(nsims, m, vcov, rr_lower, rr_upper, hist){
+sample_nma_acr <- function(nsims, m, vcov, rr_lower, rr_upper, hist, tx_names){
   rr2.sim <- runif(nsims, rr_lower, rr_upper)
   if (hist == "naive"){
       rr1.sim <- 1
@@ -549,8 +553,8 @@ sample_nma_acr <- function(nsims, m, vcov, rr_lower, rr_upper, hist){
   p2 <- nma_acrprob(A = sim[, "A"], z2 = sim[, "z2"], z3 = sim[, "z3"],
                     delta = sim[, 5:ncol(sim), drop = FALSE],
                     rr = rr2.sim) 
-  dimnames(p1$non.overlap)[[3]] <- dimnames(p2$non.overlap)[[3]] <- therapy.pars$info$sname
-  dimnames(p1$overlap)[[3]] <- dimnames(p2$overlap)[[3]] <-  therapy.pars$info$sname
+  dimnames(p1$non.overlap)[[3]] <- dimnames(p2$non.overlap)[[3]] <- tx_names
+  dimnames(p1$overlap)[[3]] <- dimnames(p2$overlap)[[3]] <- tx_names
   return(list(p1 = p1$non.overlap, p1.overlap = p1$overlap,
               p2 = p2$non.overlap, p2.overlap = p2$overlap,
               rr = rr2.sim, pars = sim))
@@ -875,7 +879,7 @@ par_table <- function(x, pat){
                     Distribution = "Multivariate normal",
                     Parameter = c("cDMARDs mean", "Cutpoint ACR20", 
                                   "Cutpoint ACR50", "Cutpoint ACR70",
-                                  therapy.pars$info$mname),
+                                  iviRA::treatments$mname),
                     Source = "NMA")
   acr <- cbind(acr, acr.pars)
   
@@ -893,7 +897,7 @@ par_table <- function(x, pat){
   das28 <- data.table(Group = "NMA DAS28",
                     Distribution = "Multivariate normal",
                     Parameter = c("cDMARDs mean",
-                                  therapy.pars$info$mname),
+                                  iviRA::treatments$mname),
                     Source = "NMA")
   das28 <- cbind(das28, das28.pars)
   
@@ -911,7 +915,7 @@ par_table <- function(x, pat){
   haq <- data.table(Group = "NMA HAQ",
                       Distribution = "Multivariate normal",
                       Parameter = c("cDMARDs mean",
-                                    therapy.pars$info$mname),
+                                    iviRA::treatments$mname),
                       Source = "NMA")
   haq <- cbind(haq, haq.pars)
   
@@ -959,9 +963,9 @@ par_table <- function(x, pat){
   # Constant linear haq progression by therapy
   lhpt <- data.table(Group = "Yearly HAQ progression by therapy",
                     Distribution = "Normal",
-                    Parameter = therapy.pars$info$mname,
+                    Parameter = iviRA::treatments$mname,
                     Source = "Wolfe2010")
-  lhpt <- cbind(lhpt, apply_summary(x$haq.lprog.therapy))
+  lhpt <- cbind(lhpt, apply_summary(x$haq.lprog.tx))
   
   # Constant linear haq progression by age
   lhpa <- data.table(Group = "Yearly HAQ progression by age relative to overall",
@@ -1094,12 +1098,12 @@ par_table <- function(x, pat){
   
   # serious infection
   ## rate
-  ttsi.summary <- survival_summary(x$ttsi)
-  ttsi <- data.table(Group = "Time to serious infection",
+  ttsi.summary <- apply_summary(x$ttsi)
+  ttsi.dt <- data.table(Group = "Time to serious infection",
                        Distribution = "Multivariate normal",
-                       Parameter = ttsi.summary$par.names,
+                       Parameter = paste0("exp - ", colnames(x$ttsi)),
                        Source = "Singh2011")
-  ttsi <- cbind(ttsi, ttsi.summary$par.summry)
+  ttsi.dt <- cbind(ttsi.dt, ttsi.summary)
   
   ## cost per infection
   si.cost <- data.table(Group = "Serious infection cost",
@@ -1173,7 +1177,7 @@ par_table <- function(x, pat){
                  ttd.all, ttd.em, ttd.eg, ttd.da,
                  acr, acr.rr, das28, das28.rr, haq, haq.rr,
                  lhpt, lhpa, haq.lcgm, lo.mort, lhr.mort, lt,
-                 tc, hdays, hcost, mgmt, prod.loss, ttsi, si.cost, si.ul, util, util.wailoo)
+                 tc, hdays, hcost, mgmt, prod.loss, ttsi.dt, si.cost, si.ul, util, util.wailoo)
   table <- table[, .(Group, Parameter, Mean, SD, Lower, Upper, Distribution, Source)]
   setnames(table, colnames(table), c("Group", "Parameter", "Posterior mean", "Posterior SD", 
                                      "Posterior 2.5%", "Posterior 97.5%", "Distribution", "Source"))

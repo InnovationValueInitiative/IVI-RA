@@ -9,12 +9,16 @@
 #' @param model_structure Object of class model structure generated from \link{sample_pars}.
 #' @param max_months Maximum number of months to run the model for. Default is NULL which implies that
 #' the model is simulated over each patient's lifetime.
+#' @param treatments_lookup Vector of names of all treatments included in the parameter
+#' estimates. Index of of treatments in \code{arms} are matched against treatments in
+#' \code{treatments_lookup} by name. Indices of treatment-specific parameter estimates must be 
+#' in the same order as treatments in \code{treatments_lookup}.   
 #' @param cdmards_ind Index for cDMARDs.
 #' @param nbt_ind Index for the non-biologic (i.e. a term used to define a selection of treatments clinicians use
 #' after the last biologic in a treatment sequence).
 #' @export 
-sim_iviRA <- function(arms, input_data, pars, model_structure,
-                    max_months = NULL, 
+sim_iviRA <- function(arms, input_data, pars, model_structure, 
+                      max_months = NULL, treatment_lookup = iviRA::treatments$sname,
                     cdmards_ind = which(therapy.pars$info$sname == "cdmards"),
                     nbt_ind = which(therapy.pars$info$sname == "nbt"),
                     check = TRUE){
@@ -28,9 +32,10 @@ sim_iviRA <- function(arms, input_data, pars, model_structure,
       stop("The argument 'model_structure' must be of class 'model_structure'")
   }
   
-  ## treatment arms
-  arminds <- which(therapy.pars$info$sname %in% arms)
-  if (is.vector(arminds)) arminds <- matrix(arminds, nrow = 1)
+  ## treatment arm indices
+  if (is.vector(arms)) arms <- matrix(arms, nrow = 1)
+  arminds <- matrix(match(arms, treatment_lookup), nrow = nrow(arms),
+                    ncol = ncol(arms))
   
   ## default internal values
   treat_gap <- 0
@@ -52,7 +57,7 @@ sim_iviRA <- function(arms, input_data, pars, model_structure,
   pars.ttd.em <- pars$ttd.eular$moderate[[ttd.dist]]
   pars.ttd.eg <- pars$ttd.eular$good[[ttd.dist]]
   si.dist <- "exp"
-  pars.si <- pars$ttsi[[si.dist]]
+  pars.si <- pars$ttsi
   
   # RUNNING THE SIMULATION
   ## simulate HAQ progression
@@ -66,7 +71,7 @@ sim_iviRA <- function(arms, input_data, pars, model_structure,
                      pars$acr2eular, pars$acr2haq, pars$eular2haq,
                      pars$acr2das28, pars$acr2sdai, pars$acr2cdai,
                      prob.switch.da,
-                     pars$haq.lprog.therapy, pars$haq.lprog.age,
+                     pars$haq.lprog.tx, pars$haq.lprog.age,
                      pars$haq.lcgm$delta, pars$haq.lcgm$beta, model_structure["cdmards_haq_model"],
                      pars$rebound, pars$lt$male, pars$lt$female,
                      input_data$x.mort, pars$logor, ttd.dist, input_data$x.ttd,
@@ -83,9 +88,9 @@ sim_iviRA <- function(arms, input_data, pars, model_structure,
                      pars.ttd.eg$sample[, pars.ttd.eg$anc1.index, drop = FALSE],
                      pars.ttd.eg$sample[, pars.ttd.eg$anc2.index, drop = FALSE],
                      cycle_length, treat_gap, cdmards.ind, nbt.ind,
-                     pars.si$sample[, pars.si$loc.index, drop = FALSE], 
-                     pars.si$sample[, pars.si$anc1.index, drop = FALSE],
-                     pars.si$sample[, pars.si$anc2.index, drop = FALSE], 
+                     pars.si, 
+                     matrix(NA, nrow = pars$n, ncol = ncol(pars.si)), 
+                     matrix(NA, nrow = pars$n, ncol = ncol(pars.si)), 
                      si.dist, pars$mort.loghr.haqdif, max_months)
   
   ## simulate health care costs
@@ -177,7 +182,7 @@ select_model_structure <- function(itreat_haq = c("acr-haq", "acr-eular-haq", "h
 #' @param input_data List of input data. Required inputs are \code{haq0}, \code{age}, \code{male}, \code{x.mort}, 
 #' and \code{x.ttd} as generated from \link{input_data}.
 #' @param pars List of parameters. Required parameters are \code{rebound}, \code{acr1}, \code{acr2}, \code{acr2eular}, \code{eular2haq}, 
-#' \code{haq.lprog.therapy}, \code{haq.lprog.age}, \code{logor.mort}, \code{mort.loghr.haqdif}, \code{ttsi},
+#' \code{haq.lprog.tx}, \code{haq.lprog.age}, \code{logor.mort}, \code{mort.loghr.haqdif}, \code{ttsi},
 #' \code{ttd.eular.mod}, \code{ttd.eular.good}, and \code{lt} as generated from \link{sample_pars}. Additionally, if \code{cdmards_prog} is equal 
 #' to "lcgm", then \code{haq.lcgm} must be included. 
 #' @param itreat_haq How should the relationship between treatment and HAQ during the initial 
@@ -342,11 +347,11 @@ check_sim_haq <- function(arminds, input_data, pars, itreat_haq, itreat_switch){
          "of sampled parameter sets which equals ", n))
   } 
   
-  ## haq.lprog.therapy
-  if(is.null(pars$haq.lprog.therapy)) stop("'haq.lprog.therapy' element of pars list not given")
-  if(!is.matrix(pars$haq.lprog.therapy))  stop("'haq.lprog.therapy' element of pars list must be a matrix")
-  if(nrow(pars$haq.lprog.therapy) != n) {
-    stop(paste0("Number of rows in 'haq.lprog.therapy' element of pars must be equal to the number ",
+  ## haq.lprog.tx
+  if(is.null(pars$haq.lprog.tx)) stop("'haq.lprog.tx' element of pars list not given")
+  if(!is.matrix(pars$haq.lprog.tx))  stop("'haq.lprog.tx' element of pars list must be a matrix")
+  if(nrow(pars$haq.lprog.tx) != n) {
+    stop(paste0("Number of rows in 'haq.lprog.tx' element of pars must be equal to the number ",
                 "of sampled parameter sets which equals ", n))
   } 
   
@@ -378,11 +383,7 @@ check_sim_haq <- function(arminds, input_data, pars, itreat_haq, itreat_switch){
   
   ## ttsi
   if(is.null(pars$ttsi)) stop("'ttsi' element of pars list not given")
-  if(!is.list(pars$ttsi))  stop("'ttsi' element of pars list must be a list")
-  if(all(!names(pars$ttsi) %in% names.dist)) {
-    stop(paste0("Survival distribution in 'ttsi' element of pars list must contain at least ",
-                "one of the following distributions: "), paste(names.dist, collapse = ", "))
-  } 
+  if(!is.matrix(pars$ttsi))  stop("'ttsi' element of pars list must be a matrix")
   
   ## ttd.eular
   if(is.null(pars$ttd.eular)) stop("'ttd.eular' element of pars list not given")

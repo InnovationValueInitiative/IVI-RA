@@ -25,7 +25,7 @@ hlp.ada.se <- se_normal(-.002, .025)
 
 # biologic specific progression rates from Michaud (2011) and above
 haq.lp.tx <- data.table(sname = treatments$sname, est = 0, se = 0)
-haq.lp.tx[sname %in% c("cdmards", "tt", "placebo","nbt"), 
+haq.lp.tx[sname %in% c("cdmards", "placebo","nbt"), 
          c("est", "se") :=  list(hlp.nb, hlp.nb.se)]
 haq.lp.tx[sname %in% c("abtivmtx", "golmtx", "tcz", "tczmtx",
                         "czpmtx", "abtscmtx","rtxmtx", "tofmtx", 
@@ -88,4 +88,4 @@ dhaq.lp.age[, upper := est + qnorm(.975) * se]
 
 # SAVE PARAMETERS --------------------------------------------------------------
 haq.lprog <- list(tx = haq.lp.tx, diff.age = dhaq.lp.age)
-save(haq.lprog, file = "../data/haq.lprog.rda", compress = "bzip2")
+save(haq.lprog, file = "../data/haq-lprog.rda", compress = "bzip2")

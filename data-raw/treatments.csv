@@ -1,22 +1,1 @@
-"name","mname","sname","biologic"
-"cDMARDs","cDMARDs","cdmards",0
-"abatacept IV + methotrexate","ABT IV + MTX","abtivmtx",1
-"adalimumab + methotrexate","ADA + MTX","adamtx",1
-"adalimumab","ADA","ada",1
-"Triple therapy","Triple therapy","tt",0
-"etanercept + methotrexate","ETN + MTX","etnmtx",1
-"etanercept","ETN","etn",1
-"golimumab + methotrexate","GOL + MTX","golmtx",1
-"infliximab + methotrexate","IFX + MTX","ifxmtx",1
-"placebo","Placebo","placebo",0
-"tocilizumab + methotrexate","TCZ + MTX","tczmtx",1
-"tocilizumab","TCZ","tcz",1
-"certolizumab pegol + methotrexate","CZP + MTX","czpmtx",1
-"abatacept SC + methotrexate","ABT SC + MTX","abtscmtx",1
-"non-biologic","NBT","nbt",0
-"rituximab + methotrexate","RTX + MTX","rtxmtx",1
-"tofacitinib citrate + methotrexate","TOF + MTX","tofmtx",1
-"rituximab","RTX","rtx",1
-"tofacitinib citrate","TOF","tof",1
-"certolizumab pegol","CZP","czp",1
-"golimumab","GOL","gol",1
+name,mname,sname,biologiccDMARDs,cDMARDs,cdmards,0abatacept IV + methotrexate,ABT IV + MTX,abtivmtx,1adalimumab + methotrexate,ADA + MTX,adamtx,1adalimumab,ADA,ada,1etanercept + methotrexate,ETN + MTX,etnmtx,1etanercept,ETN,etn,1golimumab + methotrexate,GOL + MTX,golmtx,1infliximab + methotrexate,IFX + MTX,ifxmtx,1placebo,Placebo,placebo,0tocilizumab + methotrexate,TCZ + MTX,tczmtx,1tocilizumab,TCZ,tcz,1certolizumab pegol + methotrexate,CZP + MTX,czpmtx,1abatacept SC + methotrexate,ABT SC + MTX,abtscmtx,1non-biologic,NBT,nbt,0rituximab + methotrexate,RTX + MTX,rtxmtx,1tofacitinib citrate + methotrexate,TOF + MTX,tofmtx,1rituximab,RTX,rtx,1tofacitinib citrate,TOF,tof,1certolizumab pegol,CZP,czp,1golimumab,GOL,gol,1

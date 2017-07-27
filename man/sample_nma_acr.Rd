@@ -4,7 +4,7 @@
 \alias{sample_nma_acr}
 \title{Sample ACR response from ordered probit NMA}
 \usage{
-sample_nma_acr(nsims, m, vcov, rr_lower, rr_upper, hist)
+sample_nma_acr(nsims, m, vcov, rr_lower, rr_upper, hist, tx_names)
 }
 \arguments{
 \item{nsims}{Number of observations.}

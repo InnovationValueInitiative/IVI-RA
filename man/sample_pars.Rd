@@ -6,26 +6,22 @@
 \usage{
 sample_pars(n = 100, rebound_lower = 0.7, rebound_upper = 1,
   ltfemale = iviRA::lifetable.female, ltmale = iviRA::lifetable.male,
-  acr2eular_mat = iviRA::acr2eular, treat_cost = iviRA::therapy.pars$cost,
+  acr2eular_mat = iviRA::acr2eular, treat_cost = iviRA::treat.cost,
   mort_logor = iviRA::mort.or$logor,
   mort_logor_se = iviRA::mort.or$logor_se,
   mort_loghr_haqdif = iviRA::mort.hr.haqdif$loghr,
   mort_loghr_se_haqdif = iviRA::mort.hr.haqdif$loghr_se,
   ttd_all = iviRA::ttd.all, ttd_da = iviRA::ttd.da,
-  ttd_eular = iviRA::ttd.eular,
-  nma_acr_mean = iviRA::therapy.pars$nma.acr.naive$mean,
-  nma_acr_vcov = iviRA::therapy.pars$nma.acr.naive$vcov,
-  nma_acr_rr_lower = 0.75, nma_acr_rr_upper = 0.92,
-  nma_das28_mean = iviRA::therapy.pars$nma.das28.naive$mean,
-  nma_das28_vcov = iviRA::therapy.pars$nma.das28.naive$vcov,
-  nma_das28_rr_lower = 0.75, nma_das28_rr_upper = 0.92,
-  nma_haq_mean = iviRA::therapy.pars$nma.haq.naive$mean,
-  nma_haq_vcov = iviRA::therapy.pars$nma.haq.naive$vcov,
-  nma_haq_rr_lower = 0.75, nma_haq_rr_upper = 0.92,
-  treat_hist = c("naive", "exp"),
-  haq_lprog_therapy_mean = iviRA::therapy.pars$haq.lprog$est,
-  haq_lprog_therapy_se = iviRA::therapy.pars$haq.lprog$se,
-  haq_lcgm_pars = iviRA::haq.lcgm, eular2haq_mean = iviRA::eular2haq$mean,
+  ttd_eular = iviRA::ttd.eular, nma_acr_mean = iviRA::nma.acr.naive$mean,
+  nma_acr_vcov = iviRA::nma.acr.naive$vcov, nma_acr_rr_lower = 0.75,
+  nma_acr_rr_upper = 0.92, nma_das28_mean = iviRA::nma.das28.naive$mean,
+  nma_das28_vcov = iviRA::nma.das28.naive$vcov, nma_das28_rr_lower = 0.75,
+  nma_das28_rr_upper = 0.92, nma_haq_mean = iviRA::nma.haq.naive$mean,
+  nma_haq_vcov = iviRA::nma.haq.naive$vcov, nma_haq_rr_lower = 0.75,
+  nma_haq_rr_upper = 0.92, treat_hist = c("naive", "exp"),
+  haq_lprog_tx_mean = iviRA::haq.lprog$tx$est,
+  haq_lprog_tx_se = iviRA::haq.lprog$tx$se, haq_lcgm_pars = iviRA::haq.lcgm,
+  eular2haq_mean = iviRA::eular2haq$mean,
   eular2haq_se = iviRA::eular2haq$se, acr2haq_mean = iviRA::acr2haq$mean,
   acr2haq_se = iviRA::acr2haq$se,
   acr2sdai_lower = iviRA::acr2sdai$inception$lower,
@@ -42,9 +38,8 @@ sample_pars(n = 100, rebound_lower = 0.7, rebound_upper = 1,
   hosp_cost_se = iviRA::hosp.cost$cost_pday_se,
   mgmt_cost_mean = iviRA::mgmt.cost$est, mgmt_cost_se = iviRA::mgmt.cost$se,
   pl_mean = iviRA::prod.loss$est, pl_se = iviRA::prod.loss$se,
-  ttsi = iviRA::therapy.pars$si, si_cost = 5873, si_cost_range = 0.2,
-  si_ul = 0.156, si_ul_range = 0.2,
-  therapy_names = iviRA::therapy.pars$info$sname,
+  ttsi = iviRA::ttsi, si_cost = 5873, si_cost_range = 0.2,
+  si_ul = 0.156, si_ul_range = 0.2, tx_names = iviRA::treatments$sname,
   util_mixture_pain = iviRA::pain)
 }
 \arguments{
@@ -67,7 +62,7 @@ the probability of death at a given age.}
 \item{acr2eular_mat}{A two-way frequency matrix with columns denoting EULAR response
 (none, moderate, good) and rows denoting ACR response  (<20, 20-50, 50-70, 70+).}
 
-\item{treat_cost}{Treatment cost matrix in format of therapy.pars$cost.}
+\item{treat_cost}{Treatment cost matrix in format of iviRA::treat.cost.}
 
 \item{mort_logor}{Log odds ratio of impact of baseline HAQ on probability of mortality.}
 
@@ -129,9 +124,9 @@ naive patients are used during 1st line and biologic experienced NMA results are
 for subsequent lines. If experienced, NMA results for biologic
 experienced patients are using during 1st and subsequent lines.}
 
-\item{haq_lprog_therapy_mean}{Point estimate of linear yearly HAQ progression rate by therapy.}
+\item{haq_lprog_tx_mean}{Point estimate of linear yearly HAQ progression rate by treatment.}
 
-\item{haq_lprog_therapy_se}{Standard error of linear yearly HAQ progression rate by therapy.}
+\item{haq_lprog_tx_se}{Standard error of linear yearly HAQ progression rate by treatment.}
 
 \item{haq_lcgm_pars}{Parameters of LCGM for HAQ progression.}
 
@@ -191,7 +186,7 @@ for general management of RA.}
 \item{si_ul_range}{Range used to vary serious infection utility loss. Default is to calculate upper and lower bound by multiplying 
 \code{si_ul} by 1 +/- 0.2 (i.e. a 20\% change).}
 
-\item{therapy_names}{Vector of therapy names.}
+\item{tx_names}{Vector of treatment names.}
 }
 \value{
 List containing samples for the following model parameters:
@@ -233,8 +228,8 @@ List containing samples for the following model parameters:
    three columns for no response, moderate response, and good response.}
    \item{acr2haq}{A matrix of sampled HAQ changes by ACR response category. The matrix has
    four columns for ACR < 20, ACR 20-50, ACR 50-70, and ACR 70+.}
-  \item{haq.lprog.therapy}{A matrix of sampled yearly linear change in HAQ by therapy. The matrix has one column
-   for each therapy in \code{therapy.pars}.}
+  \item{haq.lprog.tx}{A matrix of sampled yearly linear change in HAQ by treatment.
+   The matrix has one column for each treatment in \code{iviRA::treatments}.}
    \item{haq.lprog.age}{A matrix of sampled yearly linear change in HAQ by age. The matrix
    has three columns for age < 40, age 40-64, and age 65+.}
    \item{haq.lcgm}{A list of two elements containing parameters from the latent class growth
