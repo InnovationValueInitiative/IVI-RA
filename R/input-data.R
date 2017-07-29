@@ -132,7 +132,7 @@ lt_data <- function(ltfemale, ltmale){
 #' for number of previous DMARDs. 
 #' @param vars_mort A matrix with each column a variable used to adjust mortality.
 #' @param vars_ttd The design matrix for time to treatment discontinuation.
-#'  @param model_structure An object of class \code{model_structure} generated from 
+#' @param model_structure An object of class \code{model_structure} generated from 
 #'  \link{select_model_structure}.
 #' 
 #' @return A list containing the following data inputs:

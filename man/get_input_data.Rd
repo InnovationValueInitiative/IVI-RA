@@ -12,11 +12,12 @@ get_input_data(patdata, x_mort = NULL, x_ttd = NULL, model_structure)
 1 if the patient is male and 0 if female, 'weight' for patient weight, and 'prev_dmards' 
 for number of previous DMARDs.}
 
+\item{model_structure}{An object of class \code{model_structure} generated from 
+\link{select_model_structure}.}
+
 \item{vars_mort}{A matrix with each column a variable used to adjust mortality.}
 
-\item{vars_ttd}{The design matrix for time to treatment discontinuation.
-@param model_structure An object of class \code{model_structure} generated from 
-\link{select_model_structure}.}
+\item{vars_ttd}{The design matrix for time to treatment discontinuation.}
 }
 \value{
 A list containing the following data inputs:
