@@ -177,7 +177,7 @@ select_model_structure <- function(itreat_haq = c("acr-haq", "acr-eular-haq", "h
 #' N patients. Cycle lengths are 6 months long. The simulation is written in C++ for speed. 
 #' 
 #' @param arminds Indices of treatment arms consisting of sequences of therapies (each element
-#' is the index of a therapy in \code{iviRA::treatments}. May be a vector consisting of a single treatment sequence or a matrix 
+#' is the index of a treatment in \code{iviRA::treatments}. May be a vector consisting of a single treatment sequence or a matrix 
 #' of unique sequences for each patient.
 #' @param input_data List of input data. Required inputs are \code{haq0}, \code{age}, \code{male}, \code{x.mort}, 
 #' and \code{x.ttd} as generated from \link{input_data}.
@@ -218,20 +218,21 @@ select_model_structure <- function(itreat_haq = c("acr-haq", "acr-eular-haq", "h
 #'\describe{
 #' \item{sim}{Simulation number. Indexed from 1 to S where S is the number of randomly sampled parameter sets (e.g. n from \link{sample_pars}).}
 #' \item{id}{ID number. Indexed from 1 to N where N is the number of simulated patients (e.g. n from \link{sample_pats}).}
-#' \item{month}{Month since a simulated patient began the first therapy in a treatment sequence.}
-#' \item{therapy}{Index of therapy used. Given J total therapies, the first J - 1 therapies match the indices from \code{arminds}. The final \code{therapy}
-#'  is always equal to the index of the non-biologic therapy (\code{nbt_ind}).}
-#' \item{therapy_seq}{Number of therapies in a sequence. First therapy equal to 1, second therapy equal to 2, \ldots}
-#' \item{therapy_cycle}{Number of model cycles since a patient began taking a given therapy in a treatment sequence. \code{therapy_cycle} = 1
+#' \item{month}{Month since a simulated patient began the first treatment in a treatment sequence.}
+#' \item{tx}{Treatment used. Given J total therapies, the first J - 1 therapies match the indices from \code{arminds}. The final \code{tx}
+#'  is always the non-biologic treatment (\code{nbt_ind}).}
+#' \item{tx_seq}{Number of treatment in a treatment sequence. First treatment equal to 1, 
+#' second treatment equal to 2, \ldots}
+#' \item{tx_cycle}{Number of model cycles since a patient began taking a given treatment in a treatment sequence. \code{tx_cycle} = 1
 #' during the initial 6-month treatment period.}
 #' \item{death}{Equal to 1 if patient died during the model cycle and 0 otherwise. }
 #' \item{age}{Age of patient which increases with the model cycles.}
-#' \item{ttd}{Time to treatment discontinuation. Measured in terms of model cycles (e.g. ttd = 2 if therapy will discontinue in 
-#' 1 year given 6-months cycles). \code{ttd} is measured at the end of each cycle. Patients switch therapies during the cycle in which \code{ttd} 
+#' \item{ttd}{Time to treatment discontinuation. Measured in terms of model cycles (e.g. ttd = 2 if treatment will discontinue in 
+#' 1 year given 6-months cycles). \code{ttd} is measured at the end of each cycle. Patients switch treatments during the cycle in which \code{ttd} 
 #' becomes negative and HAQ rebounds during the cycle.}
-#' \item{acr}{Simulated ACR response during the initial 6-month period for a new therapy. Constant within \code{therapy}. 
+#' \item{acr}{Simulated ACR response during the initial 6-month period for a new treatment Constant within \code{tx}.
 #' Categories are 0 (ACR < 20), 1 (ACR 20-50), 2 (ACR 50-70), and 3 (ACR 70+).}
-#' \item{eular}{Simulated EULAR response during the initial 6-month period for a new therapy. Constant within \code{therapy}. 
+#' \item{eular}{Simulated EULAR response during the initial 6-month period for a new treatment Constant within \code{tx}. 
 #' Categories are 0 (no EULAR response), 1 (moderate EULAR response), and 2 (good EULAR response).}
 #' \item{haq}{HAQ score. Restricted to range between 0 and 3.}
 #' \item{ttsi}{Time to serious infection. Like \code{ttd}, measured in terms of model cycles. \code{ttsi} is measured at the end of each 
@@ -277,16 +278,16 @@ sim_haq <- function(arminds, haq0, das28_0, sdai0, cdai0, age0, male, prev_dmard
                      cycle_length, treat_gap, cdmards, nbt, 
                      si_loc, si_anc1, si_anc2, si_dist, haqdelta_loghr, max_months)
   simout <- as.data.table(simout)
-  colnames(simout) <- c("sim", "id", "month", "therapy", "therapy_seq", 
-                     "therapy_cycle", "death", "age", "ttd", "acr", "eular", 
+  colnames(simout) <- c("sim", "id", "month", "tx", "tx_seq", 
+                     "tx_cycle", "death", "age", "ttd", "acr", "eular", 
                      "haq", "ttsi", "si", "yrlen")
   
   # C++ to R indices
   simout[, sim := sim + 1]
   simout[, id := id + 1]
-  simout[, therapy_seq := therapy_seq + 1]
-  simout[, therapy_cycle := therapy_cycle + 1]
-  simout[, therapy := therapy + 1]
+  simout[, tx_seq := tx_seq + 1]
+  simout[, tx_cycle := tx_cycle + 1]
+  simout[, tx := tx + 1]
   return(simout)
 }
 
@@ -645,7 +646,7 @@ sim_hc_cost <- function(simhaq, weight, treat_cost, hosp_cost, mgmt_cost, si_cos
                         cycle_length = 6,
                         check = TRUE){
   # treatment costs
-  treat.cost.out <- sim_treat_costC(simhaq$therapy - 1, simhaq$therapy_cycle - 1, simhaq$id - 1, weight, 
+  treat.cost.out <- sim_treat_costC(simhaq$tx - 1, simhaq$tx_cycle - 1, simhaq$id - 1, weight, 
                             cycle_length,
                             treat_cost$ann_infusion_cost, treat_cost$ann_rx_cost, 
                             treat_cost$init_infusion_cost, treat_cost$init_rx_cost, 
@@ -685,8 +686,8 @@ sim_hc_cost <- function(simhaq, weight, treat_cost, hosp_cost, mgmt_cost, si_cos
 #' @keywords internal
 check_sim_hc_cost <- function(simhaq, weight, pars){
   # simhaq
-  if(is.null(simhaq$therapy)) stop("'therapy' column of 'simhaq' is missing")
-  if(is.null(simhaq$therapy_cycle)) stop("'therapy_cycle' column of 'simhaq' is missing")
+  if(is.null(simhaq$tx)) stop("'tx' column of 'simhaq' is missing")
+  if(is.null(simhaq$tx_cycle)) stop("'tx_cycle' column of 'simhaq' is missing")
   if(is.null(simhaq$id)) stop("'id' column of 'simhaq' is missing")
   if(is.null(simhaq$haq)) stop("'haq' column of 'simhaq' is missing")
   if(is.null(simhaq$yrlen)) stop("'yrlen' column of 'simhaq' is missing")

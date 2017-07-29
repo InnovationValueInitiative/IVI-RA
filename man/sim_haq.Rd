@@ -17,7 +17,7 @@ sim_haq(arminds, haq0, das28_0, sdai0, cdai0, age0, male, prev_dmards,
 }
 \arguments{
 \item{arminds}{Indices of treatment arms consisting of sequences of therapies (each element
-is the index of a therapy in \code{iviRA::treatments}. May be a vector consisting of a single treatment sequence or a matrix 
+is the index of a treatment in \code{iviRA::treatments}. May be a vector consisting of a single treatment sequence or a matrix 
 of unique sequences for each patient.}
 
 \item{itreat_haq}{How should the relationship between treatment and HAQ during the initial 
@@ -70,20 +70,21 @@ A \code{data.table} with the following columns:
 \describe{
 \item{sim}{Simulation number. Indexed from 1 to S where S is the number of randomly sampled parameter sets (e.g. n from \link{sample_pars}).}
 \item{id}{ID number. Indexed from 1 to N where N is the number of simulated patients (e.g. n from \link{sample_pats}).}
-\item{month}{Month since a simulated patient began the first therapy in a treatment sequence.}
-\item{therapy}{Index of therapy used. Given J total therapies, the first J - 1 therapies match the indices from \code{arminds}. The final \code{therapy}
- is always equal to the index of the non-biologic therapy (\code{nbt_ind}).}
-\item{therapy_seq}{Number of therapies in a sequence. First therapy equal to 1, second therapy equal to 2, \ldots}
-\item{therapy_cycle}{Number of model cycles since a patient began taking a given therapy in a treatment sequence. \code{therapy_cycle} = 1
+\item{month}{Month since a simulated patient began the first treatment in a treatment sequence.}
+\item{tx}{Treatment used. Given J total therapies, the first J - 1 therapies match the indices from \code{arminds}. The final \code{tx}
+ is always the non-biologic treatment (\code{nbt_ind}).}
+\item{tx_seq}{Number of treatment in a treatment sequence. First treatment equal to 1, 
+second treatment equal to 2, \ldots}
+\item{tx_cycle}{Number of model cycles since a patient began taking a given treatment in a treatment sequence. \code{tx_cycle} = 1
 during the initial 6-month treatment period.}
 \item{death}{Equal to 1 if patient died during the model cycle and 0 otherwise. }
 \item{age}{Age of patient which increases with the model cycles.}
-\item{ttd}{Time to treatment discontinuation. Measured in terms of model cycles (e.g. ttd = 2 if therapy will discontinue in 
-1 year given 6-months cycles). \code{ttd} is measured at the end of each cycle. Patients switch therapies during the cycle in which \code{ttd} 
+\item{ttd}{Time to treatment discontinuation. Measured in terms of model cycles (e.g. ttd = 2 if treatment will discontinue in 
+1 year given 6-months cycles). \code{ttd} is measured at the end of each cycle. Patients switch treatments during the cycle in which \code{ttd} 
 becomes negative and HAQ rebounds during the cycle.}
-\item{acr}{Simulated ACR response during the initial 6-month period for a new therapy. Constant within \code{therapy}. 
+\item{acr}{Simulated ACR response during the initial 6-month period for a new treatment Constant within \code{tx}.
 Categories are 0 (ACR < 20), 1 (ACR 20-50), 2 (ACR 50-70), and 3 (ACR 70+).}
-\item{eular}{Simulated EULAR response during the initial 6-month period for a new therapy. Constant within \code{therapy}. 
+\item{eular}{Simulated EULAR response during the initial 6-month period for a new treatment Constant within \code{tx}. 
 Categories are 0 (no EULAR response), 1 (moderate EULAR response), and 2 (good EULAR response).}
 \item{haq}{HAQ score. Restricted to range between 0 and 3.}
 \item{ttsi}{Time to serious infection. Like \code{ttd}, measured in terms of model cycles. \code{ttsi} is measured at the end of each 
