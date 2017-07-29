@@ -4,7 +4,9 @@ library("data.table")
 source("func.R")
 
 # ACQUISITION AND ADMINISTRATION COSTS -----------------------------------------
-treat.cost <- data.table(read_excel("cost.xlsx", sheet = "RData"))
+treat.cost <- data.table(read_excel("cost.xlsx", sheet = "Cost"))
+treat.lookup <- data.table(read_excel("cost.xlsx", sheet = "Lookup"))
+treat.cost <- list(cost = treat.cost, lookup = treat.lookup)
 
 # HOSPITALIZATION COSTS --------------------------------------------------------
 haq <- c("0 to <0.5", "0.5 to <1", "1 to <1.5", "1.5 to <2", "2 to <2.5", ">2.5")

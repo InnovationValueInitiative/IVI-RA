@@ -17,7 +17,7 @@ sim_haq(arminds, haq0, das28_0, sdai0, cdai0, age0, male, prev_dmards,
 }
 \arguments{
 \item{arminds}{Indices of treatment arms consisting of sequences of therapies (each element
-is the index of a therapy in \code{therapy.pars$info}. May be a vector consisting of a single treatment sequence or a matrix 
+is the index of a therapy in \code{iviRA::treatments}. May be a vector consisting of a single treatment sequence or a matrix 
 of unique sequences for each patient.}
 
 \item{itreat_haq}{How should the relationship between treatment and HAQ during the initial 

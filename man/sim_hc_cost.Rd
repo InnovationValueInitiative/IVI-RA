@@ -5,9 +5,9 @@
 \title{Simulate health care sector costs from simulated HAQ score}
 \usage{
 sim_hc_cost(simhaq, weight, treat_cost, hosp_cost, mgmt_cost, si_cost,
-  cdmards.ind = which(therapy.pars$info[["sname"]] == "cdmards"),
-  tcz.ind = which(therapy.pars$info[["sname"]] == "tcz"),
-  tczmtx.ind = which(therapy.pars$info[["sname"]] == "tczmtx"),
+  cdmards.ind = which(iviRA::treatments[["sname"]] == "cdmards"),
+  tcz.ind = which(iviRA::treatments[["sname"]] == "tcz"),
+  tczmtx.ind = which(iviRA::treatments[["sname"]] == "tczmtx"),
   cycle_length = 6, check = TRUE)
 }
 \arguments{

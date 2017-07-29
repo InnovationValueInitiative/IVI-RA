@@ -155,7 +155,7 @@ iviRA::ttd.all$weibull$anc2.index
 ```
 
 ## Serious infections
-Serious infection rates are based on the NMA and Cochrane review by [Singh et al. (2011)](http://onlinelibrary.wiley.com/doi/10.1002/14651858.CD008794/full). In accordance with the 2016 NICE report we assume a constant serious infection rate of `r exp(iviRA::therapy.pars$si$exp$est["cdmards"])` for patients using cDMARDs and a constant rate of `exp(iviRA::therapy.pars$si$exp$est["etnmtx"])` for patient using bDMARDs. A such we constantly assume that the time to a serious infection is exponentially distributed and that it does not vary across bDMARDs. 
+Serious infection rates are based on the NMA and Cochrane review by [Singh et al. (2011)](http://onlinelibrary.wiley.com/doi/10.1002/14651858.CD008794/full). In accordance with the 2016 NICE report we assume a constant serious infection rate of `r exp(iviRA::ttsi[sname == "cdmards", lograte])` for patients using cDMARDs and a constant rate of `exp(iviRA::ttsi[sname == "etnmtx", lograte])` for patient using bDMARDs. A such we constantly assume that the time to a serious infection is exponentially distributed and that it does not vary across bDMARDs. 
 
 
 ```{r }
@@ -205,7 +205,7 @@ Drug acquisition and administration costs are separated into costs associated wi
 
 ```{r }
 library(knitr)
-kable(iviRA::treat.cost)
+kable(iviRA::treat.cost$cost)
 ```
 
 Hospitalization costs are estimated as a function of the HAQ score. In particular, [Carlson 2015](https://www.ncbi.nlm.nih.gov/pubmed/25773552), report estimates of the number of days in the hospital for a given HAQ score range as well as the cost of a single day in the hospital. 

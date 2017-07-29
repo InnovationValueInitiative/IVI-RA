@@ -133,7 +133,7 @@ N patients. Cycle lengths are 6 months long. The simulation is written in C++ fo
     <tr>
       <th>arminds</th>
       <td><p>Indices of treatment arms consisting of sequences of therapies (each element
-is the index of a therapy in <code>therapy.pars$info</code>. May be a vector consisting of a single treatment sequence or a matrix 
+is the index of a therapy in <code><a href='http://www.rdocumentation.org/packages/iviRA/topics/treatments'>iviRA::treatments</a></code>. May be a vector consisting of a single treatment sequence or a matrix 
 of unique sequences for each patient.</p></td>
     </tr>
     <tr>
@@ -175,7 +175,7 @@ and <code>x.ttd</code> as generated from input_data.</p></td>
     <tr>
       <th>pars</th>
       <td><p>List of parameters. Required parameters are <code>rebound</code>, <code>acr1</code>, <code>acr2</code>, <code>acr2eular</code>, <code>eular2haq</code>, 
-<code>haq.lprog.therapy</code>, <code>haq.lprog.age</code>, <code>logor.mort</code>, <code>mort.loghr.haqdif</code>, <code>ttsi</code>,
+<code>haq.lprog.tx</code>, <code>haq.lprog.age</code>, <code>logor.mort</code>, <code>mort.loghr.haqdif</code>, <code>ttsi</code>,
 <code>ttd.eular.mod</code>, <code>ttd.eular.good</code>, and <code>lt</code> as generated from <a href='sample_pars.html'>sample_pars</a>. Additionally, if <code>cdmards_prog</code> is equal 
 to "lcgm", then <code>haq.lcgm</code> must be included.</p></td>
     </tr>

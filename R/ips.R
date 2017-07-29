@@ -19,8 +19,8 @@
 #' @export 
 sim_iviRA <- function(arms, input_data, pars, model_structure, 
                       max_months = NULL, treatment_lookup = iviRA::treatments$sname,
-                    cdmards_ind = which(therapy.pars$info$sname == "cdmards"),
-                    nbt_ind = which(therapy.pars$info$sname == "nbt"),
+                    cdmards_ind = which(iviRA::treatments$sname == "cdmards"),
+                    nbt_ind = which(iviRA::treatments$sname == "nbt"),
                     check = TRUE){
   
   # PREPPING FOR THE SIMULATION
@@ -177,7 +177,7 @@ select_model_structure <- function(itreat_haq = c("acr-haq", "acr-eular-haq", "h
 #' N patients. Cycle lengths are 6 months long. The simulation is written in C++ for speed. 
 #' 
 #' @param arminds Indices of treatment arms consisting of sequences of therapies (each element
-#' is the index of a therapy in \code{therapy.pars$info}. May be a vector consisting of a single treatment sequence or a matrix 
+#' is the index of a therapy in \code{iviRA::treatments}. May be a vector consisting of a single treatment sequence or a matrix 
 #' of unique sequences for each patient.
 #' @param input_data List of input data. Required inputs are \code{haq0}, \code{age}, \code{male}, \code{x.mort}, 
 #' and \code{x.ttd} as generated from \link{input_data}.
@@ -639,9 +639,9 @@ check_sim_utility_wailoo <- function(simhaq, haq0, male, prev_dmards, coefs){
 #'
 #' @export
 sim_hc_cost <- function(simhaq, weight, treat_cost, hosp_cost, mgmt_cost, si_cost, 
-                        cdmards.ind = which(therapy.pars$info[["sname"]] == "cdmards"),
-                        tcz.ind = which(therapy.pars$info[["sname"]] == "tcz"),
-                        tczmtx.ind = which(therapy.pars$info[["sname"]] == "tczmtx"),
+                        cdmards.ind = which(iviRA::treatments[["sname"]] == "cdmards"),
+                        tcz.ind = which(iviRA::treatments[["sname"]] == "tcz"),
+                        tczmtx.ind = which(iviRA::treatments[["sname"]] == "tczmtx"),
                         cycle_length = 6,
                         check = TRUE){
   # treatment costs

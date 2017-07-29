@@ -276,7 +276,6 @@ test_that("itreat_switch", {
 pop <- sample_pats(n = 10)
 arm.names <- c("adamtx", "cdmards")
 parsamp <- sample_pars(n = 100)
-par.table <- par_table(parsamp, pop)
 mod.struct <- select_model_structure(itreat_haq = "acr-haq",
                                      itreat_switch = "acr-switch",
                                      cdmards_haq_model = "lcgm",

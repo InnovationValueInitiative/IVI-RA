@@ -2,7 +2,7 @@
 DATA=../data
 
 # all datasets for package
-all: $(DATA)/treatments.rda $(DATA)/therapy-pars.rda 
+all: $(DATA)/treatments.rda 
 all: $(DATA)/nma-acr-naive.rda $(DATA)/nma-acr-naive-nice.rda 
 all: $(DATA)/nma-das28-naive.rda $(DATA)/nma-haq-naive.rda
 all: $(DATA)/acr2das28.rda $(DATA)/acr2sdai.rda $(DATA)/acr2cdai.rda 
@@ -25,12 +25,6 @@ NMA_TARGET := $(DATA)/nma-acr-naive.rda $(DATA)/nma-acr-naive-nice.rda
 NMA_TARGET +=  $(DATA)/nma-das28-naive.rda $(DATA)/nma-haq-naive.rda
 $(NMA_TARGET): $(NMA_DEPS)
 	Rscript nma.R
-
-# parameters that vary by treatment
-TP_DEPS := therapy-pars.R func.R cost.xlsx 
-TP_TARGET := $(DATA)/therapy-pars.rda figs/infections-grijalva-cumhaz.pdf figs/infections-van-dartel-cumhaz.pdf
-$(TP_TARGET): $(TP_DEPS)
-	Rscript therapy-pars.R
 
 # Mappings
 MAP_TARGET := := $(DATA)/acr2das28.rda $(DATA)/acr2sdai.rda $(DATA)/acr2cdai.rda 
@@ -77,6 +71,6 @@ $(DATA)/pain.rda $(DATA)/utility-mixture.rda $(DATA)/utility-wailoo.rda: utility
 	Rscript utility.R 
 	
 # Costs
-$(DATA)/treat-cost.rda $(DATA)/hosp-cost.rda $(DATA)/mgmt-cost.rda $(DATA)/prod-loss.rda: cost.R
+$(DATA)/treat-cost.rda $(DATA)/hosp-cost.rda $(DATA)/mgmt-cost.rda $(DATA)/prod-loss.rda: cost.R cost.xlsx
 	Rscript cost.R
 	

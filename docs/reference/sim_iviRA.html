@@ -115,8 +115,9 @@
     
 
     <pre class="usage"><span class='fu'>sim_iviRA</span>(<span class='no'>arms</span>, <span class='no'>input_data</span>, <span class='no'>pars</span>, <span class='no'>model_structure</span>, <span class='kw'>max_months</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>cdmards_ind</span> <span class='kw'>=</span> <span class='fu'>which</span>(<span class='no'>therapy.pars</span>$<span class='no'>info</span>$<span class='no'>sname</span> <span class='kw'>==</span> <span class='st'>"cdmards"</span>),
-  <span class='kw'>nbt_ind</span> <span class='kw'>=</span> <span class='fu'>which</span>(<span class='no'>therapy.pars</span>$<span class='no'>info</span>$<span class='no'>sname</span> <span class='kw'>==</span> <span class='st'>"nbt"</span>), <span class='kw'>check</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+  <span class='kw'>treatment_lookup</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/treatments'>treatments</a></span>$<span class='no'>sname</span>,
+  <span class='kw'>cdmards_ind</span> <span class='kw'>=</span> <span class='fu'>which</span>(<span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/treatments'>treatments</a></span>$<span class='no'>sname</span> <span class='kw'>==</span> <span class='st'>"cdmards"</span>),
+  <span class='kw'>nbt_ind</span> <span class='kw'>=</span> <span class='fu'>which</span>(<span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/treatments'>treatments</a></span>$<span class='no'>sname</span> <span class='kw'>==</span> <span class='st'>"nbt"</span>), <span class='kw'>check</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -151,6 +152,13 @@ the model is simulated over each patient's lifetime.</p></td>
       <th>nbt_ind</th>
       <td><p>Index for the non-biologic (i.e. a term used to define a selection of treatments clinicians use
 after the last biologic in a treatment sequence).</p></td>
+    </tr>
+    <tr>
+      <th>treatments_lookup</th>
+      <td><p>Vector of names of all treatments included in the parameter
+estimates. Index of of treatments in <code>arms</code> are matched against treatments in
+<code>treatments_lookup</code> by name. Indices of treatment-specific parameter estimates must be 
+in the same order as treatments in <code>treatments_lookup</code>.</p></td>
     </tr>
     </table>
     

@@ -102,7 +102,7 @@
 ## [10] "mort.loghr.haqdif" "ttd.all"           "ttd.da"           
 ## [13] "ttd.eular"         "acr"               "das28"            
 ## [16] "haq"               "eular2haq"         "acr2haq"          
-## [19] "haq.lprog.therapy" "haq.lprog.age"     "haq.lcgm"         
+## [19] "haq.lprog.tx"      "haq.lprog.age"     "haq.lcgm"         
 ## [22] "utility.mixture"   "utility.wailoo"    "hosp.cost"        
 ## [25] "mgmt.cost"         "prod.loss"         "ttsi"             
 ## [28] "si.cost"           "si.ul"</code></pre>
@@ -113,7 +113,7 @@
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">parsamp2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pars.html">sample_pars</a></span>(<span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">si_cost =</span> <span class="dv">7000</span>)
 <span class="kw">summary</span>(parsamp2$si.cost)</code></pre></div>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##    5630    6185    6866    6863    7503    8363</code></pre>
+##    5636    6357    6814    6962    7634    8373</code></pre>
 <p>To view the full list of arguments in <code>sample_pars</code> that can changed by the user view the documentation by typing <code><a href="../reference/sample_pars.html">?sample_pars</a></code>. All default arguments are loaded with the package and are based on IVI’s statistical estimates and synthesis of the literature. The parameter estimates can be viewed by typing the command <code>data(package = "iviRA")</code> into the R console.</p>
 <p>Below we describe these parameter estimates and separate them into 8 main categories: treatment effects estimated from a network meta-analysis (NMA); mappings between various measured of treatment response, disease activity, and/or function; long-term progression of disease, treatment duration, serious infections, mortality, utility, and costs.</p>
 <div id="nma" class="section level2">
@@ -206,24 +206,22 @@
 ##  2: abtivmtx -0.001 0.001530640 -0.0040 0.0020
 ##  3:   adamtx -0.003 0.007398095 -0.0175 0.0115
 ##  4:      ada  0.012 0.006887882 -0.0015 0.0255
-##  5:       tt  0.031 0.002551067  0.0260 0.0360
-##  6:   etnmtx -0.005 0.003316387 -0.0115 0.0015
-##  7:      etn -0.003 0.003826601 -0.0105 0.0045
-##  8:   golmtx -0.001 0.001530640 -0.0040 0.0020
-##  9:   ifxmtx -0.001 0.003571494 -0.0080 0.0060
-## 10:  placebo  0.031 0.002551067  0.0260 0.0360
-## 11:   tczmtx -0.001 0.001530640 -0.0040 0.0020
-## 12:      tcz -0.001 0.001530640 -0.0040 0.0020
-## 13:   czpmtx -0.001 0.001530640 -0.0040 0.0020
-## 14: abtscmtx -0.001 0.001530640 -0.0040 0.0020
-## 15:      nbt  0.031 0.002551067  0.0260 0.0360
-## 16:   rtxmtx -0.001 0.001530640 -0.0040 0.0020
-## 17:   tofmtx -0.001 0.001530640 -0.0040 0.0020
-## 18:      rtx -0.001 0.001530640 -0.0040 0.0020
-## 19:      tof -0.001 0.001530640 -0.0040 0.0020
-## 20:      czp -0.001 0.001530640 -0.0040 0.0020
-## 21:      gol -0.001 0.001530640 -0.0040 0.0020
-##        sname    est          se   lower  upper</code></pre>
+##  5:   etnmtx -0.005 0.003316387 -0.0115 0.0015
+##  6:      etn -0.003 0.003826601 -0.0105 0.0045
+##  7:   golmtx -0.001 0.001530640 -0.0040 0.0020
+##  8:   ifxmtx -0.001 0.003571494 -0.0080 0.0060
+##  9:  placebo  0.031 0.002551067  0.0260 0.0360
+## 10:   tczmtx -0.001 0.001530640 -0.0040 0.0020
+## 11:      tcz -0.001 0.001530640 -0.0040 0.0020
+## 12:   czpmtx -0.001 0.001530640 -0.0040 0.0020
+## 13: abtscmtx -0.001 0.001530640 -0.0040 0.0020
+## 14:      nbt  0.031 0.002551067  0.0260 0.0360
+## 15:   rtxmtx -0.001 0.001530640 -0.0040 0.0020
+## 16:   tofmtx -0.001 0.001530640 -0.0040 0.0020
+## 17:      rtx -0.001 0.001530640 -0.0040 0.0020
+## 18:      tof -0.001 0.001530640 -0.0040 0.0020
+## 19:      czp -0.001 0.001530640 -0.0040 0.0020
+## 20:      gol -0.001 0.001530640 -0.0040 0.0020</code></pre>
 <p>The constant annual rate of HAQ progression is also adjusted by age based on differences between overall and age specific rates as reported by Michaud et al. (2011).</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iviRA::haq.lprog$diff.age</code></pre></div>
 <pre><code>##       age    est          se       lower       upper
@@ -375,31 +373,29 @@
 <div id="serious-infections" class="section level2">
 <h2 class="hasAnchor">
 <a href="#serious-infections" class="anchor"></a>Serious infections</h2>
-<p>Serious infection rates are based on the NMA and Cochrane review by <a href="http://onlinelibrary.wiley.com/doi/10.1002/14651858.CD008794/full">Singh et al. (2011)</a>. In accordance with the 2016 NICE report we assume a constant serious infection rate of 0.026 for patients using cDMARDs and a constant rate of <code>exp(iviRA::therapy.pars$si$exp$est["etnmtx"])</code> for patient using bDMARDs. A such we constantly assume that the time to a serious infection is exponentially distributed and that it does not vary across bDMARDs.</p>
+<p>Serious infection rates are based on the NMA and Cochrane review by <a href="http://onlinelibrary.wiley.com/doi/10.1002/14651858.CD008794/full">Singh et al. (2011)</a>. In accordance with the 2016 NICE report we assume a constant serious infection rate of 0.026 for patients using cDMARDs and a constant rate of <code>exp(iviRA::ttsi[sname == "etnmtx", lograte])</code> for patient using bDMARDs. A such we constantly assume that the time to a serious infection is exponentially distributed and that it does not vary across bDMARDs.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><a href="http://www.rdocumentation.org/packages/iviRA/topics/ttsi">iviRA::ttsi</a></code></pre></div>
 <pre><code>##        sname    lograte lograte_se
 ##  1:  cdmards  -3.649659   0.135922
 ##  2: abtivmtx  -3.352407   0.135922
 ##  3:   adamtx  -3.352407   0.135922
 ##  4:      ada  -3.352407   0.135922
-##  5:       tt  -3.649659   0.135922
-##  6:   etnmtx  -3.352407   0.135922
-##  7:      etn  -3.352407   0.135922
-##  8:   golmtx  -3.352407   0.135922
-##  9:   ifxmtx  -3.352407   0.135922
-## 10:  placebo -23.025851   0.135922
-## 11:   tczmtx  -3.352407   0.135922
-## 12:      tcz  -3.352407   0.135922
-## 13:   czpmtx  -3.352407   0.135922
-## 14: abtscmtx  -3.352407   0.135922
-## 15:      nbt -23.025851   0.135922
-## 16:   rtxmtx  -3.352407   0.135922
-## 17:   tofmtx  -3.352407   0.135922
-## 18:      rtx  -3.352407   0.135922
-## 19:      tof  -3.352407   0.135922
-## 20:      czp  -3.352407   0.135922
-## 21:      gol  -3.352407   0.135922
-##        sname    lograte lograte_se</code></pre>
+##  5:   etnmtx  -3.352407   0.135922
+##  6:      etn  -3.352407   0.135922
+##  7:   golmtx  -3.352407   0.135922
+##  8:   ifxmtx  -3.352407   0.135922
+##  9:  placebo -23.025851   0.135922
+## 10:   tczmtx  -3.352407   0.135922
+## 11:      tcz  -3.352407   0.135922
+## 12:   czpmtx  -3.352407   0.135922
+## 13: abtscmtx  -3.352407   0.135922
+## 14:      nbt -23.025851   0.135922
+## 15:   rtxmtx  -3.352407   0.135922
+## 16:   tofmtx  -3.352407   0.135922
+## 17:      rtx  -3.352407   0.135922
+## 18:      tof  -3.352407   0.135922
+## 19:      czp  -3.352407   0.135922
+## 20:      gol  -3.352407   0.135922</code></pre>
 </div>
 <div id="mortality" class="section level2">
 <h2 class="hasAnchor">
@@ -510,7 +506,7 @@
 <p>The model incorporates 3 main types of health care sector costs: (1) drug acquisition and administration costs, (2) hospitalization costs, and (3) general management costs. Productivity losses can also be included in the analysis if the analyst would like to take a societal perspective.</p>
 <p>Drug acquisition and administration costs are separated into costs associated with the first 6 months of treatment and costs after the first 6 months. Costs are a function of the FDA recommended dose and frequency of administration, strength and dosage form, the wholesale acquisition cost (WAC), and infusion. If dosing is weight based, then the dose is calculated by multiplying the dose value (e.g., <code>init_dose_val</code> and <code>ann_dose_val</code>) by each patients weight in kilograms; otherwise the dose is simply equal to the dose value. For example, the dose for infliximab during the first six months is equal to 3 multiplied by the weight of the patient.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(knitr)
-<span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(iviRA::treat.cost)</code></pre></div>
+<span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(iviRA::treat.cost$cost)</code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">name</th>

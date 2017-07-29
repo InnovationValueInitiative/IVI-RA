@@ -10,7 +10,7 @@ therapy.names <- c("cDMARDs", "abatacept IV + methotrexate", "adalimumab + metho
                "tocilizumab + methotrexate", "tocilizumab", "certolizumab pegol + methotrexate",
                "abatacept SC + methotrexate", "non-biologic", 
                "rituximab + methotrexate", "tofacitinib citrate + methotrexate",
-               "rituximab", "tofacitinib citrate", "certolizumab pegol", "golimumab")
+               "rituximab", "tofac itinib citrate", "certolizumab pegol", "golimumab")
 therapy.mnames <- c("cDMARDs", "ABT IV + MTX", "ADA + MTX", "ADA", "Triple therapy",
                     "ETN + MTX", "ETN", "GOL + MTX", "IFX + MTX", "Placebo", "TCZ + MTX",
                     "TCZ", "CZP + MTX", "ABT SC + MTX", "NBT", "RTX + MTX", "TOF + MTX",
@@ -192,7 +192,7 @@ haq.lprog[, lower := est - qnorm(.975) * se]
 haq.lprog[, upper := est + qnorm(.975) * se]
 
 # TREATMENT COSTS --------------------------------------------------------------
-cost <- data.table(read_excel("cost.xlsx", sheet = "RData"))
+cost <- data.table(read_excel("cost.xlsx", sheet = "Cost"))
 cost[, dose_escalation := .025 * .188]
 cost[sname == "ada", dose_escalation := .096 * .912]
 cost[sname == "ifx", dose_escalation := .35 * .295]

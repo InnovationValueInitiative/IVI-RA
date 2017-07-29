@@ -6,8 +6,8 @@
 \usage{
 sim_iviRA(arms, input_data, pars, model_structure, max_months = NULL,
   treatment_lookup = iviRA::treatments$sname,
-  cdmards_ind = which(therapy.pars$info$sname == "cdmards"),
-  nbt_ind = which(therapy.pars$info$sname == "nbt"), check = TRUE)
+  cdmards_ind = which(iviRA::treatments$sname == "cdmards"),
+  nbt_ind = which(iviRA::treatments$sname == "nbt"), check = TRUE)
 }
 \arguments{
 \item{arms}{Name of arms in the treatment treatment sequence. May be a vector consisting of 
