@@ -51,9 +51,28 @@ sim_dhaq_lcgm1C <- function(year, cycle_length, age, female, das28, delta, beta)
     .Call('iviRA_sim_dhaq_lcgm1C', PACKAGE = 'iviRA', year, cycle_length, age, female, das28, delta, beta)
 }
 
-#' @export
-sim_haqC <- function(therapies, haq0, das28_0, sdai0, cdai0, age0, male, prev_dmards, itreat_haq_model, itreat_switch_model, nma_acr1, nma_acr2, nma_dhaq1, nma_dhaq2, nma_das28_1, nma_das28_2, acr2eular, acr2haq, eular2haq, acr2das28, acr2sdai, acr2cdai, tswitch_da, haq_lprog_therapy, haq_lprog_age, haq_lcgm_delta, haq_lcgm_beta, cdmards_haq_model, rebound_factor, lifetable_male, lifetable_female, x_mort, logor, dur_dist, x_dur, ttd_all_loc, ttd_all_anc1, ttd_all_anc2, ttd_da_loc, ttd_da_anc1, ttd_da_anc2, ttd_eular_loc_mod, ttd_eular_anc1_mod, ttd_eular_anc2_mod, ttd_eular_loc_good, ttd_eular_anc1_good, ttd_eular_anc2_good, cycle_length, treat_gap, cdmards, nbt, si_loc, si_anc1, si_anc2, si_dist, haqdelta_loghr, max_months) {
-    .Call('iviRA_sim_haqC', PACKAGE = 'iviRA', therapies, haq0, das28_0, sdai0, cdai0, age0, male, prev_dmards, itreat_haq_model, itreat_switch_model, nma_acr1, nma_acr2, nma_dhaq1, nma_dhaq2, nma_das28_1, nma_das28_2, acr2eular, acr2haq, eular2haq, acr2das28, acr2sdai, acr2cdai, tswitch_da, haq_lprog_therapy, haq_lprog_age, haq_lcgm_delta, haq_lcgm_beta, cdmards_haq_model, rebound_factor, lifetable_male, lifetable_female, x_mort, logor, dur_dist, x_dur, ttd_all_loc, ttd_all_anc1, ttd_all_anc2, ttd_da_loc, ttd_da_anc1, ttd_da_anc2, ttd_eular_loc_mod, ttd_eular_anc1_mod, ttd_eular_anc2_mod, ttd_eular_loc_good, ttd_eular_anc1_good, ttd_eular_anc2_good, cycle_length, treat_gap, cdmards, nbt, si_loc, si_anc1, si_anc2, si_dist, haqdelta_loghr, max_months)
+sim_tx_cost1C <- function(t, agents_ind, tx_name, init_dose_val, ann_dose_val, strength_val, init_num_doses, ann_num_doses, price, infusion_cost, loading_dose, weight_based, weight, cycle_length, discount) {
+    .Call('iviRA_sim_tx_cost1C', PACKAGE = 'iviRA', t, agents_ind, tx_name, init_dose_val, ann_dose_val, strength_val, init_num_doses, ann_num_doses, price, infusion_cost, loading_dose, weight_based, weight, cycle_length, discount)
+}
+
+sim_mgmt_cost1C <- function(yrlen, cost) {
+    .Call('iviRA_sim_mgmt_cost1C', PACKAGE = 'iviRA', yrlen, cost)
+}
+
+sim_hosp_cost1C <- function(haq, yrlen, hosp_days, cost_pday) {
+    .Call('iviRA_sim_hosp_cost1C', PACKAGE = 'iviRA', haq, yrlen, hosp_days, cost_pday)
+}
+
+sim_si_cost1C <- function(si, yrlen, cost) {
+    .Call('iviRA_sim_si_cost1C', PACKAGE = 'iviRA', si, yrlen, cost)
+}
+
+sim_prod_loss1C <- function(haq, yrlen, beta) {
+    .Call('iviRA_sim_prod_loss1C', PACKAGE = 'iviRA', haq, yrlen, beta)
+}
+
+sim_iviRA_C <- function(arm_inds, haq0, das28_0, sdai0, cdai0, age0, male, prev_dmards, itreat_haq_model, itreat_switch_model, nma_acr1, nma_acr2, nma_dhaq1, nma_dhaq2, nma_das28_1, nma_das28_2, acr2eular, acr2haq, eular2haq, acr2das28, acr2sdai, acr2cdai, tswitch_da, haq_lprog_therapy, haq_lprog_age, haq_lcgm_delta, haq_lcgm_beta, cdmards_haq_model, rebound_factor, lifetable_male, lifetable_female, x_mort, logor_mort, ttd_dist, x_ttd, ttd_all_loc, ttd_all_anc1, ttd_all_anc2, ttd_da_loc, ttd_da_anc1, ttd_da_anc2, ttd_eular_loc_mod, ttd_eular_anc1_mod, ttd_eular_anc2_mod, ttd_eular_loc_good, ttd_eular_anc1_good, ttd_eular_anc2_good, cycle_length, treat_gap, cdmards, nbt, si_loc, si_anc1, si_anc2, si_dist, haqdelta_loghr, max_months, hosp_days, cost_pday, mgmt_cost, si_cost, prod_loss, tc_agents_ind, tc_list, weight) {
+    .Call('iviRA_sim_iviRA_C', PACKAGE = 'iviRA', arm_inds, haq0, das28_0, sdai0, cdai0, age0, male, prev_dmards, itreat_haq_model, itreat_switch_model, nma_acr1, nma_acr2, nma_dhaq1, nma_dhaq2, nma_das28_1, nma_das28_2, acr2eular, acr2haq, eular2haq, acr2das28, acr2sdai, acr2cdai, tswitch_da, haq_lprog_therapy, haq_lprog_age, haq_lcgm_delta, haq_lcgm_beta, cdmards_haq_model, rebound_factor, lifetable_male, lifetable_female, x_mort, logor_mort, ttd_dist, x_ttd, ttd_all_loc, ttd_all_anc1, ttd_all_anc2, ttd_da_loc, ttd_da_anc1, ttd_da_anc2, ttd_eular_loc_mod, ttd_eular_anc1_mod, ttd_eular_anc2_mod, ttd_eular_loc_good, ttd_eular_anc1_good, ttd_eular_anc2_good, cycle_length, treat_gap, cdmards, nbt, si_loc, si_anc1, si_anc2, si_dist, haqdelta_loghr, max_months, hosp_days, cost_pday, mgmt_cost, si_cost, prod_loss, tc_agents_ind, tc_list, weight)
 }
 
 #' @export
@@ -72,28 +91,8 @@ sim_utility_wailooC <- function(sim, id, age, disease_duration, haq0, male, prev
 }
 
 #' @export
-sim_treat_costC <- function(therapy, therapy_cycle, id, weight, cycle_length, ann_infusion_cost, ann_rx_cost, init_infusion_cost, init_rx_cost, weight_based, ann_wgt_slope, init_wgt_slope, ann_util, init_util, strength, price, cdmards, tcz, tczmtx) {
-    .Call('iviRA_sim_treat_costC', PACKAGE = 'iviRA', therapy, therapy_cycle, id, weight, cycle_length, ann_infusion_cost, ann_rx_cost, init_infusion_cost, init_rx_cost, weight_based, ann_wgt_slope, init_wgt_slope, ann_util, init_util, strength, price, cdmards, tcz, tczmtx)
-}
-
-#' @export
-sim_hosp_costC <- function(haq, yrlen, sim, unit_cost_mat, hosp_days_mat) {
-    .Call('iviRA_sim_hosp_costC', PACKAGE = 'iviRA', haq, yrlen, sim, unit_cost_mat, hosp_days_mat)
-}
-
-#' @export
-sim_prod_lossC <- function(haq, yrlen, sim, beta) {
-    .Call('iviRA_sim_prod_lossC', PACKAGE = 'iviRA', haq, yrlen, sim, beta)
-}
-
-#' @export
 sim_si_costC <- function(si, yrlen, sim, cost) {
     .Call('iviRA_sim_si_costC', PACKAGE = 'iviRA', si, yrlen, sim, cost)
-}
-
-#' @export
-sim_mgmt_costC <- function(yrlen, sim, cost) {
-    .Call('iviRA_sim_mgmt_costC', PACKAGE = 'iviRA', yrlen, sim, cost)
 }
 
 #' @export

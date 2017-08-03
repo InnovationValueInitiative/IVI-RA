@@ -51,12 +51,9 @@
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-        <li>
-  <a href="../reference/index.html">Reference</a>
-</li>
-<li class="dropdown">
+        <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Run the model
+    Tutorial
      
     <span class="caret"></span>
   </a>
@@ -85,7 +82,39 @@
   </ul>
 </li>
 <li>
-  <a href="../articles/collaborate.html">Collaborate</a>
+  <a href="../reference/index.html">API</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Collaborate
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Suggested improvements</li>
+    <li>
+      <a href="../articles/collaborate.html">Contribute</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    About
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">OSVP</li>
+    <li>
+      <a href="../model-description/model-description.pdf">Model description</a>
+    </li>
+    <li class="dropdown-header">Release history</li>
+    <li class="dropdown-header">Reproducibility</li>
+    <li class="dropdown-header">hesim</li>
+  </ul>
+</li>
+<li>
+  <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra/">Web app</a>
 </li>
       </ul>
       
@@ -127,14 +156,17 @@
 for number of previous DMARDs.</p></td>
     </tr>
     <tr>
+      <th>model_structure</th>
+      <td><p>An object of class <code>model_structure</code> generated from 
+<a href='select_model_structure.html'>select_model_structure</a>.</p></td>
+    </tr>
+    <tr>
       <th>vars_mort</th>
       <td><p>A matrix with each column a variable used to adjust mortality.</p></td>
     </tr>
     <tr>
       <th>vars_ttd</th>
-      <td><p>The design matrix for time to treatment discontinuation.
-@param model_structure An object of class <code>model_structure</code> generated from 
-<a href='select_model_structure.html'>select_model_structure</a>.</p></td>
+      <td><p>The design matrix for time to treatment discontinuation.</p></td>
     </tr>
     </table>
     

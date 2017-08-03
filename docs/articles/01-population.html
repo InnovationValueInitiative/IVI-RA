@@ -28,12 +28,9 @@
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="../reference/index.html">Reference</a>
-</li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Run the model
+    Tutorial
      
     <span class="caret"></span>
   </a>
@@ -62,7 +59,39 @@
   </ul>
 </li>
 <li>
-  <a href="../articles/collaborate.html">Collaborate</a>
+  <a href="../reference/index.html">API</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Collaborate
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+<li class="dropdown-header">Suggested improvements</li>
+    <li>
+      <a href="../articles/collaborate.html">Contribute</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    About
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+<li class="dropdown-header">OSVP</li>
+    <li>
+      <a href="../model-description/model-description.pdf">Model description</a>
+    </li>
+    <li class="dropdown-header">Release history</li>
+    <li class="dropdown-header">Reproducibility</li>
+    <li class="dropdown-header">hesim</li>
+  </ul>
+</li>
+<li>
+  <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra/">Web app</a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
@@ -100,23 +129,30 @@
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pop &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pats.html">sample_pats</a></span>(<span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">type =</span> <span class="st">"heterog"</span>)
 <span class="kw">head</span>(pop)</code></pre></div>
 <pre><code>##           age male weight prev_dmards    das28     sdai     cdai     haq0
-## [1,] 67.43246    0     75           4 5.673015 43.54916 43.87664 2.290399
-## [2,] 62.90529    0     75           7 8.780385 66.23479 62.20959 2.014883
-## [3,] 39.00638    0     75           4 7.217222 44.91556 43.13924 1.838291
-## [4,] 64.90001    0     75           3 6.761051 47.54521 47.43275 1.766058
-## [5,] 62.89915    0     75           1 5.684007 41.07609 33.33551 1.706870
-## [6,] 47.17820    0     75           4 7.191823 42.60813 52.82879 1.193430</code></pre>
+## [1,] 55.71749    1     89           4 5.211922 29.13869 35.82725 1.650128
+## [2,] 77.87401    0     75           5 6.411088 50.18109 44.37424 2.025821
+## [3,] 56.41358    0     75           3 6.455956 59.98776 49.42509 1.773625
+## [4,] 76.29340    0     75           2 7.305472 57.03213 55.60100 1.776168
+## [5,] 50.90338    0     75           2 5.683229 40.08054 40.60958 1.168602
+## [6,] 52.84404    0     75           1 6.250057 57.13067 52.92781 2.251187</code></pre>
 <p>We can also customize the distribution of patients. For example, suppose we want to study a younger and healthier population. We might then sample patients by customizing arguments in <code>sample_pats</code>,</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pop2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pats.html">sample_pats</a></span>(<span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">type =</span> <span class="st">"heterog"</span>, <span class="dt">age_mean =</span> <span class="dv">45</span>, <span class="dt">das28_mean =</span> <span class="dv">4</span>, <span class="dt">sdai_mean =</span> <span class="dv">20</span>, 
                     <span class="dt">cdai_mean =</span> <span class="dv">18</span>)
 <span class="kw">head</span>(pop2)</code></pre></div>
-<pre><code>##           age male weight prev_dmards    das28     sdai     cdai     haq0
-## [1,] 29.35037    0     75           1 4.266674 20.88517 17.45202 1.361315
-## [2,] 47.82819    0     75           3 4.396778 32.61740 27.95572 1.008443
-## [3,] 61.09618    0     75           1 5.504777 32.63886 36.96039 1.456593
-## [4,] 55.67459    0     75           3 4.370885 27.19010 26.72859 2.299623
-## [5,] 41.66281    0     75           1 4.053985 23.65901 16.23876 2.176314
-## [6,] 45.48867    0     75           1 6.644927 32.22615 32.36875 1.392421</code></pre>
+<pre><code>##           age male weight prev_dmards    das28      sdai      cdai
+## [1,] 21.81471    0     75           4 5.000239 37.172342 37.700615
+## [2,] 57.51820    0     75           3 4.850505 23.735192 19.012994
+## [3,] 37.17954    0     75           4 5.041532 33.560127 29.265900
+## [4,] 54.99267    0     75           6 2.033994  6.289090  3.296701
+## [5,] 27.00355    0     75           2 3.643127 14.466509  8.745380
+## [6,] 74.02798    0     75           2 4.300455  8.316937 11.364114
+##          haq0
+## [1,] 1.460291
+## [2,] 1.833278
+## [3,] 2.293207
+## [4,] 1.355239
+## [5,] 1.772570
+## [6,] 1.731443</code></pre>
 </div>
 <div id="using-your-own-patient-population" class="section level2">
 <h2 class="hasAnchor">

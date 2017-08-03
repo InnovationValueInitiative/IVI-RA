@@ -49,7 +49,7 @@ sim_iviRA <- function(arms, input_data, pars, model_structure,
   cdmards.ind <- cdmards_ind - 1
   nbt.ind <- nbt_ind - 1
   arminds <- arminds - 1
-  
+
   ## survival parameters
   ttd.dist <- model_structure[["ttd_dist"]]
   pars.ttd.all <- pars$ttd.all[[ttd.dist]]
@@ -59,50 +59,69 @@ sim_iviRA <- function(arms, input_data, pars, model_structure,
   si.dist <- "exp"
   pars.si <- pars$ttsi
   
+  # treatment costs
+  tc <- pars$treat.cost
+  tc.arms <- cbind(arms, "nbt")
+  lookup.inds <- match(tc.arms, tc$lookup$sname)
+  agents <- aperm(array(match(unlist(tc$lookup[lookup.inds, -1, with = FALSE]),
+                         iviRA::treat.cost$cost$sname) - 1,
+                   dim = c(nrow(tc.arms), ncol(tc.arms), ncol(tc$lookup) - 1)),
+                  perm = c(2, 3, 1))
+  
   # RUNNING THE SIMULATION
-  ## simulate HAQ progression
-  sim.out <- sim_haq(arminds, input_data$haq0, input_data$das28,
-                     input_data$sdai, input_data$cdai,
-                     input_data$age, input_data$male, 
-                     input_data$prev.dmards,
-                     model_structure["itreat_haq"], model_structure["itreat_switch"],
-                     pars$acr$p1, pars$acr$p2, pars$haq$dy1, pars$haq$dy2,
-                     pars$das28$dy1, pars$das28$dy2,
-                     pars$acr2eular, pars$acr2haq, pars$eular2haq,
-                     pars$acr2das28, pars$acr2sdai, pars$acr2cdai,
-                     prob.switch.da,
-                     pars$haq.lprog.tx, pars$haq.lprog.age,
-                     pars$haq.lcgm$delta, pars$haq.lcgm$beta, model_structure["cdmards_haq_model"],
-                     pars$rebound, pars$lt$male, pars$lt$female,
-                     input_data$x.mort, pars$logor, ttd.dist, input_data$x.ttd,
-                     pars.ttd.all$sample[, pars.ttd.all$loc.index, drop = FALSE],
-                     pars.ttd.all$sample[, pars.ttd.all$anc1.index, drop = FALSE],
-                     pars.ttd.all$sample[, pars.ttd.all$anc2.index, drop = FALSE],
-                     pars.ttd.da$sample[, pars.ttd.da$loc.index, drop = FALSE],
-                     pars.ttd.da$sample[, pars.ttd.da$anc1.index, drop = FALSE],
-                     pars.ttd.da$sample[, pars.ttd.da$anc2.index, drop = FALSE],
-                     pars.ttd.em$sample[, pars.ttd.em$loc.index, drop = FALSE], 
-                     pars.ttd.em$sample[, pars.ttd.em$anc1.index, drop = FALSE],
-                     pars.ttd.em$sample[, pars.ttd.em$anc2.index, drop = FALSE], 
-                     pars.ttd.eg$sample[, pars.ttd.eg$loc.index, drop = FALSE], 
-                     pars.ttd.eg$sample[, pars.ttd.eg$anc1.index, drop = FALSE],
-                     pars.ttd.eg$sample[, pars.ttd.eg$anc2.index, drop = FALSE],
-                     cycle_length, treat_gap, cdmards.ind, nbt.ind,
-                     pars.si, 
-                     matrix(NA, nrow = pars$n, ncol = ncol(pars.si)), 
-                     matrix(NA, nrow = pars$n, ncol = ncol(pars.si)), 
-                     si.dist, pars$mort.loghr.haqdif, max_months)
+  sim.out <- sim_iviRA_C(arm_inds = arminds, 
+                         haq0 = input_data$haq0, das28_0 = input_data$das28,
+                     sdai0 = input_data$sdai, cdai0 = input_data$cdai,
+                     age0 = input_data$age, male = input_data$male, 
+                     prev_dmards = input_data$prev.dmards,
+                     itreat_haq_model = model_structure["itreat_haq"], 
+                     itreat_switch_model = model_structure["itreat_switch"],
+                     nma_acr1 = pars$acr$p1, nma_acr2 = pars$acr$p2, 
+                     nma_dhaq1 = pars$haq$dy1, nma_dhaq2 = pars$haq$dy2,
+                     nma_das28_1 = pars$das28$dy1, nma_das28_2 = pars$das28$dy2,
+                     acr2eular = pars$acr2eular, acr2haq = pars$acr2haq, eular2haq = pars$eular2haq,
+                     acr2das28 = pars$acr2das28, acr2sdai = pars$acr2sdai, acr2cdai = pars$acr2cdai,
+                     tswitch_da = prob.switch.da,
+                     haq_lprog_therapy = pars$haq.lprog.tx, haq_lprog_age = pars$haq.lprog.age,
+                     haq_lcgm_delta = pars$haq.lcgm$delta, haq_lcgm_beta = pars$haq.lcgm$beta, 
+                     cdmards_haq_model = model_structure["cdmards_haq_model"],
+                     rebound_factor = pars$rebound, 
+                     lifetable_male = pars$lt$male, lifetable_female = pars$lt$female,
+                     x_mort = input_data$x.mort, logor_mort = pars$logor.mort, 
+                     ttd_dist = ttd.dist, x_ttd = input_data$x.ttd,
+                     ttd_all_loc = pars.ttd.all$sample[, pars.ttd.all$loc.index, drop = FALSE],
+                     ttd_all_anc1 = pars.ttd.all$sample[, pars.ttd.all$anc1.index, drop = FALSE],
+                     ttd_all_anc2 = pars.ttd.all$sample[, pars.ttd.all$anc2.index, drop = FALSE],
+                     ttd_da_loc = pars.ttd.da$sample[, pars.ttd.da$loc.index, drop = FALSE],
+                     ttd_da_anc1 = pars.ttd.da$sample[, pars.ttd.da$anc1.index, drop = FALSE],
+                     ttd_da_anc2 = pars.ttd.da$sample[, pars.ttd.da$anc2.index, drop = FALSE],
+                     ttd_eular_loc_mod = pars.ttd.em$sample[, pars.ttd.em$loc.index, drop = FALSE], 
+                     ttd_eular_anc1_mod = pars.ttd.em$sample[, pars.ttd.em$anc1.index, drop = FALSE],
+                     ttd_eular_anc2_mod = pars.ttd.em$sample[, pars.ttd.em$anc2.index, drop = FALSE], 
+                     ttd_eular_loc_good = pars.ttd.eg$sample[, pars.ttd.eg$loc.index, drop = FALSE], 
+                     ttd_eular_anc1_good = pars.ttd.eg$sample[, pars.ttd.eg$anc1.index, drop = FALSE],
+                     ttd_eular_anc2_good = pars.ttd.eg$sample[, pars.ttd.eg$anc2.index, drop = FALSE],
+                     cycle_length = cycle_length, treat_gap = treat_gap, 
+                     cdmards = cdmards.ind, nbt = nbt.ind,
+                     si_loc = pars.si, 
+                     si_anc1 = matrix(NA, nrow = pars$n, ncol = ncol(pars.si)), 
+                     si_anc2 = matrix(NA, nrow = pars$n, ncol = ncol(pars.si)), 
+                     si_dist = si.dist, 
+                     haqdelta_loghr = pars$mort.loghr.haqdif, max_months = max_months,
+                     hosp_days = pars$hosp.cost$hosp.days, cost_pday = pars$hosp.cost$cost.pday,
+                     mgmt_cost = rowSums(pars$mgmt.cost), 
+                     si_cost = pars$si.cost, prod_loss = pars$prod.loss,
+                     tc_agents_ind = agents, tc = tc[c("cost", "discount")], 
+                     weight = input_data$weight)
+  sim.out <- as.data.table(sim.out)
   
-  ## simulate health care costs
-  sim.hc <- sim_hc_cost(simhaq = sim.out, weight = input_data$weight, 
-                        treat_cost = pars$treat.cost, hosp_cost = pars$hosp.cost,
-                        mgmt_cost = pars$mgmt.cost, si_cost = pars$si.cost,
-                        cycle_length = cycle_length)
-  sim.out <- cbind(sim.out, sim.hc)
-  
-  ## simulate productivity losses
-  sim.out[, prod_loss := sim_prod_loss(sim.out, pl_haq = pars$prod.loss)]
-  
+  ## C++ to R indices
+  sim.out[, sim := sim + 1]
+  sim.out[, id := id + 1]
+  sim.out[, tx_seq := tx_seq + 1]
+  sim.out[, tx_cycle := tx_cycle + 1]
+  sim.out[, tx := tx + 1]
+
   ## simulate utility and calculate QALYs
   if (model_structure["utility_model"] == "mixture"){
       sim.out <- cbind(sim.out, sim_utility_mixture(sim.out, male = input_data$male,
@@ -116,8 +135,6 @@ sim_iviRA <- function(arms, input_data, pars, model_structure,
   }
   sim.out[, qalys := sim_qalys(simhaq = sim.out, utility = sim.out$utility, 
                                si_ul = pars$si.ul)]
-  
-  ##
   
   # RETURN
   return(sim.out)
@@ -260,17 +277,24 @@ sim_haq <- function(arminds, haq0, das28_0, sdai0, cdai0, age0, male, prev_dmard
                     si_loc, si_anc1, si_anc2, si_dist, haqdelta_loghr, max_months){
   
   # run simulation
-  simout <- sim_haqC(arminds, haq0, das28_0, sdai0, cdai0, age0, male, prev_dmards,
-                     itreat_haq, itreat_switch, 
-                     nma_acr1, nma_acr2, nma_dhaq1, nma_dhaq2, nma_das28_1, nma_das28_2,
-                     acr2eular, acr2haq, eular2haq, acr2das28, acr2sdai, acr2cdai,
-                     tswitch_da, 
-                     haq_lprog_therapy, haq_lprog_age,
-                     haq_lcgm_delta, haq_lcgm_beta, cmdards_haq_model,
-                     rebound_factor,
-                     lifetable_male, lifetable_female, 
-                     x_mort, logor,
-                     dur_dist, x_dur,
+  browser()
+  simout <- sim_iviRA_C(arm_inds = arminds, haq0 = haq0, das28_0 = das28_0, 
+                        sdai0 = sdai0, cdai0 = cdai0, age0 = age0, male = male,
+                        prev_dmards = prev_dmards,
+                      itreat_haq_model = itreat_haq, itreat_switch_model = itreat_switch, 
+                      nma_acr1 = nma_acr1, nma_acr2 = nma_acr2, 
+                      nma_dhaq1 = nma_dhaq1, nma_dhaq2 = nma_dhaq2, 
+                      nma_das28_1 = nma_das28_1, nma_das28_2 = nma_das28_2,
+                     acr2eular = acr2eular, acr2haq = acr2haq, eular2haq = eular2haq, 
+                     acr2das28 = acr2das28, acr2sdai = acr2sdai, acr2cdai = acr2cdai,
+                     tswitch_da = tswitch_da, 
+                     haq_lprog_therapy = haq_lprog_therapy, haq_lprog_age = haq_lprog_age,
+                     haq_lcgm_delta = haq_lcgm_delta, haq_lcgm_beta = haq_lcgm_beta, 
+                     cdmards_haq_model = cmdards_haq_model,
+                     rebound_factor = rebound_factor,
+                     lifetable_male = lifetable_male, lifetable_female = lifetable_female, 
+                     x_mort = x_mort, logor = logor,
+                     dur_dist = dur_dist, x_dur = x_dur,
                      ttd_all_loc, ttd_all_anc1, ttd_all_anc2,
                      ttd_da_loc, ttd_da_nac1, ttd_da_anc2,
                      ttd_eular_loc_mod, ttd_eular_anc1_mod, ttd_eular_anc2_mod,
@@ -617,65 +641,6 @@ check_sim_utility_wailoo <- function(simhaq, haq0, male, prev_dmards, coefs){
   }
 }
 
-#' Simulate health care sector costs from simulated HAQ score
-#'
-#' Simulate health care sector costs from HAQ score simulated using \code{sim_haq}
-#' 
-#' @param simhaq Simulation output from \link{sim_haq}.
-#' @param weight Weight of patient. Used to calculate treatment costs when dosing is based
-#' on weight. 
-#' @param pars List of sampled parameter values. The format is the same as the ouptut produced 
-#' with \link{sample_pars}. The list must contain:
-#' \describe{
-#' \item{treat.cost}{Matrix of treatment cost data.}
-#' \item{hosp.cost}{List of two matrices used to simulate hospital costs. }
-#' \item{mgmt.cost}{Matrix of general management costs.}
-#' }
-#' @param cdmards.ind Index for cDMARDs. 
-#' @param tcz.ind Index for tocilizumab.
-#' @param tczmtx.ind Index for tocilizuma + methotrexate.
-#' @param check Should the function check parameters and input data passed to the model? Default is TRUE.
-#' 
-#' @return Matrix. First column is simulated pain score and second column is simulated utility.
-#'
-#' @export
-sim_hc_cost <- function(simhaq, weight, treat_cost, hosp_cost, mgmt_cost, si_cost, 
-                        cdmards.ind = which(iviRA::treatments[["sname"]] == "cdmards"),
-                        tcz.ind = which(iviRA::treatments[["sname"]] == "tcz"),
-                        tczmtx.ind = which(iviRA::treatments[["sname"]] == "tczmtx"),
-                        cycle_length = 6,
-                        check = TRUE){
-  # treatment costs
-  treat.cost.out <- sim_treat_costC(simhaq$tx - 1, simhaq$tx_cycle - 1, simhaq$id - 1, weight, 
-                            cycle_length,
-                            treat_cost$ann_infusion_cost, treat_cost$ann_rx_cost, 
-                            treat_cost$init_infusion_cost, treat_cost$init_rx_cost, 
-                            treat_cost$weight_based, treat_cost$ann_wgt_slope, 
-                            treat_cost$init_wgt_slope,
-                            treat_cost$ann_util, treat_cost$init_util, 
-                            treat_cost$strength, treat_cost$price, 
-                            cdmards.ind - 1, tcz.ind - 1, tczmtx.ind - 1)
-  treat.cost.out <- as.data.table(treat.cost.out)
-  setnames(treat.cost.out, colnames(treat.cost.out), c("infusion_cost", "rx_cost"))
-  treat.cost.out[, treat_cost := infusion_cost + rx_cost]
-  
-  # hospital costs
-  hosp.cost.out <- sim_hosp_costC(simhaq$haq, simhaq$yrlen, simhaq$sim - 1, 
-                          hosp_cost$cost.pday, hosp_cost$hosp.days)
-  
-  # management costs
-  mgmt.cost.out <- sim_mgmt_costC(simhaq$yrlen, simhaq$sim - 1, rowSums(mgmt_cost))
-  
-  # serious infection costs
-  si.cost.out <- sim_si_costC(simhaq$si, simhaq$yrlen, simhaq$sim - 1, si_cost)
-  
-  # combine costs
-  cost <- data.table(treat.cost.out, hosp_cost = hosp.cost.out, mgmt_cost = mgmt.cost.out,
-                      si_cost = si.cost.out)
-  cost[, hc_cost := treat_cost + hosp_cost + mgmt_cost + si_cost]
-  return(cost)
-}
-
 #' Check parameters of sim_hc_cost
 #'
 #' Error messages when incorrect inputs are passed to sim_hc_cost.
@@ -754,22 +719,6 @@ check_sim_hc_cost <- function(simhaq, weight, pars){
     stop(paste0("Length of 'si.cost' element of pars must be equal to the number ",
                 "of sampled parameter sets which equals ", n))
   }
-}
-
-#' Simulate productivity loss from simulated HAQ score
-#'
-#' Simulate productivity loss from HAQ score simulated using \code{sim_haq}
-#' 
-#' @param simhaq Simulation output from \link{sim_haq}.
-#' @param pl_haq Decrease in wages (i.e. productivity loss) per one-unit increase in HAQ. Equivalent to output \code{prod.loss} from
-#' \link{sample_pars}.
-#' @return Vector of simulated productivity loss for each simulated patient and time-period.
-#'
-#' @export
-sim_prod_loss <- function(simhaq, pl_haq, check = TRUE){
-  if(check) check_prod_loss(simhaq, pl_haq)
-  pl <- sim_prod_lossC(simhaq$haq, simhaq$yrlen, simhaq$sim - 1, pl_haq)
-  return(pl)
 }
 
 #' Check parameters of prod_loss

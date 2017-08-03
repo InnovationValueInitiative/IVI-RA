@@ -17,6 +17,7 @@ To prepare the data so that it can be analyzed with `hesim`, mean outcomes must 
 
 ```{r }
 n.inner <- max(sim.out$sim)
+sim.out[, hc_cost := tx_cost + hosp_cost + mgmt_cost + si_cost]
 ce <- sim.out[, .(grp = 1,
              qalys = sum(qalys)/n.inner,
                        dqalys = sum(qalys * .03)/n.inner,

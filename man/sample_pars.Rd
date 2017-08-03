@@ -6,7 +6,7 @@
 \usage{
 sample_pars(n = 100, rebound_lower = 0.7, rebound_upper = 1,
   ltfemale = iviRA::lifetable.female, ltmale = iviRA::lifetable.male,
-  acr2eular_mat = iviRA::acr2eular, treat_cost = iviRA::treat.cost$cost,
+  acr2eular_mat = iviRA::acr2eular, treat_cost = iviRA::treat.cost,
   mort_logor = iviRA::mort.or$logor,
   mort_logor_se = iviRA::mort.or$logor_se,
   mort_loghr_haqdif = iviRA::mort.hr.haqdif$loghr,
@@ -62,7 +62,7 @@ the probability of death at a given age.}
 \item{acr2eular_mat}{A two-way frequency matrix with columns denoting EULAR response
 (none, moderate, good) and rows denoting ACR response  (<20, 20-50, 50-70, 70+).}
 
-\item{treat_cost}{Treatment cost matrix in format of iviRA::treat.cost.}
+\item{treat_cost}{Treatment cost matrix and treatment lookup in format of iviRA::treat.cost.}
 
 \item{mort_logor}{Log odds ratio of impact of baseline HAQ on probability of mortality.}
 

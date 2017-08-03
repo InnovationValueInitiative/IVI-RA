@@ -34,7 +34,7 @@ test_that("sim_duration_eular", {
   
 })
 
-# Test C++ function sim_duration ----------------------------------------------
+# Test treatment duration -----------------------------------------------------
 # Data for testing
 dists <- c("exp", "weibull", "gompertz", "lnorm", "llogis", "gamma", "gengamma")
 fits <- pars <- vector(mode = "list", length(dists))
@@ -170,7 +170,7 @@ test_that("sim_itreat_haq", {
   pars <- list("acr-haq", line, therapy, nbt, nma.acr1, nma.acr2,
             nma.dhaq1, nma.dhaq2, sim.acr2eular, sim.acr2haq, sim.eular2haq)
   
-  ## Treatment -> ACR -> HAQ
+  # Treatment -> ACR -> HAQ
   set.seed(seed)
   sim <- do.call(getFromNamespace("test_itreat_haq", "iviRA"), pars)
   set.seed(seed)
@@ -179,14 +179,14 @@ test_that("sim_itreat_haq", {
   expect_equal(sim$acr, c(acr))
   expect_equal(sim$eular, c(eular))
   
-  # check nbt returns correctly
+  ## check nbt returns correctly
   pars[[4]] <- therapy
   sim <- do.call(getFromNamespace("test_itreat_haq", "iviRA"), pars)
   expect_equal(sim$acr, 0)
   expect_equal(sim$eular, 0)
   expect_equal(sim$dhaq, 0)
   
-  ## Treatment -> ACR -> EULAR -> HAQ
+  # Treatment -> ACR -> EULAR -> HAQ
   pars[[1]] <- "acr-eular-haq"
   pars[[4]] <- nbt
   set.seed(seed)
@@ -199,14 +199,14 @@ test_that("sim_itreat_haq", {
   expect_equal(sim$eular, eular)
   expect_equal(sim$dhaq, as.vector(dhaq))
   
-  # check nbt returns correctly
+  ## check nbt returns correctly
   pars[[4]] <- therapy
   sim <- do.call(getFromNamespace("test_itreat_haq", "iviRA"), pars)
   expect_equal(sim$acr, 0)
   expect_equal(sim$eular, 0)
   expect_equal(sim$dhaq, 0)
   
-  ## Treatment -> HAQ
+  # Treatment -> HAQ
   pars[[1]] <- "haq"
   pars[[4]] <- nbt
   set.seed(seed)
@@ -215,7 +215,7 @@ test_that("sim_itreat_haq", {
   expect_equal(sim$dhaq, as.vector(nma.dhaq1))
   expect_equal(sim$eular, eular)
   
-  # check nbt returns correctly
+  ## check nbt returns correctly
   pars[[4]] <- therapy
   sim <- do.call(getFromNamespace("test_itreat_haq", "iviRA"), pars)
   expect_equal(sim$acr, 0)
@@ -224,7 +224,6 @@ test_that("sim_itreat_haq", {
 })
 
 # Test itreat_switchC ---------------------------------------------------------
-# get_da_cat
 test_that("get_da_cat", {
   expect_equal(iviRA:::get_das28_cat(2.1), 0)
   expect_equal(iviRA:::get_das28_cat(6.0), 3)
@@ -232,7 +231,6 @@ test_that("get_da_cat", {
   expect_equal(iviRA:::get_sdai_cat(15.0), 2)
 })
 
-# itreat_switchC
 test_that("itreat_switch", {
   parsamp <- sample_pars(n = 3)
   line <- 0; therapy <- 1; nbt <- therapy + 2; 
@@ -268,8 +266,116 @@ test_that("itreat_switch", {
   set.seed(seed)
   twitch.R <- rbinom(1, 1, p[iviRA:::get_das28_cat(das28 + nma.das28.1[therapy + 1])])
   expect_equal(sim$tswitch, twitch.R)
-  
+})
 
+# Test simulated costs --------------------------------------------------------
+gen_agents <- function(name){
+  tx.lookup <- iviRA::treat.cost$lookup[sname == name]
+  agents <- matrix(match(unlist(tx.lookup[, -1, with = FALSE]), 
+                            iviRA::treat.cost$cost$sname) - 1,
+                      nrow = nrow(tx.lookup))
+  return(agents)
+}
+agents <- gen_agents("etnmtx")
+tc <- iviRA::treat.cost$cost
+pars.tc <- list(t = t, agents_ind = agents, tx_name = tc$sname, 
+             init_dose_val = tc$init_dose_val, ann_dose_val = tc$ann_dose_val,
+             strength_val = tc$strength_val, 
+             init_num_doses = tc$init_num_doses, ann_num_doses = tc$ann_num_doses,
+             price = tc$price_per_unit, 
+             infusion_cost = tc$infusion_cost, loading_dose = tc$loading_dose,
+             weight_based = tc$weight_based, weight = 112, cycle_length = 6)
+
+test_that("sim_tx_cost1C", {
+  t <- 0
+  weight <- 112
+  
+  # etnmtx
+  ## first 6 months
+  tcC <- do.call(getFromNamespace("sim_tx_cost1C", "iviRA"), pars.tc)
+  tcR <- sum((tc[sname %in% c("etn", "cdmards"), .(cost = init_dose_val/strength_val * 
+                                   init_num_doses * price_per_unit)]))
+  expect_equal(tcC, tcR)
+  
+  ## maintenance phase
+  pars.tc$t <- 4
+  tcC <- do.call(getFromNamespace("sim_tx_cost1C", "iviRA"), pars.tc)
+  tcR <- sum((tc[sname %in% c("etn", "cdmards"), .(cost = ann_dose_val/strength_val * 
+                                                     ann_num_doses * price_per_unit)]))
+  expect_equal(tcC, tcR/2)
+  
+  # tczmtx
+  agents <- gen_agents("tczmtx")
+  pars.tc$agents_ind <- agents
+  
+  ## over 100 kg
+  tcC <- do.call(getFromNamespace("sim_tx_cost1C", "iviRA"), pars.tc)
+  tcR <- as.numeric(tc[sname =="tcz", .(cost = ann_dose_val/strength_val * 
+                                                     ann_num_doses * 2 *price_per_unit)] +
+    tc[sname =="cdmards", .(cost = ann_dose_val/strength_val * 
+                          ann_num_doses  *price_per_unit)])
+  expect_equal(tcC, tcR/2)
+  
+  ## less than 100 kg
+  pars.tc$weight <- 85
+  tcC <- do.call(getFromNamespace("sim_tx_cost1C", "iviRA"), pars.tc)
+  tcR <- as.numeric(tc[sname =="tcz", .(cost = ann_dose_val/strength_val * 
+                                          ann_num_doses * price_per_unit)] +
+                      tc[sname =="cdmards", .(cost = ann_dose_val/strength_val * 
+                                                ann_num_doses  *price_per_unit)])
+  expect_equal(tcC, tcR/2)
+  
+  # ifxmtx
+  agents <- gen_agents("ifxmtx")
+  pars.tc$agents_ind <- agents
+  
+  ## maintenance phase
+  tcC <- do.call(getFromNamespace("sim_tx_cost1C", "iviRA"), pars.tc)
+  tcR <- as.numeric(tc[sname =="ifx", .(cost = pars.tc$weight * ann_dose_val/strength_val * 
+                                          ann_num_doses * price_per_unit +
+                                          ann_num_doses * infusion_cost)] +
+                      tc[sname =="cdmards", .(cost = ann_dose_val/strength_val * 
+                                                ann_num_doses  *price_per_unit)])
+  expect_equal(tcC, tcR/2)
+  
+  # abtscmtx
+  agents <- gen_agents("abtscmtx")
+  pars.tc$agents_ind <- agents
+  
+  ## maintenance phase
+  tcC <- do.call(getFromNamespace("sim_tx_cost1C", "iviRA"), pars.tc)
+  tcR <- sum((tc[sname %in% c("abtsc", "cdmards"), .(cost = ann_dose_val/strength_val * 
+                                                     ann_num_doses * price_per_unit)]))
+  expect_equal(tcC, tcR/2)
+})
+
+# hospital, management, serious infection, and productivity costs 
+haq <- 1.7
+yrlen <- .5
+parsamp <- sample_pars(n = 10)
+
+test_that("sim_hosp_cost1C", {
+  expect_equal(iviRA:::sim_hosp_cost1C(haq, yrlen, parsamp$hosp.cost$hosp.days[1, ], 
+                                 parsamp$hosp.cost$cost.pday[1, ]),
+  as.vector(parsamp$hosp.cost$hosp.days[1, 4] * parsamp$hosp.cost$cost.pday[1, 4] * 
+              yrlen))
+})
+
+test_that("sim_mgmt_cost1C", {
+  expect_equal(iviRA:::sim_mgmt_cost1C(yrlen, sum(parsamp$mgmt.cost[1, ])),
+               sum(parsamp$mgmt.cost[1, ]) * yrlen)
+})
+
+test_that("sim_si_cost1C", {
+  expect_equal(iviRA:::sim_si_cost1C(0, yrlen, parsamp$si.cost[1]),
+               0)
+  expect_equal(iviRA:::sim_si_cost1C(1, yrlen, parsamp$si.cost[1]),
+               parsamp$si.cost[1])
+})
+
+test_that("sim_prod_loss1C", {
+  expect_equal(iviRA:::sim_prod_loss1C(haq, yrlen, parsamp$prod.loss[1]),
+              parsamp$prod.loss[1] * haq *  yrlen)
 })
 
 # small integration test ------------------------------------------------------

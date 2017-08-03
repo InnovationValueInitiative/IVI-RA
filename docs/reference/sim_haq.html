@@ -51,12 +51,9 @@
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-        <li>
-  <a href="../reference/index.html">Reference</a>
-</li>
-<li class="dropdown">
+        <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Run the model
+    Tutorial
      
     <span class="caret"></span>
   </a>
@@ -85,7 +82,39 @@
   </ul>
 </li>
 <li>
-  <a href="../articles/collaborate.html">Collaborate</a>
+  <a href="../reference/index.html">API</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Collaborate
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Suggested improvements</li>
+    <li>
+      <a href="../articles/collaborate.html">Contribute</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    About
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">OSVP</li>
+    <li>
+      <a href="../model-description/model-description.pdf">Model description</a>
+    </li>
+    <li class="dropdown-header">Release history</li>
+    <li class="dropdown-header">Reproducibility</li>
+    <li class="dropdown-header">hesim</li>
+  </ul>
+</li>
+<li>
+  <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra/">Web app</a>
 </li>
       </ul>
       
@@ -133,7 +162,7 @@ N patients. Cycle lengths are 6 months long. The simulation is written in C++ fo
     <tr>
       <th>arminds</th>
       <td><p>Indices of treatment arms consisting of sequences of therapies (each element
-is the index of a therapy in <code><a href='http://www.rdocumentation.org/packages/iviRA/topics/treatments'>iviRA::treatments</a></code>. May be a vector consisting of a single treatment sequence or a matrix 
+is the index of a treatment in <code><a href='http://www.rdocumentation.org/packages/iviRA/topics/treatments'>iviRA::treatments</a></code>. May be a vector consisting of a single treatment sequence or a matrix 
 of unique sequences for each patient.</p></td>
     </tr>
     <tr>
@@ -210,20 +239,21 @@ after the last biologic in a treatment sequence).</p></td>
     <p>A <code>data.table</code> with the following columns:</p><dl class='dl-horizontal'>
 <dt>sim</dt><dd><p>Simulation number. Indexed from 1 to S where S is the number of randomly sampled parameter sets (e.g. n from <a href='sample_pars.html'>sample_pars</a>).</p></dd>
 <dt>id</dt><dd><p>ID number. Indexed from 1 to N where N is the number of simulated patients (e.g. n from <a href='sample_pats.html'>sample_pats</a>).</p></dd>
-<dt>month</dt><dd><p>Month since a simulated patient began the first therapy in a treatment sequence.</p></dd>
-<dt>therapy</dt><dd><p>Index of therapy used. Given J total therapies, the first J - 1 therapies match the indices from <code>arminds</code>. The final <code>therapy</code>
- is always equal to the index of the non-biologic therapy (<code>nbt_ind</code>).</p></dd>
-<dt>therapy_seq</dt><dd><p>Number of therapies in a sequence. First therapy equal to 1, second therapy equal to 2, &#8230;</p></dd>
-<dt>therapy_cycle</dt><dd><p>Number of model cycles since a patient began taking a given therapy in a treatment sequence. <code>therapy_cycle</code> = 1
+<dt>month</dt><dd><p>Month since a simulated patient began the first treatment in a treatment sequence.</p></dd>
+<dt>tx</dt><dd><p>Treatment used. Given J total therapies, the first J - 1 therapies match the indices from <code>arminds</code>. The final <code>tx</code>
+ is always the non-biologic treatment (<code>nbt_ind</code>).</p></dd>
+<dt>tx_seq</dt><dd><p>Number of treatment in a treatment sequence. First treatment equal to 1, 
+second treatment equal to 2, &#8230;</p></dd>
+<dt>tx_cycle</dt><dd><p>Number of model cycles since a patient began taking a given treatment in a treatment sequence. <code>tx_cycle</code> = 1
 during the initial 6-month treatment period.</p></dd>
 <dt>death</dt><dd><p>Equal to 1 if patient died during the model cycle and 0 otherwise.</p></dd>
 <dt>age</dt><dd><p>Age of patient which increases with the model cycles.</p></dd>
-<dt>ttd</dt><dd><p>Time to treatment discontinuation. Measured in terms of model cycles (e.g. ttd = 2 if therapy will discontinue in 
-1 year given 6-months cycles). <code>ttd</code> is measured at the end of each cycle. Patients switch therapies during the cycle in which <code>ttd</code> 
+<dt>ttd</dt><dd><p>Time to treatment discontinuation. Measured in terms of model cycles (e.g. ttd = 2 if treatment will discontinue in 
+1 year given 6-months cycles). <code>ttd</code> is measured at the end of each cycle. Patients switch treatments during the cycle in which <code>ttd</code> 
 becomes negative and HAQ rebounds during the cycle.</p></dd>
-<dt>acr</dt><dd><p>Simulated ACR response during the initial 6-month period for a new therapy. Constant within <code>therapy</code>. 
+<dt>acr</dt><dd><p>Simulated ACR response during the initial 6-month period for a new treatment Constant within <code>tx</code>.
 Categories are 0 (ACR &lt; 20), 1 (ACR 20-50), 2 (ACR 50-70), and 3 (ACR 70+).</p></dd>
-<dt>eular</dt><dd><p>Simulated EULAR response during the initial 6-month period for a new therapy. Constant within <code>therapy</code>. 
+<dt>eular</dt><dd><p>Simulated EULAR response during the initial 6-month period for a new treatment Constant within <code>tx</code>. 
 Categories are 0 (no EULAR response), 1 (moderate EULAR response), and 2 (good EULAR response).</p></dd>
 <dt>haq</dt><dd><p>HAQ score. Restricted to range between 0 and 3.</p></dd>
 <dt>ttsi</dt><dd><p>Time to serious infection. Like <code>ttd</code>, measured in terms of model cycles. <code>ttsi</code> is measured at the end of each 

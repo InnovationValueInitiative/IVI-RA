@@ -15,7 +15,7 @@
 #' @param ltmale Identical to \code{ltfemale} but for men.
 #' @param acr2eular_mat A two-way frequency matrix with columns denoting EULAR response
 #'  (none, moderate, good) and rows denoting ACR response  (<20, 20-50, 50-70, 70+).
-#' @param treat_cost Treatment cost matrix in format of iviRA::treat.cost.
+#' @param treat_cost Treatment cost matrix and treatment lookup in format of iviRA::treat.cost.
 #' @param mort_logor Log odds ratio of impact of baseline HAQ on probability of mortality.
 #' @param mort_logor_se Standard error of log odds ratio of impact of baseline HAQ on probability of mortality.
 #' @param mort_loghr_haqdif Log hazard ratio of impact of change in HAQ from baseline on mortality rate. A vector with
@@ -214,7 +214,7 @@
 sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
                        ltfemale = iviRA::lifetable.female, ltmale = iviRA::lifetable.male,
                        acr2eular_mat = iviRA::acr2eular,
-                       treat_cost = iviRA::treat.cost$cost,
+                       treat_cost = iviRA::treat.cost,
                        mort_logor = iviRA::mort.or$logor, mort_logor_se = iviRA::mort.or$logor_se,
                        mort_loghr_haqdif = iviRA::mort.hr.haqdif$loghr,
                        mort_loghr_se_haqdif = iviRA::mort.hr.haqdif$loghr_se,
@@ -261,7 +261,10 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
   sim$n <- n
   sim$rebound <- runif(n, rebound_lower, rebound_upper)
   sim$lt <- lt_data(ltmale, ltfemale)
-  sim$treat.cost <- calc_treat_cost(treat_cost)
+  sim$treat.cost <- c(treat_cost,
+                      list(discount = sample_uniforms(n, lower = treat_cost$cost$discount_lower, 
+                                      treat_cost$cost$discount_upper, 
+                                      col_names = treat_cost$cost$sname)))
   sim$acr2eular <- sample_dirichlets(n, acr2eular_mat)
   sim$acr2sdai <- sample_uniforms(n, acr2sdai_lower, acr2sdai_upper, acr.cats)
   sim$acr2cdai <- sample_uniforms(n, acr2cdai_lower, acr2cdai_upper, acr.cats)
@@ -306,78 +309,6 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
   sim$si.cost <- runif(n, si_cost * (1 - si_cost_range),  si_cost * (1 + si_cost_range))
   sim$si.ul <- runif(n, si_ul * (1 - si_ul_range), si_ul * (1 + si_ul_range))
   return(sim)
-}
-
-#'  Calculate treatment cost
-#'
-#'  Calculate treatment cost from data of dosing and prices
-#' 
-#' @return Data table
-#' 
-#' @export
-calc_treat_cost <- function(x){
-
-  # cost first 6 months
-  x[!sname %in% c("ifx", "abtsc"), ':=' (init_infusion_cost = init_num_doses * infusion_cost,
-       init_rx_cost =  init_dose_val/strength_val * init_num_doses * wac_per_unit)]
-  x[sname == "ifx", ':=' (init_infusion_cost = init_num_doses * infusion_cost, init_rx_cost = 0)]
-  x.abtiv <- x[sname == "abtiv"]
-  x[sname == "abtsc", ':=' (init_infusion_cost = 1 * x.abtiv$infusion_cost, 
-                            init_rx_cost = 1 * (x.abtiv$init_dose_val/x.abtiv$strength_val * x.abtiv$wac_per_unit) + 
-                              init_dose_val/strength_val * init_num_doses * wac_per_unit)]
-  
-  # annual cost 6+ months
-  x[!sname %in% c("ifx"), ':=' (ann_infusion_cost = ann_num_doses * infusion_cost,
-                                ann_rx_cost = ann_dose_val/strength_val * ann_num_doses * wac_per_unit)]
-  x[sname == "ifx", ':=' (ann_infusion_cost = ann_num_doses * infusion_cost, ann_rx_cost = 0)]
-  
-  # placebo + non-biologic
-  y <- x[, .(sname, init_infusion_cost, init_rx_cost, ann_infusion_cost, ann_rx_cost)]
-  y <- rbind(y, data.table(sname = "placebo", init_infusion_cost = 0, init_rx_cost = 0, 
-                           ann_infusion_cost = 0, ann_rx_cost = 0))
-  y.cdmards <- y[sname == "cdmards"]
-  y <- rbind(y, data.table(sname = "nbt", init_infusion_cost = y.cdmards$init_infusion_cost,
-                           init_rx_cost = y.cdmards$init_rx_cost, 
-                           ann_infusion_cost = y.cdmards$ann_infusion_cost, ann_rx_cost = y.cdmards$ann_rx_cost))
-  
-  # combination therapies
-  bmtx <- c("abtiv", "ada", "etn", "gol", "ifx", "tcz", "czp", 
-            "abtsc", "rtx", "tof")
-  y2 <- data.table(sname = c("abtivmtx", "adamtx", "etnmtx", "golmtx", 
-                             "ifxmtx", "tczmtx", "czpmtx", "abtscmtx", "rtxmtx", 
-                             "tofmtx"))
-  cnames <- c("init_infusion_cost", "init_rx_cost", "ann_infusion_cost", "ann_rx_cost")
-  for (i in 1:length(bmtx)){
-    for (j in cnames){
-      val <- as.numeric(y[sname == bmtx[i], j, with = FALSE] + y[sname == "cdmards", j, with = F])
-      y2[i, c(j) := val]
-    }
-  }
-  y <- rbind(y, y2)
-  y.tt <- y[sname %in% c("cdmards", "hcl", "ssz")]
-  y <- rbind(y, data.table(sname = "tt", init_infusion_cost = sum(y.tt$init_infusion_cost),
-                           init_rx_cost = sum(y.tt$init_rx_cost),
-                           ann_infusion_cost = sum(y.tt$ann_infusion_cost),
-                           ann_rx_cost = sum(y.tt$ann_rx_cost)))
-  
-  # subset/order therapies
-  y <- y[sname %in% iviRA::treatments$sname]
-  y <- merge(y, iviRA::treatments[, .(sname, mname)], by = "sname")
-  y <- y[, .(sname, mname, init_infusion_cost, init_rx_cost, ann_infusion_cost, ann_rx_cost)]
-  y <- y[order(match(sname, iviRA::treatments$sname))]
-  
-  # weight-based
-  y[, weight_based := ifelse(sname == "ifx" | sname == "ifxmtx", 1, 0)]
-  x.ifx <- x[sname == "ifx"]
-  y[, init_wgt_slope := ifelse(sname == "ifxmtx", x.ifx$init_dose_val, 0)]
-  y[, ann_wgt_slope := ifelse(sname == "ifxmtx", x.ifx$ann_dose_val, 0)]
-  y[, init_util := ifelse(sname == "ifxmtx", x.ifx$init_num_doses, 0)]
-  y[, ann_util := ifelse(sname == "ifxmtx", x.ifx$ann_num_doses, 0)]
-  y[, strength := ifelse(sname == "ifxmtx", x.ifx$strength_val, 0)]
-  y[, price := ifelse(sname == "ifxmtx", x.ifx$wac_per_unit, 0)]
-  
-  # return
-  return(y)
 }
 
 #' Sample from beta distributions

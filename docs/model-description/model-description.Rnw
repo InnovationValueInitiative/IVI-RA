@@ -1433,7 +1433,7 @@ Parameter uncertainty is quantified using PSA, which propagates uncertainty in t
 \begin{table}[!ht] 
 \begin{center}
 \begin{threeparttable}
-\caption{Probabilistic Sensitivity Analysis Parameter Distributions} \label{tbl:psa-dists}
+\caption{Probabilistic sensitivity analysis parameter distributions} \label{tbl:psa-dists}
 \def\arraystretch{1.5}
 \begin{tabularx}{\textwidth}{@{\extracolsep{\fill}}p{.65 \linewidth}p{.35 \linewidth}}
 \hline

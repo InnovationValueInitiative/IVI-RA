@@ -201,13 +201,27 @@ iviRA::utility.mixture$coef
 ## Costs
 The model incorporates 3 main types of health care sector costs: (1) drug acquisition and administration costs, (2) hospitalization costs, and (3) general management costs. Productivity losses can also be included in the analysis if the analyst would like to take a societal perspective. 
 
-Drug acquisition and administration costs are separated into costs associated with the first 6 months of treatment and costs after the first 6 months. Costs are a function of the FDA recommended dose and frequency of administration, strength and dosage form, the wholesale acquisition cost (WAC), and infusion. If dosing is weight based, then the dose is calculated by multiplying the dose value (e.g., `init_dose_val` and `ann_dose_val`) by each patients weight in kilograms; otherwise the dose is simply equal to the dose value. For example, the dose for infliximab during the first six months is equal to 3 multiplied by the weight of the patient. 
+### Treatment costs
+Drug acquisition and administration costs are separated into costs associated with the first 6 months of treatment and costs after the first 6 months. Costs are a function of the FDA recommended dose and frequency of administration, strength and dosage form, the price, and infusion. Prices with the simulation are reduced according to assumed discounts and rebates. If dosing is weight based, then the dose is calculated by multiplying the dose value (e.g., `init_dose_val` and `ann_dose_val`) by each patients weight in kilograms; otherwise the dose is simply equal to the dose value. For example, the dose for infliximab during the first six months is equal to 3 multiplied by the weight of the patient. 
+
+Information related to treatment costs are stored in the list `iviRA::treat.cost`. Data related to the costs of treatment for each medication are in the data table `iviRA::treat.cost$cost`.
 
 ```{r }
 library(knitr)
 kable(iviRA::treat.cost$cost)
 ```
 
+The variable `init_num_doses` is the number of doses during the first 6 months after beginning a new treatment and the variable `ann_num_doses` is the number of doses *per year* after the first 6 months. The variables `discount_lower` and `discount_upper` are lower and upper bounds for the amount by which prices (`price_per_unit`) are decreased after discounts and rebates. 
+
+Costs for individual therapeutic agents are used to calculate costs for the (combination) treatments in a treatment sequence by using the lookup data table `iviRA::treat.cost$lookup`.
+
+```{r }
+iviRA::treat.cost$lookup
+```
+
+The treatment names in the first column (`sname`) must match the names of the treatments selected in a treatment sequence. All subsequent columns refer to the names of the therapeutic agents used for a particular treatment. For example, the treatment `etnmtx` contains both etanercept and methotrexate/conventional cDMARDs.
+
+### Other health care sector costs
 Hospitalization costs are estimated as a function of the HAQ score. In particular, [Carlson 2015](https://www.ncbi.nlm.nih.gov/pubmed/25773552), report estimates of the number of days in the hospital for a given HAQ score range as well as the cost of a single day in the hospital. 
 
 ```{r }
@@ -220,7 +234,8 @@ Management costs are based on mean costs and cost ranges reported in [Claxton (2
 iviRA::mgmt.cost
 ```
 
-Finally, we use estimates of productivity loss from [Wolfe et al. (2005)](http://www.jrheum.org/content/32/10/1875.short). The authors provide estimates of the annual loss in earnings associated with a 1-unit increase in HAQ, which we convert to 2017 dollars. 
+### Productivity losses
+We use estimates of productivity loss from [Wolfe et al. (2005)](http://www.jrheum.org/content/32/10/1875.short). The authors provide estimates of the annual loss in earnings associated with a 1-unit increase in HAQ, which we convert to 2017 dollars. 
 
 ```{r }
 iviRA::prod.loss

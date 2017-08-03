@@ -66,9 +66,7 @@ reference:
 navbar:
   title: IVI-RA
   left:
-  - text: "Reference"
-    href: reference/index.html
-  - text: "Run the model"
+  - text: "Tutorial"
     menu:
       - text: "0. Introduction"
         href: articles/00-intro.html
@@ -84,5 +82,20 @@ navbar:
         href: articles/05-ips.html
       - text: "6. Cost-effectiveness analysis"
         href: articles/06-cea.html
+  - text: "API"
+    href: reference/index.html
   - text: "Collaborate"
-    href: articles/collaborate.html
+    menu:
+      - text: "Suggested improvements"
+      - text: "Contribute"
+        href: articles/collaborate.html
+  - text: "About"
+    menu:
+      - text: "OSVP"
+      - text: "Model description"
+        href: model-description/model-description.pdf
+      - text: "Release history"
+      - text: "Reproducibility"
+      - text: "hesim"
+  - text: "Web app"
+    href: https://innovationandvalueinitiative.shinyapps.io/ivi-ra/

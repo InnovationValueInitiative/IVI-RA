@@ -310,10 +310,124 @@ double sim_dhaq_lcgm1C(double year, double cycle_length, double age, double fema
   return(dyhat);
 }
 
+// Simulate costs
+struct Cost {
+  double tx;
+  double hosp;
+  double mgmt;
+  double si;
+  double prod;
+};
+
+//// Treatment Costs
+// [[Rcpp::export]]
+double sim_tx_cost1C(int t, arma::rowvec agents_ind, std::vector<std::string> tx_name,
+                     std::vector<double> init_dose_val, std::vector<double> ann_dose_val,
+                     std::vector<double> strength_val,
+                     std::vector<double> init_num_doses, std::vector<double> ann_num_doses,
+                     std::vector<double> price, 
+                     std::vector<double> infusion_cost, std::vector<int> loading_dose,
+                     std::vector<int> weight_based, double weight, double cycle_length,
+                     double discount){
+  
+  // initial vs. maintenance phase dosing
+  std::vector<double> dose_amt;
+  std::vector<double> dose_num;
+  if (t == 0){
+    dose_amt = init_dose_val;
+    dose_num = init_num_doses;
+  }
+  else{
+    dose_amt = ann_dose_val;
+    dose_num = ann_num_doses;
+  }
+
+  // Calculate costs
+  int J = agents_ind.size();
+  double tc = 0;
+  double infusion_cost_j = 0;
+  for (int j = 0; j < J; ++j){
+    if(arma::is_finite(agents_ind(j))){
+      int agents_ind_j = agents_ind(j);
+      double dose_num_j = dose_num[agents_ind_j];
+      std::string tx_name_j = tx_name[agents_ind_j];
+      if (tx_name_j == "tcz" && weight >= 100){
+        dose_num_j = dose_num_j * 2;
+      }
+      if (weight_based[agents_ind_j] == 0){
+        weight = 1; 
+      }
+      if (t == 0){
+        if (loading_dose[agents_ind_j] == 1){
+          infusion_cost_j = infusion_cost[agents_ind_j];
+        } 
+        else{
+          infusion_cost_j = infusion_cost[agents_ind_j] * dose_num[agents_ind_j];
+        }
+        tc +=  ceil(weight * dose_amt[agents_ind_j]/strength_val[agents_ind_j]) * 
+          dose_num_j * price[agents_ind_j] * (1 - discount) + infusion_cost_j;
+      }
+      else{
+        tc += (ceil(weight * dose_amt[agents_ind_j]/strength_val[agents_ind_j]) * 
+          dose_num_j * price[agents_ind_j] * (1 - discount) + 
+          infusion_cost[agents_ind_j] * dose_num[agents_ind_j]) * cycle_length/12; 
+      }
+    }
+  }
+  return tc;
+}
+
+//// General management cost
+// [[Rcpp::export]]
+double sim_mgmt_cost1C(double yrlen, double cost){
+  return cost * yrlen;
+}
+
+//// Hospitalization costs
+// [[Rcpp::export]]
+double sim_hosp_cost1C(double &haq, double yrlen, arma::rowvec hosp_days, 
+                                   arma::rowvec cost_pday){
+  double hosp_cost = 0.0;
+  if (haq < 0.5){
+      hosp_cost = hosp_days(0) * cost_pday(0) * yrlen;
+  }
+  else if (haq >= 0.5 && haq < 1){
+      hosp_cost = hosp_days(1) * cost_pday(1) * yrlen;
+  }
+  else if (haq >= 1 && haq < 1.5){
+      hosp_cost = hosp_days(2) * cost_pday(2) * yrlen;
+  }
+  else if (haq >= 1.5 & haq < 2){
+      hosp_cost = hosp_days(3) * cost_pday(3) * yrlen;
+  } 
+  else if (haq >= 2 & haq < 2.5){
+      hosp_cost = hosp_days(4) * cost_pday(4) * yrlen;
+  }
+  else if (haq >= 2.5){
+      hosp_cost = hosp_days(5) * cost_pday(5) * yrlen;
+  }
+  return hosp_cost;
+}
+
+//// Serious Infection Cost
+// [[Rcpp::export]]
+double sim_si_cost1C(int si, double yrlen, double cost){
+  double si_cost = 0.0;
+  if (si == 1){
+      si_cost = cost;
+  }
+  return si_cost;
+}
+
+// Productivity Loss
+// [[Rcpp::export]]
+double sim_prod_loss1C(double &haq, double yrlen, double beta){
+  return haq * beta * yrlen;
+}
+
 // Simulate HAQ score
-//' @export
 // [[Rcpp::export]] 
-List sim_haqC(arma::mat therapies,
+List sim_iviRA_C(arma::mat arm_inds,
              std::vector<double> haq0, std::vector<double> das28_0,
              std::vector<double> sdai0, std::vector<double> cdai0,
              std::vector<double> age0, std::vector<int> male,
@@ -328,19 +442,36 @@ List sim_haqC(arma::mat therapies,
              arma::cube haq_lcgm_delta, arma::cube haq_lcgm_beta, std::string cdmards_haq_model,
              std::vector<double> rebound_factor,
              arma::mat lifetable_male, arma::mat lifetable_female, 
-             arma::mat x_mort, arma::mat logor, 
-             std::string dur_dist, arma::mat x_dur, 
+             arma::mat x_mort, arma::mat logor_mort, 
+             std::string ttd_dist, arma::mat x_ttd, 
              arma::mat ttd_all_loc, arma::vec ttd_all_anc1, arma::vec ttd_all_anc2,
              arma::mat ttd_da_loc, arma::vec ttd_da_anc1, arma::vec ttd_da_anc2,
              arma::mat ttd_eular_loc_mod, arma::vec ttd_eular_anc1_mod, arma::vec ttd_eular_anc2_mod,
              arma::mat ttd_eular_loc_good, arma::vec ttd_eular_anc1_good, arma::vec ttd_eular_anc2_good,
              double cycle_length, int treat_gap, int cdmards, int nbt, 
              arma::mat si_loc, arma::mat si_anc1, arma::mat si_anc2, std::string si_dist, 
-             arma::mat haqdelta_loghr, int max_months){
+             arma::mat haqdelta_loghr, int max_months, 
+             arma::mat hosp_days, arma::mat cost_pday, std::vector<double> mgmt_cost, 
+             std::vector<double> si_cost, std::vector<double> prod_loss, 
+             arma::cube tc_agents_ind, Rcpp::List tc_list, std::vector<double> weight){
   
+  // Type conversions
+  std::vector<double> tc_discount = as<std::vector<double> >(tc_list["discount"]);
+  Rcpp::DataFrame tc = Rcpp::as<Rcpp::DataFrame>(tc_list["cost"]);
+  std::vector<std::string> tx_name = as<std::vector<std::string> >(tc["sname"]);
+  std::vector<double> init_dose_val = as<std::vector<double> >(tc["init_dose_val"]);
+  std::vector<double> ann_dose_val = as<std::vector<double> >(tc["ann_dose_val"]);
+  std::vector<double> strength_val = as<std::vector<double> >(tc["strength_val"]);
+  std::vector<double> init_num_doses = as<std::vector<double> >(tc["init_num_doses"]);
+  std::vector<double> ann_num_doses = as<std::vector<double> >(tc["ann_num_doses"]);
+  std::vector<double> price = as<std::vector<double> >(tc["price_per_unit"]);
+  std::vector<double> infusion_cost = as<std::vector<double> >(tc["infusion_cost"]);
+  std::vector<int> loading_dose = as<std::vector<int> >(tc["loading_dose"]);
+  std::vector<int> weight_based = as<std::vector<int> >(tc["weight_based"]);
+
   // Constants
-  int n_therapies = therapies.n_cols;
-  int n_sims = logor.n_rows;
+  int n_treatments = arm_inds.n_cols;
+  int n_sims = logor_mort.n_rows;
   int n_pat = x_mort.n_rows;
   int maxt = 100 * (12/cycle_length);
   
@@ -348,17 +479,18 @@ List sim_haqC(arma::mat therapies,
   int counter = 0;
   double cage_i = 0.0; // continuous age
   int age_i = 0;
-  arma::rowvec therapies_i = therapies.row(0);
-  int therapies_ij = 0;
+  int arm_row = 0;
+  arma::rowvec arm_ind_i = arm_inds.row(0);
+  int arm_ind_ij = 0;
+  Cost sim_cost;
   
   // Information to store
   std::vector<int> sim;
   std::vector<int> id;
   std::vector<double> month_vec;
-  std::vector<int> therapy_vec;
-  //std::vector<std::string> therapy_name;
-  std::vector<int> therapy_seq;
-  std::vector<int> therapy_cycle;
+  std::vector<int> tx_vec;
+  std::vector<int> tx_seq;
+  std::vector<int> tx_cycle;
   std::vector<int> death_vec;
   std::vector<double> age_vec;
   std::vector<double> ttd_vec;
@@ -368,6 +500,11 @@ List sim_haqC(arma::mat therapies,
   std::vector<double> ttsi_vec;
   std::vector<int> si_vec;
   std::vector<double> yrlen_vec;
+  std::vector<double> tx_cost_vec;
+  std::vector<double> hosp_cost_vec;
+  std::vector<double> mgmt_cost_vec;
+  std::vector<double> si_cost_vec;
+  std::vector<double> prod_loss_vec;
   
   // "OUTER" LOOP
   for (int s = 0; s < n_sims; ++s){
@@ -379,8 +516,9 @@ List sim_haqC(arma::mat therapies,
       cage_i = age0[i];
       age_i = int(cage_i);
       double haq = haq0[i];
-      if (therapies.n_rows > 1){
-        therapies_i = therapies.row(i);
+      if (arm_inds.n_rows > 1){
+        arm_row = i;
+        arm_ind_i = arm_inds.row(i);
       }
       int t_cdmards = 0;
       ItreatSwitch sim_s_t1;
@@ -388,35 +526,36 @@ List sim_haqC(arma::mat therapies,
       sim_s_t1.sdai = sdai0[i];
       sim_s_t1.cdai = cdai0[i];
       
-      // Loop over therapies
-      for (int j = 0; j < n_therapies + 1; ++j){
+      // Loop over treatments
+      for (int j = 0; j < n_treatments + 1; ++j){
+        int si = 0;
         
-        // Which therapy is being used and how long has it been used for
-        if (j == n_therapies - 1){
+        // Which treatment is being used and how long has it been used for
+        if (j == n_treatments - 1){
            t_cdmards = 0; // counter for cdmards and nbt which does not reset after cdmards ends and nbt begins
         }
         
-        if (j == n_therapies){
-          therapies_ij = nbt;
-          if (therapies_i(j-1) == cdmards){
-              t_cdmards = therapy_cycle[counter - 1] + 1; // note 0 otherwise
+        if (j == n_treatments){
+          arm_ind_ij = nbt;
+          if (arm_ind_i(j-1) == cdmards){
+              t_cdmards = tx_cycle[counter - 1] + 1; // note 0 otherwise
           } 
         }
         else{
-          therapies_ij = therapies_i(j);
+          arm_ind_ij = arm_ind_i(j);
         }
         
         // H1-H3: simulate change in HAQ during initial treatment phase
-        ItreatHaq sim_h_t1 = sim_itreat_haq(itreat_haq_model, j, therapies_ij, nbt,
-                                        nma_acr1.slice(therapies_ij).row(s), 
-                                        nma_acr2.slice(therapies_ij).row(s), 
-                                        nma_dhaq1.col(therapies_ij)(s),
-                                        nma_dhaq2.col(therapies_ij)(s),
+        ItreatHaq sim_h_t1 = sim_itreat_haq(itreat_haq_model, j, arm_ind_ij, nbt,
+                                        nma_acr1.slice(arm_ind_ij).row(s), 
+                                        nma_acr2.slice(arm_ind_ij).row(s), 
+                                        nma_dhaq1.col(arm_ind_ij)(s),
+                                        nma_dhaq2.col(arm_ind_ij)(s),
                                         acr2eular.slice(s), acr2haq.row(s), 
                                         eular2haq.row(s));
         
         // S1-S6: simulate treatment switching during first 6 months
-        sim_s_t1 = sim_itreat_switch(itreat_switch_model, j, therapies_ij, nbt,
+        sim_s_t1 = sim_itreat_switch(itreat_switch_model, j, arm_ind_ij, nbt,
                                                   sim_h_t1.acr, sim_h_t1.eular,
                                                   sim_s_t1.das28, sim_s_t1.sdai, sim_s_t1.cdai,
                                                   acr2das28.row(s), acr2sdai.row(s), acr2cdai.row(s),
@@ -424,25 +563,25 @@ List sim_haqC(arma::mat therapies,
                                                   tswitch_da.row(s));
         
         // Time to treatment discontinuation and serious infections
-        double ttsi_j = (-cycle_length/12 + rsurvC(as_scalar(si_loc.row(s).col(therapies_ij)), 
-                                              as_scalar(si_anc1.row(s).col(therapies_ij)),
-                                              si_dist,as_scalar(si_anc2.row(s).col(therapies_ij))
+        double ttsi_j = (-cycle_length/12 + rsurvC(as_scalar(si_loc.row(s).col(arm_ind_ij)), 
+                                              as_scalar(si_anc1.row(s).col(arm_ind_ij)),
+                                              si_dist,as_scalar(si_anc2.row(s).col(arm_ind_ij))
                                               )) * (12/cycle_length);
         double ttd_j = 0;
         if (itreat_switch_model == "acr-eular-switch"){
-            ttd_j = sim_ttd_eular(x_dur.row(i), ttd_eular_loc_mod.row(s), ttd_eular_anc1_mod(s), 
+            ttd_j = sim_ttd_eular(x_ttd.row(i), ttd_eular_loc_mod.row(s), ttd_eular_anc1_mod(s), 
                                                  ttd_eular_loc_good.row(s), ttd_eular_anc1_good(s), 
-                                                 sim_h_t1.eular, dur_dist, cycle_length, ttsi_j,
+                                                 sim_h_t1.eular, ttd_dist, cycle_length, ttsi_j,
                                                  ttd_eular_anc2_mod(s), ttd_eular_anc2_good(s));
         }
         else if (itreat_switch_model == "acr-switch"){
-          ttd_j = sim_ttd(x_dur.row(i), ttd_all_loc.row(s), ttd_all_anc1(s),
-                              sim_s_t1.tswitch, dur_dist, cycle_length, ttsi_j,
+          ttd_j = sim_ttd(x_ttd.row(i), ttd_all_loc.row(s), ttd_all_anc1(s),
+                              sim_s_t1.tswitch, ttd_dist, cycle_length, ttsi_j,
                               ttd_all_anc2(s));
         }
         else {
-          ttd_j = sim_ttd(x_dur.row(i), ttd_da_loc.row(s), ttd_da_anc1(s),
-                          sim_s_t1.tswitch, dur_dist, cycle_length, ttsi_j,
+          ttd_j = sim_ttd(x_ttd.row(i), ttd_da_loc.row(s), ttd_da_anc1(s),
+                          sim_s_t1.tswitch, ttd_dist, cycle_length, ttsi_j,
                           ttd_all_anc2(s));
         }
         
@@ -450,7 +589,7 @@ List sim_haqC(arma::mat therapies,
         for (int t = 0; t < maxt; ++t){
           
           // Stop j loop if cycle is larger than treatment duration
-          if (j < n_therapies && t > 0 && t >= ttd_j + 1 + treat_gap){
+          if (j < n_treatments && t > 0 && t >= ttd_j + 1 + treat_gap){
             cage_i = cage_i - cycle_length/12 + 0.5;
             month = month - cycle_length + 6;
             age_i = int(cage_i);
@@ -459,9 +598,16 @@ List sim_haqC(arma::mat therapies,
           
           // Draw death indicator
           double death = sample_deathC(age_i, male[i], lifetable_male, lifetable_female, 
-                                       x_mort.row(i), logor.row(s), haq0[i], haq,
+                                       x_mort.row(i), logor_mort.row(s), haq0[i], haq,
                                       cycle_length, month, haqdelta_loghr.row(s));
           
+          // Did serious infection occur?
+          if (ttsi_j < ttd_j && t > ttd_j && t < ttd_j + 1 && arm_ind_ij != nbt) {
+            si = 1;
+          } 
+          else if (ttsi_j < 0 && arm_ind_ij != nbt) {
+           si = 1;
+          }
           
           // Update HAQ score
           if (t == 0){ // initial haq change
@@ -473,15 +619,15 @@ List sim_haqC(arma::mat therapies,
             }
           }
           else if (t > 0 && t <= ttd_j){
-            if(cdmards_haq_model == "lcgm" && (therapies_ij == nbt || therapies_ij == cdmards)){
+            if(cdmards_haq_model == "lcgm" && (arm_ind_ij == nbt || arm_ind_ij == cdmards)){
                 haq = haq + sim_dhaq_lcgm1C(2.5 + t_cdmards * cycle_length/12, cycle_length, cage_i, 1 - male[i],
                                            das28_0[i], haq_lcgm_delta.slice(s), haq_lcgm_beta.slice(s));
             } else{
-              update_haq_t(haq, as_scalar(haq_lprog_therapy.row(s).col(therapies_ij)),
+              update_haq_t(haq, as_scalar(haq_lprog_therapy.row(s).col(arm_ind_ij)),
                            haq_lprog_age.row(s), cage_i, cycle_length);
             }
           }
-          else if (t > ttd_j && t < ttd_j + 1 && j < n_therapies){ // rebound
+          else if (t > ttd_j && t < ttd_j + 1 && j < n_treatments){ // rebound
             haq = haq - sim_h_t1.dhaq * rebound_factor[s];
           }
           else {
@@ -495,17 +641,27 @@ List sim_haqC(arma::mat therapies,
             haq = 3.0;
           }
           
+          // Update costs
+          sim_cost.tx = sim_tx_cost1C(t, tc_agents_ind.slice(arm_row).row(j), tx_name,
+                                      init_dose_val, ann_dose_val, strength_val,
+                                      init_num_doses, ann_num_doses, price,
+                                      infusion_cost, loading_dose, 
+                                      weight_based, weight[i], cycle_length, tc_discount[s]);
+          sim_cost.hosp = sim_hosp_cost1C(haq, cycle_length/12, hosp_days.row(s), cost_pday.row(s));
+          sim_cost.mgmt = sim_mgmt_cost1C(cycle_length/12, mgmt_cost[s]);
+          sim_cost.prod = sim_prod_loss1C(haq, cycle_length/12, prod_loss[s]);
+          sim_cost.si = sim_si_cost1C(si, cycle_length/12, si_cost[s]);
+          
           // Fill vectors
           sim.push_back(s);
           id.push_back(i);
           month_vec.push_back(month);
-          therapy_vec.push_back(therapies_ij);
-          //therapy_name.push_back(therapy_names[j]);
-          therapy_seq.push_back(j); // should be j
-          therapy_cycle.push_back(t);
+          tx_vec.push_back(arm_ind_ij);
+          tx_seq.push_back(j);
+          tx_cycle.push_back(t);
           death_vec.push_back(death);
           age_vec.push_back(cage_i);
-          if (therapies_ij != nbt){
+          if (arm_ind_ij != nbt){
             ttd_vec.push_back(ttd_j - t);
           }
           else {
@@ -515,28 +671,24 @@ List sim_haqC(arma::mat therapies,
           acr_vec.push_back(sim_h_t1.acr);
           eular_vec.push_back(sim_h_t1.eular);
           haq_vec.push_back(haq);
-          if (therapies_ij != nbt){
+          if (arm_ind_ij != nbt){
             ttsi_vec.push_back(ttsi_j - t);
           }
           else{
             ttsi_vec.push_back(NA_REAL);
           }
-          if (ttsi_j < ttd_j && t > ttd_j && t < ttd_j + 1
-                && therapies_ij != nbt) {
-            si_vec.push_back(1);
-          } 
-          else if (ttsi_j < 0 && therapies_ij != nbt) {
-            si_vec.push_back(1);
-          }
-          else {
-            si_vec.push_back(0);
-          }
+          si_vec.push_back(si);
           if (t == 0) {
             yrlen_vec.push_back(0.5);
           } 
           else {
             yrlen_vec.push_back(cycle_length/12);
           }
+          tx_cost_vec.push_back(sim_cost.tx);
+          hosp_cost_vec.push_back(sim_cost.hosp);
+          mgmt_cost_vec.push_back(sim_cost.mgmt);
+          prod_loss_vec.push_back(sim_cost.prod);
+          si_cost_vec.push_back(sim_cost.si);
           
           // Iterate and update age + time
           cage_i = cage_i + cycle_length/12;
@@ -553,9 +705,18 @@ List sim_haqC(arma::mat therapies,
       } next_i:;
     }
   }
-  return List::create(sim, id, month_vec, therapy_vec, therapy_seq, therapy_cycle, death_vec, 
-                      age_vec, ttd_vec, acr_vec, eular_vec,
-                      haq_vec, ttsi_vec, si_vec, yrlen_vec);
+  return List::create(Rcpp::Named("sim") = sim, Rcpp::Named("id") = id, 
+                      Rcpp::Named("month") = month_vec, Rcpp::Named("tx") = tx_vec,
+                      Rcpp::Named("tx_seq") = tx_seq, Rcpp::Named("tx_cycle") = tx_cycle,
+                      Rcpp::Named("age") = age_vec, Rcpp::Named("ttd") = ttd_vec, 
+                      Rcpp::Named("acr") = acr_vec, Rcpp::Named("eular") = eular_vec,
+                      Rcpp::Named("haq") = haq_vec, Rcpp::Named("ttsi") = ttsi_vec, 
+                      Rcpp::Named("si") = si_vec, Rcpp::Named("yrlen") = yrlen_vec,
+                      Rcpp::Named("tx_cost") = tx_cost_vec,
+                      Rcpp::Named("hosp_cost") = hosp_cost_vec, 
+                      Rcpp::Named("mgmt_cost") = mgmt_cost_vec,
+                      Rcpp::Named("si_cost") = si_cost_vec,
+                      Rcpp::Named("prod_loss") = prod_loss_vec);
 }
 
 // Sample from Hernandez Alva (2013) Mixture Model
@@ -670,181 +831,6 @@ std::vector<double> sim_utility_wailooC(std::vector<int> sim, std::vector<int> i
   return logit_xb;
 }
 
-// Treatment Costs
-//' @export
-// [[Rcpp::export]]
-List sim_treat_costC(std::vector<int> therapy, std::vector<int> therapy_cycle,
-              std::vector<double> id, std::vector<double> weight, double cycle_length,
-             std::vector<double> ann_infusion_cost, std::vector<double> ann_rx_cost,
-             std::vector<double> init_infusion_cost, std::vector<double> init_rx_cost,
-             std::vector<int> weight_based,
-             std::vector<double> ann_wgt_slope, std::vector<double> init_wgt_slope,
-             std::vector<double> ann_util, std::vector<double> init_util,
-             std::vector<double> strength, std::vector<double> price,
-             int cdmards, int tcz, int tczmtx){
-  int N = therapy.size();
-  std::vector<double> treat_infusion_cost;
-  std::vector<double> treat_rx_cost;
-  treat_infusion_cost.reserve(N);
-  treat_rx_cost.reserve(N);
-  double init_wcost = 0.0;
-  double ann_wcost = 0.0;
-  double init_infusion_cost_j = 0.0;
-  double init_rx_cost_j = 0.0;
-  double ann_infusion_cost_j = 0.0;
-  double ann_rx_cost_j = 0.0;
-  
-  // Replace annual cost with costs per cycle
-  for (int k = 0; k < ann_infusion_cost.size(); ++k){
-    ann_infusion_cost[k] = ann_infusion_cost[k] * cycle_length/12;
-    ann_rx_cost[k] = ann_rx_cost[k] * cycle_length/12;
-    ann_util[k] = ann_util[k] * cycle_length/12;
-  }
-  
-  // Loop over simulated data
-  for (int i = 0; i < N; ++i){
-    int j = therapy[i];
-    
-    // initial 6-month cost
-    if (therapy_cycle[i] == 0){
-      // weight based cost
-      if (weight_based[j] == 1){
-        int init_wunit1 = ceil(weight[id[i]]* init_wgt_slope[j] / strength[j]);
-        init_wcost = price[j] * init_util[j] * init_wunit1;
-      }
-      else{
-        init_wcost = 0;
-      }
-      
-      // non-weight based cost
-      if (j == tcz){
-        if (weight[id[i]] >= 100){
-          init_infusion_cost_j = init_infusion_cost[tcz] * 2;
-          init_rx_cost_j = init_rx_cost[tcz] * 2;
-        }
-        else {
-          init_infusion_cost_j = init_infusion_cost[j];
-          init_rx_cost_j = init_rx_cost[j];
-        }
-      }
-      else if (j == tczmtx){
-        if (weight[id[i]] >= 100){
-          init_infusion_cost_j = init_infusion_cost[tcz] * 2 + init_infusion_cost[cdmards];
-          init_rx_cost_j = init_rx_cost[tcz] * 2 + init_infusion_cost[cdmards];
-        }
-        else {
-          init_infusion_cost_j = init_infusion_cost[j];
-          init_rx_cost_j = init_rx_cost[j];
-        }
-      }
-      else {
-        init_infusion_cost_j = init_infusion_cost[j];
-        init_rx_cost_j = init_rx_cost[j];
-      }
-      double init_rx_cost = init_rx_cost_j + init_wcost;
-      treat_infusion_cost.push_back(init_infusion_cost_j);
-      treat_rx_cost.push_back(init_rx_cost);
-    }
-    
-    // Annual post 6-month cost
-    else {
-      // weight based cost
-      if (weight_based[j] == 1){
-        int ann_wunit1 = ceil(weight[id[i]]* ann_wgt_slope[j] / strength[j]);
-        ann_wcost = price[j] * ann_util[j] * ann_wunit1;
-      }
-      else{
-        ann_wcost = 0;
-      }
-      
-      // non-weight based cost
-      if (j == tcz){
-        if (weight[id[i]] >= 100){
-          ann_infusion_cost_j = ann_infusion_cost[tcz] * 2;
-          ann_rx_cost_j = ann_rx_cost[tcz] * 2;
-        }
-        else {
-          ann_infusion_cost_j = ann_infusion_cost[j];
-          ann_rx_cost_j = ann_rx_cost[j];
-        }
-      }
-      else if (j == tczmtx){
-        if (weight[id[i]] >= 100){
-          ann_infusion_cost_j = ann_infusion_cost[tcz] * 2 + ann_infusion_cost[cdmards];
-          ann_rx_cost_j = ann_rx_cost[tcz] * 2 + ann_rx_cost[cdmards];
-        }
-        else {
-          ann_infusion_cost_j = ann_infusion_cost[j];
-          ann_rx_cost_j = ann_rx_cost[j];
-        }
-      }
-      else {
-        ann_infusion_cost_j = ann_infusion_cost[j];
-        ann_rx_cost_j = ann_rx_cost[j];
-      }      
-      double ann_rx_cost =  ann_rx_cost_j  + ann_wcost;
-      treat_infusion_cost.push_back(ann_infusion_cost_j);
-      treat_rx_cost.push_back(ann_rx_cost);
-    }
-  }
-  return List::create(treat_infusion_cost, treat_rx_cost);
-}
-
-// Hospitalization costs
-//' @export
-// [[Rcpp::export]]
-std::vector<double> sim_hosp_costC(std::vector<double> &haq, std::vector<double> &yrlen,
-                               std::vector<int> &sim, arma::mat &unit_cost_mat, 
-                               arma::mat &hosp_days_mat){
-  int N = haq.size();
-  std::vector<double> hosp_cost_vec;
-  hosp_cost_vec.reserve(N);
-  double hosp_days = 0.0;
-  double hosp_cost = 0.0;
-  for (int i = 0; i < N; ++i){
-    if (haq[i] < 0.5){
-      hosp_days = hosp_days_mat.row(sim[i])(0);
-      hosp_cost = hosp_days * unit_cost_mat.row(sim[i])(0) * yrlen[i];
-    }
-    else if (haq[i] >= 0.5 && haq[i] < 1){
-      hosp_days = hosp_days_mat.row(sim[i])(1);
-      hosp_cost = hosp_days * unit_cost_mat.row(sim[i])(1) * yrlen[i];
-    }
-    else if (haq[i] >= 1 && haq[i] < 1.5){
-      hosp_days = hosp_days_mat.row(sim[i])(2);
-      hosp_cost = hosp_days * unit_cost_mat.row(sim[i])(2) * yrlen[i];
-    }
-    else if (haq[i] >= 1.5 && haq[i] < 2){
-      hosp_days = hosp_days_mat.row(sim[i])(3);
-      hosp_cost = hosp_days * unit_cost_mat.row(sim[i])(3) * yrlen[i];
-    }
-    else if (haq[i] >= 2 && haq[i] < 2.5){
-      hosp_days = hosp_days_mat.row(sim[i])(4);
-      hosp_cost = hosp_days * unit_cost_mat.row(sim[i])(4) * yrlen[i];
-    }
-    else if (haq[i] >= 2.5){
-      hosp_days = hosp_days_mat.row(sim[i])(5);
-      hosp_cost = hosp_days * unit_cost_mat.row(sim[i])(5) * yrlen[i];
-    }
-    hosp_cost_vec.push_back(hosp_cost);
-  }
-  return hosp_cost_vec;
-}
-
-// Productivity Loss
-//' @export
-// [[Rcpp::export]]
-std::vector<double> sim_prod_lossC(std::vector<double> &haq, std::vector<double> &yrlen,
-                               std::vector<int> &sim, std::vector<double> beta){
-  int N = haq.size();
-  std::vector<double> prod_loss_vec;
-  prod_loss_vec.reserve(N);
-  for (int i = 0; i < N; ++i){
-    prod_loss_vec.push_back(haq[i] * beta[sim[i]] * yrlen[i]);
-  }
-  return prod_loss_vec;
-}
-
 // Serious Infection Cost
 //' @export
 // [[Rcpp::export]]
@@ -864,20 +850,6 @@ std::vector<double> sim_si_costC(std::vector<double> si, std::vector<double> &yr
     si_cost_vec.push_back(si_cost);
   }
   return si_cost_vec;
-}
-
-// General management cost
-//' @export
-// [[Rcpp::export]]
-std::vector<double> sim_mgmt_costC(std::vector<double> &yrlen,
-                               std::vector<int> &sim, std::vector<double> &cost){
-  int N = sim.size();
-  std::vector<double> mgmt_cost_vec;
-  mgmt_cost_vec.reserve(N);
-  for (int i = 0; i < N; ++i){
-    mgmt_cost_vec.push_back(cost[sim[i]] * yrlen[i]);
-  }
-  return mgmt_cost_vec;
 }
 
 // QALYs

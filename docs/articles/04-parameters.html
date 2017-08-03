@@ -28,12 +28,9 @@
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="../reference/index.html">Reference</a>
-</li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Run the model
+    Tutorial
      
     <span class="caret"></span>
   </a>
@@ -62,7 +59,39 @@
   </ul>
 </li>
 <li>
-  <a href="../articles/collaborate.html">Collaborate</a>
+  <a href="../reference/index.html">API</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Collaborate
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+<li class="dropdown-header">Suggested improvements</li>
+    <li>
+      <a href="../articles/collaborate.html">Contribute</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    About
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+<li class="dropdown-header">OSVP</li>
+    <li>
+      <a href="../model-description/model-description.pdf">Model description</a>
+    </li>
+    <li class="dropdown-header">Release history</li>
+    <li class="dropdown-header">Reproducibility</li>
+    <li class="dropdown-header">hesim</li>
+  </ul>
+</li>
+<li>
+  <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra/">Web app</a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
@@ -113,7 +142,7 @@
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">parsamp2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pars.html">sample_pars</a></span>(<span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">si_cost =</span> <span class="dv">7000</span>)
 <span class="kw">summary</span>(parsamp2$si.cost)</code></pre></div>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##    5636    6357    6814    6962    7634    8373</code></pre>
+##    5710    6405    6847    6930    7451    8368</code></pre>
 <p>To view the full list of arguments in <code>sample_pars</code> that can changed by the user view the documentation by typing <code><a href="../reference/sample_pars.html">?sample_pars</a></code>. All default arguments are loaded with the package and are based on IVI’s statistical estimates and synthesis of the literature. The parameter estimates can be viewed by typing the command <code>data(package = "iviRA")</code> into the R console.</p>
 <p>Below we describe these parameter estimates and separate them into 8 main categories: treatment effects estimated from a network meta-analysis (NMA); mappings between various measured of treatment response, disease activity, and/or function; long-term progression of disease, treatment duration, serious infections, mortality, utility, and costs.</p>
 <div id="nma" class="section level2">
@@ -504,7 +533,11 @@
 <h2 class="hasAnchor">
 <a href="#costs" class="anchor"></a>Costs</h2>
 <p>The model incorporates 3 main types of health care sector costs: (1) drug acquisition and administration costs, (2) hospitalization costs, and (3) general management costs. Productivity losses can also be included in the analysis if the analyst would like to take a societal perspective.</p>
-<p>Drug acquisition and administration costs are separated into costs associated with the first 6 months of treatment and costs after the first 6 months. Costs are a function of the FDA recommended dose and frequency of administration, strength and dosage form, the wholesale acquisition cost (WAC), and infusion. If dosing is weight based, then the dose is calculated by multiplying the dose value (e.g., <code>init_dose_val</code> and <code>ann_dose_val</code>) by each patients weight in kilograms; otherwise the dose is simply equal to the dose value. For example, the dose for infliximab during the first six months is equal to 3 multiplied by the weight of the patient.</p>
+<div id="treatment-costs" class="section level3">
+<h3 class="hasAnchor">
+<a href="#treatment-costs" class="anchor"></a>Treatment costs</h3>
+<p>Drug acquisition and administration costs are separated into costs associated with the first 6 months of treatment and costs after the first 6 months. Costs are a function of the FDA recommended dose and frequency of administration, strength and dosage form, the price, and infusion. Prices with the simulation are reduced according to assumed discounts and rebates. If dosing is weight based, then the dose is calculated by multiplying the dose value (e.g., <code>init_dose_val</code> and <code>ann_dose_val</code>) by each patients weight in kilograms; otherwise the dose is simply equal to the dose value. For example, the dose for infliximab during the first six months is equal to 3 multiplied by the weight of the patient.</p>
+<p>Information related to treatment costs are stored in the list <code><a href="http://www.rdocumentation.org/packages/iviRA/topics/treat.cost">iviRA::treat.cost</a></code>. Data related to the costs of treatment for each medication are in the data table <code>iviRA::treat.cost$cost</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(knitr)
 <span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(iviRA::treat.cost$cost)</code></pre></div>
 <table class="table">
@@ -520,8 +553,12 @@
 <th align="right">ann_num_doses</th>
 <th align="right">strength_val</th>
 <th align="left">strength_unit</th>
-<th align="right">wac_per_unit</th>
+<th align="right">price_per_unit</th>
+<th align="right">discount_lower</th>
+<th align="right">discount_upper</th>
 <th align="right">infusion_cost</th>
+<th align="right">loading_dose</th>
+<th align="right">weight_based</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
@@ -537,6 +574,10 @@
 <td align="right">50.0</td>
 <td align="left">mg</td>
 <td align="right">1110.50000</td>
+<td align="right">0.2</td>
+<td align="right">0.3</td>
+<td align="right">0</td>
+<td align="right">0</td>
 <td align="right">0</td>
 </tr>
 <tr class="even">
@@ -552,6 +593,10 @@
 <td align="right">40.0</td>
 <td align="left">mg</td>
 <td align="right">2220.62000</td>
+<td align="right">0.2</td>
+<td align="right">0.3</td>
+<td align="right">0</td>
+<td align="right">0</td>
 <td align="right">0</td>
 </tr>
 <tr class="odd">
@@ -567,7 +612,11 @@
 <td align="right">100.0</td>
 <td align="left">mg</td>
 <td align="right">1113.27000</td>
+<td align="right">0.2</td>
+<td align="right">0.3</td>
 <td align="right">164</td>
+<td align="right">0</td>
+<td align="right">1</td>
 </tr>
 <tr class="even">
 <td align="left">golimumab</td>
@@ -582,6 +631,10 @@
 <td align="right">50.0</td>
 <td align="left">mg</td>
 <td align="right">3811.18000</td>
+<td align="right">0.2</td>
+<td align="right">0.3</td>
+<td align="right">0</td>
+<td align="right">0</td>
 <td align="right">0</td>
 </tr>
 <tr class="odd">
@@ -597,6 +650,10 @@
 <td align="right">400.0</td>
 <td align="left">mg</td>
 <td align="right">3679.87000</td>
+<td align="right">0.2</td>
+<td align="right">0.3</td>
+<td align="right">0</td>
+<td align="right">0</td>
 <td align="right">0</td>
 </tr>
 <tr class="even">
@@ -612,7 +669,11 @@
 <td align="right">250.0</td>
 <td align="left">mg</td>
 <td align="right">931.16000</td>
+<td align="right">0.2</td>
+<td align="right">0.3</td>
 <td align="right">164</td>
+<td align="right">0</td>
+<td align="right">0</td>
 </tr>
 <tr class="odd">
 <td align="left">abatacept SC</td>
@@ -627,6 +688,10 @@
 <td align="right">125.0</td>
 <td align="left">mg</td>
 <td align="right">957.14000</td>
+<td align="right">0.2</td>
+<td align="right">0.3</td>
+<td align="right">164</td>
+<td align="right">1</td>
 <td align="right">0</td>
 </tr>
 <tr class="even">
@@ -642,6 +707,10 @@
 <td align="right">162.0</td>
 <td align="left">mg</td>
 <td align="right">898.31000</td>
+<td align="right">0.2</td>
+<td align="right">0.3</td>
+<td align="right">0</td>
+<td align="right">0</td>
 <td align="right">0</td>
 </tr>
 <tr class="odd">
@@ -657,7 +726,11 @@
 <td align="right">500.0</td>
 <td align="left">mg</td>
 <td align="right">4176.10000</td>
+<td align="right">0.2</td>
+<td align="right">0.3</td>
 <td align="right">164</td>
+<td align="right">0</td>
+<td align="right">0</td>
 </tr>
 <tr class="even">
 <td align="left">tofaticinib citrate</td>
@@ -672,6 +745,10 @@
 <td align="right">5.0</td>
 <td align="left">mg</td>
 <td align="right">63.26000</td>
+<td align="right">0.2</td>
+<td align="right">0.3</td>
+<td align="right">0</td>
+<td align="right">0</td>
 <td align="right">0</td>
 </tr>
 <tr class="odd">
@@ -687,6 +764,10 @@
 <td align="right">15.0</td>
 <td align="left">mg</td>
 <td align="right">32.41875</td>
+<td align="right">0.2</td>
+<td align="right">0.3</td>
+<td align="right">0</td>
+<td align="right">0</td>
 <td align="right">0</td>
 </tr>
 <tr class="even">
@@ -702,6 +783,10 @@
 <td align="right">200.0</td>
 <td align="left">mg</td>
 <td align="right">3.18000</td>
+<td align="right">0.2</td>
+<td align="right">0.3</td>
+<td align="right">0</td>
+<td align="right">0</td>
 <td align="right">0</td>
 </tr>
 <tr class="odd">
@@ -717,10 +802,43 @@
 <td align="right">0.5</td>
 <td align="left">g</td>
 <td align="right">0.47000</td>
+<td align="right">0.2</td>
+<td align="right">0.3</td>
+<td align="right">0</td>
+<td align="right">0</td>
 <td align="right">0</td>
 </tr>
 </tbody>
 </table>
+<p>The variable <code>init_num_doses</code> is the number of doses during the first 6 months after beginning a new treatment and the variable <code>ann_num_doses</code> is the number of doses <em>per year</em> after the first 6 months. The variables <code>discount_lower</code> and <code>discount_upper</code> are lower and upper bounds for the amount by which prices (<code>price_per_unit</code>) are decreased after discounts and rebates.</p>
+<p>Costs for individual therapeutic agents are used to calculate costs for the (combination) treatments in a treatment sequence by using the lookup data table <code>iviRA::treat.cost$lookup</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iviRA::treat.cost$lookup</code></pre></div>
+<pre><code>##        sname  agent1  agent2
+##  1:  cdmards cdmards      NA
+##  2: abtivmtx   abtiv cdmards
+##  3:   adamtx     ada cdmards
+##  4:      ada     ada      NA
+##  5:   etnmtx     etn cdmards
+##  6:      etn     etn      NA
+##  7:   golmtx     gol cdmards
+##  8:   ifxmtx     ifx cdmards
+##  9:  placebo placebo      NA
+## 10:   tczmtx     tcz cdmards
+## 11:      tcz     tcz      NA
+## 12:   czpmtx     czp cdmards
+## 13: abtscmtx   abtsc cdmards
+## 14:      nbt cdmards      NA
+## 15:   rtxmtx     rtx cdmards
+## 16:   tofmtx     tof cdmards
+## 17:      rtx     rtx      NA
+## 18:      tof     tof      NA
+## 19:      czp     czp      NA
+## 20:      gol     gol      NA</code></pre>
+<p>The treatment names in the first column (<code>sname</code>) must match the names of the treatments selected in a treatment sequence. All subsequent columns refer to the names of the therapeutic agents used for a particular treatment. For example, the treatment <code>etnmtx</code> contains both etanercept and methotrexate/conventional cDMARDs.</p>
+</div>
+<div id="other-health-care-sector-costs" class="section level3">
+<h3 class="hasAnchor">
+<a href="#other-health-care-sector-costs" class="anchor"></a>Other health care sector costs</h3>
 <p>Hospitalization costs are estimated as a function of the HAQ score. In particular, <a href="https://www.ncbi.nlm.nih.gov/pubmed/25773552">Carlson 2015</a>, report estimates of the number of days in the hospital for a given HAQ score range as well as the cost of a single day in the hospital.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><a href="http://www.rdocumentation.org/packages/iviRA/topics/hosp.cost">iviRA::hosp.cost</a></code></pre></div>
 <pre><code>##          haq days_mean days_se cost_pday_mean cost_pday_se
@@ -737,7 +855,11 @@
 ## 2:          xray_visit  53.0  45.0  61.0  4.081708
 ## 3: outpatient_followup 187.0 159.0 215.0 14.285977
 ## 4:                 tst  30.5  30.5  30.5  0.000000</code></pre>
-<p>Finally, we use estimates of productivity loss from <a href="http://www.jrheum.org/content/32/10/1875.short">Wolfe et al. (2005)</a>. The authors provide estimates of the annual loss in earnings associated with a 1-unit increase in HAQ, which we convert to 2017 dollars.</p>
+</div>
+<div id="productivity-losses" class="section level3">
+<h3 class="hasAnchor">
+<a href="#productivity-losses" class="anchor"></a>Productivity losses</h3>
+<p>We use estimates of productivity loss from <a href="http://www.jrheum.org/content/32/10/1875.short">Wolfe et al. (2005)</a>. The authors provide estimates of the annual loss in earnings associated with a 1-unit increase in HAQ, which we convert to 2017 dollars.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><a href="http://www.rdocumentation.org/packages/iviRA/topics/prod.loss">iviRA::prod.loss</a></code></pre></div>
 <pre><code>##         est       se
 ## 1: 5965.952 1576.608</code></pre>
@@ -750,6 +872,7 @@
 <a href="05-ips.html">Next</a>
 </li>
 </ul>
+</div>
 </div>
 </div>
 </div>

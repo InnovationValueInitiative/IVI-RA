@@ -28,12 +28,9 @@
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="../reference/index.html">Reference</a>
-</li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Run the model
+    Tutorial
      
     <span class="caret"></span>
   </a>
@@ -62,7 +59,39 @@
   </ul>
 </li>
 <li>
-  <a href="../articles/collaborate.html">Collaborate</a>
+  <a href="../reference/index.html">API</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Collaborate
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+<li class="dropdown-header">Suggested improvements</li>
+    <li>
+      <a href="../articles/collaborate.html">Contribute</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    About
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+<li class="dropdown-header">OSVP</li>
+    <li>
+      <a href="../model-description/model-description.pdf">Model description</a>
+    </li>
+    <li class="dropdown-header">Release history</li>
+    <li class="dropdown-header">Reproducibility</li>
+    <li class="dropdown-header">hesim</li>
+  </ul>
+</li>
+<li>
+  <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra/">Web app</a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
@@ -94,6 +123,7 @@
 <p>The easiest way to analyze output from the <code>sim_iviRA</code> function is with the <a href="http://devinincerti.com/hesim/">hesim</a> package, also developed by IVI. <code>hesim</code> helps facilitate computationally intensive simulation modeling, including the analysis of simulation output. It contains a number of functions for summarizing a PSA given general cost-effectiveness output.</p>
 <p>To prepare the data so that it can be analyzed with <code>hesim</code>, mean outcomes must be calculated for each simulation number and each treatment arm.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">n.inner &lt;-<span class="st"> </span><span class="kw">max</span>(sim.out$sim)
+sim.out[, hc_cost :<span class="er">=</span><span class="st"> </span>tx_cost +<span class="st"> </span>hosp_cost +<span class="st"> </span>mgmt_cost +<span class="st"> </span>si_cost]
 ce &lt;-<span class="st"> </span>sim.out[, .(<span class="dt">grp =</span> <span class="dv">1</span>,
              <span class="dt">qalys =</span> <span class="kw">sum</span>(qalys)/n.inner,
                        <span class="dt">dqalys =</span> <span class="kw">sum</span>(qalys *<span class="st"> </span>.<span class="dv">03</span>)/n.inner,
