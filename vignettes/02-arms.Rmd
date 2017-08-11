@@ -46,8 +46,8 @@ nrow(pop)
 
 <div>
 <ul class="pager">
-  <li class="previous"><a href="02-population.html">Previous</a></li>
-  <li class="next"><a href="03-structure.html">Next</a></li>
+  <li class="previous"><a href="01-population.html">Previous</a></li>
+  <li class="next"><a href="03-structures.html">Next</a></li>
 </ul>
 </div>
 

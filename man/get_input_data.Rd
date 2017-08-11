@@ -4,7 +4,8 @@
 \alias{get_input_data}
 \title{Input data for simulation}
 \usage{
-get_input_data(patdata, x_mort = NULL, x_ttd = NULL, model_structure)
+get_input_data(patdata, x_mort = NULL, x_ttd_all = NULL, x_ttd_da = NULL,
+  x_ttd_eular = NULL, model_structures)
 }
 \arguments{
 \item{patdata}{Matrix of patient data. Must contain variables generated from \link{sample_pats}:
@@ -12,12 +13,16 @@ get_input_data(patdata, x_mort = NULL, x_ttd = NULL, model_structure)
 1 if the patient is male and 0 if female, 'weight' for patient weight, and 'prev_dmards' 
 for number of previous DMARDs.}
 
-\item{model_structure}{An object of class \code{model_structure} generated from 
-\link{select_model_structure}.}
+\item{x_mort}{A matrix with each column a variable used to adjust mortality.}
 
-\item{vars_mort}{A matrix with each column a variable used to adjust mortality.}
+\item{x_ttd_all}{The design matrix for time to treatment discontinuation representative of all patients (i.e., unstratified).}
 
-\item{vars_ttd}{The design matrix for time to treatment discontinuation.}
+\item{x_ttd_da}{The design matrix for time to treatment discontinuation stratified by disease activity level.}
+
+\item{x_ttd_eular}{The design matrix for time to treatment discontinuation for each EULAR response category (moderate, good).}
+
+\item{model_structures}{An object of class \code{model_structures} generated from 
+\link{select_model_structures}.}
 }
 \value{
 A list containing the following data inputs:

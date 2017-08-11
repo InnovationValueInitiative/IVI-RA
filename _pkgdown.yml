@@ -8,10 +8,10 @@ articles:
     - 00-intro
     - 01-population
     - 02-arms
-    - 03-structure
+    - 03-structures
     - 04-parameters
     - 05-ips
-    - 06-cea
+    - 06-analysis
   - title: "Collaborate"
     contents:
     - collaborate
@@ -54,13 +54,15 @@ reference:
       - sample_pars_utility_mixture
   - title: "Model structure"
     contents:
-      - select_model_structure
+      - select_model_structures
   - title: "Individual patient simulation"
     contents:
       - get_input_data
       - sim_iviRA
   - title: "Other useful functions"
     contents:
+      - sim_utility_mixture
+      - sim_utility_wailoo
       - sim_survtime
 
 navbar:
@@ -74,14 +76,14 @@ navbar:
         href: articles/01-population.html
       - text: "2. Select treatment sequences"
         href: articles/02-arms.html
-      - text: "3. Select model structure"
-        href: articles/03-structure.html
+      - text: "3. Select model structures"
+        href: articles/03-structures.html
       - text: "4. Sample parameters"
         href: articles/04-parameters.html
       - text: "5. Run simulation"
         href: articles/05-ips.html
-      - text: "6. Cost-effectiveness analysis"
-        href: articles/06-cea.html
+      - text: "6. Value assessment"
+        href: articles/06-analysis.html
   - text: "API"
     href: reference/index.html
   - text: "Collaborate"

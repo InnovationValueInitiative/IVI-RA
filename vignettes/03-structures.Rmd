@@ -47,16 +47,16 @@ The parametric distribution used to model time to treat discontinuation can also
 Finally, there are two ways to estimate utility. Our preferred method is mixture model estimated by [Hernandez Alava et al. (2013)](https://academic.oup.com/rheumatology/article/52/5/944/1816557) that has been shown to significantly outperform existing models. The mixture model simulates utility as a function of age, pain, and HAQ for four separate classes that are, in turn, dependent on age, gender, pain, HAQ, and an unobserved random intercept term. The second algorithm is based on the logistic regression equation relating HAQ and other patient characteristics to utility by [Wailoo et al. (2006)](https://www.sheffield.ac.uk/polopoly_fs/1.43356!/file/AHRQ-final-report.pdf). 
 
 
-## Select a model structure
-A model structure is chosen with R using the `select_model_structure` function. The function returns an object of class `model_structure`, which is used as an input to functions needed to run the simulation. Here, we choose a model structure that models the effect of treatment on HAQ using **H1**, switching using **S1**, the LCGM for HAQ progression in the absence of bDMARDs, the generalized gamma distribution for time to treatment discontinuation, and the mixture model to simulate utility. 
+## Select model structures
+Model structures are chosen with R using the `select_model_structures` function. The function returns an object of class `model_structures`, which is used as an input to functions needed to run the simulation. Here, we choose two model structures. In the first model structure, we model the effect of treatment on HAQ using **H2**, switching using **S6**, HAQ progression in the absence of bDMARDs with the LCGM, time to treatment discontinuation with the generalized gamma distribution, and utility using the mixture model. In the second model structure, we use the pathway **H3** so that treatment has a direct effect on HAQ, treatment switching is determined using the pathway **S1**, a linear model is used for HAQ progression in the absence of bDMARDs, a lognormal distribution is used for treatment duration, and HAQ is mapped to utility with the Wailoo algorithm. 
 
 ```{r }
-mod.struct <- select_model_structure(itreat_haq = "acr-eular-haq",
-                                     itreat_switch = "acr-eular-switch",
-                                     cdmards_haq_model = "lcgm",
-                                     ttd_dist = "gengamma",
-                                     utility_model = "mixture")
-print(mod.struct)
+mod.structs <- select_model_structures(tx_ihaq = c("acr-eular-haq", "acr-haq"),
+                                     tx_iswitch = c("acr-eular-switch", "acr-switch"),
+                                     cdmards_haq_model = c("lcgm", "linear"),
+                                     ttd_dist = c("gengamma", "lnorm"),
+                                     utility_model = c("mixture", "wailoo"))
+print(mod.structs)
 ```
 
 

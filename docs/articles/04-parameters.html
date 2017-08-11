@@ -45,7 +45,7 @@
       <a href="../articles/02-arms.html">2. Select treatment sequences</a>
     </li>
     <li>
-      <a href="../articles/03-structure.html">3. Select model structure</a>
+      <a href="../articles/03-structures.html">3. Select model structures</a>
     </li>
     <li>
       <a href="../articles/04-parameters.html">4. Sample parameters</a>
@@ -54,7 +54,7 @@
       <a href="../articles/05-ips.html">5. Run simulation</a>
     </li>
     <li>
-      <a href="../articles/06-cea.html">6. Cost-effectiveness analysis</a>
+      <a href="../articles/06-analysis.html">6. Value assessment</a>
     </li>
   </ul>
 </li>
@@ -142,7 +142,7 @@
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">parsamp2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pars.html">sample_pars</a></span>(<span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">si_cost =</span> <span class="dv">7000</span>)
 <span class="kw">summary</span>(parsamp2$si.cost)</code></pre></div>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##    5710    6405    6847    6930    7451    8368</code></pre>
+##    5648    6374    7124    7131    7958    8395</code></pre>
 <p>To view the full list of arguments in <code>sample_pars</code> that can changed by the user view the documentation by typing <code><a href="../reference/sample_pars.html">?sample_pars</a></code>. All default arguments are loaded with the package and are based on IVI’s statistical estimates and synthesis of the literature. The parameter estimates can be viewed by typing the command <code>data(package = "iviRA")</code> into the R console.</p>
 <p>Below we describe these parameter estimates and separate them into 8 main categories: treatment effects estimated from a network meta-analysis (NMA); mappings between various measured of treatment response, disease activity, and/or function; long-term progression of disease, treatment duration, serious infections, mortality, utility, and costs.</p>
 <div id="nma" class="section level2">
@@ -528,6 +528,11 @@
 ## 40         HAQ    delta3   1.051656593
 ## 41    Pain/100    delta3  25.339552780
 ## 42   Pain/1002    delta3 -16.962219250</code></pre>
+<p>Quality-adjusted life-years are also decreased in each period that there is a serious infection and is assumed to vary by 20 percent in either direction.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">formals</span>(sample_pars)$si_ul</code></pre></div>
+<pre><code>## [1] 0.156</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">formals</span>(sample_pars)$si_ul_range</code></pre></div>
+<pre><code>## [1] 0.2</code></pre>
 </div>
 <div id="costs" class="section level2">
 <h2 class="hasAnchor">
@@ -866,7 +871,7 @@
 <div>
 <ul class="pager">
 <li class="previous">
-<a href="03-structure.html">Previous</a>
+<a href="03-structures.html">Previous</a>
 </li>
 <li class="next">
 <a href="05-ips.html">Next</a>

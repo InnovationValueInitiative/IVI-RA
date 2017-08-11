@@ -11,56 +11,56 @@ library("iviRA")
 load("output.RData")
 ```
 
-Once treatment arms have been select, the model structure has been defined, and parameter values have been sampled, the IPS can be run. However, first, we must derive data inputs for the model specific to the model structure chosen.    
+Once treatment arms have been select, the model structures have been defined, and parameter values have been sampled, the IPS can be run. However, first, we must derive data inputs for the model specific to the model structure chosen.    
 
 ## Generate input data
 Data inputs are model inputs that are fixed at baseline. Given a patient population and model structure, we can generate the required data with the function `get_input_data`
 
 ```{r, cache = TRUE }
-input.dat <- get_input_data(patdata = pop, model_structure = mod.struct)
+input.dat <- get_input_data(patdata = pop, model_structures = mod.structs)
 names(input.dat)
 ```
 
-The function returns all patient characteristics needed to run the simulation (HAQ score at baseline, age, gender, DAS28, SDAI, CDAI, weight, and the number of previous DMARDs). It also stores two matrices of explanatory variables. The first matrix, `x.mort`, contains all patient characteristics known at baseline used to adjust mortality with a log odds ratio. By default, only the baseline HAQ score is used to adjust mortality. 
+The function returns all patient characteristics needed to run the simulation (HAQ score at baseline, age, gender, DAS28, SDAI, CDAI, weight, and the number of previous DMARDs). It also stores two types of matrices of explanatory variables. First, `x.mort`, contains all patient characteristics known at baseline used to adjust mortality with a log odds ratio. By default, only the baseline HAQ score is used to adjust mortality. 
 
 ```{r, cache = TRUE }
 head(input.dat$x.mort)
 ```
 
-The second matrix, `x.ttd`, is the design matrix used to simulate time to treatment discontinuation. This matrix depends on the the model structure chosen since treatment duration depends on the pathway **S1-S6** used for treatment switching. In the current model structure, `itreat_switch = acr-switch`, the design matrix is a single column of ones since the model parameters used to simulate treatment duration do not differ across patients. 
+The second set of matrices are the design matrices used to simulate time to treatment discontinuation. They include `x.ttd.all`, `x.ttd.da`, and `x.ttd.eular`. The required matrices depnd on the model structures chosen. `x.ttd.all` is required if treatment duration does not depend on disease activity or EULAR respone (i.e., pathway **S1**), `x.ttd.da` is required if treatment duration depends on disease activity (i.e., pathways **S2-S5** ), and `x.ttd.eular` is required if treatment duration depends on EULAR response (i.e., pathway **S6**). This matrix depends on the the model structure chosen since treatment duration depends on the pathway **S1-S6** used for treatment switching. In our selected model structures, `tx_iswitch = acr-eular-switch` or `tx_iswitch = acr-switch`.
 
 ```{r, cache = TRUE }
-head(input.dat$x.ttd)
+head(input.dat$x.ttd.all)
+head(input.dat$x.ttd.eular)
+input.dat$x.ttd.da
 ```
 
 ## Simulate
-We run the IPS using the function `sim_iviRA`. The main arguments are the selected treatment arms, the input data, the parameter samples, and the model structure. Here, we simulate outcomes for Arm 1 (`r arm1`) and Arm 2
+We run the IPS using the function `sim_iviRA`. The main arguments are the selected treatment arms, the input data, the parameter samples, and the model structure. Here, we simulate outcomes for Arm 1 and Arm 2.
 
 ```{r }
 sim.out1 <- sim_iviRA(arms = arm1, input_data = input.dat, pars = parsamp,
-                     model_structure = mod.struct)
+                     model_structures = mod.structs)
 sim.out1[, arm := "Arm 1"]
 sim.out2 <- sim_iviRA(arms = arm2, input_data = input.dat, pars = parsamp,
-                     model_structure = mod.struct)
+                     model_structures = mod.structs)
 sim.out2[, arm := "Arm 2"]
 sim.out <- rbind(sim.out1, sim.out2)
 head(sim.out)
 ```
 
-`sim_iviRA` returns a data.table which is an enhanced data.frame from the data.table package designed for fast data manipulation. For a given sampled parameter set (`sim`) a sampled patient (`id`) remains on a given therapy until time to treatment discontinuation (`ttd`) becomes less than zero in a given month. Treatment discontinuation is caused by a serious infection (`si = 1`) if the sampled time to serious infection at treatment initiation is less than the sampled time to discontinuation. After discontinuation, a patient switches to the next therapy and `therapy_seq` increments by one. Patient age increases in 6-month increments. 
+`sim_iviRA` returns a data.table which is an enhanced data.frame from the data.table package designed for fast data manipulation. For a given model structure (`model`) and sampled parameter set (`sim`), a sampled patient (`id`) remains on a given therapy until time to treatment discontinuation (`ttd`) becomes less than zero in a given month. Treatment discontinuation is caused by a serious infection (`si = 1`) if the sampled time to serious infection at treatment initiation is less than the sampled time to discontinuation. After discontinuation, a patient switches to the next therapy and `therapy_seq` increments by one. Patient age (`age`) increases in 6-month increments. 
 
-The HAQ score (`haq`) during the initial 6-month period (`therapy_cycle = 1`) and `ttd` depend on the model structure chosen. In our chosen structure, `r paste0("itreat_haq = ", mod.struct["itreat_haq"])` and `r paste0("itreat_switch = ", mod.struct["itreat_switch"])`, HAQ and time to treatment discontinuation depend on ACR response (`acr`) and in turn, EULAR response (`eular`). For patients on cDMARDs, the HAQ score progresses according to the LCGM while HAQ progresses linearly for patients on bDMARDs. The simulation ends when a patient dies (`death = 1`).
+The HAQ score (`haq`) during the initial 6-month period (`therapy_cycle = 1`), disease activity measures (`das28`, `sdai`, and `cdai`), and `ttd` depend on the model structure chosen. For example, in the first model structure, HAQ and time to treatment discontinuation depend on ACR response (`acr`) and in turn, EULAR response (`eular`). The simulation returned NA values for the three disease activity measures because treatment switching is is not a function of disease activity (i.e., **S6** was chosen in the first model structure). The simulation ends when a patient dies (`death = 1`).
 
-An important component of health care sector costs (`hc_cost`) are the costs associated with treatment (`treat_cost`), which consist of infusion costs (`infusion_cost`) and drug acquisition costs (`rx_cost`). Other health care sector costs are hospital costs (`hosp_cost`), which increase with the HAQ score; general management costs (`mgmt_cost`); and the costs of caused by serious infections (`si_cost`).
+Health care sector costs consist of treatment costs (`treat_cost`); hospital costs (`hosp_cost`), which increase with the HAQ score; general management costs (`mgmt_cost`); and the costs of caused by serious infections (`si_cost`). Non-health care sector costs are those due to lost wages. Analyses performed from a societal perspective should include these productivity losses (`prod_loss`). 
 
-The model currently only supports non-health care sector costs due to lost wages. Analyses performed from a societal perspective should include these productivity losses (`prod_loss`). 
-
-If utility is simulated using the mixture model, then both pain (`pain`) and utility (`utility`) are returned. If, on the other hand, the Wailoo model is used, then only utility is returned. In both cases, QALYs (`qalys`) are calculated as a function of utility and the estimated utility loss from a serious infection.  
+Utility (`utility`) depends on whether the Hernandez-Alava mixture model or Wailoo logistic regression equation is used to simulate utility. In both cases, QALYs (`qalys`) are calculated as a function of utility and the estimated utility loss from a serious infection.  
 
 <div>
 <ul class="pager">
   <li class="previous"><a href="04-parameters.html">Previous</a></li>
-  <li class="next"><a href="06-cea.html">Next</a></li>
+  <li class="next"><a href="06-analysis.html">Next</a></li>
 </ul>
 </div>
 

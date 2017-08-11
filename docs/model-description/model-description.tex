@@ -196,9 +196,7 @@
 
 This document describes version 0.1 of the Innovation and Value Initiative's (IVIs) rheumatoid arthritis (RA) cost-effectiveness model. The IVI-RA model is an individual patient simulation (IPS) that simulates patients one at a time. The model can be run with multiple perspectives (e.g., health care sector, societal) and accounts for both parameter and structural uncertainty. Since the range of defendable scientific approaches is large, the IVI-RA model consists of 336 possible model structures. Structural uncertainty can be quantified by estimating cost-effectiveness across these different model structures and parameter uncertainty is quantified using probabilistic sensitivity analysis (PSA). 
 
-% The model is available as an \href{https://cran.r-project.org/}{\R{}} package with documentation available \href{https://innovationvalueinitiative.github.io/IVI-RA/index.html}{online}. The source code can be viewed or downloaded at our \href{https://github.com/InnovationValueInitiative/IVI-RA}{GitHub repository}. The IPS was primarily written in \CPP{} so that PSA and analyses of structural uncertainty can be run in a reasonable amount of time. The model can either be run using \R{} (see \href{https://innovationvalueinitiative.github.io/IVI-RA/index.html}{documentation}) or \href{http://www.shinyapps.io/}{online} with our user-friendly R Shiny web application. 
-
-The model will be made available as an \R{} package and the source code will be available at our GitHub repository. The IPS was primarily written in \CPP{} so that PSA and analyses of structural uncertainty can be run in a reasonable amount of time. The model can either be run using \R{} or online with our user-friendly R Shiny web application. 
+The model is available as an \href{https://cran.r-project.org/}{\R{}} package with documentation available \href{https://innovationvalueinitiative.github.io/IVI-RA/index.html}{online}. The source code can be viewed or downloaded at our \href{https://github.com/InnovationValueInitiative/IVI-RA}{GitHub repository}. The IPS was primarily written in \CPP{} so that PSA and analyses of structural uncertainty can be run in a reasonable amount of time. The model can either be run using \R{} (see \href{https://innovationvalueinitiative.github.io/IVI-RA/index.html}{documentation}) or \href{http://www.shinyapps.io/}{online} with our user-friendly R Shiny web application. 
 
 This document is structured as follows. We begin by discussing treatment strategies that can be modeled in \autoref{sec:treatments}. \autoref{sec:model-structures} outlines the competing model structures. \autoref{sec:populations} examines the data needed to define a population and run an analysis. \autoref{sec:data-parameters} describes the statistical techniques used to estimate the model parameters and the data sources used. \autoref{sec:sim-uncertainty} details the simulation techniques used to implement the IVI-RA model and quantify uncertainty. \autoref{sec:validation} focuses on methods for validating the model. Lastly, \autoref{sec:limitations} discusses limitations and areas for improvement. 
 
@@ -697,7 +695,7 @@ Based on the NMA by \citet{singh2011adverse} and in accordance with \citet{steve
 
 
 
-A patient in the IPS has a serious infection if the simulated time to serious infection occurs before the simulated time of treatment discontinuation. \autoref{tbl:si-prob} shows the probability of this occurring when treatment duration is modeled using a generalized gamma distribution. The probability of a serious infection is relatively rare as only 3.49\% of patients using cDMARDs and 8.14\% of patients using bDMARDs have serious infections. However, differences between cDMARDs and bDMARDs are not insignificant as the probability of a serious infection is almost 5 percentage points higher with bDMARDs than with cDMARDs.
+A patient in the IPS has a serious infection if the simulated time to serious infection occurs before the simulated time of treatment discontinuation. \autoref{tbl:si-prob} shows the probability of this occurring when treatment duration is modeled using a generalized gamma distribution. The probability of a serious infection is relatively rare as only 3.48\% of patients using cDMARDs and 8.07\% of patients using bDMARDs have serious infections. However, differences between cDMARDs and bDMARDs are not insignificant as the probability of a serious infection is almost 5 percentage points higher with bDMARDs than with cDMARDs.
 
 \begin{table}[!ht]
 \begin{center}
@@ -826,7 +824,7 @@ Notes: Baseline HAQ is 1 for the ``Constant HAQ'' and ``HAQ increase of 0.03 per
 \subsection{Cost}\label{cost}
 
 
-An overview of drug acquisition and administration costs is presented in \autoref{tbl:treat-cost}. Costs are a function of dose and frequency of administration, strength and dosage form, the wholesale acquisition cost (WAC), and infusion costs. Since infliximab dosing depend on patient weight, the costs for infliximab reported in the table average over a patient population that is 21\% male. The WACs in the table do not include discounts or rebates so they may be higher than actual drug costs. The methodology used to calculate drug acquisition and administration costs is described in more detail in \autoref{app:treat-cost}.
+An overview of drug acquisition and administration costs is presented in \autoref{tbl:treat-cost}. Costs are a function of dose and frequency of administration, strength and dosage form, price, and infusion costs. Since infliximab dosing depend on patient weight, the costs for infliximab reported in the table average over a patient population that is 21\% male. The prices in the table are based on the wholesale acquisition cost (WAC) and do not include discounts or rebates so they may be higher than actual drug costs. In the simulation, a unique discount can be used for each drug; currently the discount is assumed to range from 20\% to 30\%. The methodology used to calculate drug acquisition and administration costs is described in more detail in \autoref{app:treat-cost}. 
 
 \begin{sidewaystable}
 \begin{center}
@@ -840,7 +838,7 @@ An overview of drug acquisition and administration costs is presented in \autore
 \multicolumn{1}{p{0.15\linewidth}}{Strength and dosage form} & 
 \multicolumn{1}{p{0.08\linewidth}}{Number of doses first 6 months}  & 
 \multicolumn{1}{p{0.08\linewidth}}{Number of dosees per year beyond the first 6 months} & 
-\multicolumn{1}{c}{WAC per unit} & \multicolumn{1}{c}{Infusion cost} & 
+\multicolumn{1}{c}{Price per unit} & \multicolumn{1}{c}{Infusion cost} & 
 \multicolumn{1}{p{0.08\linewidth}}{Cost for the first 6 months} &
 \multicolumn{1}{p{0.08\linewidth}}{Cost per year beyond the first 6 months}\\
 \hline
@@ -848,7 +846,7 @@ An overview of drug acquisition and administration costs is presented in \autore
 \hline
 \end{tabular}
 \tiny
-Notes: Costs do not include rebates or discounts. Cost for infliximab are calculated by assuming that 21\% of patients are male and that the weight of men and women are 89 kg and 75 kg respectively. Tocilizumab is dosed weekly if weight is greater than 100 kg; costs for tocilizumab reported in the table are for patients weighing less than 100 kg. IV = intravenous; SC = subcutaneous; WAC = wholesale acquisition cost. 
+Notes: Costs in the table do not include rebates or discounts, but rebates and discounts are used in the simulation. Cost for infliximab are calculated by assuming that 21\% of patients are male and that the weight of men and women are 89 kg and 75 kg respectively. Tocilizumab is dosed weekly if weight is greater than 100 kg; costs for tocilizumab reported in the table are for patients weighing less than 100 kg. IV = intravenous; SC = subcutaneous; WAC = wholesale acquisition cost. 
 \end{threeparttable}
 \end{center}
 \end{sidewaystable}
@@ -1311,7 +1309,7 @@ Drug acquisition and administration costs are calculated separately during the i
 cost = \left\lceil\frac{dose_{amt}}{strength_{amt}}\right\rceil \cdot doses_{num} \cdot WAC,
 \end{align}
 
-where $\lceil\cdot\rceil$ is the ceiling function and implies that products cannot be reused after opening, $dose_{amt}$ is the recommended dose of the drug, $strength_{amt}$ is the strength of the drug, $doses_{num}$ is the number of doses in a 6 month period, and $WAC$ is the WAC. For example, as shown in \autoref{tbl:treat-cost}, both the strength and the dose of adalimumab are 50 mg, so costs for the initial 6 month period are calculated by multiplying the number of doses (13) by the WAC (\$2,220.62).
+where $\lceil\cdot\rceil$ is the ceiling function and implies that products cannot be reused after opening, $dose_{amt}$ is the recommended dose of the drug, $strength_{amt}$ is the strength of the drug, $doses_{num}$ is the number of doses in a 6 month period, and $WAC$ is the WAC. For example, as shown in \autoref{tbl:treat-cost}, both the strength and the dose of adalimumab are 50 mg, so costs for the initial 6 month period are calculated by multiplying the number of doses (13) by the WAC (\$).
 
 When dosing depends on weight, costs are calculated separately for each patient in the simulation. In particular, costs are calculated as,
 
@@ -1319,7 +1317,7 @@ When dosing depends on weight, costs are calculated separately for each patient 
 cost &= \lceil weight \cdot dose_{amt}/strength_{amt}\rceil \cdot doses_{num} \cdot WAC,
 \end{align}
 
-where $\rm{weight}$ is patient weight, $dose_{amt}$ is the dose per weight, and $strength_{amt}$, $WAC$, and $doses_{num}$ are defined in the same way as in the non-weight based scenario. To illustrate, the acquisition cost for infliximab after the first 6 months is calculated by multiplying each patient's weight by the dose (6 mg/kg) and dividing by the size of a vial (100 mg), and then multiplying by the number of doses (8.67) and the WAC (\$1,113.27).  
+where $\rm{weight}$ is patient weight, $dose_{amt}$ is the dose per weight, and $strength_{amt}$, $WAC$, and $doses_{num}$ are defined in the same way as in the non-weight based scenario. To illustrate, the acquisition cost for infliximab after the first 6 months is calculated by multiplying each patient's weight by the dose (6 mg/kg) and dividing by the size of a vial (100 mg), and then multiplying by the number of doses (8.67) and the WAC (\$).  
 
 \section{Network Meta-Analysis}\label{appendix:NMA}
 

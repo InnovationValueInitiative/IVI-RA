@@ -130,10 +130,12 @@ lt_data <- function(ltfemale, ltmale){
 #'  'age' for age, 'haq0' for baseline HAQ, 'male' as a indicator equal to
 #' 1 if the patient is male and 0 if female, 'weight' for patient weight, and 'prev_dmards' 
 #' for number of previous DMARDs. 
-#' @param vars_mort A matrix with each column a variable used to adjust mortality.
-#' @param vars_ttd The design matrix for time to treatment discontinuation.
-#' @param model_structure An object of class \code{model_structure} generated from 
-#'  \link{select_model_structure}.
+#' @param x_mort A matrix with each column a variable used to adjust mortality.
+#' @param x_ttd_all The design matrix for time to treatment discontinuation representative of all patients (i.e., unstratified).
+#' @param x_ttd_da The design matrix for time to treatment discontinuation stratified by disease activity level.
+#' @param x_ttd_eular The design matrix for time to treatment discontinuation for each EULAR response category (moderate, good). 
+#' @param model_structures An object of class \code{model_structures} generated from 
+#'  \link{select_model_structures}.
 #' 
 #' @return A list containing the following data inputs:
 #' \describe{
@@ -147,33 +149,74 @@ lt_data <- function(ltfemale, ltmale){
 #' }
 #' 
 #' @export
-get_input_data <- function(patdata, x_mort = NULL, x_ttd = NULL, model_structure){
+get_input_data <- function(patdata, x_mort = NULL, 
+                           x_ttd_all = NULL, x_ttd_da = NULL, x_ttd_eular = NULL, 
+                           model_structures){
+  if (!inherits(model_structures, "model_structures")){
+    stop("The argument 'model_structures' must be of class 'model_structures'")
+  }
   npats <- nrow(patdata)
+  
+  # mortality
   if (is.null(x_mort)){
       x.mort <- patdata[, "haq0", drop = FALSE]
   } else{
       if (nrow(x_mort) != npats){
-          stop("Number of rows in 'x.mort' must equal number of simulated patients.")
+          stop("Number of rows in 'x_mort' must equal number of simulated patients.")
       }
     x.mort <- x_mort
   }
-  if (is.null(x_ttd)){
-    if (model_structure["itreat_switch"] %in% c("acr-switch", "acr-eular-switch")){
-        x.ttd <- matrix(1, nrow = nrow(patdata), ncol = 1)
-    } else{
-        x.ttd <- matrix(c(1, 0, 0), nrow = nrow(patdata), ncol = 3, byrow = TRUE)
-    }
-  } else{
-    if (nrow(x_ttd) != npats){
-      stop("Number of rows in 'x.mort' must equal number of simulated patients.")
-    }
-    x.ttd <- x_ttd
+  
+  # time to treatment discontinuation
+  if ("acr-switch" %in% model_structures[, "tx_iswitch"]){
+      if(is.null(x_ttd_all)){
+          x.ttd.all <- matrix(1, nrow = nrow(patdata), ncol = 1)
+      } else{
+        if (nrow(x_ttd_all) != npats){
+          stop("Number of rows in 'x_ttd_all' must equal number of simulated patients.")
+        }
+        x.ttd.all <- x_ttd_all
+      }
+  } 
+  
+  if("acr-eular-switch" %in% model_structures[, "tx_iswitch"]){
+      if(is.null(x_ttd_eular)){
+        x.ttd.eular <- matrix(1, nrow = nrow(patdata), ncol = 1)
+      } else{
+        if (nrow(x_ttd_eular) != npats){
+          stop("Number of rows in 'x_ttd_eular' must equal number of simulated patients.")
+        }
+        x.ttd.eular <- x_ttd_eular
+      }
+  } 
+  
+  if (any(c("acr-das28-switch", "acr-sdai-switch", "acr-cdai-switch", "das28-switch") %in% 
+      model_structures[, "tx_iswitch"])){
+      if(is.null(x_ttd_da)){
+        x.ttd.da <- matrix(c(1, 0, 0), nrow = nrow(patdata), ncol = 3, byrow = TRUE)
+      } else{
+        if (nrow(x_ttd_da) != npats){
+          stop("Number of rows in 'x_ttd_da' must equal number of simulated patients.")
+        }
+        x.ttd.da <- x_ttd_da
+      }
   }
+  
+  # combine
   l <- list(n = nrow(patdata), haq0 = patdata[, "haq0"], age = patdata[, "age"],
               male = patdata[, "male"], das28 = patdata[, "das28"],
               sdai = patdata[, "sdai"], cdai = patdata[, "cdai"],
               weight = patdata[, "weight"], prev.dmards = patdata[, "prev_dmards"],
-              x.mort = x.mort, x.ttd = x.ttd)
+              x.mort = x.mort)
+  if (exists("x.ttd.all")){
+    l <- c(l, list(x.ttd.all = x.ttd.all))
+  }
+  if (exists("x.ttd.eular")){
+    l <- c(l, list(x.ttd.eular = x.ttd.eular))
+  }
+  if (exists("x.ttd.da")){
+    l <- c(l, list(x.ttd.da = x.ttd.da))
+  }
   class(l) <- "input_data"
   return(l)
 }

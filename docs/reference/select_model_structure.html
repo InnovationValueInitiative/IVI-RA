@@ -77,7 +77,7 @@
       <a href="../articles/05-ips.html">5. Run simulation</a>
     </li>
     <li>
-      <a href="../articles/06-cea.html">6. Cost-effectiveness analysis</a>
+      <a href="../articles/06-cea.html">6. Value assessment</a>
     </li>
   </ul>
 </li>
@@ -143,8 +143,8 @@
     <p>Select the model structure to be used in the IVI-RA individual patient simulation.</p>
     
 
-    <pre class="usage"><span class='fu'>select_model_structure</span>(<span class='kw'>itreat_haq</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"acr-haq"</span>, <span class='st'>"acr-eular-haq"</span>, <span class='st'>"haq"</span>),
-  <span class='kw'>itreat_switch</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"acr-switch"</span>, <span class='st'>"acr-das28-switch"</span>, <span class='st'>"acr-sdai-switch"</span>,
+    <pre class="usage"><span class='fu'>select_model_structure</span>(<span class='kw'>tx_ihaq</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"acr-haq"</span>, <span class='st'>"acr-eular-haq"</span>, <span class='st'>"haq"</span>),
+  <span class='kw'>tx_iswitch</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"acr-switch"</span>, <span class='st'>"acr-das28-switch"</span>, <span class='st'>"acr-sdai-switch"</span>,
   <span class='st'>"acr-cdai-switch"</span>, <span class='st'>"das28-switch"</span>, <span class='st'>"acr-eular-switch"</span>),
   <span class='kw'>cdmards_haq_model</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"lcgm"</span>, <span class='st'>"linear"</span>), <span class='kw'>ttd_dist</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"exponential"</span>,
   <span class='st'>"weibull"</span>, <span class='st'>"gompertz"</span>, <span class='st'>"gamma"</span>, <span class='st'>"llogis"</span>, <span class='st'>"lnorm"</span>, <span class='st'>"gengamma"</span>),
@@ -154,18 +154,30 @@
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>itreat_haq</th>
+      <th>tx_ihaq</th>
       <td><p>Model structure relating treatment to HAQ during the first 6 months of 
-treatment.</p></td>
+treatment. Options, which are equivalent to H1-H3 in the documentation are
+H1: Treatment -&gt; ACR -&gt; HAQ (<code>acr-haq</code>), 
+H2: Treatment -&gt; ACR -&gt; EULAR -&gt; HAQ (<code>acr-eular-haq</code>), or
+H3:Treatment -&gt; HAQ (<code>haq</code>).</p></td>
     </tr>
     <tr>
-      <th>itreat_switch</th>
+      <th>tx_iswitch</th>
       <td><p>Model structure relating treatment to switching during the first
-6 months of treatment.</p></td>
+6 months of treatment. Options, which are equivalent to S1-S6 in the documentation are
+S1: Treatment -&gt; ACR -&gt; Switch (<code>acr-switch</code>), 
+S2: Treatment -&gt; ACR -&gt; DAS28 -&gt; Switch (<code>acr-das28-switch</code>),
+S3: Treatment -&gt; ACR -&gt; SDAI -&gt; Switch (<code>acr-sdai-switch</code>),
+S4: Treatment -&gt; ACR -&gt; CDAI -&gt; Switch (<code>acr-cdai-switch</code>),
+S5: Treatment -&gt; DAS28 -&gt; Switch (<code>das28-switch</code>),
+S6: Treatment -&gt; ACR -&gt; EULAR -&gt; Switch (<code>acr-eular-switch</code>).</p></td>
     </tr>
     <tr>
       <th>cdmards_haq_model</th>
-      <td><p>Model used for long-term HAQ progression.</p></td>
+      <td><p>Model used for long-term HAQ progression. Options are "lcgm" and "linear",
+ with "lcgm" as the default. If "lcgm" is chosen, then a latent class growth model is used for cDMARDs
+and NBT but a constant annual rate is is assumed for all other therapies; otherwise 
+a constant linear HAQ progression is assumed for all therapies including cDMARDs and NBT.</p></td>
     </tr>
     <tr>
       <th>ttd_dist</th>

@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Conducting a cost-effectiveness analysis • iviRA</title>
+<title>Value assessment • iviRA</title>
 <!-- jquery --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/simplex/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 <!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
@@ -28,41 +28,70 @@
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="../reference/index.html">Reference</a>
-</li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Run the model
+    Tutorial
      
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/01-intro.html">0. Introduction</a>
+      <a href="../articles/00-intro.html">0. Introduction</a>
     </li>
     <li>
-      <a href="../articles/02-population.html">1. Generate population</a>
+      <a href="../articles/01-population.html">1. Generate population</a>
     </li>
     <li>
-      <a href="../articles/03-arms.html">2. Select treatment sequences</a>
+      <a href="../articles/02-arms.html">2. Select treatment sequences</a>
     </li>
     <li>
-      <a href="../articles/04-parameters.html">3. Sample parameters</a>
+      <a href="../articles/03-structures.html">3. Select model structures</a>
     </li>
     <li>
-      <a href="../articles/05-structure.html">4. Select model structure</a>
+      <a href="../articles/04-parameters.html">4. Sample parameters</a>
     </li>
     <li>
-      <a href="../articles/06-ips.html">5. Run simulation</a>
+      <a href="../articles/05-ips.html">5. Run simulation</a>
     </li>
     <li>
-      <a href="../articles/07-cea.html">6. Cost-effectiveness analysis</a>
+      <a href="../articles/06-analysis.html">6. Value assessment</a>
     </li>
   </ul>
 </li>
 <li>
-  <a href="../articles/collaborate.html">Collaborate</a>
+  <a href="../reference/index.html">API</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Collaborate
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+<li class="dropdown-header">Suggested improvements</li>
+    <li>
+      <a href="../articles/collaborate.html">Contribute</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    About
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+<li class="dropdown-header">OSVP</li>
+    <li>
+      <a href="../model-description/model-description.pdf">Model description</a>
+    </li>
+    <li class="dropdown-header">Release history</li>
+    <li class="dropdown-header">Reproducibility</li>
+    <li class="dropdown-header">hesim</li>
+  </ul>
+</li>
+<li>
+  <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra/">Web app</a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
@@ -84,44 +113,35 @@
       </header><div class="row">
   <div class="col-md-9">
     <div class="page-header toc-ignore">
-      <h1>Conducting a cost-effectiveness analysis</h1>
+      <h1>Value assessment</h1>
             
           </div>
 
     
     
 <div class="contents">
-<div id="hesim-package" class="section level2">
-<h2 class="hasAnchor">
-<a href="#hesim-package" class="anchor"></a>hesim package</h2>
-<p>The <a href="http://devinincerti.com/hesim/">hesim</a> package contains a number of functions for conducting cost-effectiveness analyses. To prepare the data so that it can be analyzed with <code>hesim</code>, mean outcomes must be calculated for each simulation number and each treatment arm.</p>
+<p>The easiest way to analyze output from the <code>sim_iviRA</code> function is with the <a href="http://devinincerti.com/hesim/">hesim</a> package, also developed by IVI. <code>hesim</code> is designed for decision modeling modeling and the economic evaluation of health technologies. It contains functions for summarizing a PSA given general simulation output.</p>
+<p>To prepare the data so that it can be analyzed with <code>hesim</code>, mean outcomes must be calculated for each simulation number and each treatment arm.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">n.inner &lt;-<span class="st"> </span><span class="kw">max</span>(sim.out$sim)
-ce &lt;-<span class="st"> </span>sim.out[, .(<span class="dt">grp =</span> <span class="dv">1</span>,
+sim.out[, hc_cost :<span class="er">=</span><span class="st"> </span>tx_cost +<span class="st"> </span>hosp_cost +<span class="st"> </span>mgmt_cost +<span class="st"> </span>si_cost]
+sim.out.means &lt;-<span class="st"> </span>sim.out[, .(<span class="dt">grp =</span> <span class="dv">1</span>,
              <span class="dt">qalys =</span> <span class="kw">sum</span>(qalys)/n.inner,
                        <span class="dt">dqalys =</span> <span class="kw">sum</span>(qalys *<span class="st"> </span>.<span class="dv">03</span>)/n.inner,
                        <span class="dt">hc_cost =</span> <span class="kw">sum</span>(hc_cost)/n.inner,
                        <span class="dt">dhc_cost =</span> <span class="kw">sum</span>(hc_cost *<span class="st"> </span>.<span class="dv">03</span>)/n.inner),
                    by =<span class="st"> </span><span class="kw">c</span>(<span class="st">"sim"</span>, <span class="st">"arm"</span>)]</code></pre></div>
-<p>The functions in <code>hesim</code> are designed for subgroup analyses so we must specify a group variable. The current analysis does not specify subgroups so we assume a single large group. Analysis from a health care sector perspective would compare clinical effectiveness as measured by discounted QALYs (<code>dqalys</code>) to costs as measured by discounted health care sector costs (<code>dhc_cost</code>). An analysis from a societal perspective would add productivity losses to health care sector costs.</p>
+<p>The <code>sim.out.means</code> object can be analyzed in <code>hesim</code> using the <code>pcea</code> and <code>pcea_pw</code> functions, which are designed for indiviualized (i.e., subgroup) cost-effectiveness analysis. Since these functions are designed for subgroup analyses, a group variable must be specified. The current analysis does not specify subgroups so we assume a single large group. Analysis from a health care sector perspective would compare clinical effectiveness as measured by discounted QALYs (<code>dqalys</code>) to costs as measured by discounted health care sector costs (<code>dhc_cost</code>). An analysis from a societal perspective would add productivity losses to health care sector costs.</p>
 <div>
 <ul class="pager">
 <li class="previous">
-<a href="06-ips.html">Previous</a>
+<a href="05-ips.html">Previous</a>
 </li>
 </ul>
-</div>
 </div>
 </div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-        <div id="tocnav">
-      <h2 class="hasAnchor">
-<a href="#tocnav" class="anchor"></a>Contents</h2>
-      <ul class="nav nav-pills nav-stacked">
-<li><a href="#hesim-package">hesim package</a></li>
-      </ul>
-</div>
       </div>
 
 </div>

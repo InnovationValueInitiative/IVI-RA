@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Sample stratified survival parameters — sample_stratified_survpars • iviRA</title>
+<title>The IVI-RA simulation — adjust_utility_wailoo • iviRA</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -136,34 +136,23 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Sample stratified survival parameters</h1>
+    <h1>The IVI-RA simulation</h1>
     </div>
 
     
-    <p>Sample survival paramters stratified by variable.</p>
+    <p>Run the IVI-RA individual patient simulation model.</p>
     
 
-    <pre class="usage"><span class='fu'>sample_stratified_survpars</span>(<span class='no'>nsims</span>, <span class='no'>x</span>)</pre>
+    <pre class="usage"><span class='fu'>adjust_utility_wailoo</span>(<span class='no'>pars</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>nsims</th>
-      <td><p>Size of the posterior sample.</p></td>
-    </tr>
-    <tr>
-      <th>x</th>
-      <td><p>A list of survival parameters. For example, see 'Treatment duration' in <a href='sample_pars.html'>sample_pars</a>.</p></td>
+      <th>pars</th>
+      <td><p><code>utility.mixture</code> object from <code>sample_pars</code>.</p></td>
     </tr>
     </table>
-    
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>A list of lists. The top level list is the value of the variable used for 
-stratification. The second level list consists of matrices each containing random draws of the
- parameters of the survival distribution. The matrices are for the location parameter and
- each of the ancillary parameters.</p>
     
 
   </div>
@@ -171,9 +160,7 @@ stratification. The second level list consists of matrices each containing rando
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
-      <li><a href="#value">Value</a></li>
-          </ul>
+                </ul>
 
   </div>
 </div>

@@ -45,7 +45,7 @@
       <a href="../articles/02-arms.html">2. Select treatment sequences</a>
     </li>
     <li>
-      <a href="../articles/03-structure.html">3. Select model structure</a>
+      <a href="../articles/03-structures.html">3. Select model structures</a>
     </li>
     <li>
       <a href="../articles/04-parameters.html">4. Sample parameters</a>
@@ -54,7 +54,7 @@
       <a href="../articles/05-ips.html">5. Run simulation</a>
     </li>
     <li>
-      <a href="../articles/06-cea.html">6. Cost-effectiveness analysis</a>
+      <a href="../articles/06-analysis.html">6. Value assessment</a>
     </li>
   </ul>
 </li>
@@ -120,17 +120,17 @@
     
     
 <div class="contents">
-<p>Once treatment arms have been select, the model structure has been defined, and parameter values have been sampled, the IPS can be run. However, first, we must derive data inputs for the model specific to the model structure chosen.</p>
+<p>Once treatment arms have been select, the model structures have been defined, and parameter values have been sampled, the IPS can be run. However, first, we must derive data inputs for the model specific to the model structure chosen.</p>
 <div id="generate-input-data" class="section level2">
 <h2 class="hasAnchor">
 <a href="#generate-input-data" class="anchor"></a>Generate input data</h2>
 <p>Data inputs are model inputs that are fixed at baseline. Given a patient population and model structure, we can generate the required data with the function <code>get_input_data</code></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">input.dat &lt;-<span class="st"> </span><span class="kw"><a href="../reference/get_input_data.html">get_input_data</a></span>(<span class="dt">patdata =</span> pop, <span class="dt">model_structure =</span> mod.struct)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">input.dat &lt;-<span class="st"> </span><span class="kw"><a href="../reference/get_input_data.html">get_input_data</a></span>(<span class="dt">patdata =</span> pop, <span class="dt">model_structures =</span> mod.structs)
 <span class="kw">names</span>(input.dat)</code></pre></div>
 <pre><code>##  [1] "n"           "haq0"        "age"         "male"        "das28"      
 ##  [6] "sdai"        "cdai"        "weight"      "prev.dmards" "x.mort"     
-## [11] "x.ttd"</code></pre>
-<p>The function returns all patient characteristics needed to run the simulation (HAQ score at baseline, age, gender, DAS28, SDAI, CDAI, weight, and the number of previous DMARDs). It also stores two matrices of explanatory variables. The first matrix, <code>x.mort</code>, contains all patient characteristics known at baseline used to adjust mortality with a log odds ratio. By default, only the baseline HAQ score is used to adjust mortality.</p>
+## [11] "x.ttd.all"   "x.ttd.eular"</code></pre>
+<p>The function returns all patient characteristics needed to run the simulation (HAQ score at baseline, age, gender, DAS28, SDAI, CDAI, weight, and the number of previous DMARDs). It also stores two types of matrices of explanatory variables. First, <code>x.mort</code>, contains all patient characteristics known at baseline used to adjust mortality with a log odds ratio. By default, only the baseline HAQ score is used to adjust mortality.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(input.dat$x.mort)</code></pre></div>
 <pre><code>##           haq0
 ## [1,] 0.1430960
@@ -139,8 +139,8 @@
 ## [4,] 0.9628729
 ## [5,] 1.2583120
 ## [6,] 2.7052381</code></pre>
-<p>The second matrix, <code>x.ttd</code>, is the design matrix used to simulate time to treatment discontinuation. This matrix depends on the the model structure chosen since treatment duration depends on the pathway <strong>S1-S6</strong> used for treatment switching. In the current model structure, <code>itreat_switch = acr-switch</code>, the design matrix is a single column of ones since the model parameters used to simulate treatment duration do not differ across patients.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(input.dat$x.ttd)</code></pre></div>
+<p>The second set of matrices are the design matrices used to simulate time to treatment discontinuation. They include <code>x.ttd.all</code>, <code>x.ttd.da</code>, and <code>x.ttd.eular</code>. The required matrices depnd on the model structures chosen. <code>x.ttd.all</code> is required if treatment duration does not depend on disease activity or EULAR respone (i.e., pathway <strong>S1</strong>), <code>x.ttd.da</code> is required if treatment duration depends on disease activity (i.e., pathways <strong>S2-S5</strong> ), and <code>x.ttd.eular</code> is required if treatment duration depends on EULAR response (i.e., pathway <strong>S6</strong>). This matrix depends on the the model structure chosen since treatment duration depends on the pathway <strong>S1-S6</strong> used for treatment switching. In our selected model structures, <code>tx_iswitch = acr-eular-switch</code> or <code>tx_iswitch = acr-switch</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(input.dat$x.ttd.all)</code></pre></div>
 <pre><code>##      [,1]
 ## [1,]    1
 ## [2,]    1
@@ -148,52 +148,61 @@
 ## [4,]    1
 ## [5,]    1
 ## [6,]    1</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(input.dat$x.ttd.eular)</code></pre></div>
+<pre><code>##      [,1]
+## [1,]    1
+## [2,]    1
+## [3,]    1
+## [4,]    1
+## [5,]    1
+## [6,]    1</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">input.dat$x.ttd.da</code></pre></div>
+<pre><code>## NULL</code></pre>
 </div>
 <div id="simulate" class="section level2">
 <h2 class="hasAnchor">
 <a href="#simulate" class="anchor"></a>Simulate</h2>
-<p>We run the IPS using the function <code>sim_iviRA</code>. The main arguments are the selected treatment arms, the input data, the parameter samples, and the model structure. Here, we simulate outcomes for Arm 1 (adamtx, etnmtx, ifxmtx) and Arm 2</p>
+<p>We run the IPS using the function <code>sim_iviRA</code>. The main arguments are the selected treatment arms, the input data, the parameter samples, and the model structure. Here, we simulate outcomes for Arm 1 and Arm 2.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sim.out1 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sim_iviRA.html">sim_iviRA</a></span>(<span class="dt">arms =</span> arm1, <span class="dt">input_data =</span> input.dat, <span class="dt">pars =</span> parsamp,
-                     <span class="dt">model_structure =</span> mod.struct)
+                     <span class="dt">model_structures =</span> mod.structs)
 sim.out1[, arm :<span class="er">=</span><span class="st"> "Arm 1"</span>]
 sim.out2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sim_iviRA.html">sim_iviRA</a></span>(<span class="dt">arms =</span> arm2, <span class="dt">input_data =</span> input.dat, <span class="dt">pars =</span> parsamp,
-                     <span class="dt">model_structure =</span> mod.struct)
+                     <span class="dt">model_structures =</span> mod.structs)
 sim.out2[, arm :<span class="er">=</span><span class="st"> "Arm 2"</span>]
 sim.out &lt;-<span class="st"> </span><span class="kw">rbind</span>(sim.out1, sim.out2)
 <span class="kw">head</span>(sim.out)</code></pre></div>
-<pre><code>##    sim id month tx tx_seq tx_cycle      age      ttd acr eular      haq
-## 1:   1  1     6  3      1        1 51.84709  0.00000   0     0 0.143096
-## 2:   1  1    12  5      2        1 52.34709 18.36359   1     1 0.000000
-## 3:   1  1    18  5      2        2 52.84709 17.36359   1     1 0.000000
-## 4:   1  1    24  5      2        3 53.34709 16.36359   1     1 0.000000
-## 5:   1  1    30  5      2        4 53.84709 15.36359   1     1 0.000000
-## 6:   1  1    36  5      2        5 54.34709 14.36359   1     1 0.000000
-##        ttsi si yrlen  tx_cost hosp_cost mgmt_cost si_cost prod_loss
-## 1: 33.01596  0   0.5 20827.27  1.401958   195.909       0  314.2167
-## 2: 41.14851  0   0.5 20830.74  1.401958   195.909       0    0.0000
-## 3: 40.14851  0   0.5 20830.74  1.401958   195.909       0    0.0000
-## 4: 39.14851  0   0.5 20830.74  1.401958   195.909       0    0.0000
-## 5: 38.14851  0   0.5 20830.74  1.401958   195.909       0    0.0000
-## 6: 37.14851  0   0.5 20830.74  1.401958   195.909       0    0.0000
-##        pain   utility     qalys   arm
-## 1: 34.03547 0.7440780 0.3720390 Arm 1
-## 2: 71.20951 0.6294906 0.3147453 Arm 1
-## 3: 42.76343 0.7532457 0.3766228 Arm 1
-## 4: 36.84848 0.7616680 0.3808340 Arm 1
-## 5: 46.41519 0.7935025 0.3967512 Arm 1
-## 6: 13.18520 0.7845785 0.3922893 Arm 1</code></pre>
-<p><code>sim_iviRA</code> returns a data.table which is an enhanced data.frame from the data.table package designed for fast data manipulation. For a given sampled parameter set (<code>sim</code>) a sampled patient (<code>id</code>) remains on a given therapy until time to treatment discontinuation (<code>ttd</code>) becomes less than zero in a given month. Treatment discontinuation is caused by a serious infection (<code>si = 1</code>) if the sampled time to serious infection at treatment initiation is less than the sampled time to discontinuation. After discontinuation, a patient switches to the next therapy and <code>therapy_seq</code> increments by one. Patient age increases in 6-month increments.</p>
-<p>The HAQ score (<code>haq</code>) during the initial 6-month period (<code>therapy_cycle = 1</code>) and <code>ttd</code> depend on the model structure chosen. In our chosen structure, itreat_haq = acr-eular-haq and itreat_switch = acr-eular-switch, HAQ and time to treatment discontinuation depend on ACR response (<code>acr</code>) and in turn, EULAR response (<code>eular</code>). For patients on cDMARDs, the HAQ score progresses according to the LCGM while HAQ progresses linearly for patients on bDMARDs. The simulation ends when a patient dies (<code>death = 1</code>).</p>
-<p>An important component of health care sector costs (<code>hc_cost</code>) are the costs associated with treatment (<code>treat_cost</code>), which consist of infusion costs (<code>infusion_cost</code>) and drug acquisition costs (<code>rx_cost</code>). Other health care sector costs are hospital costs (<code>hosp_cost</code>), which increase with the HAQ score; general management costs (<code>mgmt_cost</code>); and the costs of caused by serious infections (<code>si_cost</code>).</p>
-<p>The model currently only supports non-health care sector costs due to lost wages. Analyses performed from a societal perspective should include these productivity losses (<code>prod_loss</code>).</p>
-<p>If utility is simulated using the mixture model, then both pain (<code>pain</code>) and utility (<code>utility</code>) are returned. If, on the other hand, the Wailoo model is used, then only utility is returned. In both cases, QALYs (<code>qalys</code>) are calculated as a function of utility and the estimated utility loss from a serious infection.</p>
+<pre><code>##    model sim id month tx tx_seq tx_cycle death      age        ttd acr
+## 1:     1   1  1     6  3      1        1     0 55.17278  0.0000000   0
+## 2:     1   1  1    12  5      2        1     0 55.67278  0.2949533   0
+## 3:     1   1  1    18  5      2        2     0 56.17278 -0.7050467   0
+## 4:     1   1  1    24  8      3        1     0 56.67278  0.0000000   2
+## 5:     1   1  1    30 14      4        1     1 57.17278         NA   0
+## 6:     1   1  2     6  3      1        1     0 68.15844  1.9717487   1
+##    eular das28 sdai cdai      haq       ttsi si yrlen    tx_cost hosp_cost
+## 1:     0    NA   NA   NA 2.658256 115.998176  0   0.5 21005.7194 3089.5142
+## 2:     1    NA   NA   NA 2.379522   7.569656  0   0.5 21009.2120 1057.3196
+## 3:     1    NA   NA   NA 2.631432   6.569656  0   0.5 21009.2120 3089.5142
+## 4:     0    NA   NA   NA 2.631432  16.600115  0   0.5 13222.1968 3089.5142
+## 5:     0    NA   NA   NA 2.631432         NA  0   0.5   595.9237 3089.5142
+## 6:     2    NA   NA   NA 1.245892  10.531893  0   0.5 21005.7194  189.7012
+##    mgmt_cost si_cost prod_loss     utility         qalys   arm
+## 1:  177.5397       0  6862.521 -0.21950825 -0.1097541256 Arm 1
+## 2:  177.5397       0  6142.944  0.66364492  0.3318224591 Arm 1
+## 3:  177.5397       0  6793.272  0.03191376  0.0159568821 Arm 1
+## 4:  177.5397       0  6793.272  0.01397579  0.0069878972 Arm 1
+## 5:  177.5397       0  6793.272 -0.00160050 -0.0008002501 Arm 1
+## 6:  177.5397       0  3216.378  0.81925007  0.4096250338 Arm 1</code></pre>
+<p><code>sim_iviRA</code> returns a data.table which is an enhanced data.frame from the data.table package designed for fast data manipulation. For a given model structure (<code>model</code>) and sampled parameter set (<code>sim</code>), a sampled patient (<code>id</code>) remains on a given therapy until time to treatment discontinuation (<code>ttd</code>) becomes less than zero in a given month. Treatment discontinuation is caused by a serious infection (<code>si = 1</code>) if the sampled time to serious infection at treatment initiation is less than the sampled time to discontinuation. After discontinuation, a patient switches to the next therapy and <code>therapy_seq</code> increments by one. Patient age (<code>age</code>) increases in 6-month increments.</p>
+<p>The HAQ score (<code>haq</code>) during the initial 6-month period (<code>therapy_cycle = 1</code>), disease activity measures (<code>das28</code>, <code>sdai</code>, and <code>cdai</code>), and <code>ttd</code> depend on the model structure chosen. For example, in the first model structure, HAQ and time to treatment discontinuation depend on ACR response (<code>acr</code>) and in turn, EULAR response (<code>eular</code>). The simulation returned NA values for the three disease activity measures because treatment switching is is not a function of disease activity (i.e., <strong>S6</strong> was chosen in the first model structure). The simulation ends when a patient dies (<code>death = 1</code>).</p>
+<p>Health care sector costs consist of treatment costs (<code>treat_cost</code>); hospital costs (<code>hosp_cost</code>), which increase with the HAQ score; general management costs (<code>mgmt_cost</code>); and the costs of caused by serious infections (<code>si_cost</code>). Non-health care sector costs are those due to lost wages. Analyses performed from a societal perspective should include these productivity losses (<code>prod_loss</code>).</p>
+<p>Utility (<code>utility</code>) depends on whether the Hernandez-Alava mixture model or Wailoo logistic regression equation is used to simulate utility. In both cases, QALYs (<code>qalys</code>) are calculated as a function of utility and the estimated utility loss from a serious infection.</p>
 <div>
 <ul class="pager">
 <li class="previous">
 <a href="04-parameters.html">Previous</a>
 </li>
 <li class="next">
-<a href="06-cea.html">Next</a>
+<a href="06-analysis.html">Next</a>
 </li>
 </ul>
 </div>

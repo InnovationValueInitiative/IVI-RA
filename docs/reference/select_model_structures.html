@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Sample stratified survival parameters — sample_stratified_survpars • iviRA</title>
+<title>Select model structures — select_model_structures • iviRA</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -136,34 +136,71 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Sample stratified survival parameters</h1>
+    <h1>Select model structures</h1>
     </div>
 
     
-    <p>Sample survival paramters stratified by variable.</p>
+    <p>Select the model structures to be used in the IVI-RA individual patient simulation.</p>
     
 
-    <pre class="usage"><span class='fu'>sample_stratified_survpars</span>(<span class='no'>nsims</span>, <span class='no'>x</span>)</pre>
+    <pre class="usage"><span class='fu'>select_model_structures</span>(<span class='kw'>tx_ihaq</span> <span class='kw'>=</span> <span class='st'>"acr-haq"</span>, <span class='kw'>tx_iswitch</span> <span class='kw'>=</span> <span class='st'>"acr-switch"</span>,
+  <span class='kw'>cdmards_haq_model</span> <span class='kw'>=</span> <span class='st'>"lcgm"</span>, <span class='kw'>ttd_dist</span> <span class='kw'>=</span> <span class='st'>"exponential"</span>,
+  <span class='kw'>utility_model</span> <span class='kw'>=</span> <span class='st'>"mixture"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>nsims</th>
-      <td><p>Size of the posterior sample.</p></td>
+      <th>tx_ihaq</th>
+      <td><p>Model structure relating treatment to HAQ during the first 6 months of 
+treatment. Options, which are equivalent to H1-H3 in the documentation are:</p><ul>
+<li><p><code>acr-haq</code> H1: Treatment -&gt; ACR -&gt; HAQ</p></li>
+<li><p><code>acr-eular-haq</code> H2: Treatment -&gt; ACR -&gt; EULAR -&gt; HAQ</p></li>
+<li><p><code>haq</code> H3:Treatment -&gt; HAQ</p></li>
+</ul></td>
     </tr>
     <tr>
-      <th>x</th>
-      <td><p>A list of survival parameters. For example, see 'Treatment duration' in <a href='sample_pars.html'>sample_pars</a>.</p></td>
+      <th>tx_iswitch</th>
+      <td><p>Model structure relating treatment to switching during the first
+6 months of treatment. Options, which are equivalent to S1-S6 in the documentation are:</p><ul>
+<li><p><code>acr-switch</code> S1: Treatment -&gt; ACR -&gt; Switch</p></li>
+<li><p><code>acr-das28-switch</code> S2: Treatment -&gt; ACR -&gt; DAS28 -&gt; Switch</p></li>
+<li><p><code>acr-sdai-switch</code> S3: Treatment -&gt; ACR -&gt; SDAI -&gt; Switch</p></li>
+<li><p><code>acr-cdai-switch</code> S4: Treatment -&gt; ACR -&gt; CDAI -&gt; Switch</p></li>
+<li><p><code>das28-switch</code> S5: Treatment -&gt; DAS28 -&gt; Switch</p></li>
+<li><p><code>das28-switch</code> S6: Treatment -&gt; ACR -&gt; EULAR -&gt; Switch</p></li>
+</ul></td>
+    </tr>
+    <tr>
+      <th>cdmards_haq_model</th>
+      <td><p>Model used for long-term HAQ progression. Options are:</p><ul>
+<li><p>lcgm Latent class growth model</p></li>
+<li><p>linear Constant linear HAQ progression</p></li>
+</ul><p>If <code>lgcm</code> is chosen, then a latent class growth model is used for cDMARDs
+and NBT but a constant annual rate is is assumed for all other therapies; otherwise 
+a constant linear HAQ progression is assumed for all therapies including cDMARDs and NBT.</p></td>
+    </tr>
+    <tr>
+      <th>ttd_dist</th>
+      <td><p>Distribution used to model time to treatment discontinuaton. Options are:</p><ul>
+<li><p>exponential Exponential</p></li>
+<li><p>weibull Weibull</p></li>
+<li><p>gompertz Gompertz</p></li>
+<li><p>gamma Gamma</p></li>
+<li><p>llogis Log-logistic</p></li>
+<li><p>lnorm Lognormal</p></li>
+<li><p>gengamma Generalized gamma</p></li>
+</ul></td>
+    </tr>
+    <tr>
+      <th>utility_model</th>
+      <td><p>Model used to estimate patient utility as a function of HAQ and patient
+characteristics. Options are:</p><ul>
+<li><p>mixture Hernandez Alava (2013) mixutre model</p></li>
+<li><p>wailoo Wailoo 2006 logistc regression</p></li>
+</ul></td>
     </tr>
     </table>
-    
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>A list of lists. The top level list is the value of the variable used for 
-stratification. The second level list consists of matrices each containing random draws of the
- parameters of the survival distribution. The matrices are for the location parameter and
- each of the ancillary parameters.</p>
     
 
   </div>
@@ -171,9 +208,7 @@ stratification. The second level list consists of matrices each containing rando
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
-      <li><a href="#value">Value</a></li>
-          </ul>
+                </ul>
 
   </div>
 </div>

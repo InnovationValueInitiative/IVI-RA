@@ -6,13 +6,13 @@
 
 using namespace Rcpp;
 
-// test_itreat_haq
-List test_itreat_haq(std::string itreat_haq_model, int line, int therapy, int nbt, arma::rowvec nma_acr1, arma::rowvec nma_acr2, double nma_dhaq1, double nma_dhaq2, arma::mat acr2eular, arma::rowvec acr2haq, arma::rowvec eular2haq);
-RcppExport SEXP iviRA_test_itreat_haq(SEXP itreat_haq_modelSEXP, SEXP lineSEXP, SEXP therapySEXP, SEXP nbtSEXP, SEXP nma_acr1SEXP, SEXP nma_acr2SEXP, SEXP nma_dhaq1SEXP, SEXP nma_dhaq2SEXP, SEXP acr2eularSEXP, SEXP acr2haqSEXP, SEXP eular2haqSEXP) {
+// test_tx_ihaq
+List test_tx_ihaq(std::string tx_ihaq_model, int line, int therapy, int nbt, arma::rowvec nma_acr1, arma::rowvec nma_acr2, double nma_dhaq1, double nma_dhaq2, arma::mat acr2eular, arma::rowvec acr2haq, arma::rowvec eular2haq);
+RcppExport SEXP iviRA_test_tx_ihaq(SEXP tx_ihaq_modelSEXP, SEXP lineSEXP, SEXP therapySEXP, SEXP nbtSEXP, SEXP nma_acr1SEXP, SEXP nma_acr2SEXP, SEXP nma_dhaq1SEXP, SEXP nma_dhaq2SEXP, SEXP acr2eularSEXP, SEXP acr2haqSEXP, SEXP eular2haqSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type itreat_haq_model(itreat_haq_modelSEXP);
+    Rcpp::traits::input_parameter< std::string >::type tx_ihaq_model(tx_ihaq_modelSEXP);
     Rcpp::traits::input_parameter< int >::type line(lineSEXP);
     Rcpp::traits::input_parameter< int >::type therapy(therapySEXP);
     Rcpp::traits::input_parameter< int >::type nbt(nbtSEXP);
@@ -23,7 +23,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::mat >::type acr2eular(acr2eularSEXP);
     Rcpp::traits::input_parameter< arma::rowvec >::type acr2haq(acr2haqSEXP);
     Rcpp::traits::input_parameter< arma::rowvec >::type eular2haq(eular2haqSEXP);
-    rcpp_result_gen = Rcpp::wrap(test_itreat_haq(itreat_haq_model, line, therapy, nbt, nma_acr1, nma_acr2, nma_dhaq1, nma_dhaq2, acr2eular, acr2haq, eular2haq));
+    rcpp_result_gen = Rcpp::wrap(test_tx_ihaq(tx_ihaq_model, line, therapy, nbt, nma_acr1, nma_acr2, nma_dhaq1, nma_dhaq2, acr2eular, acr2haq, eular2haq));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -74,13 +74,13 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// test_itreat_switch
-List test_itreat_switch(std::string itreat_switch_model, int line, int therapy, int nbt, int acr, int eular, double das28, double sdai, double cdai, arma::rowvec acr2das28, arma::rowvec acr2sdai, arma::rowvec acr2cdai, arma::rowvec nma_das28_1, arma::rowvec nma_das28_2, arma::rowvec p);
-RcppExport SEXP iviRA_test_itreat_switch(SEXP itreat_switch_modelSEXP, SEXP lineSEXP, SEXP therapySEXP, SEXP nbtSEXP, SEXP acrSEXP, SEXP eularSEXP, SEXP das28SEXP, SEXP sdaiSEXP, SEXP cdaiSEXP, SEXP acr2das28SEXP, SEXP acr2sdaiSEXP, SEXP acr2cdaiSEXP, SEXP nma_das28_1SEXP, SEXP nma_das28_2SEXP, SEXP pSEXP) {
+// test_tx_iswitch
+List test_tx_iswitch(std::string tx_iswitch_model, int line, int therapy, int nbt, int acr, int eular, double das28, double sdai, double cdai, arma::rowvec acr2das28, arma::rowvec acr2sdai, arma::rowvec acr2cdai, arma::rowvec nma_das28_1, arma::rowvec nma_das28_2, arma::rowvec p);
+RcppExport SEXP iviRA_test_tx_iswitch(SEXP tx_iswitch_modelSEXP, SEXP lineSEXP, SEXP therapySEXP, SEXP nbtSEXP, SEXP acrSEXP, SEXP eularSEXP, SEXP das28SEXP, SEXP sdaiSEXP, SEXP cdaiSEXP, SEXP acr2das28SEXP, SEXP acr2sdaiSEXP, SEXP acr2cdaiSEXP, SEXP nma_das28_1SEXP, SEXP nma_das28_2SEXP, SEXP pSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type itreat_switch_model(itreat_switch_modelSEXP);
+    Rcpp::traits::input_parameter< std::string >::type tx_iswitch_model(tx_iswitch_modelSEXP);
     Rcpp::traits::input_parameter< int >::type line(lineSEXP);
     Rcpp::traits::input_parameter< int >::type therapy(therapySEXP);
     Rcpp::traits::input_parameter< int >::type nbt(nbtSEXP);
@@ -95,7 +95,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::rowvec >::type nma_das28_1(nma_das28_1SEXP);
     Rcpp::traits::input_parameter< arma::rowvec >::type nma_das28_2(nma_das28_2SEXP);
     Rcpp::traits::input_parameter< arma::rowvec >::type p(pSEXP);
-    rcpp_result_gen = Rcpp::wrap(test_itreat_switch(itreat_switch_model, line, therapy, nbt, acr, eular, das28, sdai, cdai, acr2das28, acr2sdai, acr2cdai, nma_das28_1, nma_das28_2, p));
+    rcpp_result_gen = Rcpp::wrap(test_tx_iswitch(tx_iswitch_model, line, therapy, nbt, acr, eular, das28, sdai, cdai, acr2das28, acr2sdai, acr2cdai, nma_das28_1, nma_das28_2, p));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -136,6 +136,17 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type anc2(anc2SEXP);
     Rcpp::traits::input_parameter< int >::type da_cat(da_catSEXP);
     rcpp_result_gen = Rcpp::wrap(sim_ttd(x, loc, anc1, tswitch, dist, cycle_length, ttsi, anc2, da_cat));
+    return rcpp_result_gen;
+END_RCPP
+}
+// test_ttd
+Rcpp::List test_ttd(Rcpp::List x);
+RcppExport SEXP iviRA_test_ttd(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::List >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(test_ttd(x));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -258,87 +269,62 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// sim_iviRA_C
-List sim_iviRA_C(arma::mat arm_inds, std::vector<double> haq0, std::vector<double> das28_0, std::vector<double> sdai0, std::vector<double> cdai0, std::vector<double> age0, std::vector<int> male, std::vector<int> prev_dmards, std::string itreat_haq_model, std::string itreat_switch_model, arma::cube nma_acr1, arma::cube nma_acr2, arma::mat nma_dhaq1, arma::mat nma_dhaq2, arma::mat nma_das28_1, arma::mat nma_das28_2, arma::cube acr2eular, arma::mat acr2haq, arma::mat eular2haq, arma::mat acr2das28, arma::mat acr2sdai, arma::mat acr2cdai, arma::mat tswitch_da, arma::mat haq_lprog_therapy, arma::mat haq_lprog_age, arma::cube haq_lcgm_delta, arma::cube haq_lcgm_beta, std::string cdmards_haq_model, std::vector<double> rebound_factor, arma::mat lifetable_male, arma::mat lifetable_female, arma::mat x_mort, arma::mat logor_mort, std::string ttd_dist, arma::mat x_ttd, arma::mat ttd_all_loc, arma::vec ttd_all_anc1, arma::vec ttd_all_anc2, arma::mat ttd_da_loc, arma::vec ttd_da_anc1, arma::vec ttd_da_anc2, arma::mat ttd_eular_loc_mod, arma::vec ttd_eular_anc1_mod, arma::vec ttd_eular_anc2_mod, arma::mat ttd_eular_loc_good, arma::vec ttd_eular_anc1_good, arma::vec ttd_eular_anc2_good, double cycle_length, int treat_gap, int cdmards, int nbt, arma::mat si_loc, arma::mat si_anc1, arma::mat si_anc2, std::string si_dist, arma::mat haqdelta_loghr, int max_months, arma::mat hosp_days, arma::mat cost_pday, std::vector<double> mgmt_cost, std::vector<double> si_cost, std::vector<double> prod_loss, arma::cube tc_agents_ind, Rcpp::List tc_list, std::vector<double> weight);
-RcppExport SEXP iviRA_sim_iviRA_C(SEXP arm_indsSEXP, SEXP haq0SEXP, SEXP das28_0SEXP, SEXP sdai0SEXP, SEXP cdai0SEXP, SEXP age0SEXP, SEXP maleSEXP, SEXP prev_dmardsSEXP, SEXP itreat_haq_modelSEXP, SEXP itreat_switch_modelSEXP, SEXP nma_acr1SEXP, SEXP nma_acr2SEXP, SEXP nma_dhaq1SEXP, SEXP nma_dhaq2SEXP, SEXP nma_das28_1SEXP, SEXP nma_das28_2SEXP, SEXP acr2eularSEXP, SEXP acr2haqSEXP, SEXP eular2haqSEXP, SEXP acr2das28SEXP, SEXP acr2sdaiSEXP, SEXP acr2cdaiSEXP, SEXP tswitch_daSEXP, SEXP haq_lprog_therapySEXP, SEXP haq_lprog_ageSEXP, SEXP haq_lcgm_deltaSEXP, SEXP haq_lcgm_betaSEXP, SEXP cdmards_haq_modelSEXP, SEXP rebound_factorSEXP, SEXP lifetable_maleSEXP, SEXP lifetable_femaleSEXP, SEXP x_mortSEXP, SEXP logor_mortSEXP, SEXP ttd_distSEXP, SEXP x_ttdSEXP, SEXP ttd_all_locSEXP, SEXP ttd_all_anc1SEXP, SEXP ttd_all_anc2SEXP, SEXP ttd_da_locSEXP, SEXP ttd_da_anc1SEXP, SEXP ttd_da_anc2SEXP, SEXP ttd_eular_loc_modSEXP, SEXP ttd_eular_anc1_modSEXP, SEXP ttd_eular_anc2_modSEXP, SEXP ttd_eular_loc_goodSEXP, SEXP ttd_eular_anc1_goodSEXP, SEXP ttd_eular_anc2_goodSEXP, SEXP cycle_lengthSEXP, SEXP treat_gapSEXP, SEXP cdmardsSEXP, SEXP nbtSEXP, SEXP si_locSEXP, SEXP si_anc1SEXP, SEXP si_anc2SEXP, SEXP si_distSEXP, SEXP haqdelta_loghrSEXP, SEXP max_monthsSEXP, SEXP hosp_daysSEXP, SEXP cost_pdaySEXP, SEXP mgmt_costSEXP, SEXP si_costSEXP, SEXP prod_lossSEXP, SEXP tc_agents_indSEXP, SEXP tc_listSEXP, SEXP weightSEXP) {
+// sim_utility_wailoo1C
+double sim_utility_wailoo1C(double age, double disease_duration, double haq0, int male, double prev_dmards, double haq, arma::rowvec b);
+RcppExport SEXP iviRA_sim_utility_wailoo1C(SEXP ageSEXP, SEXP disease_durationSEXP, SEXP haq0SEXP, SEXP maleSEXP, SEXP prev_dmardsSEXP, SEXP haqSEXP, SEXP bSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat >::type arm_inds(arm_indsSEXP);
+    Rcpp::traits::input_parameter< double >::type age(ageSEXP);
+    Rcpp::traits::input_parameter< double >::type disease_duration(disease_durationSEXP);
+    Rcpp::traits::input_parameter< double >::type haq0(haq0SEXP);
+    Rcpp::traits::input_parameter< int >::type male(maleSEXP);
+    Rcpp::traits::input_parameter< double >::type prev_dmards(prev_dmardsSEXP);
+    Rcpp::traits::input_parameter< double >::type haq(haqSEXP);
+    Rcpp::traits::input_parameter< arma::rowvec >::type b(bSEXP);
+    rcpp_result_gen = Rcpp::wrap(sim_utility_wailoo1C(age, disease_duration, haq0, male, prev_dmards, haq, b));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sim_utility_wailooC
+std::vector<double> sim_utility_wailooC(std::vector<int> sim, std::vector<int> id, std::vector<double> age, double disease_duration, std::vector<double> haq0, std::vector<int> male, std::vector<double> prev_dmards, std::vector<double> haq, std::vector<double> b_int, std::vector<double> b_age, std::vector<double> b_disease_duration, std::vector<double> b_haq0, std::vector<double> b_male, std::vector<double> b_prev_dmards, std::vector<double> b_haq);
+RcppExport SEXP iviRA_sim_utility_wailooC(SEXP simSEXP, SEXP idSEXP, SEXP ageSEXP, SEXP disease_durationSEXP, SEXP haq0SEXP, SEXP maleSEXP, SEXP prev_dmardsSEXP, SEXP haqSEXP, SEXP b_intSEXP, SEXP b_ageSEXP, SEXP b_disease_durationSEXP, SEXP b_haq0SEXP, SEXP b_maleSEXP, SEXP b_prev_dmardsSEXP, SEXP b_haqSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::vector<int> >::type sim(simSEXP);
+    Rcpp::traits::input_parameter< std::vector<int> >::type id(idSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type age(ageSEXP);
+    Rcpp::traits::input_parameter< double >::type disease_duration(disease_durationSEXP);
     Rcpp::traits::input_parameter< std::vector<double> >::type haq0(haq0SEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type das28_0(das28_0SEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type sdai0(sdai0SEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type cdai0(cdai0SEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type age0(age0SEXP);
     Rcpp::traits::input_parameter< std::vector<int> >::type male(maleSEXP);
-    Rcpp::traits::input_parameter< std::vector<int> >::type prev_dmards(prev_dmardsSEXP);
-    Rcpp::traits::input_parameter< std::string >::type itreat_haq_model(itreat_haq_modelSEXP);
-    Rcpp::traits::input_parameter< std::string >::type itreat_switch_model(itreat_switch_modelSEXP);
-    Rcpp::traits::input_parameter< arma::cube >::type nma_acr1(nma_acr1SEXP);
-    Rcpp::traits::input_parameter< arma::cube >::type nma_acr2(nma_acr2SEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type nma_dhaq1(nma_dhaq1SEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type nma_dhaq2(nma_dhaq2SEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type nma_das28_1(nma_das28_1SEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type nma_das28_2(nma_das28_2SEXP);
-    Rcpp::traits::input_parameter< arma::cube >::type acr2eular(acr2eularSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type acr2haq(acr2haqSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type eular2haq(eular2haqSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type acr2das28(acr2das28SEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type acr2sdai(acr2sdaiSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type acr2cdai(acr2cdaiSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type tswitch_da(tswitch_daSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type haq_lprog_therapy(haq_lprog_therapySEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type haq_lprog_age(haq_lprog_ageSEXP);
-    Rcpp::traits::input_parameter< arma::cube >::type haq_lcgm_delta(haq_lcgm_deltaSEXP);
-    Rcpp::traits::input_parameter< arma::cube >::type haq_lcgm_beta(haq_lcgm_betaSEXP);
-    Rcpp::traits::input_parameter< std::string >::type cdmards_haq_model(cdmards_haq_modelSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type rebound_factor(rebound_factorSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type lifetable_male(lifetable_maleSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type lifetable_female(lifetable_femaleSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type x_mort(x_mortSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type logor_mort(logor_mortSEXP);
-    Rcpp::traits::input_parameter< std::string >::type ttd_dist(ttd_distSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type x_ttd(x_ttdSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type ttd_all_loc(ttd_all_locSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type ttd_all_anc1(ttd_all_anc1SEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type ttd_all_anc2(ttd_all_anc2SEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type ttd_da_loc(ttd_da_locSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type ttd_da_anc1(ttd_da_anc1SEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type ttd_da_anc2(ttd_da_anc2SEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type ttd_eular_loc_mod(ttd_eular_loc_modSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type ttd_eular_anc1_mod(ttd_eular_anc1_modSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type ttd_eular_anc2_mod(ttd_eular_anc2_modSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type ttd_eular_loc_good(ttd_eular_loc_goodSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type ttd_eular_anc1_good(ttd_eular_anc1_goodSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type ttd_eular_anc2_good(ttd_eular_anc2_goodSEXP);
-    Rcpp::traits::input_parameter< double >::type cycle_length(cycle_lengthSEXP);
-    Rcpp::traits::input_parameter< int >::type treat_gap(treat_gapSEXP);
-    Rcpp::traits::input_parameter< int >::type cdmards(cdmardsSEXP);
-    Rcpp::traits::input_parameter< int >::type nbt(nbtSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type si_loc(si_locSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type si_anc1(si_anc1SEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type si_anc2(si_anc2SEXP);
-    Rcpp::traits::input_parameter< std::string >::type si_dist(si_distSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type haqdelta_loghr(haqdelta_loghrSEXP);
-    Rcpp::traits::input_parameter< int >::type max_months(max_monthsSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type hosp_days(hosp_daysSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type cost_pday(cost_pdaySEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type mgmt_cost(mgmt_costSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type si_cost(si_costSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type prod_loss(prod_lossSEXP);
-    Rcpp::traits::input_parameter< arma::cube >::type tc_agents_ind(tc_agents_indSEXP);
-    Rcpp::traits::input_parameter< Rcpp::List >::type tc_list(tc_listSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type weight(weightSEXP);
-    rcpp_result_gen = Rcpp::wrap(sim_iviRA_C(arm_inds, haq0, das28_0, sdai0, cdai0, age0, male, prev_dmards, itreat_haq_model, itreat_switch_model, nma_acr1, nma_acr2, nma_dhaq1, nma_dhaq2, nma_das28_1, nma_das28_2, acr2eular, acr2haq, eular2haq, acr2das28, acr2sdai, acr2cdai, tswitch_da, haq_lprog_therapy, haq_lprog_age, haq_lcgm_delta, haq_lcgm_beta, cdmards_haq_model, rebound_factor, lifetable_male, lifetable_female, x_mort, logor_mort, ttd_dist, x_ttd, ttd_all_loc, ttd_all_anc1, ttd_all_anc2, ttd_da_loc, ttd_da_anc1, ttd_da_anc2, ttd_eular_loc_mod, ttd_eular_anc1_mod, ttd_eular_anc2_mod, ttd_eular_loc_good, ttd_eular_anc1_good, ttd_eular_anc2_good, cycle_length, treat_gap, cdmards, nbt, si_loc, si_anc1, si_anc2, si_dist, haqdelta_loghr, max_months, hosp_days, cost_pday, mgmt_cost, si_cost, prod_loss, tc_agents_ind, tc_list, weight));
+    Rcpp::traits::input_parameter< std::vector<double> >::type prev_dmards(prev_dmardsSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type haq(haqSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type b_int(b_intSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type b_age(b_ageSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type b_disease_duration(b_disease_durationSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type b_haq0(b_haq0SEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type b_male(b_maleSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type b_prev_dmards(b_prev_dmardsSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type b_haq(b_haqSEXP);
+    rcpp_result_gen = Rcpp::wrap(sim_utility_wailooC(sim, id, age, disease_duration, haq0, male, prev_dmards, haq, b_int, b_age, b_disease_duration, b_haq0, b_male, b_prev_dmards, b_haq));
     return rcpp_result_gen;
 END_RCPP
 }
 // sim_utility_mixture1C
-double sim_utility_mixture1C(arma::rowvec beta1, arma::rowvec beta2, arma::rowvec beta3, arma::rowvec beta4, double alpha1, double alpha2, double alpha3, double alpha4, double alpha, double epsilon1_sd, double& epsilon2_sd, double epsilon3_sd, double& epsilon4_sd, double mu, arma::mat delta, arma::rowvec w, arma::rowvec x, int male);
-RcppExport SEXP iviRA_sim_utility_mixture1C(SEXP beta1SEXP, SEXP beta2SEXP, SEXP beta3SEXP, SEXP beta4SEXP, SEXP alpha1SEXP, SEXP alpha2SEXP, SEXP alpha3SEXP, SEXP alpha4SEXP, SEXP alphaSEXP, SEXP epsilon1_sdSEXP, SEXP epsilon2_sdSEXP, SEXP epsilon3_sdSEXP, SEXP epsilon4_sdSEXP, SEXP muSEXP, SEXP deltaSEXP, SEXP wSEXP, SEXP xSEXP, SEXP maleSEXP) {
+double sim_utility_mixture1C(double haq, double pain_mean, double haq_mean, double pain_var, double haq_var, double painhaq_cor, double age, int male, arma::rowvec beta1, arma::rowvec beta2, arma::rowvec beta3, arma::rowvec beta4, double alpha1, double alpha2, double alpha3, double alpha4, double alpha, double epsilon1_sd, double& epsilon2_sd, double epsilon3_sd, double& epsilon4_sd, double mu, arma::mat delta, arma::rowvec w, arma::rowvec x);
+RcppExport SEXP iviRA_sim_utility_mixture1C(SEXP haqSEXP, SEXP pain_meanSEXP, SEXP haq_meanSEXP, SEXP pain_varSEXP, SEXP haq_varSEXP, SEXP painhaq_corSEXP, SEXP ageSEXP, SEXP maleSEXP, SEXP beta1SEXP, SEXP beta2SEXP, SEXP beta3SEXP, SEXP beta4SEXP, SEXP alpha1SEXP, SEXP alpha2SEXP, SEXP alpha3SEXP, SEXP alpha4SEXP, SEXP alphaSEXP, SEXP epsilon1_sdSEXP, SEXP epsilon2_sdSEXP, SEXP epsilon3_sdSEXP, SEXP epsilon4_sdSEXP, SEXP muSEXP, SEXP deltaSEXP, SEXP wSEXP, SEXP xSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type haq(haqSEXP);
+    Rcpp::traits::input_parameter< double >::type pain_mean(pain_meanSEXP);
+    Rcpp::traits::input_parameter< double >::type haq_mean(haq_meanSEXP);
+    Rcpp::traits::input_parameter< double >::type pain_var(pain_varSEXP);
+    Rcpp::traits::input_parameter< double >::type haq_var(haq_varSEXP);
+    Rcpp::traits::input_parameter< double >::type painhaq_cor(painhaq_corSEXP);
+    Rcpp::traits::input_parameter< double >::type age(ageSEXP);
+    Rcpp::traits::input_parameter< int >::type male(maleSEXP);
     Rcpp::traits::input_parameter< arma::rowvec >::type beta1(beta1SEXP);
     Rcpp::traits::input_parameter< arma::rowvec >::type beta2(beta2SEXP);
     Rcpp::traits::input_parameter< arma::rowvec >::type beta3(beta3SEXP);
@@ -356,13 +342,12 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::mat >::type delta(deltaSEXP);
     Rcpp::traits::input_parameter< arma::rowvec >::type w(wSEXP);
     Rcpp::traits::input_parameter< arma::rowvec >::type x(xSEXP);
-    Rcpp::traits::input_parameter< int >::type male(maleSEXP);
-    rcpp_result_gen = Rcpp::wrap(sim_utility_mixture1C(beta1, beta2, beta3, beta4, alpha1, alpha2, alpha3, alpha4, alpha, epsilon1_sd, epsilon2_sd, epsilon3_sd, epsilon4_sd, mu, delta, w, x, male));
+    rcpp_result_gen = Rcpp::wrap(sim_utility_mixture1C(haq, pain_mean, haq_mean, pain_var, haq_var, painhaq_cor, age, male, beta1, beta2, beta3, beta4, alpha1, alpha2, alpha3, alpha4, alpha, epsilon1_sd, epsilon2_sd, epsilon3_sd, epsilon4_sd, mu, delta, w, x));
     return rcpp_result_gen;
 END_RCPP
 }
 // sim_utility_mixtureC
-List sim_utility_mixtureC(std::vector<int> id, std::vector<int> sim, std::vector<double> haq, double pain_mean, double haq_mean, double pain_var, double haq_var, double painhaq_cor, std::vector<double> age, std::vector<double> male, arma::mat beta1, arma::mat beta2, arma::mat beta3, arma::mat beta4, std::vector<double> alpha1, std::vector<double> alpha2, std::vector<double> alpha3, std::vector<double> alpha4, std::vector<double> alpha, std::vector<double> epsilon1_sd, std::vector<double> epsilon2_sd, std::vector<double> epsilon3_sd, std::vector<double> epsilon4_sd, std::vector<double> mu_sd, arma::cube delta);
+std::vector<double> sim_utility_mixtureC(std::vector<int> id, std::vector<int> sim, std::vector<double> haq, double pain_mean, double haq_mean, double pain_var, double haq_var, double painhaq_cor, std::vector<double> age, std::vector<int> male, arma::mat beta1, arma::mat beta2, arma::mat beta3, arma::mat beta4, std::vector<double> alpha1, std::vector<double> alpha2, std::vector<double> alpha3, std::vector<double> alpha4, std::vector<double> alpha, std::vector<double> epsilon1_sd, std::vector<double> epsilon2_sd, std::vector<double> epsilon3_sd, std::vector<double> epsilon4_sd, std::vector<double> mu_sd, arma::cube delta);
 RcppExport SEXP iviRA_sim_utility_mixtureC(SEXP idSEXP, SEXP simSEXP, SEXP haqSEXP, SEXP pain_meanSEXP, SEXP haq_meanSEXP, SEXP pain_varSEXP, SEXP haq_varSEXP, SEXP painhaq_corSEXP, SEXP ageSEXP, SEXP maleSEXP, SEXP beta1SEXP, SEXP beta2SEXP, SEXP beta3SEXP, SEXP beta4SEXP, SEXP alpha1SEXP, SEXP alpha2SEXP, SEXP alpha3SEXP, SEXP alpha4SEXP, SEXP alphaSEXP, SEXP epsilon1_sdSEXP, SEXP epsilon2_sdSEXP, SEXP epsilon3_sdSEXP, SEXP epsilon4_sdSEXP, SEXP mu_sdSEXP, SEXP deltaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -376,7 +361,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type haq_var(haq_varSEXP);
     Rcpp::traits::input_parameter< double >::type painhaq_cor(painhaq_corSEXP);
     Rcpp::traits::input_parameter< std::vector<double> >::type age(ageSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type male(maleSEXP);
+    Rcpp::traits::input_parameter< std::vector<int> >::type male(maleSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type beta1(beta1SEXP);
     Rcpp::traits::input_parameter< arma::mat >::type beta2(beta2SEXP);
     Rcpp::traits::input_parameter< arma::mat >::type beta3(beta3SEXP);
@@ -396,42 +381,69 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// sim_utility_wailooC
-std::vector<double> sim_utility_wailooC(std::vector<int> sim, std::vector<int> id, std::vector<double> age, double disease_duration, std::vector<double> haq0, std::vector<double> male, std::vector<double> prev_dmards, std::vector<double> haq, std::vector<double> b_int, std::vector<double> b_age, std::vector<double> b_disease_duration, std::vector<double> b_haq0, std::vector<double> b_male, std::vector<double> b_prev_dmards, std::vector<double> b_haq);
-RcppExport SEXP iviRA_sim_utility_wailooC(SEXP simSEXP, SEXP idSEXP, SEXP ageSEXP, SEXP disease_durationSEXP, SEXP haq0SEXP, SEXP maleSEXP, SEXP prev_dmardsSEXP, SEXP haqSEXP, SEXP b_intSEXP, SEXP b_ageSEXP, SEXP b_disease_durationSEXP, SEXP b_haq0SEXP, SEXP b_maleSEXP, SEXP b_prev_dmardsSEXP, SEXP b_haqSEXP) {
+// sim_iviRA_C
+List sim_iviRA_C(arma::mat arm_inds, CharacterMatrix model_structures_mat, std::vector<double> haq0, std::vector<double> das28_0, std::vector<double> sdai0, std::vector<double> cdai0, std::vector<double> age0, std::vector<int> male, std::vector<int> prev_dmards, arma::cube nma_acr1, arma::cube nma_acr2, arma::mat nma_dhaq1, arma::mat nma_dhaq2, arma::mat nma_das28_1, arma::mat nma_das28_2, arma::cube acr2eular, arma::mat acr2haq, arma::mat eular2haq, arma::mat acr2das28, arma::mat acr2sdai, arma::mat acr2cdai, arma::mat tswitch_da, arma::mat haq_lprog_therapy, arma::mat haq_lprog_age, arma::cube haq_lcgm_delta, arma::cube haq_lcgm_beta, std::vector<double> rebound_factor, arma::mat lifetable_male, arma::mat lifetable_female, arma::mat x_mort, arma::mat logor_mort, arma::mat x_ttd_all, arma::mat x_ttd_da, arma::mat x_ttd_eular, Rcpp::List ttd_all_list, Rcpp::List ttd_da_list, Rcpp::List ttd_eular_mod_list, Rcpp::List ttd_eular_good_list, int cdmards, int nbt, arma::mat si_loc, arma::mat si_anc1, arma::mat si_anc2, std::string si_dist, arma::mat haqdelta_loghr, int max_months, arma::mat hosp_days, arma::mat cost_pday, std::vector<double> mgmt_cost, std::vector<double> si_cost, std::vector<double> prod_loss, Rcpp::List tc_list, std::vector<double> weight, arma::mat coefs_wailoo, Rcpp::List pars_util_mix, std::vector<double> si_ul);
+RcppExport SEXP iviRA_sim_iviRA_C(SEXP arm_indsSEXP, SEXP model_structures_matSEXP, SEXP haq0SEXP, SEXP das28_0SEXP, SEXP sdai0SEXP, SEXP cdai0SEXP, SEXP age0SEXP, SEXP maleSEXP, SEXP prev_dmardsSEXP, SEXP nma_acr1SEXP, SEXP nma_acr2SEXP, SEXP nma_dhaq1SEXP, SEXP nma_dhaq2SEXP, SEXP nma_das28_1SEXP, SEXP nma_das28_2SEXP, SEXP acr2eularSEXP, SEXP acr2haqSEXP, SEXP eular2haqSEXP, SEXP acr2das28SEXP, SEXP acr2sdaiSEXP, SEXP acr2cdaiSEXP, SEXP tswitch_daSEXP, SEXP haq_lprog_therapySEXP, SEXP haq_lprog_ageSEXP, SEXP haq_lcgm_deltaSEXP, SEXP haq_lcgm_betaSEXP, SEXP rebound_factorSEXP, SEXP lifetable_maleSEXP, SEXP lifetable_femaleSEXP, SEXP x_mortSEXP, SEXP logor_mortSEXP, SEXP x_ttd_allSEXP, SEXP x_ttd_daSEXP, SEXP x_ttd_eularSEXP, SEXP ttd_all_listSEXP, SEXP ttd_da_listSEXP, SEXP ttd_eular_mod_listSEXP, SEXP ttd_eular_good_listSEXP, SEXP cdmardsSEXP, SEXP nbtSEXP, SEXP si_locSEXP, SEXP si_anc1SEXP, SEXP si_anc2SEXP, SEXP si_distSEXP, SEXP haqdelta_loghrSEXP, SEXP max_monthsSEXP, SEXP hosp_daysSEXP, SEXP cost_pdaySEXP, SEXP mgmt_costSEXP, SEXP si_costSEXP, SEXP prod_lossSEXP, SEXP tc_listSEXP, SEXP weightSEXP, SEXP coefs_wailooSEXP, SEXP pars_util_mixSEXP, SEXP si_ulSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::vector<int> >::type sim(simSEXP);
-    Rcpp::traits::input_parameter< std::vector<int> >::type id(idSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type age(ageSEXP);
-    Rcpp::traits::input_parameter< double >::type disease_duration(disease_durationSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type arm_inds(arm_indsSEXP);
+    Rcpp::traits::input_parameter< CharacterMatrix >::type model_structures_mat(model_structures_matSEXP);
     Rcpp::traits::input_parameter< std::vector<double> >::type haq0(haq0SEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type male(maleSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type prev_dmards(prev_dmardsSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type haq(haqSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type b_int(b_intSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type b_age(b_ageSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type b_disease_duration(b_disease_durationSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type b_haq0(b_haq0SEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type b_male(b_maleSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type b_prev_dmards(b_prev_dmardsSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type b_haq(b_haqSEXP);
-    rcpp_result_gen = Rcpp::wrap(sim_utility_wailooC(sim, id, age, disease_duration, haq0, male, prev_dmards, haq, b_int, b_age, b_disease_duration, b_haq0, b_male, b_prev_dmards, b_haq));
-    return rcpp_result_gen;
-END_RCPP
-}
-// sim_si_costC
-std::vector<double> sim_si_costC(std::vector<double> si, std::vector<double>& yrlen, std::vector<int>& sim, std::vector<double> cost);
-RcppExport SEXP iviRA_sim_si_costC(SEXP siSEXP, SEXP yrlenSEXP, SEXP simSEXP, SEXP costSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::vector<double> >::type si(siSEXP);
-    Rcpp::traits::input_parameter< std::vector<double>& >::type yrlen(yrlenSEXP);
-    Rcpp::traits::input_parameter< std::vector<int>& >::type sim(simSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type cost(costSEXP);
-    rcpp_result_gen = Rcpp::wrap(sim_si_costC(si, yrlen, sim, cost));
+    Rcpp::traits::input_parameter< std::vector<double> >::type das28_0(das28_0SEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type sdai0(sdai0SEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type cdai0(cdai0SEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type age0(age0SEXP);
+    Rcpp::traits::input_parameter< std::vector<int> >::type male(maleSEXP);
+    Rcpp::traits::input_parameter< std::vector<int> >::type prev_dmards(prev_dmardsSEXP);
+    Rcpp::traits::input_parameter< arma::cube >::type nma_acr1(nma_acr1SEXP);
+    Rcpp::traits::input_parameter< arma::cube >::type nma_acr2(nma_acr2SEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type nma_dhaq1(nma_dhaq1SEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type nma_dhaq2(nma_dhaq2SEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type nma_das28_1(nma_das28_1SEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type nma_das28_2(nma_das28_2SEXP);
+    Rcpp::traits::input_parameter< arma::cube >::type acr2eular(acr2eularSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type acr2haq(acr2haqSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type eular2haq(eular2haqSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type acr2das28(acr2das28SEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type acr2sdai(acr2sdaiSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type acr2cdai(acr2cdaiSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type tswitch_da(tswitch_daSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type haq_lprog_therapy(haq_lprog_therapySEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type haq_lprog_age(haq_lprog_ageSEXP);
+    Rcpp::traits::input_parameter< arma::cube >::type haq_lcgm_delta(haq_lcgm_deltaSEXP);
+    Rcpp::traits::input_parameter< arma::cube >::type haq_lcgm_beta(haq_lcgm_betaSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type rebound_factor(rebound_factorSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type lifetable_male(lifetable_maleSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type lifetable_female(lifetable_femaleSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type x_mort(x_mortSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type logor_mort(logor_mortSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type x_ttd_all(x_ttd_allSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type x_ttd_da(x_ttd_daSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type x_ttd_eular(x_ttd_eularSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type ttd_all_list(ttd_all_listSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type ttd_da_list(ttd_da_listSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type ttd_eular_mod_list(ttd_eular_mod_listSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type ttd_eular_good_list(ttd_eular_good_listSEXP);
+    Rcpp::traits::input_parameter< int >::type cdmards(cdmardsSEXP);
+    Rcpp::traits::input_parameter< int >::type nbt(nbtSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type si_loc(si_locSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type si_anc1(si_anc1SEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type si_anc2(si_anc2SEXP);
+    Rcpp::traits::input_parameter< std::string >::type si_dist(si_distSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type haqdelta_loghr(haqdelta_loghrSEXP);
+    Rcpp::traits::input_parameter< int >::type max_months(max_monthsSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type hosp_days(hosp_daysSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type cost_pday(cost_pdaySEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type mgmt_cost(mgmt_costSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type si_cost(si_costSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type prod_loss(prod_lossSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type tc_list(tc_listSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type weight(weightSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type coefs_wailoo(coefs_wailooSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type pars_util_mix(pars_util_mixSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type si_ul(si_ulSEXP);
+    rcpp_result_gen = Rcpp::wrap(sim_iviRA_C(arm_inds, model_structures_mat, haq0, das28_0, sdai0, cdai0, age0, male, prev_dmards, nma_acr1, nma_acr2, nma_dhaq1, nma_dhaq2, nma_das28_1, nma_das28_2, acr2eular, acr2haq, eular2haq, acr2das28, acr2sdai, acr2cdai, tswitch_da, haq_lprog_therapy, haq_lprog_age, haq_lcgm_delta, haq_lcgm_beta, rebound_factor, lifetable_male, lifetable_female, x_mort, logor_mort, x_ttd_all, x_ttd_da, x_ttd_eular, ttd_all_list, ttd_da_list, ttd_eular_mod_list, ttd_eular_good_list, cdmards, nbt, si_loc, si_anc1, si_anc2, si_dist, haqdelta_loghr, max_months, hosp_days, cost_pday, mgmt_cost, si_cost, prod_loss, tc_list, weight, coefs_wailoo, pars_util_mix, si_ul));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -447,6 +459,50 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< std::vector<int>& >::type si(siSEXP);
     Rcpp::traits::input_parameter< std::vector<double>& >::type si_ul(si_ulSEXP);
     rcpp_result_gen = Rcpp::wrap(qalysC(utility, yrlen, sim, si, si_ul));
+    return rcpp_result_gen;
+END_RCPP
+}
+// mytest
+arma::cube mytest(List x);
+RcppExport SEXP iviRA_mytest(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(mytest(x));
+    return rcpp_result_gen;
+END_RCPP
+}
+// maptest
+std::map <std::string, std::vector<double> > maptest(Rcpp::DataFrame x);
+RcppExport SEXP iviRA_maptest(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(maptest(x));
+    return rcpp_result_gen;
+END_RCPP
+}
+// vec2list
+Rcpp::List vec2list(std::vector<double> x);
+RcppExport SEXP iviRA_vec2list(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::vector<double> >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(vec2list(x));
+    return rcpp_result_gen;
+END_RCPP
+}
+// mat2vec
+CharacterVector mat2vec(CharacterMatrix x);
+RcppExport SEXP iviRA_mat2vec(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< CharacterMatrix >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(mat2vec(x));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -633,16 +689,28 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// array2cube
+arma::cube array2cube(NumericVector array);
+RcppExport SEXP iviRA_array2cube(SEXP arraySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type array(arraySEXP);
+    rcpp_result_gen = Rcpp::wrap(array2cube(array));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
-    {"iviRA_test_itreat_haq", (DL_FUNC) &iviRA_test_itreat_haq, 11},
+    {"iviRA_test_tx_ihaq", (DL_FUNC) &iviRA_test_tx_ihaq, 11},
     {"iviRA_get_das28_cat", (DL_FUNC) &iviRA_get_das28_cat, 1},
     {"iviRA_get_sdai_cat", (DL_FUNC) &iviRA_get_sdai_cat, 1},
     {"iviRA_get_cdai_cat", (DL_FUNC) &iviRA_get_cdai_cat, 1},
     {"iviRA_get_da_new", (DL_FUNC) &iviRA_get_da_new, 4},
-    {"iviRA_test_itreat_switch", (DL_FUNC) &iviRA_test_itreat_switch, 15},
+    {"iviRA_test_tx_iswitch", (DL_FUNC) &iviRA_test_tx_iswitch, 15},
     {"iviRA_sim_ttd_eular", (DL_FUNC) &iviRA_sim_ttd_eular, 11},
     {"iviRA_sim_ttd", (DL_FUNC) &iviRA_sim_ttd, 9},
+    {"iviRA_test_ttd", (DL_FUNC) &iviRA_test_ttd, 1},
     {"iviRA_sim_mlogit_classC", (DL_FUNC) &iviRA_sim_mlogit_classC, 2},
     {"iviRA_sim_dhaq_class_lcgm1C", (DL_FUNC) &iviRA_sim_dhaq_class_lcgm1C, 3},
     {"iviRA_sim_dhaq_lcgm1C", (DL_FUNC) &iviRA_sim_dhaq_lcgm1C, 7},
@@ -651,12 +719,16 @@ static const R_CallMethodDef CallEntries[] = {
     {"iviRA_sim_hosp_cost1C", (DL_FUNC) &iviRA_sim_hosp_cost1C, 4},
     {"iviRA_sim_si_cost1C", (DL_FUNC) &iviRA_sim_si_cost1C, 3},
     {"iviRA_sim_prod_loss1C", (DL_FUNC) &iviRA_sim_prod_loss1C, 3},
-    {"iviRA_sim_iviRA_C", (DL_FUNC) &iviRA_sim_iviRA_C, 65},
-    {"iviRA_sim_utility_mixture1C", (DL_FUNC) &iviRA_sim_utility_mixture1C, 18},
-    {"iviRA_sim_utility_mixtureC", (DL_FUNC) &iviRA_sim_utility_mixtureC, 25},
+    {"iviRA_sim_utility_wailoo1C", (DL_FUNC) &iviRA_sim_utility_wailoo1C, 7},
     {"iviRA_sim_utility_wailooC", (DL_FUNC) &iviRA_sim_utility_wailooC, 15},
-    {"iviRA_sim_si_costC", (DL_FUNC) &iviRA_sim_si_costC, 4},
+    {"iviRA_sim_utility_mixture1C", (DL_FUNC) &iviRA_sim_utility_mixture1C, 25},
+    {"iviRA_sim_utility_mixtureC", (DL_FUNC) &iviRA_sim_utility_mixtureC, 25},
+    {"iviRA_sim_iviRA_C", (DL_FUNC) &iviRA_sim_iviRA_C, 56},
     {"iviRA_qalysC", (DL_FUNC) &iviRA_qalysC, 5},
+    {"iviRA_mytest", (DL_FUNC) &iviRA_mytest, 1},
+    {"iviRA_maptest", (DL_FUNC) &iviRA_maptest, 1},
+    {"iviRA_vec2list", (DL_FUNC) &iviRA_vec2list, 1},
+    {"iviRA_mat2vec", (DL_FUNC) &iviRA_mat2vec, 1},
     {"iviRA_ologit_probC", (DL_FUNC) &iviRA_ologit_probC, 3},
     {"iviRA_mlogit_probC", (DL_FUNC) &iviRA_mlogit_probC, 2},
     {"iviRA_logistic", (DL_FUNC) &iviRA_logistic, 1},
@@ -669,6 +741,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"iviRA_rbvcnormC", (DL_FUNC) &iviRA_rbvcnormC, 6},
     {"iviRA_matrix_byrow", (DL_FUNC) &iviRA_matrix_byrow, 3},
     {"iviRA_matrix_bycol", (DL_FUNC) &iviRA_matrix_bycol, 3},
+    {"iviRA_array2cube", (DL_FUNC) &iviRA_array2cube, 1},
     {NULL, NULL, 0}
 };
 

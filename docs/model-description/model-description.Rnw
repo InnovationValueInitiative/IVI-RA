@@ -163,9 +163,7 @@ CACHE <- TRUE
 
 This document describes version 0.1 of the Innovation and Value Initiative's (IVIs) rheumatoid arthritis (RA) cost-effectiveness model. The IVI-RA model is an individual patient simulation (IPS) that simulates patients one at a time. The model can be run with multiple perspectives (e.g., health care sector, societal) and accounts for both parameter and structural uncertainty. Since the range of defendable scientific approaches is large, the IVI-RA model consists of 336 possible model structures. Structural uncertainty can be quantified by estimating cost-effectiveness across these different model structures and parameter uncertainty is quantified using probabilistic sensitivity analysis (PSA). 
 
-% The model is available as an \href{https://cran.r-project.org/}{\R{}} package with documentation available \href{https://innovationvalueinitiative.github.io/IVI-RA/index.html}{online}. The source code can be viewed or downloaded at our \href{https://github.com/InnovationValueInitiative/IVI-RA}{GitHub repository}. The IPS was primarily written in \CPP{} so that PSA and analyses of structural uncertainty can be run in a reasonable amount of time. The model can either be run using \R{} (see \href{https://innovationvalueinitiative.github.io/IVI-RA/index.html}{documentation}) or \href{http://www.shinyapps.io/}{online} with our user-friendly R Shiny web application. 
-
-The model will be made available as an \R{} package and the source code will be available at our GitHub repository. The IPS was primarily written in \CPP{} so that PSA and analyses of structural uncertainty can be run in a reasonable amount of time. The model can either be run using \R{} or online with our user-friendly R Shiny web application. 
+The model is available as an \href{https://cran.r-project.org/}{\R{}} package with documentation available \href{https://innovationvalueinitiative.github.io/IVI-RA/index.html}{online}. The source code can be viewed or downloaded at our \href{https://github.com/InnovationValueInitiative/IVI-RA}{GitHub repository}. The IPS was primarily written in \CPP{} so that PSA and analyses of structural uncertainty can be run in a reasonable amount of time. The model can either be run using \R{} (see \href{https://innovationvalueinitiative.github.io/IVI-RA/index.html}{documentation}) or \href{http://www.shinyapps.io/}{online} with our user-friendly R Shiny web application. 
 
 This document is structured as follows. We begin by discussing treatment strategies that can be modeled in \autoref{sec:treatments}. \autoref{sec:model-structures} outlines the competing model structures. \autoref{sec:populations} examines the data needed to define a population and run an analysis. \autoref{sec:data-parameters} describes the statistical techniques used to estimate the model parameters and the data sources used. \autoref{sec:sim-uncertainty} details the simulation techniques used to implement the IVI-RA model and quantify uncertainty. \autoref{sec:validation} focuses on methods for validating the model. Lastly, \autoref{sec:limitations} discusses limitations and areas for improvement. 
 
@@ -578,7 +576,7 @@ sim6_summary <- function(arms, arm_names, nouter = 1000, ninner = 1000, treat_hi
   input.dat <- get_input_data(patdata = pat, model_structure = model_structure)
   parsamp <- sample_pars(n = nouter, treat_hist = treat_hist)
   for (i in 1:length(arms)){
-    if (!(model_structure["itreat_switch"] == "das28-switch" & 
+    if (!(model_structure[1, "tx_iswitch"] == "das28-switch" & 
           arms[i] %in% c("adamtx", "tofmtx", "tox"))){
       sim6 <- sim_iviRA(arms[i], input_data = input.dat, pars = parsamp,
                         model_structure = model_structure, max_months = 6)
@@ -631,20 +629,20 @@ sim6_summary <- function(arms, arm_names, nouter = 1000, ninner = 1000, treat_hi
 
 # simulate
 ## H1
-mod.struct <- select_model_structure(itreat_haq = "acr-haq", itreat_switch = "acr-switch",
+mod.struct <- select_model_structures(tx_ihaq = "acr-haq", tx_iswitch = "acr-switch",
                                      utility_model = "wailoo")
 sim6.acr2haq.naive <- sim6_summary(arm.snames, arm.names, treat_hist = "naive", 
                                    model_structure = mod.struct)
 
 ## H2
-mod.struct <- select_model_structure(itreat_haq = "haq", itreat_switch = "das28-switch",
+mod.struct <- select_model_structures(tx_ihaq = "haq", tx_iswitch = "das28-switch",
                                      utility_model = "wailoo")
 sim6.haq.naive <- sim6_summary(arm.snames, arm.names, treat_hist = "naive",
                                 model_structure = mod.struct, das28_mean = 0)
 
 ## H3
-mod.struct <- select_model_structure(itreat_haq = "acr-eular-haq", 
-                                     itreat_switch = "acr-eular-switch",
+mod.struct <- select_model_structures(tx_ihaq = "acr-eular-haq", 
+                                     tx_iswitch = "acr-eular-switch",
                                      utility_model = "wailoo")
 sim6.acr2eular2haq.naive <- sim6_summary(arm.snames, arm.names, treat_hist = "naive", 
                                          model_structure = mod.struct)
@@ -685,7 +683,6 @@ tex <- print(xtable(tab.dhaq.naive),
       include.rownames = TRUE, include.colnames = FALSE,
       only.contents = TRUE, sanitize.text.function = identity,
       file = "tables/sim-dhaq-6months.txt")
-
 @
 
 \begin{table}[!ht]
@@ -1004,8 +1001,8 @@ sim6 <- vector(length(dur.dist) * length(arm.snames), mode = "list")
 counter <- 1
 for (i in 1:length(arm.snames)){
   for(j in 1:length(dur.dist)){
-    mod.struct <- select_model_structure(itreat_haq = "acr-haq",
-                                     itreat_switch = "acr-switch",
+    mod.struct <- select_model_structures(tx_ihaq = "acr-haq",
+                                     tx_iswitch = "acr-switch",
                                      cdmards_haq_model = "lcgm",
                                      ttd_dist = dur.dist[i],
                                      utility_model = "wailoo")
@@ -1015,6 +1012,8 @@ for (i in 1:length(arm.snames)){
     sim6[[counter]][, dur_dist := dur.dist.l[j]]
     sim6[[counter]][, arm := arm.names[i]]
     counter <- counter + 1
+    print(i)
+    print(j)
   }
 }
 sim6 <- rbindlist(sim6)
@@ -1137,7 +1136,7 @@ util.mix <- sim_utility_mixture(simhaq, male = pat[, "male"], pars = parsamp$uti
 util.wailoo <- sim_utility_wailoo(simhaq, haq0 = pat[, "haq0"], male = pat[, "male"],
                                   prev_dmards = pat[, "prev_dmards"], 
                                   coefs = parsamp$utility.wailoo)
-util.dt <- data.table(util = c(util.mix$utility, util.wailoo), haq = rep(simhaq$haq, 2),
+util.dt <- data.table(util = c(util.mix, util.wailoo), haq = rep(simhaq$haq, 2),
                       lab = c(rep("Alava (2013) mixture model", nrow(simhaq)),
                               rep("Wailoo (2006)", nrow(simhaq))))
 util.dt <- util.dt[, .(mean_util = mean(util)), by = c("haq", "lab")]
@@ -1206,6 +1205,7 @@ and log hazard ratio scales.
 
 <<survplot, echo=FALSE, include=FALSE, cache=CACHE>>=
 set.seed(100)
+theme_set(theme_bw())
 n <- 1000; age <- 55; haq0 <- 1; cycle.len <- 6; max.age <- 100
 t <- seq(0, 12/cycle.len * (max.age - age) - 1)
 haq.ts0 <- rep(0, length(t))
@@ -1254,8 +1254,8 @@ Notes: Baseline HAQ is 1 for the ``Constant HAQ'' and ``HAQ increase of 0.03 per
 <<treat_cost, echo = FALSE, include = FALSE>>=
 # cost for non-weight based dosing
 tab = copy(iviRA::treat.cost$cost)
-tab[, init_cost := init_dose_val/strength_val * init_num_doses * wac_per_unit + init_num_doses * infusion_cost]
-tab[, ann_cost := ann_dose_val/strength_val * ann_num_doses * wac_per_unit + ann_num_doses * infusion_cost]
+tab[, init_cost := init_dose_val/strength_val * init_num_doses * price_per_unit + init_num_doses * infusion_cost]
+tab[, ann_cost := ann_dose_val/strength_val * ann_num_doses * price_per_unit + ann_num_doses * infusion_cost]
 
 # cost for weight based dosing
 wt <- sample_pats(1000)[, "weight"]
@@ -1270,7 +1270,7 @@ tab[sname == "ifx", ann_cost := ann.cost.ifx]
 
 # formatting
 tab1 <- tab[, .(name, dosage, strength_dosage_form)]
-tab2 <- tab[, .(init_num_doses, ann_num_doses, wac_per_unit, infusion_cost, 
+tab2 <- tab[, .(init_num_doses, ann_num_doses, price_per_unit, infusion_cost, 
                               init_cost, ann_cost)]
 tab2[, ann_num_doses := round(ann_num_doses, 2)]
 tab2f <- matrix(NA, nrow = nrow(tab2), ncol = ncol(tab2))
@@ -1290,7 +1290,7 @@ tex <- print(xtable(tab),
       file = "tables/treat-cost.txt")
 @
 
-An overview of drug acquisition and administration costs is presented in \autoref{tbl:treat-cost}. Costs are a function of dose and frequency of administration, strength and dosage form, the wholesale acquisition cost (WAC), and infusion costs. Since infliximab dosing depend on patient weight, the costs for infliximab reported in the table average over a patient population that is \Sexpr{male.prop}\% male. The WACs in the table do not include discounts or rebates so they may be higher than actual drug costs. The methodology used to calculate drug acquisition and administration costs is described in more detail in \autoref{app:treat-cost}.
+An overview of drug acquisition and administration costs is presented in \autoref{tbl:treat-cost}. Costs are a function of dose and frequency of administration, strength and dosage form, price, and infusion costs. Since infliximab dosing depend on patient weight, the costs for infliximab reported in the table average over a patient population that is \Sexpr{male.prop}\% male. The prices in the table are based on the wholesale acquisition cost (WAC) and do not include discounts or rebates so they may be higher than actual drug costs. In the simulation, a unique discount can be used for each drug; currently the discount is assumed to range from 20\% to 30\%. The methodology used to calculate drug acquisition and administration costs is described in more detail in \autoref{app:treat-cost}. 
 
 \begin{sidewaystable}
 \begin{center}
@@ -1304,7 +1304,7 @@ An overview of drug acquisition and administration costs is presented in \autore
 \multicolumn{1}{p{0.15\linewidth}}{Strength and dosage form} & 
 \multicolumn{1}{p{0.08\linewidth}}{Number of doses first 6 months}  & 
 \multicolumn{1}{p{0.08\linewidth}}{Number of dosees per year beyond the first 6 months} & 
-\multicolumn{1}{c}{WAC per unit} & \multicolumn{1}{c}{Infusion cost} & 
+\multicolumn{1}{c}{Price per unit} & \multicolumn{1}{c}{Infusion cost} & 
 \multicolumn{1}{p{0.08\linewidth}}{Cost for the first 6 months} &
 \multicolumn{1}{p{0.08\linewidth}}{Cost per year beyond the first 6 months}\\
 \hline
@@ -1312,7 +1312,7 @@ An overview of drug acquisition and administration costs is presented in \autore
 \hline
 \end{tabular}
 \tiny
-Notes: Costs do not include rebates or discounts. Cost for infliximab are calculated by assuming that \Sexpr{male.prop}\% of patients are male and that the weight of men and women are \Sexpr{wtmale} kg and \Sexpr{wtfemale} kg respectively. Tocilizumab is dosed weekly if weight is greater than 100 kg; costs for tocilizumab reported in the table are for patients weighing less than 100 kg. IV = intravenous; SC = subcutaneous; WAC = wholesale acquisition cost. 
+Notes: Costs in the table do not include rebates or discounts, but rebates and discounts are used in the simulation. Cost for infliximab are calculated by assuming that \Sexpr{male.prop}\% of patients are male and that the weight of men and women are \Sexpr{wtmale} kg and \Sexpr{wtfemale} kg respectively. Tocilizumab is dosed weekly if weight is greater than 100 kg; costs for tocilizumab reported in the table are for patients weighing less than 100 kg. IV = intravenous; SC = subcutaneous; WAC = wholesale acquisition cost. 
 \end{threeparttable}
 \end{center}
 \end{sidewaystable}

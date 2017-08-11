@@ -4,7 +4,7 @@
 \alias{sim_iviRA}
 \title{The IVI-RA simulation}
 \usage{
-sim_iviRA(arms, input_data, pars, model_structure, max_months = NULL,
+sim_iviRA(arms, input_data, pars, model_structures, max_months = NULL,
   treatment_lookup = iviRA::treatments$sname,
   cdmards_ind = which(iviRA::treatments$sname == "cdmards"),
   nbt_ind = which(iviRA::treatments$sname == "nbt"), check = TRUE)
@@ -17,8 +17,6 @@ a single treatment sequence or a matrix of unique sequences for each patient.}
 
 \item{pars}{List of sampled parameter values generated from \link{sample_pars}.}
 
-\item{model_structure}{Object of class model structure generated from \link{sample_pars}.}
-
 \item{max_months}{Maximum number of months to run the model for. Default is NULL which implies that
 the model is simulated over each patient's lifetime.}
 
@@ -27,10 +25,50 @@ the model is simulated over each patient's lifetime.}
 \item{nbt_ind}{Index for the non-biologic (i.e. a term used to define a selection of treatments clinicians use
 after the last biologic in a treatment sequence).}
 
+\item{model_structure}{Object of class model structure generated from \link{select_model_structure}.}
+
 \item{treatments_lookup}{Vector of names of all treatments included in the parameter
 estimates. Index of of treatments in \code{arms} are matched against treatments in
 \code{treatments_lookup} by name. Indices of treatment-specific parameter estimates must be 
 in the same order as treatments in \code{treatments_lookup}.}
+}
+\value{
+A \code{data.table} with the following columns:
+\describe{
+\item{sim}{Simulation number. Indexed from 1 to S where S is the number of randomly sampled parameter sets (e.g. n from \link{sample_pars}).}
+\item{id}{ID number. Indexed from 1 to N where N is the number of simulated patients (e.g. n from \link{sample_pats}).}
+\item{month}{Month since a simulated patient began the first treatment in a treatment sequence.}
+\item{tx}{Treatment used. Given J total therapies, the first J - 1 therapies match the indices from \code{arminds}. The final \code{tx}
+ is always the non-biologic treatment (\code{nbt_ind}).}
+\item{tx_seq}{Number of treatment in a treatment sequence. First treatment equal to 1, 
+second treatment equal to 2, \ldots}
+\item{tx_cycle}{Number of model cycles since a patient began taking a given treatment in a treatment sequence. \code{tx_cycle} = 1
+during the initial 6-month treatment period.}
+\item{death}{Equal to 1 if patient died during the model cycle and 0 otherwise. }
+\item{age}{Age of patient which increases with the model cycles.}
+\item{ttd}{Time to treatment discontinuation. Measured in terms of model cycles (e.g. ttd = 2 if treatment will discontinue in 
+1 year given 6-months cycles). \code{ttd} is measured at the end of each cycle. Patients switch treatments during the cycle in which \code{ttd} 
+becomes negative and HAQ rebounds during the cycle.}
+\item{acr}{Simulated ACR response during the initial 6-month period for a new treatment Constant within \code{tx}.
+Categories are 0 (ACR < 20), 1 (ACR 20-50), 2 (ACR 50-70), and 3 (ACR 70+).}
+\item{eular}{Simulated EULAR response during the initial 6-month period for a new treatment Constant within \code{tx}. 
+Categories are 0 (no EULAR response), 1 (moderate EULAR response), and 2 (good EULAR response).}
+\item{das28}{Disease Activity Score 28 (DAS28).}
+\item{sdai}{Simplified Disease Activity Index (SDAI).}
+\item{cdai}{Clinical Disease Activity Index (CDAI).}
+\item{haq}{HAQ score. Restricted to range between 0 and 3.}
+\item{ttsi}{Time to serious infection. Like \code{ttd}, measured in terms of model cycles. \code{ttsi} is measured at the end of each 
+cycle.}
+\item{si}{Equal to 1 if treatment discontinuation was caused by a serious infection and 0 otherwise.}
+\item{yrlen}{Length of a model cycle in years. Equal to 0.5 given 6-month cycles.}
+\item{tx_cost}{Treatment costs after discounts and rebates.}
+\item{hosp_cost}{Hospitalization costs.}
+\item{mgmt_cost}{General management costs.}
+\item{si_cost}{Cost due to serious infections.}
+\item{prod_loss}{Productivity loss (i.e., lost earnings).}
+\item{utility}{Simulated utility score.}
+\item{qalys}{Quality-adjusted life-years (QALYs).}
+}
 }
 \description{
 Run the IVI-RA individual patient simulation model.

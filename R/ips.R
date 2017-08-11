@@ -2,11 +2,30 @@
 #'
 #' Run the IVI-RA individual patient simulation model.
 #' 
+#' @param pars \code{utility.mixture} object from \code{sample_pars}.
+#' @keywords internal
+adjust_utility_wailoo <- function(pars){
+  wailoo.coefnames <- c("int", "age", "dis_dur", "haq0", "male", "prev_dmards", "haq")
+  wailoo.colindx <- match(wailoo.coefnames, colnames(pars))
+  if(any(is.na(wailoo.colindx))) {
+    stop("Matrix utility.wailoo in list 'pars' must have column names 'int', 'age',
+         'dis_dur', 'haq0', 'male', 'prev_dmards', and 'haq'")
+  }
+  newpars <-  pars[, wailoo.colindx]
+  return(newpars)
+}
+
+
+
+#' The IVI-RA simulation
+#'
+#' Run the IVI-RA individual patient simulation model.
+#' 
 #' @param arms Name of arms in the treatment treatment sequence. May be a vector consisting of 
 #' a single treatment sequence or a matrix of unique sequences for each patient.
 #' @param input_data An object of class 'input_data' returned from \link{get_input_data}.
 #' @param pars List of sampled parameter values generated from \link{sample_pars}.
-#' @param model_structure Object of class model structure generated from \link{sample_pars}.
+#' @param model_structure Object of class model structure generated from \link{select_model_structure}.
 #' @param max_months Maximum number of months to run the model for. Default is NULL which implies that
 #' the model is simulated over each patient's lifetime.
 #' @param treatments_lookup Vector of names of all treatments included in the parameter
@@ -16,220 +35,6 @@
 #' @param cdmards_ind Index for cDMARDs.
 #' @param nbt_ind Index for the non-biologic (i.e. a term used to define a selection of treatments clinicians use
 #' after the last biologic in a treatment sequence).
-#' @export 
-sim_iviRA <- function(arms, input_data, pars, model_structure, 
-                      max_months = NULL, treatment_lookup = iviRA::treatments$sname,
-                    cdmards_ind = which(iviRA::treatments$sname == "cdmards"),
-                    nbt_ind = which(iviRA::treatments$sname == "nbt"),
-                    check = TRUE){
-  
-  # PREPPING FOR THE SIMULATION
-  ## check correct object types used as arguments
-  if (!inherits(input_data, "input_data")){
-    stop("The argument 'input_data' must be of class 'input_data'")
-  }
-  if (!inherits(model_structure, "model_structure")){
-      stop("The argument 'model_structure' must be of class 'model_structure'")
-  }
-  
-  ## treatment arm indices
-  if (is.vector(arms)) arms <- matrix(arms, nrow = 1)
-  arminds <- matrix(match(arms, treatment_lookup), nrow = nrow(arms),
-                    ncol = ncol(arms))
-  
-  ## default internal values
-  treat_gap <- 0
-  cycle_length <- 6
-  if (is.null(max_months)){
-    max_months <- 12 * 150
-  }
-  prob.switch.da <- matrix(rep(c(0, 0, 1, 1), each = pars$n), ncol = 4)
-  
-  ## indexing
-  cdmards.ind <- cdmards_ind - 1
-  nbt.ind <- nbt_ind - 1
-  arminds <- arminds - 1
-
-  ## survival parameters
-  ttd.dist <- model_structure[["ttd_dist"]]
-  pars.ttd.all <- pars$ttd.all[[ttd.dist]]
-  pars.ttd.da <- pars$ttd.da[[ttd.dist]]
-  pars.ttd.em <- pars$ttd.eular$moderate[[ttd.dist]]
-  pars.ttd.eg <- pars$ttd.eular$good[[ttd.dist]]
-  si.dist <- "exp"
-  pars.si <- pars$ttsi
-  
-  # treatment costs
-  tc <- pars$treat.cost
-  tc.arms <- cbind(arms, "nbt")
-  lookup.inds <- match(tc.arms, tc$lookup$sname)
-  agents <- aperm(array(match(unlist(tc$lookup[lookup.inds, -1, with = FALSE]),
-                         iviRA::treat.cost$cost$sname) - 1,
-                   dim = c(nrow(tc.arms), ncol(tc.arms), ncol(tc$lookup) - 1)),
-                  perm = c(2, 3, 1))
-  
-  # RUNNING THE SIMULATION
-  sim.out <- sim_iviRA_C(arm_inds = arminds, 
-                         haq0 = input_data$haq0, das28_0 = input_data$das28,
-                     sdai0 = input_data$sdai, cdai0 = input_data$cdai,
-                     age0 = input_data$age, male = input_data$male, 
-                     prev_dmards = input_data$prev.dmards,
-                     itreat_haq_model = model_structure["itreat_haq"], 
-                     itreat_switch_model = model_structure["itreat_switch"],
-                     nma_acr1 = pars$acr$p1, nma_acr2 = pars$acr$p2, 
-                     nma_dhaq1 = pars$haq$dy1, nma_dhaq2 = pars$haq$dy2,
-                     nma_das28_1 = pars$das28$dy1, nma_das28_2 = pars$das28$dy2,
-                     acr2eular = pars$acr2eular, acr2haq = pars$acr2haq, eular2haq = pars$eular2haq,
-                     acr2das28 = pars$acr2das28, acr2sdai = pars$acr2sdai, acr2cdai = pars$acr2cdai,
-                     tswitch_da = prob.switch.da,
-                     haq_lprog_therapy = pars$haq.lprog.tx, haq_lprog_age = pars$haq.lprog.age,
-                     haq_lcgm_delta = pars$haq.lcgm$delta, haq_lcgm_beta = pars$haq.lcgm$beta, 
-                     cdmards_haq_model = model_structure["cdmards_haq_model"],
-                     rebound_factor = pars$rebound, 
-                     lifetable_male = pars$lt$male, lifetable_female = pars$lt$female,
-                     x_mort = input_data$x.mort, logor_mort = pars$logor.mort, 
-                     ttd_dist = ttd.dist, x_ttd = input_data$x.ttd,
-                     ttd_all_loc = pars.ttd.all$sample[, pars.ttd.all$loc.index, drop = FALSE],
-                     ttd_all_anc1 = pars.ttd.all$sample[, pars.ttd.all$anc1.index, drop = FALSE],
-                     ttd_all_anc2 = pars.ttd.all$sample[, pars.ttd.all$anc2.index, drop = FALSE],
-                     ttd_da_loc = pars.ttd.da$sample[, pars.ttd.da$loc.index, drop = FALSE],
-                     ttd_da_anc1 = pars.ttd.da$sample[, pars.ttd.da$anc1.index, drop = FALSE],
-                     ttd_da_anc2 = pars.ttd.da$sample[, pars.ttd.da$anc2.index, drop = FALSE],
-                     ttd_eular_loc_mod = pars.ttd.em$sample[, pars.ttd.em$loc.index, drop = FALSE], 
-                     ttd_eular_anc1_mod = pars.ttd.em$sample[, pars.ttd.em$anc1.index, drop = FALSE],
-                     ttd_eular_anc2_mod = pars.ttd.em$sample[, pars.ttd.em$anc2.index, drop = FALSE], 
-                     ttd_eular_loc_good = pars.ttd.eg$sample[, pars.ttd.eg$loc.index, drop = FALSE], 
-                     ttd_eular_anc1_good = pars.ttd.eg$sample[, pars.ttd.eg$anc1.index, drop = FALSE],
-                     ttd_eular_anc2_good = pars.ttd.eg$sample[, pars.ttd.eg$anc2.index, drop = FALSE],
-                     cycle_length = cycle_length, treat_gap = treat_gap, 
-                     cdmards = cdmards.ind, nbt = nbt.ind,
-                     si_loc = pars.si, 
-                     si_anc1 = matrix(NA, nrow = pars$n, ncol = ncol(pars.si)), 
-                     si_anc2 = matrix(NA, nrow = pars$n, ncol = ncol(pars.si)), 
-                     si_dist = si.dist, 
-                     haqdelta_loghr = pars$mort.loghr.haqdif, max_months = max_months,
-                     hosp_days = pars$hosp.cost$hosp.days, cost_pday = pars$hosp.cost$cost.pday,
-                     mgmt_cost = rowSums(pars$mgmt.cost), 
-                     si_cost = pars$si.cost, prod_loss = pars$prod.loss,
-                     tc_agents_ind = agents, tc = tc[c("cost", "discount")], 
-                     weight = input_data$weight)
-  sim.out <- as.data.table(sim.out)
-  
-  ## C++ to R indices
-  sim.out[, sim := sim + 1]
-  sim.out[, id := id + 1]
-  sim.out[, tx_seq := tx_seq + 1]
-  sim.out[, tx_cycle := tx_cycle + 1]
-  sim.out[, tx := tx + 1]
-
-  ## simulate utility and calculate QALYs
-  if (model_structure["utility_model"] == "mixture"){
-      sim.out <- cbind(sim.out, sim_utility_mixture(sim.out, male = input_data$male,
-                                         pars = pars$utility.mixture))
-      
-  } else if (model_structure["utility_model"] == "wailoo"){
-      sim.out[, utility := sim_utility_wailoo(sim.out, haq0 = input_data$haq0,
-                                        male = input_data$male,
-                                        prev_dmards = input_data$prev.dmards,
-                                        coefs = pars$utility.wailoo)]
-  }
-  sim.out[, qalys := sim_qalys(simhaq = sim.out, utility = sim.out$utility, 
-                               si_ul = pars$si.ul)]
-  
-  # RETURN
-  return(sim.out)
-}
-
-#' Select model structure
-#'
-#' Select the model structure to be used in the IVI-RA individual patient simulation.
-#' 
-#' @param itreat_haq Model structure relating treatment to HAQ during the first 6 months of 
-#' treatment.
-#' @param itreat_switch Model structure relating treatment to switching during the first
-#' 6 months of treatment.
-#' @param cdmards_haq_model Model used for long-term HAQ progression.
-#' @param ttd_dist Distribution used to model time to treatment discontinuaton. Options are the
-#'  exponential (\code{exponential}), Weibull (\code{weibull}), Gompertz (\code{gompertz}),
-#' gamma (\code{gamma}), log-logistic (\code{llogis}), lognormal (\code{lnorm}), 
-#' and generalized gamma (\code{gengamma}) distributions.
-#' @param utility_model Model used to estimate patient utility as a function of HAQ and patient
-#' characteristics.
-#' @export
-select_model_structure <- function(itreat_haq = c("acr-haq", "acr-eular-haq", "haq"),
-                                   itreat_switch = c("acr-switch", "acr-das28-switch",
-                                                     "acr-sdai-switch", "acr-cdai-switch", 
-                                                     "das28-switch", "acr-eular-switch"),
-                                   cdmards_haq_model = c("lcgm", "linear"), 
-                                   ttd_dist = c("exponential", "weibull", "gompertz", 
-                                           "gamma", "llogis", "lnorm", "gengamma"),
-                                   utility_model = c("mixture", "wailoo")){
-  itreat.haq <- match.arg(itreat_haq)
-  itreat.switch <- match.arg(itreat_switch)
-  cdmards.haq_model <- match.arg(cdmards_haq_model)
-  ttd.dist <- match.arg(ttd_dist) 
-  utility.model <- match.arg(utility_model)
-  if (itreat.haq == "acr-haq"){
-      if (itreat.switch == "acr-eular-switch"){
-        stop ("'acr-eular-switch' cannot be used when itreat_haq equals 'acr-haq'.")
-      }
-  }
-  if (itreat.haq == "haq"){
-      if (itreat.switch != "das28-switch"){
-        stop("Only 'das28-swtich' can be used when itreat_haq equals 'haq'")
-      }
-  }
-  model.structure <- c("itreat_haq" = itreat.haq, "itreat_switch" = itreat.switch,
-                       "cdmards_haq_model" = cdmards.haq_model,
-                       "ttd_dist" = ttd.dist,
-                       "utility_model" = utility.model)
-  class(model.structure) <- "model_structure"
-  return(model.structure)
-}
-
-#' Simulate HAQ over time
-#'
-#' An individual patient simulation of HAQ scores for rheumatoid arthritis patients given a sequence of J 
-#' treatments. An "outer" loop iterates over S draws from sampled parameter sets and an "inner" loop iterates of
-#' N patients. Cycle lengths are 6 months long. The simulation is written in C++ for speed. 
-#' 
-#' @param arminds Indices of treatment arms consisting of sequences of therapies (each element
-#' is the index of a treatment in \code{iviRA::treatments}. May be a vector consisting of a single treatment sequence or a matrix 
-#' of unique sequences for each patient.
-#' @param input_data List of input data. Required inputs are \code{haq0}, \code{age}, \code{male}, \code{x.mort}, 
-#' and \code{x.ttd} as generated from \link{input_data}.
-#' @param pars List of parameters. Required parameters are \code{rebound}, \code{acr1}, \code{acr2}, \code{acr2eular}, \code{eular2haq}, 
-#' \code{haq.lprog.tx}, \code{haq.lprog.age}, \code{logor.mort}, \code{mort.loghr.haqdif}, \code{ttsi},
-#' \code{ttd.eular.mod}, \code{ttd.eular.good}, and \code{lt} as generated from \link{sample_pars}. Additionally, if \code{cdmards_prog} is equal 
-#' to "lcgm", then \code{haq.lcgm} must be included. 
-#' @param itreat_haq How should the relationship between treatment and HAQ during the initial 
-#' treatment phase (i.e., first 6 months) be modeled? Options, which are equivalent to H1-H3
-#' in the documentation are
-#' H1: Treatment -> ACR -> HAQ (\code{acr-haq}), 
-#' H2: Treatment -> ACR -> EULAR -> HAQ (\code{acr-eular-haq}), or
-#' H3:Treatment -> HAQ (\code{haq}). 
-#' @param itreat_switch How should the relationship between treatment and switching to a new 
-#' treatment during the initial treatment phase (i.e., first 6 months) be modeled. Options, which
-#' are equivalent to S1-S6 in the documentation are
-#' S1: Treatment -> ACR -> Switch (\code{acr-switch}), 
-#' S2: Treatment -> ACR -> DAS28 -> Switch (\code{acr-das28-switch}),
-#' S3: Treatment -> ACR -> SDAI -> Switch (\code{acr-sdai-switch}),
-#' S4: Treatment -> ACR -> CDAI -> Switch (\code{acr-cdai-switch}),
-#' S5: Treatment -> DAS28 -> Switch (\code{das28-switch}),
-#' S6: Treatment -> ACR -> EULAR -> Switch (\code{acr-eular-switch}). 
-#' @param haq_prog_model Model used to simulate the progression of HAQ. Options are "lcgm" and "linear", with
-#' "lcgm" as the default. If "lcgm" is chosen, then a latent class growth model is used for cDMARDs
-#' and NBT but a constant annual rate is is assumed for all other therapies; otherwise 
-#' a constant linear HAQ progression is assumed for all therapies including cDMARDs and NBT.
-#' @param ttd_dist Survival distribution for treatment duration.
-#' @param si_dist Survival distribution for serious infections. Currently rate is assumed
-#' to be constant so an exponential distribution is used.
-#' @param max_months Maximum number of months to run the model for. Default is NULL which implies that
-#' the model is simulated over each patient's lifetime.
-#' @param cdmards_ind Index for cDMARDs.
-#' @param nbt_ind Index for the non-biologic (i.e. a term used to define a selection of treatments clinicians use
-#' after the last biologic in a treatment sequence).
-#' @param check Should the function check parameters and input data passed to the model? Default is TRUE.
 #' 
 #' @return A \code{data.table} with the following columns:
 #'\describe{
@@ -251,80 +56,235 @@ select_model_structure <- function(itreat_haq = c("acr-haq", "acr-eular-haq", "h
 #' Categories are 0 (ACR < 20), 1 (ACR 20-50), 2 (ACR 50-70), and 3 (ACR 70+).}
 #' \item{eular}{Simulated EULAR response during the initial 6-month period for a new treatment Constant within \code{tx}. 
 #' Categories are 0 (no EULAR response), 1 (moderate EULAR response), and 2 (good EULAR response).}
+#' \item{das28}{Disease Activity Score 28 (DAS28).}
+#' \item{sdai}{Simplified Disease Activity Index (SDAI).}
+#' \item{cdai}{Clinical Disease Activity Index (CDAI).}
 #' \item{haq}{HAQ score. Restricted to range between 0 and 3.}
 #' \item{ttsi}{Time to serious infection. Like \code{ttd}, measured in terms of model cycles. \code{ttsi} is measured at the end of each 
 #' cycle.}
 #' \item{si}{Equal to 1 if treatment discontinuation was caused by a serious infection and 0 otherwise.}
 #' \item{yrlen}{Length of a model cycle in years. Equal to 0.5 given 6-month cycles.}
+#' \item{tx_cost}{Treatment costs after discounts and rebates.}
+#' \item{hosp_cost}{Hospitalization costs.}
+#' \item{mgmt_cost}{General management costs.}
+#' \item{si_cost}{Cost due to serious infections.}
+#' \item{prod_loss}{Productivity loss (i.e., lost earnings).}
+#' \item{utility}{Simulated utility score.}
+#' \item{qalys}{Quality-adjusted life-years (QALYs).}
 #'}
-#' @export
-sim_haq <- function(arminds, haq0, das28_0, sdai0, cdai0, age0, male, prev_dmards,
-                    itreat_haq, itreat_switch, 
-                    nma_acr1, nma_acr2, nma_dhaq1, nma_dhaq2, nma_das28_1, nma_das28_2,
-                    acr2eular, acr2haq, eular2haq, acr2das28, acr2sdai, acr2cdai,
-                    tswitch_da, 
-                    haq_lprog_therapy, haq_lprog_age,
-                    haq_lcgm_delta, haq_lcgm_beta, cmdards_haq_model,
-                    rebound_factor,
-                    lifetable_male, lifetable_female, 
-                    x_mort, logor,
-                    dur_dist, x_dur,
-                    ttd_all_loc, ttd_all_anc1, ttd_all_anc2,
-                    ttd_da_loc, ttd_da_nac1, ttd_da_anc2,
-                    ttd_eular_loc_mod, ttd_eular_anc1_mod, ttd_eular_anc2_mod,
-                    ttd_eular_loc_good, ttd_eular_anc1_good, ttd_eular_anc2_good,
-                    cycle_length, treat_gap, cdmards, nbt, 
-                    si_loc, si_anc1, si_anc2, si_dist, haqdelta_loghr, max_months){
+#' @export 
+sim_iviRA <- function(arms, input_data, pars, model_structures, 
+                      max_months = NULL, treatment_lookup = iviRA::treatments$sname,
+                    cdmards_ind = which(iviRA::treatments$sname == "cdmards"),
+                    nbt_ind = which(iviRA::treatments$sname == "nbt"),
+                    check = TRUE){
   
-  # run simulation
-  browser()
-  simout <- sim_iviRA_C(arm_inds = arminds, haq0 = haq0, das28_0 = das28_0, 
-                        sdai0 = sdai0, cdai0 = cdai0, age0 = age0, male = male,
-                        prev_dmards = prev_dmards,
-                      itreat_haq_model = itreat_haq, itreat_switch_model = itreat_switch, 
-                      nma_acr1 = nma_acr1, nma_acr2 = nma_acr2, 
-                      nma_dhaq1 = nma_dhaq1, nma_dhaq2 = nma_dhaq2, 
-                      nma_das28_1 = nma_das28_1, nma_das28_2 = nma_das28_2,
-                     acr2eular = acr2eular, acr2haq = acr2haq, eular2haq = eular2haq, 
-                     acr2das28 = acr2das28, acr2sdai = acr2sdai, acr2cdai = acr2cdai,
-                     tswitch_da = tswitch_da, 
-                     haq_lprog_therapy = haq_lprog_therapy, haq_lprog_age = haq_lprog_age,
-                     haq_lcgm_delta = haq_lcgm_delta, haq_lcgm_beta = haq_lcgm_beta, 
-                     cdmards_haq_model = cmdards_haq_model,
-                     rebound_factor = rebound_factor,
-                     lifetable_male = lifetable_male, lifetable_female = lifetable_female, 
-                     x_mort = x_mort, logor = logor,
-                     dur_dist = dur_dist, x_dur = x_dur,
-                     ttd_all_loc, ttd_all_anc1, ttd_all_anc2,
-                     ttd_da_loc, ttd_da_nac1, ttd_da_anc2,
-                     ttd_eular_loc_mod, ttd_eular_anc1_mod, ttd_eular_anc2_mod,
-                     ttd_eular_loc_good, ttd_eular_anc1_good, ttd_eular_anc2_good,
-                     cycle_length, treat_gap, cdmards, nbt, 
-                     si_loc, si_anc1, si_anc2, si_dist, haqdelta_loghr, max_months)
-  simout <- as.data.table(simout)
-  colnames(simout) <- c("sim", "id", "month", "tx", "tx_seq", 
-                     "tx_cycle", "death", "age", "ttd", "acr", "eular", 
-                     "haq", "ttsi", "si", "yrlen")
+  # PREPPING FOR THE SIMULATION
+  ## check correct object types used as arguments
+  if (!inherits(input_data, "input_data")){
+    stop("The argument 'input_data' must be of class 'input_data'")
+  }
+  if (!inherits(model_structures, "model_structures")){
+      stop("The argument 'model_structures' must be of class 'model_structures'")
+  }
   
-  # C++ to R indices
-  simout[, sim := sim + 1]
-  simout[, id := id + 1]
-  simout[, tx_seq := tx_seq + 1]
-  simout[, tx_cycle := tx_cycle + 1]
-  simout[, tx := tx + 1]
-  return(simout)
+  ## treatment arm indices
+  if (is.vector(arms)) arms <- matrix(arms, nrow = 1)
+  arminds <- matrix(match(arms, treatment_lookup), nrow = nrow(arms),
+                    ncol = ncol(arms))
+  
+  ## default internal values
+  treat_gap <- 0
+  if (is.null(max_months)){
+    max_months <- 12 * 150
+  }
+  prob.switch.da <- matrix(rep(c(0, 0, 1, 1), each = pars$n), ncol = 4)
+  
+  ## indexing
+  cdmards.ind <- cdmards_ind - 1
+  nbt.ind <- nbt_ind - 1
+  arminds <- arminds - 1
+
+  ## survival parameters
+  ttd.dist <- model_structures[1, "ttd_dist"]
+  pars.ttd.all <- pars$ttd.all[[ttd.dist]]
+  pars.ttd.da <- pars$ttd.da[[ttd.dist]]
+  pars.ttd.em <- pars$ttd.eular$moderate[[ttd.dist]]
+  pars.ttd.eg <- pars$ttd.eular$good[[ttd.dist]]
+  si.dist <- "exp"
+  pars.si <- pars$ttsi
+  
+  ## time to treatment discontinuation
+  if (is.null(input_data$x.ttd.all)){
+    x.ttd.all <- matrix()
+  } else{
+    x.ttd.all <- input_data$x.ttd.all
+  }
+  
+  if (is.null(input_data$x.ttd.eular)){
+    x.ttd.eular <- matrix()
+  } else{
+    x.ttd.eular <- input_data$x.ttd.eular
+  }
+  
+  if (is.null(input_data$x.ttd.da)){
+    x.ttd.da <- matrix()
+  } else{
+    x.ttd.da <- input_data$x.ttd.da
+  }
+  
+  ## treatment costs
+  tc <- pars$treat.cost
+  tc.arms <- cbind(arms, "nbt")
+  lookup.inds <- match(tc.arms, tc$lookup$sname)
+  agents <- aperm(array(match(unlist(tc$lookup[lookup.inds, -1, with = FALSE]),
+                         iviRA::treat.cost$cost$sname) - 1,
+                   dim = c(nrow(tc.arms), ncol(tc.arms), ncol(tc$lookup) - 1)),
+                  perm = c(2, 3, 1))
+  
+  ## utility parameters
+  parsamp.utility.wailoo <- adjust_utility_wailoo(pars$utility.wailoo)
+
+  # RUNNING THE SIMULATION
+  sim.out <- sim_iviRA_C(arm_inds = arminds, model_structures_mat = model_structures,
+                         haq0 = input_data$haq0, das28_0 = input_data$das28,
+                     sdai0 = input_data$sdai, cdai0 = input_data$cdai,
+                     age0 = input_data$age, male = input_data$male, 
+                     prev_dmards = input_data$prev.dmards,
+                     nma_acr1 = pars$acr$p1, nma_acr2 = pars$acr$p2, 
+                     nma_dhaq1 = pars$haq$dy1, nma_dhaq2 = pars$haq$dy2,
+                     nma_das28_1 = pars$das28$dy1, nma_das28_2 = pars$das28$dy2,
+                     acr2eular = pars$acr2eular, acr2haq = pars$acr2haq, eular2haq = pars$eular2haq,
+                     acr2das28 = pars$acr2das28, acr2sdai = pars$acr2sdai, acr2cdai = pars$acr2cdai,
+                     tswitch_da = prob.switch.da,
+                     haq_lprog_therapy = pars$haq.lprog.tx, haq_lprog_age = pars$haq.lprog.age,
+                     haq_lcgm_delta = pars$haq.lcgm$delta, haq_lcgm_beta = pars$haq.lcgm$beta, 
+                     rebound_factor = pars$rebound, 
+                     lifetable_male = pars$lt$male, lifetable_female = pars$lt$female,
+                     x_mort = input_data$x.mort, logor_mort = pars$logor.mort, 
+                     x_ttd_all = x.ttd.all, x_ttd_da = x.ttd.da, x_ttd_eular = x.ttd.eular,
+                     ttd_all_list = pars$ttd.all, ttd_da_list = pars$ttd.da,
+                     ttd_eular_mod_list = pars$ttd.eular$moderate, ttd_eular_good_list = pars$ttd.eular$good,
+                     cdmards = cdmards.ind, nbt = nbt.ind,
+                     si_loc = pars.si, 
+                     si_anc1 = matrix(NA, nrow = pars$n, ncol = ncol(pars.si)), 
+                     si_anc2 = matrix(NA, nrow = pars$n, ncol = ncol(pars.si)), 
+                     si_dist = si.dist, 
+                     haqdelta_loghr = pars$mort.loghr.haqdif, max_months = max_months,
+                     hosp_days = pars$hosp.cost$hosp.days, cost_pday = pars$hosp.cost$cost.pday,
+                     mgmt_cost = rowSums(pars$mgmt.cost), 
+                     si_cost = pars$si.cost, prod_loss = pars$prod.loss,
+                     tc_list = c(list(agents = agents), tc[c("cost", "discount")]), 
+                     weight = input_data$weight, 
+                     coefs_wailoo = parsamp.utility.wailoo, 
+                     pars_util_mix = pars$utility.mixture, si_ul = pars$si.ul)
+  sim.out <- as.data.table(sim.out)
+  
+  ## C++ to R indices
+  sim.out[, model := model + 1]
+  sim.out[, sim := sim + 1]
+  sim.out[, id := id + 1]
+  sim.out[, tx_seq := tx_seq + 1]
+  sim.out[, tx_cycle := tx_cycle + 1]
+  sim.out[, tx := tx + 1]
+  
+  # RETURN
+  return(sim.out)
 }
 
-#' Check parameters of sim_haq
+#' Select model structures
 #'
-#' Error messages when incorrect inputs are passed to sim_haq.
+#' Select the model structures to be used in the IVI-RA individual patient simulation.
+#' 
+#' @param tx_ihaq Model structure relating treatment to HAQ during the first 6 months of 
+#' treatment. Options, which are equivalent to H1-H3 in the documentation are:
+#' \itemize{
+#' \item{\code{acr-haq}}{ H1: Treatment -> ACR -> HAQ }
+#' \item{\code{acr-eular-haq}}{ H2: Treatment -> ACR -> EULAR -> HAQ}
+#' \item{\code{haq}}{ H3:Treatment -> HAQ}
+#' }
+#' @param tx_iswitch Model structure relating treatment to switching during the first
+#' 6 months of treatment. Options, which are equivalent to S1-S6 in the documentation are:
+#' \itemize{
+#' \item{\code{acr-switch}}{ S1: Treatment -> ACR -> Switch}
+#' \item{\code{acr-das28-switch}}{ S2: Treatment -> ACR -> DAS28 -> Switch}
+#' \item{\code{acr-sdai-switch}}{ S3: Treatment -> ACR -> SDAI -> Switch}
+#' \item{\code{acr-cdai-switch}}{ S4: Treatment -> ACR -> CDAI -> Switch}
+#' \item{\code{das28-switch}}{ S5: Treatment -> DAS28 -> Switch}
+#'  \item{\code{das28-switch}}{ S6: Treatment -> ACR -> EULAR -> Switch}
+#' 
+#' }
+#' @param cdmards_haq_model Model used for long-term HAQ progression. Options are:
+#' \itemize{
+#' \item{lcgm}{ Latent class growth model}
+#' \item{linear}{ Constant linear HAQ progression}
+#' }
+#' If \code{lgcm} is chosen, then a latent class growth model is used for cDMARDs
+#' and NBT but a constant annual rate is is assumed for all other therapies; otherwise 
+#' a constant linear HAQ progression is assumed for all therapies including cDMARDs and NBT.
+#' @param ttd_dist Distribution used to model time to treatment discontinuaton. Options are:
+#' \itemize{
+#' \item{exponential}{ Exponential}
+#' \item{weibull}{ Weibull}
+#' \item{gompertz}{ Gompertz}
+#' \item{gamma}{ Gamma}
+#' \item{llogis}{ Log-logistic}
+#' \item{lnorm}{ Lognormal}
+#' \item{gengamma}{ Generalized gamma}
+#' }
+#' @param utility_model Model used to estimate patient utility as a function of HAQ and patient
+#' characteristics. Options are:
+#' \itemize{
+#' \item{mixture}{ Hernandez Alava (2013) mixutre model}
+#' \item{wailoo}{ Wailoo 2006 logistc regression}
+#' }
+#' @export
+select_model_structures <- function(tx_ihaq = "acr-haq",
+                                   tx_iswitch = "acr-switch",
+                                   cdmards_haq_model = "lcgm", 
+                                   ttd_dist = "exponential",
+                                   utility_model = "mixture"){
+  if (any(!tx_ihaq %in% c("acr-haq", "acr-eular-haq", "haq"))){
+      stop("Values in 'tx_ihaq' must be 'acr-haq', 'acr-eular-haq' or 'haq'.")
+  }
+  
+  if (any(!tx_iswitch %in% c("acr-switch", "acr-das28-switch",
+                             "acr-sdai-switch", "acr-cdai-switch", 
+                             "das28-switch", "acr-eular-switch"))){
+      stop(paste0("Values in 'tx_iswitch' must be 'acr-switch', 'acr-das28-switch', 'acr-sdai-switch',",
+                  " 'cr-cdai-switch', 'das28-switch', or 'acr-eular-switch'."))
+  }
+  
+  if (any(!cdmards_haq_model %in% c("lcgm", "linear"))){
+      stop("Values in 'cdmards_haq_model' must be 'lcgm' or 'linear'.")
+  } 
+  
+  if (any(!ttd_dist %in% c("exponential", "weibull", "gompertz", 
+                           "gamma", "llogis", "lnorm", "gengamma"))){
+    stop(paste0("Values in 'ttd_dist' must be 'exponential', 'weibull', 'gompertz', 'gamma',", 
+         " 'llogis', 'lnorm', or 'gengamma'."))
+  } 
+
+  if (any(!utility_model %in% c("mixture", "wailoo"))){
+      stop("Values in 'utility_model' must be 'mixture' or 'wailoo'.")
+  } 
+
+  model.structure <- matrix(c(tx_ihaq, tx_iswitch, cdmards_haq_model, ttd_dist, utility_model), ncol = 5)
+  colnames(model.structure) <- c("tx_ihaq", "tx_iswitch", "cdmards_haq_model", "ttd_dist", "utility_model")
+  class(model.structure) <- "model_structures"
+  return(model.structure)
+}
+
+#' Check parameters for ivi_RA
+#'
+#' Error messages when incorrect parameters are passed to ivi_RA.
 #' 
 #' @param input_data \code{input_data} as passed to \link{sim_haq}.
 #' @param pars \code{pars} as passed to \link{sim_haq}.
-#' @param itreat_haq Treatment to HAQ pathway first 6 months.
-#' @param itreat_switch Treatment switching pathway first 6 months.
+#' @param tx_ihaq Treatment to HAQ pathway first 6 months.
+#' @param tx_iswitch Treatment switching pathway first 6 months.
 #' @keywords internal
-check_sim_haq <- function(arminds, input_data, pars, itreat_haq, itreat_switch){
+check_pars <- function(arminds, input_data, pars, tx_ihaq, tx_iswitch){
   names.dist <- c("exponential", "exp", "weibull", "gompertz", "gamma", "llogis",
                   "lnorm", "gengamma")
   arminds.unique <- unique(c(arminds))
@@ -440,7 +400,7 @@ check_sim_haq <- function(arminds, input_data, pars, itreat_haq, itreat_switch){
   ## NMA ACR
   nma.acr1 <- pars$acr$p1[, , arminds.unique]
   nma.acr2 <- pars$acr$p2[, , arminds.unique]
-  if (itreat_haq %in% c("acr-haq", "acr-eular-haq")){
+  if (tx_ihaq %in% c("acr-haq", "acr-eular-haq")){
     if (any(is.na(nma.acr1) | is.na(nma.acr2))){
       stop ("'acr' element of pars has missing parameter values for one of the selected treatment 
             arms; that is, the NMA results are missing.")
@@ -450,7 +410,7 @@ check_sim_haq <- function(arminds, input_data, pars, itreat_haq, itreat_switch){
   ## NMA HAQ
   nma.haq1 <- pars$haq$dy1[, arminds.unique]
   nma.haq2 <- pars$haq$dy2[, arminds.unique] 
-  if (itreat_haq == "haq"){
+  if (tx_ihaq == "haq"){
     if (any(is.na(nma.haq1) | is.na(nma.haq2))){
       stop ("'haq' element of pars has missing parameter values for one of the selected treatment 
             arms; that is, the NMA results are missing.")
@@ -460,7 +420,7 @@ check_sim_haq <- function(arminds, input_data, pars, itreat_haq, itreat_switch){
   ## NMA DA28
   nma.das28.1 <- pars$das28$dy1[, arminds.unique]
   nma.das28.2 <- pars$das28$dy2[, arminds.unique] 
-  if (itreat_switch == "das28-switch"){
+  if (tx_iswitch == "das28-switch"){
     if (any(is.na(nma.das28.1) | is.na(nma.das28.1))){
       stop ("'das28' element of pars has missing parameter values for one of the selected treatment 
             arms; that is, the NMA results are missing.")
@@ -469,10 +429,10 @@ check_sim_haq <- function(arminds, input_data, pars, itreat_haq, itreat_switch){
 }
 
 
-#' Simulate utility from simulated HAQ score (Hernandez-Alva)
+#' Simulate utility using Hernandez-Alava mixture model
 #'
-#' Simulate utility from HAQ score simulated using \code{sim_haq} using mixture model from
-#' Hernandez-Alva (2013).
+#' Simulate utility from HAQ score simulated using using mixture model from
+#' Hernandez-Alva (2013). Can be used to simulate utility after running \code{ivi_RA}.
 #' 
 #' @param simhaq Simulation output from \link{sim_haq}.
 #' @param male Vector indiciating patient gender (1 = male, 0 = female).
@@ -487,21 +447,19 @@ check_sim_haq <- function(arminds, input_data, pars, itreat_haq, itreat_switch){
 #' @export
 sim_utility_mixture <- function(simhaq, male, pars, check = TRUE){
   if (check) check_sim_utility_mixture(simhaq, male, pars)
-  util <- sim_utility_mixtureC(simhaq$id - 1, simhaq$sim - 1, simhaq$haq, 
-                               pars$pain$pain.mean, pars$pain$haq.mean, 
-                               pars$pain$pain.var, pars$pain$haq.var, 
-                               pars$pain$painhaq.cor, 
-                               simhaq$age, male,
-                               pars$beta1, pars$beta2, pars$beta3,
-                               pars$beta4, 
-                               pars$alpha1, pars$alpha2, pars$alpha3, 
-                               pars$alpha4,
-                               pars$alpha,
-                               pars$epsilon1, pars$epsilon2, pars$epsilon3, 
-                               pars$epsilon4,
-                               pars$mu, pars$delta)
-  util <- as.data.table(util)
-  colnames(util) <- c("pain", "utility")
+  util <- sim_utility_mixtureC(id = simhaq$id - 1, sim = simhaq$sim - 1, haq = simhaq$haq, 
+                               pain_mean = pars$pain$pain.mean, haq_mean = pars$pain$haq.mean, 
+                               pain_var = pars$pain$pain.var, haq_var = pars$pain$haq.var, 
+                               painhaq_cor = pars$pain$painhaq.cor, 
+                               age = simhaq$age, male = male,
+                               beta1 = pars$beta1, beta2 = pars$beta2, beta3 = pars$beta3,
+                               beta4 = pars$beta4, 
+                               alpha1 = pars$alpha1, alpha2 = pars$alpha2, alpha3 = pars$alpha3, 
+                               alpha4 = pars$alpha4,
+                               alpha = pars$alpha,
+                               epsilon1 = pars$epsilon1, epsilon2 = pars$epsilon2, epsilon3 = pars$epsilon3, 
+                               epsilon4 = pars$epsilon4,
+                               mu = pars$mu, delta = pars$delta)
   return(util)
 }
 
@@ -570,19 +528,19 @@ check_sim_utility_mixture <- function(simhaq, male, pars){
   }
 }
 
-#' Simulate utility from simulated HAQ score using Wailoo (2006) model
+#' Simulate utility using Wailoo (2006) model
 #'
-#' Simulate utility from HAQ score simulated using \code{sim_haq} using model from
-#' Wailoo (2006).
+#' Simulate utility from simulated HAQ score simulated using using model from
+#' Wailoo (2006). Can be used to simulate utility after running \code{sim_iviRA}.
 #' 
-#' @param simhaq Simulation output from \link{sim_haq}. Variables needed are \code{sim}, \code{id},
+#' @param simhaq Simulation output from \link{sim_iviRA}. Variables needed are \code{sim}, \code{id},
 #'  \code{age}, and \code{haq}.
 #' @param haq0 HAQ score at baseline.
 #' @param male Indicator = 1 for males and 0 for females.
 #' @param prev_dmards Number of previous DMARDs.
 #' @param coefs Matrix of coefficients needed to simulate utility using the Wailoo (2006) model. 
-#' See the documentation in \link{sample_pars} for details. Note that the matrix columns must be in 
-#' the same order as generated by \link{sample_pars}. 
+#' See the documentation in \link{sample_pars} for details. Note that the matrix columns must contain the
+#' same variables as generated by \link{sample_pars}. 
 #' @param check Should the function check parameters and input data passed to the model? Default is TRUE.
 #' 
 #' @details Note that disease duration is set to 18.65 years, which
@@ -594,13 +552,14 @@ check_sim_utility_mixture <- function(simhaq, male, pars){
 sim_utility_wailoo <- function(simhaq, haq0, male, prev_dmards,
                                coefs, check = TRUE){
   if (check) check_sim_utility_wailoo(simhaq, haq0, male, prev_dmards, coefs)
-  DIS.DUR <- 18.65 # based on mean disease duration in Wailoo (2006)
-  util <- sim_utility_wailooC(simhaq$sim - 1, simhaq$id - 1, simhaq$age,
-                              DIS.DUR, haq0, male, 
-                              prev_dmards, simhaq$haq,
-                              coefs[, "int"], coefs[, "age"], coefs[, "dis_dur"], 
-                              coefs[, "haq0"], coefs[, "male"],
-                              coefs[, "prev_dmards"], coefs[, "haq"])
+  dis.dur <- 18.65 # based on mean disease duration in Wailoo (2006)
+  coefs <- adjust_utility_wailoo(coefs)
+  util <- sim_utility_wailooC(sim = simhaq$sim - 1, id = simhaq$id - 1, age = simhaq$age,
+                              disease_duration = dis.dur, haq0 = haq0, male = male, 
+                              prev_dmards = prev_dmards, haq = simhaq$haq,
+                              b_int = coefs[, "int"], b_age = coefs[, "age"], b_disease_duration = coefs[, "dis_dur"], 
+                              b_haq0 = coefs[, "haq0"], b_male = coefs[, "male"],
+                              b_prev_dmards = coefs[, "prev_dmards"], b_haq = coefs[, "haq"])
   return(util)
 }
 

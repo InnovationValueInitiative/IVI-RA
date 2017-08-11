@@ -198,6 +198,13 @@ names(iviRA::utility.mixture)
 iviRA::utility.mixture$coef
 ```
 
+Quality-adjusted life-years are also decreased in each period that there is a serious infection and is assumed to vary by `r formatC(formals(sample_pars)$si_ul_range * 100, digits = 2)` percent in either direction. 
+
+```{r }
+formals(sample_pars)$si_ul
+formals(sample_pars)$si_ul_range
+```
+
 ## Costs
 The model incorporates 3 main types of health care sector costs: (1) drug acquisition and administration costs, (2) hospitalization costs, and (3) general management costs. Productivity losses can also be included in the analysis if the analyst would like to take a societal perspective. 
 
@@ -243,7 +250,7 @@ iviRA::prod.loss
 
 <div>
 <ul class="pager">
-  <li class="previous"><a href="03-structure.html">Previous</a></li>
+  <li class="previous"><a href="03-structures.html">Previous</a></li>
   <li class="next"><a href="05-ips.html">Next</a></li>
 </ul>
 </div>

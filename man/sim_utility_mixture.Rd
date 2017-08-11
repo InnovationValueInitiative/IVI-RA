@@ -2,7 +2,7 @@
 % Please edit documentation in R/ips.R
 \name{sim_utility_mixture}
 \alias{sim_utility_mixture}
-\title{Simulate utility from simulated HAQ score (Hernandez-Alva)}
+\title{Simulate utility using Hernandez-Alava mixture model}
 \usage{
 sim_utility_mixture(simhaq, male, pars, check = TRUE)
 }
@@ -22,6 +22,6 @@ Matrix. First column is simulated pain score and second column is simulated util
 Each row corresponds to a unique patient and time-period (i.e. month) from \link{sim_haq}.
 }
 \description{
-Simulate utility from HAQ score simulated using \code{sim_haq} using mixture model from
-Hernandez-Alva (2013).
+Simulate utility from HAQ score simulated using using mixture model from
+Hernandez-Alva (2013). Can be used to simulate utility after running \code{ivi_RA}.
 }

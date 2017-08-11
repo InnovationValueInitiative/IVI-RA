@@ -378,18 +378,45 @@ test_that("sim_prod_loss1C", {
               parsamp$prod.loss[1] * haq *  yrlen)
 })
 
+# Test utility simulation(s) --------------------------------------------------
+# Wailoo (2006)
+test_that("sim_utility_wailoo1C", {
+  age <- 55; dis.dur <- 18; haq0 <- 1.5; male <- 1; prev.dmards <- 3; haq <- 2
+  beta <- utility.wailoo$est; names(beta) <- utility.wailoo$var
+  utilC <- iviRA:::sim_utility_wailoo1C(age = age, disease_duration = dis.dur, 
+                               haq0 = haq0, male = male, prev_dmards = prev.dmards,
+                               haq = haq, b = beta)
+  utilR.xb <- as.vector(beta["int"] + beta["age"] * age + beta["dis_dur"] * dis.dur +
+    beta["haq0"] * haq0 + beta["male"] * male + beta["prev_dmards"] * prev.dmards +
+    beta["haq"] * haq)
+  expect_equal(utilC, 1/(1 + exp(-utilR.xb)))
+})
+
+# Hernandez-Alava (2013)
+# test_that("sim_utility_mixture1C", {
+#   haq <- 1.5; age <- 55; male <- 1
+#   pars <- sample_pars(n = 10)
+#   pars <- pars$utility.mixture
+#   iviRA:::sim_utility_mixture1C(haq = haq, pain.mean = pars$pain$pain.mean,
+#                         haq_mean = pars$pain$haq.mean, pain_var = pars$pain$pain.var,
+#                         haq_var = pars$pain$haq.var, painhaq_cor = pars$pain$painhaq.cor,
+#                         age = age, male = male, 
+#                         beta1 = pars$beta1[1, ], beta2 = pars$beta2[1, ], 
+#                         beta3 = pars$beta3[1, ], beta4 = pars$beta4[1, ], 
+#                         alpha1 = pars$alpha1[1], alpha2 = pars$alpha2[1],
+#                         alpha3 = pars)
+# })
+
 # small integration test ------------------------------------------------------
 pop <- sample_pats(n = 10)
 arm.names <- c("adamtx", "cdmards")
 parsamp <- sample_pars(n = 100)
-mod.struct <- select_model_structure(itreat_haq = "acr-haq",
-                                     itreat_switch = "acr-switch",
-                                     cdmards_haq_model = "lcgm",
-                                     ttd_dist = "gengamma",
-                                     utility_model = "wailoo")
-input.dat <- get_input_data(patdata = pop, model_structure = mod.struct)
+mod.structs <- select_model_structures(tx_ihaq = c("acr-haq", "acr-eular-haq"),
+                                     tx_iswitch = c("acr-das28-switch", "acr-eular-switch"),
+                                     cdmards_haq_model = c("lcgm", "linear"),
+                                     ttd_dist = c("gengamma", "lnorm"),
+                                     utility_model = c("mixture", "wailoo"))
+input.dat <- get_input_data(patdata = pop, model_structure = mod.structs)
 sim.out <- sim_iviRA(arms = arm.names, input_data = input.dat, pars = parsamp,
-                     model_structure = mod.struct)
-
-
+                     model_structures = mod.structs)
 
