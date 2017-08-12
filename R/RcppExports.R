@@ -2,179 +2,179 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 test_tx_ihaq <- function(tx_ihaq_model, line, therapy, nbt, nma_acr1, nma_acr2, nma_dhaq1, nma_dhaq2, acr2eular, acr2haq, eular2haq) {
-    .Call('iviRA_test_tx_ihaq', PACKAGE = 'iviRA', tx_ihaq_model, line, therapy, nbt, nma_acr1, nma_acr2, nma_dhaq1, nma_dhaq2, acr2eular, acr2haq, eular2haq)
+    .Call('_iviRA_test_tx_ihaq', PACKAGE = 'iviRA', tx_ihaq_model, line, therapy, nbt, nma_acr1, nma_acr2, nma_dhaq1, nma_dhaq2, acr2eular, acr2haq, eular2haq)
 }
 
 get_das28_cat <- function(das28) {
-    .Call('iviRA_get_das28_cat', PACKAGE = 'iviRA', das28)
+    .Call('_iviRA_get_das28_cat', PACKAGE = 'iviRA', das28)
 }
 
 get_sdai_cat <- function(sdai) {
-    .Call('iviRA_get_sdai_cat', PACKAGE = 'iviRA', sdai)
+    .Call('_iviRA_get_sdai_cat', PACKAGE = 'iviRA', sdai)
 }
 
 get_cdai_cat <- function(cdai) {
-    .Call('iviRA_get_cdai_cat', PACKAGE = 'iviRA', cdai)
+    .Call('_iviRA_get_cdai_cat', PACKAGE = 'iviRA', cdai)
 }
 
 get_da_new <- function(da_old, da_change, lower, upper) {
-    .Call('iviRA_get_da_new', PACKAGE = 'iviRA', da_old, da_change, lower, upper)
+    .Call('_iviRA_get_da_new', PACKAGE = 'iviRA', da_old, da_change, lower, upper)
 }
 
 #' @export
 test_tx_iswitch <- function(tx_iswitch_model, line, therapy, nbt, acr, eular, das28, sdai, cdai, acr2das28, acr2sdai, acr2cdai, nma_das28_1, nma_das28_2, p) {
-    .Call('iviRA_test_tx_iswitch', PACKAGE = 'iviRA', tx_iswitch_model, line, therapy, nbt, acr, eular, das28, sdai, cdai, acr2das28, acr2sdai, acr2cdai, nma_das28_1, nma_das28_2, p)
+    .Call('_iviRA_test_tx_iswitch', PACKAGE = 'iviRA', tx_iswitch_model, line, therapy, nbt, acr, eular, das28, sdai, cdai, acr2das28, acr2sdai, acr2cdai, nma_das28_1, nma_das28_2, p)
 }
 
 #' @export
 sim_ttd_eular <- function(x, loc_mod, anc1_mod, loc_good, anc1_good, eular, dist, cycle_length, ttsi, anc2_mod = 0.0, anc2_good = 0.0) {
-    .Call('iviRA_sim_ttd_eular', PACKAGE = 'iviRA', x, loc_mod, anc1_mod, loc_good, anc1_good, eular, dist, cycle_length, ttsi, anc2_mod, anc2_good)
+    .Call('_iviRA_sim_ttd_eular', PACKAGE = 'iviRA', x, loc_mod, anc1_mod, loc_good, anc1_good, eular, dist, cycle_length, ttsi, anc2_mod, anc2_good)
 }
 
 #' @export
 sim_ttd <- function(x, loc, anc1, tswitch, dist, cycle_length, ttsi, anc2 = 0.0, da_cat = 0L) {
-    .Call('iviRA_sim_ttd', PACKAGE = 'iviRA', x, loc, anc1, tswitch, dist, cycle_length, ttsi, anc2, da_cat)
+    .Call('_iviRA_sim_ttd', PACKAGE = 'iviRA', x, loc, anc1, tswitch, dist, cycle_length, ttsi, anc2, da_cat)
 }
 
 test_ttd <- function(x) {
-    .Call('iviRA_test_ttd', PACKAGE = 'iviRA', x)
+    .Call('_iviRA_test_ttd', PACKAGE = 'iviRA', x)
 }
 
 #' @export
 sim_mlogit_classC <- function(w, delta) {
-    .Call('iviRA_sim_mlogit_classC', PACKAGE = 'iviRA', w, delta)
+    .Call('_iviRA_sim_mlogit_classC', PACKAGE = 'iviRA', w, delta)
 }
 
 #' @export
 sim_dhaq_class_lcgm1C <- function(year, cycle_length, beta) {
-    .Call('iviRA_sim_dhaq_class_lcgm1C', PACKAGE = 'iviRA', year, cycle_length, beta)
+    .Call('_iviRA_sim_dhaq_class_lcgm1C', PACKAGE = 'iviRA', year, cycle_length, beta)
 }
 
 #' @export
 sim_dhaq_lcgm1C <- function(year, cycle_length, age, female, das28, delta, beta) {
-    .Call('iviRA_sim_dhaq_lcgm1C', PACKAGE = 'iviRA', year, cycle_length, age, female, das28, delta, beta)
+    .Call('_iviRA_sim_dhaq_lcgm1C', PACKAGE = 'iviRA', year, cycle_length, age, female, das28, delta, beta)
 }
 
 sim_tx_cost1C <- function(t, agents_ind, tx_name, init_dose_val, ann_dose_val, strength_val, init_num_doses, ann_num_doses, price, infusion_cost, loading_dose, weight_based, weight, cycle_length, discount) {
-    .Call('iviRA_sim_tx_cost1C', PACKAGE = 'iviRA', t, agents_ind, tx_name, init_dose_val, ann_dose_val, strength_val, init_num_doses, ann_num_doses, price, infusion_cost, loading_dose, weight_based, weight, cycle_length, discount)
+    .Call('_iviRA_sim_tx_cost1C', PACKAGE = 'iviRA', t, agents_ind, tx_name, init_dose_val, ann_dose_val, strength_val, init_num_doses, ann_num_doses, price, infusion_cost, loading_dose, weight_based, weight, cycle_length, discount)
 }
 
 sim_mgmt_cost1C <- function(yrlen, cost) {
-    .Call('iviRA_sim_mgmt_cost1C', PACKAGE = 'iviRA', yrlen, cost)
+    .Call('_iviRA_sim_mgmt_cost1C', PACKAGE = 'iviRA', yrlen, cost)
 }
 
 sim_hosp_cost1C <- function(haq, yrlen, hosp_days, cost_pday) {
-    .Call('iviRA_sim_hosp_cost1C', PACKAGE = 'iviRA', haq, yrlen, hosp_days, cost_pday)
+    .Call('_iviRA_sim_hosp_cost1C', PACKAGE = 'iviRA', haq, yrlen, hosp_days, cost_pday)
 }
 
 sim_si_cost1C <- function(si, yrlen, cost) {
-    .Call('iviRA_sim_si_cost1C', PACKAGE = 'iviRA', si, yrlen, cost)
+    .Call('_iviRA_sim_si_cost1C', PACKAGE = 'iviRA', si, yrlen, cost)
 }
 
 sim_prod_loss1C <- function(haq, yrlen, beta) {
-    .Call('iviRA_sim_prod_loss1C', PACKAGE = 'iviRA', haq, yrlen, beta)
+    .Call('_iviRA_sim_prod_loss1C', PACKAGE = 'iviRA', haq, yrlen, beta)
 }
 
 sim_utility_wailoo1C <- function(age, disease_duration, haq0, male, prev_dmards, haq, b) {
-    .Call('iviRA_sim_utility_wailoo1C', PACKAGE = 'iviRA', age, disease_duration, haq0, male, prev_dmards, haq, b)
+    .Call('_iviRA_sim_utility_wailoo1C', PACKAGE = 'iviRA', age, disease_duration, haq0, male, prev_dmards, haq, b)
 }
 
 #' @export
 sim_utility_wailooC <- function(sim, id, age, disease_duration, haq0, male, prev_dmards, haq, b_int, b_age, b_disease_duration, b_haq0, b_male, b_prev_dmards, b_haq) {
-    .Call('iviRA_sim_utility_wailooC', PACKAGE = 'iviRA', sim, id, age, disease_duration, haq0, male, prev_dmards, haq, b_int, b_age, b_disease_duration, b_haq0, b_male, b_prev_dmards, b_haq)
+    .Call('_iviRA_sim_utility_wailooC', PACKAGE = 'iviRA', sim, id, age, disease_duration, haq0, male, prev_dmards, haq, b_int, b_age, b_disease_duration, b_haq0, b_male, b_prev_dmards, b_haq)
 }
 
 #' @export
 sim_utility_mixture1C <- function(haq, pain_mean, haq_mean, pain_var, haq_var, painhaq_cor, age, male, beta1, beta2, beta3, beta4, alpha1, alpha2, alpha3, alpha4, alpha, epsilon1_sd, epsilon2_sd, epsilon3_sd, epsilon4_sd, mu, delta, w, x) {
-    .Call('iviRA_sim_utility_mixture1C', PACKAGE = 'iviRA', haq, pain_mean, haq_mean, pain_var, haq_var, painhaq_cor, age, male, beta1, beta2, beta3, beta4, alpha1, alpha2, alpha3, alpha4, alpha, epsilon1_sd, epsilon2_sd, epsilon3_sd, epsilon4_sd, mu, delta, w, x)
+    .Call('_iviRA_sim_utility_mixture1C', PACKAGE = 'iviRA', haq, pain_mean, haq_mean, pain_var, haq_var, painhaq_cor, age, male, beta1, beta2, beta3, beta4, alpha1, alpha2, alpha3, alpha4, alpha, epsilon1_sd, epsilon2_sd, epsilon3_sd, epsilon4_sd, mu, delta, w, x)
 }
 
 #' @export
 sim_utility_mixtureC <- function(id, sim, haq, pain_mean, haq_mean, pain_var, haq_var, painhaq_cor, age, male, beta1, beta2, beta3, beta4, alpha1, alpha2, alpha3, alpha4, alpha, epsilon1_sd, epsilon2_sd, epsilon3_sd, epsilon4_sd, mu_sd, delta) {
-    .Call('iviRA_sim_utility_mixtureC', PACKAGE = 'iviRA', id, sim, haq, pain_mean, haq_mean, pain_var, haq_var, painhaq_cor, age, male, beta1, beta2, beta3, beta4, alpha1, alpha2, alpha3, alpha4, alpha, epsilon1_sd, epsilon2_sd, epsilon3_sd, epsilon4_sd, mu_sd, delta)
+    .Call('_iviRA_sim_utility_mixtureC', PACKAGE = 'iviRA', id, sim, haq, pain_mean, haq_mean, pain_var, haq_var, painhaq_cor, age, male, beta1, beta2, beta3, beta4, alpha1, alpha2, alpha3, alpha4, alpha, epsilon1_sd, epsilon2_sd, epsilon3_sd, epsilon4_sd, mu_sd, delta)
 }
 
 sim_iviRA_C <- function(arm_inds, model_structures_mat, haq0, das28_0, sdai0, cdai0, age0, male, prev_dmards, nma_acr1, nma_acr2, nma_dhaq1, nma_dhaq2, nma_das28_1, nma_das28_2, acr2eular, acr2haq, eular2haq, acr2das28, acr2sdai, acr2cdai, tswitch_da, haq_lprog_therapy, haq_lprog_age, haq_lcgm_delta, haq_lcgm_beta, rebound_factor, lifetable_male, lifetable_female, x_mort, logor_mort, x_ttd_all, x_ttd_da, x_ttd_eular, ttd_all_list, ttd_da_list, ttd_eular_mod_list, ttd_eular_good_list, cdmards, nbt, si_loc, si_anc1, si_anc2, si_dist, haqdelta_loghr, max_months, hosp_days, cost_pday, mgmt_cost, si_cost, prod_loss, tc_list, weight, coefs_wailoo, pars_util_mix, si_ul) {
-    .Call('iviRA_sim_iviRA_C', PACKAGE = 'iviRA', arm_inds, model_structures_mat, haq0, das28_0, sdai0, cdai0, age0, male, prev_dmards, nma_acr1, nma_acr2, nma_dhaq1, nma_dhaq2, nma_das28_1, nma_das28_2, acr2eular, acr2haq, eular2haq, acr2das28, acr2sdai, acr2cdai, tswitch_da, haq_lprog_therapy, haq_lprog_age, haq_lcgm_delta, haq_lcgm_beta, rebound_factor, lifetable_male, lifetable_female, x_mort, logor_mort, x_ttd_all, x_ttd_da, x_ttd_eular, ttd_all_list, ttd_da_list, ttd_eular_mod_list, ttd_eular_good_list, cdmards, nbt, si_loc, si_anc1, si_anc2, si_dist, haqdelta_loghr, max_months, hosp_days, cost_pday, mgmt_cost, si_cost, prod_loss, tc_list, weight, coefs_wailoo, pars_util_mix, si_ul)
+    .Call('_iviRA_sim_iviRA_C', PACKAGE = 'iviRA', arm_inds, model_structures_mat, haq0, das28_0, sdai0, cdai0, age0, male, prev_dmards, nma_acr1, nma_acr2, nma_dhaq1, nma_dhaq2, nma_das28_1, nma_das28_2, acr2eular, acr2haq, eular2haq, acr2das28, acr2sdai, acr2cdai, tswitch_da, haq_lprog_therapy, haq_lprog_age, haq_lcgm_delta, haq_lcgm_beta, rebound_factor, lifetable_male, lifetable_female, x_mort, logor_mort, x_ttd_all, x_ttd_da, x_ttd_eular, ttd_all_list, ttd_da_list, ttd_eular_mod_list, ttd_eular_good_list, cdmards, nbt, si_loc, si_anc1, si_anc2, si_dist, haqdelta_loghr, max_months, hosp_days, cost_pday, mgmt_cost, si_cost, prod_loss, tc_list, weight, coefs_wailoo, pars_util_mix, si_ul)
 }
 
 #' @export
 qalysC <- function(utility, yrlen, sim, si, si_ul) {
-    .Call('iviRA_qalysC', PACKAGE = 'iviRA', utility, yrlen, sim, si, si_ul)
+    .Call('_iviRA_qalysC', PACKAGE = 'iviRA', utility, yrlen, sim, si, si_ul)
 }
 
 #' @export
 mytest <- function(x) {
-    .Call('iviRA_mytest', PACKAGE = 'iviRA', x)
+    .Call('_iviRA_mytest', PACKAGE = 'iviRA', x)
 }
 
 #' @export
 maptest <- function(x) {
-    .Call('iviRA_maptest', PACKAGE = 'iviRA', x)
+    .Call('_iviRA_maptest', PACKAGE = 'iviRA', x)
 }
 
 #' @export
 vec2list <- function(x) {
-    .Call('iviRA_vec2list', PACKAGE = 'iviRA', x)
+    .Call('_iviRA_vec2list', PACKAGE = 'iviRA', x)
 }
 
 #' @export
 mat2vec <- function(x) {
-    .Call('iviRA_mat2vec', PACKAGE = 'iviRA', x)
+    .Call('_iviRA_mat2vec', PACKAGE = 'iviRA', x)
 }
 
 #' @export
 ologit_probC <- function(x, beta, cut) {
-    .Call('iviRA_ologit_probC', PACKAGE = 'iviRA', x, beta, cut)
+    .Call('_iviRA_ologit_probC', PACKAGE = 'iviRA', x, beta, cut)
 }
 
 #' @export
 mlogit_probC <- function(x, beta) {
-    .Call('iviRA_mlogit_probC', PACKAGE = 'iviRA', x, beta)
+    .Call('_iviRA_mlogit_probC', PACKAGE = 'iviRA', x, beta)
 }
 
 logistic <- function(p) {
-    .Call('iviRA_logistic', PACKAGE = 'iviRA', p)
+    .Call('_iviRA_logistic', PACKAGE = 'iviRA', p)
 }
 
 newprobC <- function(x, logor, logit_baseprob) {
-    .Call('iviRA_newprobC', PACKAGE = 'iviRA', x, logor, logit_baseprob)
+    .Call('_iviRA_newprobC', PACKAGE = 'iviRA', x, logor, logit_baseprob)
 }
 
 update_qxC <- function(baseline_haq, current_haq, qx, cycle_length, month, loghr_vec) {
-    invisible(.Call('iviRA_update_qxC', PACKAGE = 'iviRA', baseline_haq, current_haq, qx, cycle_length, month, loghr_vec))
+    invisible(.Call('_iviRA_update_qxC', PACKAGE = 'iviRA', baseline_haq, current_haq, qx, cycle_length, month, loghr_vec))
 }
 
 mortprobC <- function(age, male, lifetable_male, lifetable_female, x, logor, haq0, haq, cycle_length, month, loghr_vec) {
-    .Call('iviRA_mortprobC', PACKAGE = 'iviRA', age, male, lifetable_male, lifetable_female, x, logor, haq0, haq, cycle_length, month, loghr_vec)
+    .Call('_iviRA_mortprobC', PACKAGE = 'iviRA', age, male, lifetable_male, lifetable_female, x, logor, haq0, haq, cycle_length, month, loghr_vec)
 }
 
 sample_deathC <- function(age, male, lifetable_male, lifetable_female, x, logor, haq0, haq, cycle_length, month, loghr_vec) {
-    .Call('iviRA_sample_deathC', PACKAGE = 'iviRA', age, male, lifetable_male, lifetable_female, x, logor, haq0, haq, cycle_length, month, loghr_vec)
+    .Call('_iviRA_sample_deathC', PACKAGE = 'iviRA', age, male, lifetable_male, lifetable_female, x, logor, haq0, haq, cycle_length, month, loghr_vec)
 }
 
 sample_survC <- function(n, age0, male, lifetable_male, lifetable_female, x, logor, haq0, haq, cycle_length, loghr_vec) {
-    .Call('iviRA_sample_survC', PACKAGE = 'iviRA', n, age0, male, lifetable_male, lifetable_female, x, logor, haq0, haq, cycle_length, loghr_vec)
+    .Call('_iviRA_sample_survC', PACKAGE = 'iviRA', n, age0, male, lifetable_male, lifetable_female, x, logor, haq0, haq, cycle_length, loghr_vec)
 }
 
 #' @export
 rsurvC <- function(location, anc1, dist, anc2 = 0.0) {
-    .Call('iviRA_rsurvC', PACKAGE = 'iviRA', location, anc1, dist, anc2)
+    .Call('_iviRA_rsurvC', PACKAGE = 'iviRA', location, anc1, dist, anc2)
 }
 
 rbvcnormC <- function(x, y_mean, x_mean, y_var, x_var, cor) {
-    .Call('iviRA_rbvcnormC', PACKAGE = 'iviRA', x, y_mean, x_mean, y_var, x_var, cor)
+    .Call('_iviRA_rbvcnormC', PACKAGE = 'iviRA', x, y_mean, x_mean, y_var, x_var, cor)
 }
 
 matrix_byrow <- function(v, nrow, ncol) {
-    .Call('iviRA_matrix_byrow', PACKAGE = 'iviRA', v, nrow, ncol)
+    .Call('_iviRA_matrix_byrow', PACKAGE = 'iviRA', v, nrow, ncol)
 }
 
 matrix_bycol <- function(v, nrow, ncol) {
-    .Call('iviRA_matrix_bycol', PACKAGE = 'iviRA', v, nrow, ncol)
+    .Call('_iviRA_matrix_bycol', PACKAGE = 'iviRA', v, nrow, ncol)
 }
 
 array2cube <- function(array) {
-    .Call('iviRA_array2cube', PACKAGE = 'iviRA', array)
+    .Call('_iviRA_array2cube', PACKAGE = 'iviRA', array)
 }
 

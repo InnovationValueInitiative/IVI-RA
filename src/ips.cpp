@@ -40,6 +40,30 @@ struct TxIHaq {
   double dhaq;
 };
 
+class Test {
+public:
+  Test(int x): x_(x) {}
+  int getValue() { return x_; }
+  void addValue(int y) { x_ += y; }
+  void merge(const Test& rhs) { x_ += rhs.x_; }
+private:
+  int x_;
+};
+
+
+RCPP_EXPOSED_CLASS(Test)
+  RCPP_MODULE(mod_test) {
+    
+    class_<Test>("Test")
+    
+    .constructor<int>("sets initial value")
+    
+    .method("getValue", &Test::getValue, "Returns the value")
+    .method("addValue", &Test::addValue, "Adds a value")
+    .method("merge", &Test::merge, "Merges another Test into this object")
+    ;
+  }
+
 TxIHaq sim_tx_ihaq(std::string tx_ihaq_model, int line, int therapy, int nbt,
                      arma::rowvec nma_acr1, arma::rowvec nma_acr2, 
                      double nma_dhaq1, double nma_dhaq2,
@@ -418,7 +442,7 @@ double sim_tx_cost1C(int t, arma::rowvec agents_ind, std::vector<std::string> tx
                      std::vector<double> price, 
                      std::vector<double> infusion_cost, std::vector<int> loading_dose,
                      std::vector<int> weight_based, double weight, double cycle_length,
-                     double discount){
+                     arma::rowvec discount){
   
   // initial vs. maintenance phase dosing
   std::vector<double> dose_amt;
@@ -455,12 +479,18 @@ double sim_tx_cost1C(int t, arma::rowvec agents_ind, std::vector<std::string> tx
           infusion_cost_j = infusion_cost[agents_ind_j] * dose_num[agents_ind_j];
         }
         tc +=  ceil(weight * dose_amt[agents_ind_j]/strength_val[agents_ind_j]) * 
-          dose_num_j * price[agents_ind_j] * (1 - discount) + infusion_cost_j;
+          dose_num_j * price[agents_ind_j] * (1 - discount(agents_ind_j)) + infusion_cost_j;
       }
       else{
+        if (loading_dose[agents_ind_j] == 1){
+          infusion_cost_j = 0;
+        } 
+        else{
+          infusion_cost_j = infusion_cost[agents_ind_j] * dose_num[agents_ind_j];
+        }
         tc += (ceil(weight * dose_amt[agents_ind_j]/strength_val[agents_ind_j]) * 
-          dose_num_j * price[agents_ind_j] * (1 - discount) + 
-          infusion_cost[agents_ind_j] * dose_num[agents_ind_j]) * cycle_length/12; 
+          dose_num_j * price[agents_ind_j] * (1 - discount(agents_ind_j)) + 
+          infusion_cost_j) * cycle_length/12; 
       }
     }
   }
@@ -682,7 +712,7 @@ List sim_iviRA_C(arma::mat arm_inds, CharacterMatrix model_structures_mat,
   
   //// Treatment costs
   arma::cube tc_agents_ind = as<arma::cube>(tc_list["agents"]);
-  std::vector<double> tc_discount = as<std::vector<double> >(tc_list["discount"]);
+  arma::mat tc_discount = as<arma::mat>(tc_list["discount"]);
   Rcpp::DataFrame tc = Rcpp::as<Rcpp::DataFrame>(tc_list["cost"]);
   std::vector<std::string> tx_name = as<std::vector<std::string> >(tc["sname"]);
   std::vector<double> init_dose_val = as<std::vector<double> >(tc["init_dose_val"]);
@@ -923,7 +953,8 @@ List sim_iviRA_C(arma::mat arm_inds, CharacterMatrix model_structures_mat,
                                         init_dose_val, ann_dose_val, strength_val,
                                         init_num_doses, ann_num_doses, price,
                                         infusion_cost, loading_dose, 
-                                        weight_based, weight[i], cycle_length, tc_discount[s]);
+                                        weight_based, weight[i], cycle_length, 
+                                        tc_discount.row(s));
             sim_cost.hosp = sim_hosp_cost1C(haq, cycle_length/12, hosp_days.row(s), cost_pday.row(s));
             sim_cost.mgmt = sim_mgmt_cost1C(cycle_length/12, mgmt_cost[s]);
             sim_cost.prod = sim_prod_loss1C(haq, cycle_length/12, prod_loss[s]);

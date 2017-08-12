@@ -25,7 +25,7 @@ treatment. Options, which are equivalent to H1-H3 in the documentation are:
 \item{\code{acr-sdai-switch}}{ S3: Treatment -> ACR -> SDAI -> Switch}
 \item{\code{acr-cdai-switch}}{ S4: Treatment -> ACR -> CDAI -> Switch}
 \item{\code{das28-switch}}{ S5: Treatment -> DAS28 -> Switch}
- \item{\code{das28-switch}}{ S6: Treatment -> ACR -> EULAR -> Switch}
+ \item{\code{acr-eular-switch}}{ S6: Treatment -> ACR -> EULAR -> Switch}
 
 }}
 

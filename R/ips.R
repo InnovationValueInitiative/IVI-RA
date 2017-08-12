@@ -2,25 +2,6 @@
 #'
 #' Run the IVI-RA individual patient simulation model.
 #' 
-#' @param pars \code{utility.mixture} object from \code{sample_pars}.
-#' @keywords internal
-adjust_utility_wailoo <- function(pars){
-  wailoo.coefnames <- c("int", "age", "dis_dur", "haq0", "male", "prev_dmards", "haq")
-  wailoo.colindx <- match(wailoo.coefnames, colnames(pars))
-  if(any(is.na(wailoo.colindx))) {
-    stop("Matrix utility.wailoo in list 'pars' must have column names 'int', 'age',
-         'dis_dur', 'haq0', 'male', 'prev_dmards', and 'haq'")
-  }
-  newpars <-  pars[, wailoo.colindx]
-  return(newpars)
-}
-
-
-
-#' The IVI-RA simulation
-#'
-#' Run the IVI-RA individual patient simulation model.
-#' 
 #' @param arms Name of arms in the treatment treatment sequence. May be a vector consisting of 
 #' a single treatment sequence or a matrix of unique sequences for each patient.
 #' @param input_data An object of class 'input_data' returned from \link{get_input_data}.
@@ -143,7 +124,13 @@ sim_iviRA <- function(arms, input_data, pars, model_structures,
                   perm = c(2, 3, 1))
   
   ## utility parameters
-  parsamp.utility.wailoo <- adjust_utility_wailoo(pars$utility.wailoo)
+  wailoo.coefnames <- c("int", "age", "dis_dur", "haq0", "male", "prev_dmards", "haq")
+  wailoo.colindx <- match(wailoo.coefnames, colnames(pars$utility.wailoo))
+  if(any(is.na(wailoo.colindx))) {
+    stop("Matrix utility.wailoo in list 'pars' must have column names 'int', 'age',
+         'dis_dur', 'haq0', 'male', 'prev_dmards', and 'haq'")
+  }
+  parsamp.utility.wailoo <- pars$utility.wailoo[, wailoo.colindx, drop = FALSE]
 
   # RUNNING THE SIMULATION
   sim.out <- sim_iviRA_C(arm_inds = arminds, model_structures_mat = model_structures,
@@ -211,7 +198,7 @@ sim_iviRA <- function(arms, input_data, pars, model_structures,
 #' \item{\code{acr-sdai-switch}}{ S3: Treatment -> ACR -> SDAI -> Switch}
 #' \item{\code{acr-cdai-switch}}{ S4: Treatment -> ACR -> CDAI -> Switch}
 #' \item{\code{das28-switch}}{ S5: Treatment -> DAS28 -> Switch}
-#'  \item{\code{das28-switch}}{ S6: Treatment -> ACR -> EULAR -> Switch}
+#'  \item{\code{acr-eular-switch}}{ S6: Treatment -> ACR -> EULAR -> Switch}
 #' 
 #' }
 #' @param cdmards_haq_model Model used for long-term HAQ progression. Options are:
@@ -244,6 +231,39 @@ select_model_structures <- function(tx_ihaq = "acr-haq",
                                    cdmards_haq_model = "lcgm", 
                                    ttd_dist = "exponential",
                                    utility_model = "mixture"){
+  # 
+  n <- vector(length = 5)
+  n[1] <- length(tx_ihaq)
+  n[2] <- length(tx_iswitch)
+  n[3] <- length(cdmards_haq_model)
+  n[4] <- length(ttd_dist)
+  n[5] <- length(utility_model)
+  if (max(n) > 1){
+    n.g1 <- n[n > 1]
+    max.n.g1 <- max(n.g1)
+    if (any(max.n.g1 - n.g1 > 0)){
+      stop("Length of all vectors must be the same")
+    }
+    if (any(max.n.g1 - n > 0)){
+      if (n[1] == 1){
+        tx_ihaq <- rep(tx_ihaq, max.n.g1)
+      }
+      if (n[2] == 1){
+        tx_iswitch <- rep(tx_iswitch, max.n.g1)
+      }
+      if (n[3] == 1){
+        cdmards_haq_model <- rep(cdmards_haq_model, max.n.g1)
+      }
+      if (n[4] ==1){
+        ttd_dist <- rep(ttd_dist, max.n.g1)
+      } 
+      if (n[5] ==1){
+        utility_model <- rep(utility_model, max.n.g1)
+      } 
+    }
+  }
+  
+  # are valid options selected?
   if (any(!tx_ihaq %in% c("acr-haq", "acr-eular-haq", "haq"))){
       stop("Values in 'tx_ihaq' must be 'acr-haq', 'acr-eular-haq' or 'haq'.")
   }
@@ -268,7 +288,22 @@ select_model_structures <- function(tx_ihaq = "acr-haq",
   if (any(!utility_model %in% c("mixture", "wailoo"))){
       stop("Values in 'utility_model' must be 'mixture' or 'wailoo'.")
   } 
+  
+  # are valid combinations of options selected?
+  ## tx_ihaq = acr-haq
+  val <- ifelse(tx_ihaq == "acr-haq" & tx_iswitch == "acr-eular-switch", 1, 0)
+  if (any(val > 0)){
+    stop("'tx_iswitch' option 'acr-eular-switch' cannot be used with 'tx_ihaq' option
+         'acr-haq'.")
+  }
+  
+  ## tx_ihaq = haq
+  val <- ifelse(tx_ihaq == "haq" & tx_iswitch != "das28-switch", 1, 0)
+  if (any(val == 1)){
+    stop("When 'tx_ihaq' option 'haq' is selected, 'tx_iswitch' must equal 'das28-switch'.")
+  }
 
+  # return
   model.structure <- matrix(c(tx_ihaq, tx_iswitch, cdmards_haq_model, ttd_dist, utility_model), ncol = 5)
   colnames(model.structure) <- c("tx_ihaq", "tx_iswitch", "cdmards_haq_model", "ttd_dist", "utility_model")
   class(model.structure) <- "model_structures"
@@ -553,7 +588,6 @@ sim_utility_wailoo <- function(simhaq, haq0, male, prev_dmards,
                                coefs, check = TRUE){
   if (check) check_sim_utility_wailoo(simhaq, haq0, male, prev_dmards, coefs)
   dis.dur <- 18.65 # based on mean disease duration in Wailoo (2006)
-  coefs <- adjust_utility_wailoo(coefs)
   util <- sim_utility_wailooC(sim = simhaq$sim - 1, id = simhaq$id - 1, age = simhaq$age,
                               disease_duration = dis.dur, haq0 = haq0, male = male, 
                               prev_dmards = prev_dmards, haq = simhaq$haq,
