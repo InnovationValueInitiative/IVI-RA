@@ -40,30 +40,6 @@ struct TxIHaq {
   double dhaq;
 };
 
-class Test {
-public:
-  Test(int x): x_(x) {}
-  int getValue() { return x_; }
-  void addValue(int y) { x_ += y; }
-  void merge(const Test& rhs) { x_ += rhs.x_; }
-private:
-  int x_;
-};
-
-
-RCPP_EXPOSED_CLASS(Test)
-  RCPP_MODULE(mod_test) {
-    
-    class_<Test>("Test")
-    
-    .constructor<int>("sets initial value")
-    
-    .method("getValue", &Test::getValue, "Returns the value")
-    .method("addValue", &Test::addValue, "Adds a value")
-    .method("merge", &Test::merge, "Merges another Test into this object")
-    ;
-  }
-
 TxIHaq sim_tx_ihaq(std::string tx_ihaq_model, int line, int therapy, int nbt,
                      arma::rowvec nma_acr1, arma::rowvec nma_acr2, 
                      double nma_dhaq1, double nma_dhaq2,
@@ -556,7 +532,6 @@ double sim_utility_wailoo1C(double age, double disease_duration,
   return 1/(1 + exp(-xb));
 }
 
-
 //' @export
 // [[Rcpp::export]]
 std::vector<double> sim_utility_wailooC(std::vector<int> sim, std::vector<int> id,
@@ -677,6 +652,333 @@ std::vector<double> sim_utility_mixtureC(std::vector<int> id, std::vector<int> s
                                         mu, delta.slice(s), w, x));
   }
   return util;
+}
+
+// Calculate means by individual for selected variables
+class IndivMeans {         
+private:
+  int sim; 
+  int mod;
+  int index;
+  int n_indivs;
+  int n_sims;
+  int n_mods;
+  double time;
+  double discount_qalys;
+  double discount_cost;
+  std::map<std::string, std::vector<int> > id;
+  std::map<std::string, std::vector<double> > varsums;
+public:  
+  IndivMeans(int n_indivs_, int n_sims_, int n_mods_, double r_qalys = .03, double r_cost = .03);
+  std::map<std::string, std::vector<double> > get_varsums();
+  std::map<std::string, std::vector<int> > get_id();
+  void set_iterators(int m, int s, double t);
+  void set_id();
+  void increment_id(int m, int s, double t);
+  void increment_varsums(double qalys); 
+  std::map<std::string, std::vector<double> > calc_means();
+};
+
+IndivMeans::IndivMeans(int n_indivs_, int n_sims_, int n_mods_, double r_qalys, double r_cost){
+  sim = 0;
+  mod = 0;
+  time = 0.0;
+  n_indivs = n_indivs_;
+  n_sims = n_sims_;
+  n_mods = n_mods_;
+  index = 0;
+  discount_qalys = r_qalys;
+  discount_cost = r_cost;
+  int N = n_sims * n_mods;
+  id = std::map<std::string, std::vector<int> > ();
+  varsums = std::map<std::string, std::vector<double> >();
+  id["sim"] = std::vector<int> (N);
+  id["mod"] = std::vector<int> (N);
+  varsums["qalys"] = std::vector<double> (N);
+  varsums["dqalys"] = std::vector<double> (N);
+}
+
+std::map<std::string, std::vector<double> > IndivMeans::get_varsums(){
+  return varsums;
+}
+
+std::map<std::string, std::vector<int> > IndivMeans::get_id(){
+  return id;
+}
+
+void IndivMeans::set_iterators(int m, int s, double t){
+  mod = m;
+  sim = s;
+  time = t;
+  index = mod * n_sims + sim;
+}
+
+void IndivMeans::set_id(){
+  id["mod"][index] = mod;
+  id["sim"][index] = sim;
+}
+
+void IndivMeans::increment_id(int m, int s, double t){
+  set_iterators(m, s, t);
+  set_id();
+}
+
+void IndivMeans::increment_varsums(double qalys){
+  varsums["qalys"][index] = varsums["qalys"][index] + qalys;
+  varsums["dqalys"][index] = varsums["dqalys"][index] + qalys * discount_factor(time, discount_qalys);
+}
+
+std::map<std::string, std::vector<double> > IndivMeans::calc_means(){
+  std::map<std::string, std::vector<double> > varmeans(varsums);
+  std::map<std::string, std::vector<double> >::iterator it;
+  for (it = varmeans.begin(); it != varmeans.end(); ++it){
+    int J = it->second.size();
+    for (int j = 0; j < J; ++j){
+      it->second[j] = it->second[j]/n_indivs;
+    }
+  }
+  return varmeans;
+}
+
+RCPP_MODULE(mod_IndivMeans) {
+    
+    class_<IndivMeans>("IndivMeans")
+    .constructor<int, int, int, double, double>()
+    .method("get_id", &IndivMeans::get_id)
+    .method("get_varsums", &IndivMeans::get_varsums)
+    .method("set_iterators", &IndivMeans::set_iterators)
+    .method("set_id", &IndivMeans::set_id)
+    .method("increment_id", &IndivMeans::increment_id)
+    .method("increment_varsums", &IndivMeans::increment_varsums)
+    .method("calc_means", &IndivMeans::calc_means)
+    ;
+}
+
+// Calculate means by time period for selected variables
+class TimeMeans {         
+private:
+  int sim, mod, cycle;
+  int index;
+  int n_indivs, n_sims, n_mods, n_cycles;
+  std::vector<int> alive;
+  std::map<std::string, std::vector<int> > id;
+  std::map<std::string, std::vector<double> > varsums;
+public:  
+  TimeMeans(int n_mods_, int n_sims_, int n_indivs_, int T_);
+  std::map<std::string, std::vector<double> > get_varsums();
+  std::map<std::string, std::vector<int> > get_id();
+  int get_index();
+  std::vector<int> get_alive();
+  void set_iterators(int m, int s, int cycle);
+  void set_id();
+  void increment_id(int m, int s, int t);
+  void increment_alive();
+  void increment_varsums(double qalys, double haq); 
+  std::map<std::string, std::vector<double> > calc_means();
+};
+
+TimeMeans::TimeMeans(int n_mods_, int n_sims_, int n_indivs_, int n_cycles_){
+  sim = 0;
+  mod = 0;
+  cycle = 0;
+  n_indivs = n_indivs_;
+  n_sims = n_sims_;
+  n_mods = n_mods_;
+  n_cycles = n_cycles_;
+  index = 0;
+  int N = n_sims * n_mods * n_cycles;
+  id = std::map<std::string, std::vector<int> > ();
+  varsums = std::map<std::string, std::vector<double> >();
+  alive = std::vector<int> (N);
+  std::fill (alive.begin(), alive.end(), 0);
+  id["sim"] = std::vector<int> (N);
+  id["mod"] = std::vector<int> (N);
+  id["cycle"] = std::vector<int> (N);
+  varsums["qalys"] = std::vector<double> (N);
+  varsums["haq"] = std::vector<double> (N);
+}
+
+std::map<std::string, std::vector<double> > TimeMeans::get_varsums(){
+  return varsums;
+}
+
+std::map<std::string, std::vector<int> > TimeMeans::get_id(){
+  return id;
+}
+
+int TimeMeans::get_index(){
+  return index;
+}
+
+std::vector<int> TimeMeans::get_alive(){
+  return alive;
+}
+
+void TimeMeans::set_iterators(int m, int s, int t){
+  mod = m;
+  sim = s;
+  cycle = t;
+  index = mod * n_sims * n_cycles +  sim * n_cycles + cycle;
+}
+
+void TimeMeans::set_id(){
+  id["mod"][index] = mod;
+  id["sim"][index] = sim;
+  id["cycle"][index] = cycle;
+}
+
+void TimeMeans::increment_id(int m, int s, int t){
+  set_iterators(m, s, t);
+  set_id();
+}
+
+void TimeMeans::increment_alive(){
+  alive[index] += 1;
+}
+
+void TimeMeans::increment_varsums(double qalys, double haq){
+  varsums["qalys"][index] = varsums["qalys"][index] + qalys;
+  varsums["haq"][index] = varsums["haq"][index] + haq;
+}
+
+std::map<std::string, std::vector<double> > TimeMeans::calc_means(){
+  std::map<std::string, std::vector<double> > varmeans(varsums);
+  std::map<std::string, std::vector<double> >::iterator it;
+  for (it = varmeans.begin(); it != varmeans.end(); ++it){
+    int J = it->second.size();
+    for (int j = 0; j < J; ++j){
+      it->second[j] = it->second[j]/alive[j];
+    }
+  }
+  return varmeans;
+}
+
+RCPP_MODULE(mod_TimeMeans) {
+  
+  class_<TimeMeans>("TimeMeans")
+  .constructor<int, int, int, int>()
+  .method("get_varsums", &TimeMeans::get_varsums)
+  .method("get_id", &TimeMeans::get_id)
+  .method("get_index", &TimeMeans::get_index)
+  .method("get_alive", &TimeMeans::get_alive)
+  .method("increment_id", &TimeMeans::increment_id)
+  .method("increment_alive", &TimeMeans::increment_alive)
+  .method("increment_varsums", &TimeMeans::increment_varsums)
+  .method("calc_means", &TimeMeans::calc_means)
+  ;
+}
+
+// Output at time-period 0 for each treatment 
+class Out0 {         
+private:
+  int n_indivs, n_sims, n_mods, n_tx;
+  std::vector<int> sim_vec, mod_vec, id_vec, tx_vec;
+  std::vector<int> acr_vec, eular_vec;
+  std::vector<double> ttd_vec, ttsi_vec;
+public:  
+  Out0(int n_indivs_, int n_sims_, int n_mods_, int n_tx_);
+  std::vector<int> get_sim();
+  std::vector<int> get_mod();
+  std::vector<int> get_id();
+  std::vector<int> get_tx();
+  std::vector<int> get_acr();
+  std::vector<int> get_eular();
+  std::vector<double> get_ttd();
+  std::vector<double> get_ttsi();
+  void push_back(int cycle, int mod, int sim, int id, int tx, int acr, int eular, 
+                 double ttd, double ttsi);
+};
+
+Out0::Out0(int n_indivs_, int n_sims_, int n_mods_, int n_tx_){
+  n_indivs = n_indivs_;
+  n_sims = n_sims_;
+  n_mods = n_mods_;
+  n_tx = n_tx_;
+  int N = n_sims * n_mods * n_indivs * n_tx;
+  sim_vec.reserve(N);
+  mod_vec.reserve(N);
+  id_vec.reserve(N);
+  tx_vec.reserve(N);
+  acr_vec.reserve(N);
+  eular_vec.reserve(N);
+  ttd_vec.reserve(N);
+  ttsi_vec.reserve(N);
+}
+
+std::vector<int> Out0::get_sim(){
+  return sim_vec;
+}
+
+std::vector<int> Out0::get_mod(){
+  return mod_vec;
+}
+
+std::vector<int> Out0::get_id(){
+  return id_vec;
+}
+
+std::vector<int> Out0::get_tx(){
+  return tx_vec;
+}
+
+std::vector<int> Out0::get_acr(){
+  return acr_vec;
+}
+
+std::vector<int> Out0::get_eular(){
+  return eular_vec;
+}
+
+std::vector<double> Out0::get_ttd(){
+  return ttd_vec;
+}
+
+std::vector<double> Out0::get_ttsi(){
+  return ttsi_vec;
+}
+
+void Out0::push_back(int cycle, int mod, int sim, int id, int tx, int acr, int eular, 
+                     double ttd, double ttsi){
+  if (cycle == 0){
+    mod_vec.push_back(mod);
+    sim_vec.push_back(sim);
+    id_vec.push_back(id);
+    tx_vec.push_back(tx);
+    acr_vec.push_back(acr);
+    eular_vec.push_back(eular);
+    ttd_vec.push_back(ttd);
+    ttsi_vec.push_back(ttsi);
+  }
+}
+
+RCPP_MODULE(mod_Out0) {
+  
+  class_<Out0>("Out0")
+  .constructor<int, int, int, int>()
+  .method("get_sim", &Out0::get_sim)
+  .method("get_mod", &Out0::get_mod)
+  .method("get_id", &Out0::get_id)
+  .method("get_tx", &Out0::get_tx)
+  .method("get_acr", &Out0::get_acr)
+  .method("get_eular", &Out0::get_eular)
+  .method("get_ttd", &Out0::get_ttd)
+  .method("get_ttsi", &Out0::get_ttsi)
+  .method("push_back", &Out0::push_back)
+  ;
+}
+
+// Calculate vector of QALYs given simulation output
+//' @export
+// [[Rcpp::export]]
+std::vector<double> qalysC(std::vector<double> &utility, std::vector<double> &yrlen,
+                           std::vector<int> &sim, std::vector<int> &si, std::vector<double> &si_ul){
+  int N = utility.size();
+  std::vector<double> qalys_vec;
+  qalys_vec.reserve(N);
+  for (int i = 0; i < N; ++i){
+    qalys_vec.push_back(yrlen[i] * (utility[i] - si[i] * si_ul[sim[i]]/12));
+  }
+  return qalys_vec;
 }
 
 // Simulate HAQ score
@@ -1076,58 +1378,5 @@ List sim_iviRA_C(arma::mat arm_inds, CharacterMatrix model_structures_mat,
 }
 
 
-// QALYs
-//' @export
-// [[Rcpp::export]]
-std::vector<double> qalysC(std::vector<double> &utility, std::vector<double> &yrlen,
-                           std::vector<int> &sim, std::vector<int> &si, std::vector<double> &si_ul){
-  int N = utility.size();
-  std::vector<double> qalys_vec;
-  qalys_vec.reserve(N);
-  for (int i = 0; i < N; ++i){
-    qalys_vec.push_back(yrlen[i] * (utility[i] - si[i] * si_ul[sim[i]]/12));
-  }
-  return qalys_vec;
-}
-
-//' @export
-// [[Rcpp::export]]
-arma::cube mytest(List x){
-  NumericVector array = x["array"];
-  IntegerVector dim = array.attr("dim"); 
-  arma::cube my_array(array.begin(),dim[0], dim[1], dim[2], false);
-  return my_array;
-}
-
-//' @export
-// [[Rcpp::export]]
-std::map <std::string, std::vector<double> > maptest(Rcpp::DataFrame x){
-  std::vector<double> x_vec = as<std::vector<double> >(x["dog"]);
-  std::map <std::string, std::vector<double> > myMap;
-  myMap.insert(std::make_pair("dog", x_vec));
-  myMap["cat"] = x_vec;
-  return myMap;
-}
-
-//' @export
-// [[Rcpp::export]]
-Rcpp::List vec2list(std::vector<double> x){
-  int N = 4;
-  int M = 2;
-  std::vector<std::vector<double> > vecs(M, std::vector<double>(N));
-  for (int i = 0; i <M; ++i){
-    for (int j = 0; j < N; ++j){
-      vecs[i][j] = x[j + i * N];
-    }
-  }
-  return List::create(Rcpp::Named("v1") = vecs[0], 
-                      Rcpp::Named("v2") = vecs[1]);
-}
 
 
-//' @export
-// [[Rcpp::export]]
-CharacterVector mat2vec(CharacterMatrix x){
-  CharacterVector v = x(1, _);
-  return v;
-}

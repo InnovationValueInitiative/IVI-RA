@@ -1,6 +1,7 @@
 context("Workhorse IPS functions")
 library("flexsurv")
 library("data.table")
+library("Rcpp")
 source("../../data-raw/func.R")
 seed <- runif(1, 0, 1000)
 
@@ -432,6 +433,40 @@ test_that("sim_utility_wailoo1C", {
 #                         alpha1 = pars$alpha1[1], alpha2 = pars$alpha2[1],
 #                         alpha3 = pars)
 # })
+
+# Summary output for individual means -----------------------------------------
+mod.IndivMeans <- Rcpp::Module('mod_IndivMeans', PACKAGE = "iviRA")
+IndivMeans <- mod.IndivMeans$IndivMeans
+im <- new(IndivMeans, 10, 5, 3, .03, .03)
+im$get_id()
+im$get_varsums()
+im$increment_id(0, 2, 1)
+im$increment_varsums(2.0)
+im$get_id()
+im$get_varsums()
+im$calc_means()
+
+# Summary output for time means -----------------------------------------------
+mod.TimeMeans <- Rcpp::Module('mod_TimeMeans', PACKAGE = "iviRA")
+TimeMeans <- mod.TimeMeans$TimeMeans
+tm <- new(TimeMeans, 2, 3, 4, 5)
+tm$get_id()
+tm$get_alive()
+tm$increment_id(1, 1, 2)
+tm$increment_alive()
+tm$get_alive()
+tm$increment_varsums(.3, .5)
+tm$get_id()
+tm$get_index()
+tm$get_varsums()
+
+# Summary output during model cycle 0 -----------------------------------------
+mod.Out0 <- Rcpp::Module('mod_Out0', PACKAGE = "iviRA")
+Out0 <- mod.Out0$Out0
+out <- new(Out0, 10, 5, 3, 2)
+out$push_back(0, 0, 0, 0, 0, 1, 2, 2.4, 2.9)
+out$get_acr()
+out$get_ttsi()
 
 # small integration test ------------------------------------------------------
 pop <- sample_pats(n = 10)
