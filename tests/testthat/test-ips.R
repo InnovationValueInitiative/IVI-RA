@@ -435,16 +435,16 @@ test_that("sim_utility_wailoo1C", {
 # })
 
 # Summary output for individual means -----------------------------------------
-mod.IndivMeans <- Rcpp::Module('mod_IndivMeans', PACKAGE = "iviRA")
-IndivMeans <- mod.IndivMeans$IndivMeans
-im <- new(IndivMeans, 10, 5, 3, .03, .03)
-im$get_id()
-im$get_varsums()
-im$increment_id(0, 2, 1)
-im$increment_varsums(2.0)
-im$get_id()
-im$get_varsums()
-im$calc_means()
+mod.SimMeans <- Rcpp::Module('mod_SimMeans', PACKAGE = "iviRA")
+SimMeans <- mod.SimMeans$SimMeans
+sm <- new(SimMeans, 2, 5, 10, .03, .03)
+sm$get_id()
+sm$get_varsums()
+sm$increment_id(0, 2, 1)
+sm$increment_varsums(2.0)
+sm$get_id()
+sm$get_varsums()
+sm$calc_means()
 
 # Summary output for time means -----------------------------------------------
 mod.TimeMeans <- Rcpp::Module('mod_TimeMeans', PACKAGE = "iviRA")
@@ -463,7 +463,7 @@ tm$get_varsums()
 # Summary output during model cycle 0 -----------------------------------------
 mod.Out0 <- Rcpp::Module('mod_Out0', PACKAGE = "iviRA")
 Out0 <- mod.Out0$Out0
-out <- new(Out0, 10, 5, 3, 2)
+out <- new(Out0, 2, 5, 10, 5)
 out$push_back(0, 0, 0, 0, 0, 1, 2, 2.4, 2.9)
 out$get_acr()
 out$get_ttsi()
@@ -479,5 +479,5 @@ mod.structs <- select_model_structures(tx_ihaq = c("acr-haq", "acr-eular-haq"),
                                      utility_model = c("mixture", "wailoo"))
 input.dat <- get_input_data(patdata = pop, model_structure = mod.structs)
 sim.out <- sim_iviRA(arms = arm.names, input_data = input.dat, pars = parsamp,
-                     model_structures = mod.structs)
+                     model_structures = mod.structs, output = "summary")
 

@@ -5,9 +5,8 @@
 \title{The IVI-RA simulation}
 \usage{
 sim_iviRA(arms, input_data, pars, model_structures, max_months = NULL,
-  treatment_lookup = iviRA::treatments$sname,
-  cdmards_ind = which(iviRA::treatments$sname == "cdmards"),
-  nbt_ind = which(iviRA::treatments$sname == "nbt"), check = TRUE)
+  treatment_lookup = iviRA::treatments$sname, output = c("data", "summary"),
+  discount_qalys = 0.03, discount_cost = 0.03, check = TRUE)
 }
 \arguments{
 \item{arms}{Name of arms in the treatment treatment sequence. May be a vector consisting of 
@@ -20,10 +19,16 @@ a single treatment sequence or a matrix of unique sequences for each patient.}
 \item{max_months}{Maximum number of months to run the model for. Default is NULL which implies that
 the model is simulated over each patient's lifetime.}
 
-\item{cdmards_ind}{Index for cDMARDs.}
+\item{output}{Specifies the format of output returned from the simulation. Options are \code{data} 
+and \code{summary}. When \code{data} is specified, each simulated value (i.e, by model,
+sampled parameter set, individual, and time-period) is returned in a \code{data.table}. If 
+\code{summary} is selected, then only summary measures are returned.}
 
-\item{nbt_ind}{Index for the non-biologic (i.e. a term used to define a selection of treatments clinicians use
-after the last biologic in a treatment sequence).}
+\item{discount_qalys}{Discount rate for QALYs. Only used when \code{output = "summary"}; 
+otherwise, discounts can be applied to the simulated output.}
+
+\item{discount_cost}{Discount rate for cost variables. Only used when \code{output = "summary"};
+otherwise, discounts can be applied to the simulated output.}
 
 \item{model_structure}{Object of class model structure generated from \link{select_model_structure}.}
 
@@ -33,7 +38,14 @@ estimates. Index of of treatments in \code{arms} are matched against treatments 
 in the same order as treatments in \code{treatments_lookup}.}
 }
 \value{
-A \code{data.table} with the following columns:
+The \code{output = "data"} options returns all simulated output. However, since output is 
+returned for each model, sampled parameter set, individual, and model cycle, 
+the size of the output can be very large and can cause memory management issues. The 
+\code{output = "summary"}, which only provides summaries of the simulation output, can be 
+useful in the cases. 
+
+When \code{output = "data"} is selected, the simulation returns a \code{data.table} with the 
+following columns:
 \describe{
 \item{sim}{Simulation number. Indexed from 1 to S where S is the number of randomly sampled parameter sets (e.g. n from \link{sample_pars}).}
 \item{id}{ID number. Indexed from 1 to N where N is the number of simulated patients (e.g. n from \link{sample_pats}).}

@@ -4,7 +4,7 @@
 using namespace Rcpp;
 
 // Discount factor
-double discount_factor(double discount, double t){
+double discount_factor(double t, double discount){
   return 1/pow((1 + discount), t);
 }
 

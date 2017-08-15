@@ -1303,7 +1303,7 @@ An overview of drug acquisition and administration costs is presented in \autore
 \multicolumn{1}{p{0.15\linewidth}}{Dose and frequency of administration} & 
 \multicolumn{1}{p{0.15\linewidth}}{Strength and dosage form} & 
 \multicolumn{1}{p{0.08\linewidth}}{Number of doses first 6 months}  & 
-\multicolumn{1}{p{0.08\linewidth}}{Number of dosees per year beyond the first 6 months} & 
+\multicolumn{1}{p{0.08\linewidth}}{Number of doses per year beyond the first 6 months} & 
 \multicolumn{1}{c}{Price per unit} & \multicolumn{1}{c}{Infusion cost} & 
 \multicolumn{1}{p{0.08\linewidth}}{Cost for the first 6 months} &
 \multicolumn{1}{p{0.08\linewidth}}{Cost per year beyond the first 6 months}\\

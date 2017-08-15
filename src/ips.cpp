@@ -655,7 +655,7 @@ std::vector<double> sim_utility_mixtureC(std::vector<int> id, std::vector<int> s
 }
 
 // Calculate means by individual for selected variables
-class IndivMeans {         
+class SimMeans {         
 private:
   int sim; 
   int mod;
@@ -663,26 +663,26 @@ private:
   int n_indivs;
   int n_sims;
   int n_mods;
-  double time;
+  double year;
   double discount_qalys;
   double discount_cost;
   std::map<std::string, std::vector<int> > id;
   std::map<std::string, std::vector<double> > varsums;
 public:  
-  IndivMeans(int n_indivs_, int n_sims_, int n_mods_, double r_qalys = .03, double r_cost = .03);
+  SimMeans(int n_mods, int n_sims_, int n_indivs_, double r_qalys = .03, double r_cost = .03);
   std::map<std::string, std::vector<double> > get_varsums();
   std::map<std::string, std::vector<int> > get_id();
-  void set_iterators(int m, int s, double t);
+  void set_iterators(int m, int s, double y);
   void set_id();
-  void increment_id(int m, int s, double t);
+  void increment_id(int m, int s, double y);
   void increment_varsums(double qalys); 
   std::map<std::string, std::vector<double> > calc_means();
 };
 
-IndivMeans::IndivMeans(int n_indivs_, int n_sims_, int n_mods_, double r_qalys, double r_cost){
+SimMeans::SimMeans(int n_mods_, int n_sims_, int n_indivs_, double r_qalys, double r_cost){
   sim = 0;
   mod = 0;
-  time = 0.0;
+  year = 0.0;
   n_indivs = n_indivs_;
   n_sims = n_sims_;
   n_mods = n_mods_;
@@ -698,37 +698,37 @@ IndivMeans::IndivMeans(int n_indivs_, int n_sims_, int n_mods_, double r_qalys, 
   varsums["dqalys"] = std::vector<double> (N);
 }
 
-std::map<std::string, std::vector<double> > IndivMeans::get_varsums(){
+std::map<std::string, std::vector<double> > SimMeans::get_varsums(){
   return varsums;
 }
 
-std::map<std::string, std::vector<int> > IndivMeans::get_id(){
+std::map<std::string, std::vector<int> > SimMeans::get_id(){
   return id;
 }
 
-void IndivMeans::set_iterators(int m, int s, double t){
+void SimMeans::set_iterators(int m, int s, double y){
   mod = m;
   sim = s;
-  time = t;
+  year = y;
   index = mod * n_sims + sim;
 }
 
-void IndivMeans::set_id(){
+void SimMeans::set_id(){
   id["mod"][index] = mod;
   id["sim"][index] = sim;
 }
 
-void IndivMeans::increment_id(int m, int s, double t){
-  set_iterators(m, s, t);
+void SimMeans::increment_id(int m, int s, double y){
+  set_iterators(m, s, y);
   set_id();
 }
 
-void IndivMeans::increment_varsums(double qalys){
+void SimMeans::increment_varsums(double qalys){
   varsums["qalys"][index] = varsums["qalys"][index] + qalys;
-  varsums["dqalys"][index] = varsums["dqalys"][index] + qalys * discount_factor(time, discount_qalys);
+  varsums["dqalys"][index] = varsums["dqalys"][index] + qalys * discount_factor(year, discount_qalys);
 }
 
-std::map<std::string, std::vector<double> > IndivMeans::calc_means(){
+std::map<std::string, std::vector<double> > SimMeans::calc_means(){
   std::map<std::string, std::vector<double> > varmeans(varsums);
   std::map<std::string, std::vector<double> >::iterator it;
   for (it = varmeans.begin(); it != varmeans.end(); ++it){
@@ -740,17 +740,17 @@ std::map<std::string, std::vector<double> > IndivMeans::calc_means(){
   return varmeans;
 }
 
-RCPP_MODULE(mod_IndivMeans) {
+RCPP_MODULE(mod_SimMeans) {
     
-    class_<IndivMeans>("IndivMeans")
+    class_<SimMeans>("SimMeans")
     .constructor<int, int, int, double, double>()
-    .method("get_id", &IndivMeans::get_id)
-    .method("get_varsums", &IndivMeans::get_varsums)
-    .method("set_iterators", &IndivMeans::set_iterators)
-    .method("set_id", &IndivMeans::set_id)
-    .method("increment_id", &IndivMeans::increment_id)
-    .method("increment_varsums", &IndivMeans::increment_varsums)
-    .method("calc_means", &IndivMeans::calc_means)
+    .method("get_id", &SimMeans::get_id)
+    .method("get_varsums", &SimMeans::get_varsums)
+    .method("set_iterators", &SimMeans::set_iterators)
+    .method("set_id", &SimMeans::set_id)
+    .method("increment_id", &SimMeans::increment_id)
+    .method("increment_varsums", &SimMeans::increment_varsums)
+    .method("calc_means", &SimMeans::calc_means)
     ;
 }
 
@@ -876,7 +876,7 @@ private:
   std::vector<int> acr_vec, eular_vec;
   std::vector<double> ttd_vec, ttsi_vec;
 public:  
-  Out0(int n_indivs_, int n_sims_, int n_mods_, int n_tx_);
+  Out0(int n_mods_, int n_sims_, int n_indivs_, int n_tx_);
   std::vector<int> get_sim();
   std::vector<int> get_mod();
   std::vector<int> get_id();
@@ -889,7 +889,7 @@ public:
                  double ttd, double ttsi);
 };
 
-Out0::Out0(int n_indivs_, int n_sims_, int n_mods_, int n_tx_){
+Out0::Out0(int n_mods_, int n_sims_, int n_indivs_, int n_tx_){
   n_indivs = n_indivs_;
   n_sims = n_sims_;
   n_mods = n_mods_;
@@ -1006,7 +1006,8 @@ List sim_iviRA_C(arma::mat arm_inds, CharacterMatrix model_structures_mat,
              arma::mat hosp_days, arma::mat cost_pday, std::vector<double> mgmt_cost, 
              std::vector<double> si_cost, std::vector<double> prod_loss, 
              Rcpp::List tc_list, std::vector<double> weight, 
-             arma::mat coefs_wailoo, Rcpp::List pars_util_mix, std::vector<double> si_ul){
+             arma::mat coefs_wailoo, Rcpp::List pars_util_mix, std::vector<double> si_ul,
+             Rcpp::List discount_rate, std::string output){
   
   // Type conversions
   //// Model structures
@@ -1055,6 +1056,10 @@ List sim_iviRA_C(arma::mat arm_inds, CharacterMatrix model_structures_mat,
   TTDPars ttd_eular_mod = get_ttd_pars(ttd_eular_mod_list);
   TTDPars ttd_eular_good = get_ttd_pars(ttd_eular_good_list);
   
+  //// Discount rate
+  double discount_qalys = as<double>(discount_rate["qalys"]);
+  double discount_cost = as<double>(discount_rate["cost"]);
+  
   // Constants
   const double cycle_length = 6;
   const int maxt = 100 * (12/cycle_length);
@@ -1078,6 +1083,9 @@ List sim_iviRA_C(arma::mat arm_inds, CharacterMatrix model_structures_mat,
   arma::rowvec utilmix_x(5);
   arma::rowvec utilmix_w(4);
   double qalys = 0.0;
+  SimMeans sim_means(n_mods, n_sims, n_pat, discount_qalys, discount_cost);
+  TimeMeans time_means(n_mods, n_sims, n_pat, maxt);
+  Out0 out0(n_mods, n_sims, n_pat, n_treatments);
   
   // Information to store
   std::vector<int> model;
@@ -1283,6 +1291,15 @@ List sim_iviRA_C(arma::mat arm_inds, CharacterMatrix model_structures_mat,
             }
             qalys = cycle_length/12 * (utility - si * si_ul[s]);
             
+            if (output == "summary"){
+              sim_means.increment_id(m, s, month/12);
+              sim_means.increment_varsums(qalys);
+              time_means.increment_id(m, s, month/cycle_length); //note: requires assumption of constant model cycles!!!
+              time_means.increment_varsums(qalys, haq);
+              out0.push_back(t, m, s, i, j, sim_h_t1.acr, sim_h_t1.eular,
+                             ttd_j, ttsi_j);
+            }
+            
             // Fill vectors
             model.push_back(m);
             sim.push_back(s);
@@ -1344,37 +1361,73 @@ List sim_iviRA_C(arma::mat arm_inds, CharacterMatrix model_structures_mat,
     }
   }
   // Return results
-  Rcpp::DataFrame sim1 = Rcpp::DataFrame::create(
-    _["model"] = model,
-    _["sim"] = sim, 
-    _["id"] = id,
-    _["month"] = month_vec,
-    _["tx"] = tx_vec,
-    _["tx_seq"] = tx_seq,
-    _["tx_cycle"] = tx_cycle,
-    _["death"] = death_vec,
-    _["age"] = age_vec,
-    _["ttd"] = ttd_vec,
-    _["acr"] = acr_vec,
-    _["eular"] = eular_vec,
-    _["das28"] = das28_vec,
-    _["sdai"] = sdai_vec,
-    _["cdai"] = cdai_vec,
-    _["haq"] = haq_vec,
-    _["ttsi"] = ttsi_vec,
-    _["si"] = si_vec
-  );
-  Rcpp::DataFrame sim2 = Rcpp::DataFrame::create(
-    _["yrlen"] = yrlen_vec,
-    _["tx_cost"] = tx_cost_vec,
-    _["hosp_cost"] = hosp_cost_vec,
-    _["mgmt_cost"] = mgmt_cost_vec,
-    _["si_cost"] = si_cost_vec,
-    _["prod_loss"] = prod_loss_vec,
-    _["utility"] = utility_vec,
-    _["qalys"] = qalys_vec
-  );
-  return Rcpp::List::create(sim1, sim2);
+  if (output == "data"){
+    Rcpp::DataFrame sim1 = Rcpp::DataFrame::create(
+      _["model"] = model,
+      _["sim"] = sim, 
+      _["id"] = id,
+      _["month"] = month_vec,
+      _["tx"] = tx_vec,
+      _["tx_seq"] = tx_seq,
+      _["tx_cycle"] = tx_cycle,
+      _["death"] = death_vec,
+      _["age"] = age_vec,
+      _["ttd"] = ttd_vec,
+      _["acr"] = acr_vec,
+      _["eular"] = eular_vec,
+      _["das28"] = das28_vec,
+      _["sdai"] = sdai_vec,
+      _["cdai"] = cdai_vec,
+      _["haq"] = haq_vec,
+      _["ttsi"] = ttsi_vec,
+      _["si"] = si_vec
+    );
+    Rcpp::DataFrame sim2 = Rcpp::DataFrame::create(
+      _["yrlen"] = yrlen_vec,
+      _["tx_cost"] = tx_cost_vec,
+      _["hosp_cost"] = hosp_cost_vec,
+      _["mgmt_cost"] = mgmt_cost_vec,
+      _["si_cost"] = si_cost_vec,
+      _["prod_loss"] = prod_loss_vec,
+      _["utility"] = utility_vec,
+      _["qalys"] = qalys_vec
+    );
+    return Rcpp::List::create(sim1, sim2);
+  } 
+  else{
+    std::map<std::string, std::vector<double> > sim_means_out = sim_means.calc_means();
+    std::map<std::string, std::vector<int> > sim_means_id = sim_means.get_id();
+    Rcpp::DataFrame sim_means_df = Rcpp::DataFrame::create(
+      _["model"] = sim_means_id["mod"],
+      _["sim"] = sim_means_id["sim"],
+      _["qalys"] = sim_means_out["qalys"],
+      _["dqalys"] = sim_means_out["dqalys"] 
+    );
+    std::map<std::string, std::vector<double> > time_means_out = time_means.calc_means();
+    std::map<std::string, std::vector<int> > time_means_id = time_means.get_id();
+    Rcpp::DataFrame time_means_df = Rcpp::DataFrame::create(
+      _["model"] = time_means_id["mod"],
+      _["sim"] = time_means_id["sim"],
+      _["cycle"] = time_means_id["cycle"],
+      _["qalys"] = time_means_out["qalys"],
+      _["haq"] = time_means_out["haq"] 
+    );
+    Rcpp::DataFrame out0_df = Rcpp::DataFrame::create(
+      _["model"] = out0.get_mod(),
+      _["sim"] = out0.get_sim(),
+      _["id"] = out0.get_id(),
+      _["tx"] = out0.get_tx(),
+      _["acr"] = out0.get_acr(),
+      _["eular"] = out0.get_eular(),
+      _["ttd"] = out0.get_ttd(),
+      _["ttsi"] = out0.get_ttsi()
+    );
+    return Rcpp::List::create(
+      _["means"] = sim_means_df,
+      _["time.means"] = time_means_df,
+      _["out0"] = out0_df
+      );
+  }
 }
 
 

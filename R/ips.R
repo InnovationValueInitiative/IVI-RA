@@ -13,11 +13,24 @@
 #' estimates. Index of of treatments in \code{arms} are matched against treatments in
 #' \code{treatments_lookup} by name. Indices of treatment-specific parameter estimates must be 
 #' in the same order as treatments in \code{treatments_lookup}.   
-#' @param cdmards_ind Index for cDMARDs.
-#' @param nbt_ind Index for the non-biologic (i.e. a term used to define a selection of treatments clinicians use
-#' after the last biologic in a treatment sequence).
+#' @param output Specifies the format of output returned from the simulation. Options are \code{data} 
+#' and \code{summary}. When \code{data} is specified, each simulated value (i.e, by model,
+#' sampled parameter set, individual, and time-period) is returned in a \code{data.table}. If 
+#' \code{summary} is selected, then only summary measures are returned.
+#' @param discount_qalys Discount rate for QALYs. Only used when \code{output = "summary"}; 
+#' otherwise, discounts can be applied to the simulated output.
+#' @param discount_cost Discount rate for cost variables. Only used when \code{output = "summary"};
+#' otherwise, discounts can be applied to the simulated output.
 #' 
-#' @return A \code{data.table} with the following columns:
+#' @return 
+#' The \code{output = "data"} options returns all simulated output. However, since output is 
+#' returned for each model, sampled parameter set, individual, and model cycle, 
+#' the size of the output can be very large and can cause memory management issues. The 
+#' \code{output = "summary"}, which only provides summaries of the simulation output, can be 
+#' useful in the cases. 
+#' 
+#' When \code{output = "data"} is selected, the simulation returns a \code{data.table} with the 
+#' following columns:
 #'\describe{
 #' \item{sim}{Simulation number. Indexed from 1 to S where S is the number of randomly sampled parameter sets (e.g. n from \link{sample_pars}).}
 #' \item{id}{ID number. Indexed from 1 to N where N is the number of simulated patients (e.g. n from \link{sample_pats}).}
@@ -53,12 +66,14 @@
 #' \item{utility}{Simulated utility score.}
 #' \item{qalys}{Quality-adjusted life-years (QALYs).}
 #'}
+#'
 #' @export 
 sim_iviRA <- function(arms, input_data, pars, model_structures, 
                       max_months = NULL, treatment_lookup = iviRA::treatments$sname,
-                    cdmards_ind = which(iviRA::treatments$sname == "cdmards"),
-                    nbt_ind = which(iviRA::treatments$sname == "nbt"),
-                    check = TRUE){
+                      output = c("data", "summary"), 
+                      discount_qalys = .03, discount_cost = .03,
+                      check = TRUE){
+  output <- match.arg(output)
   
   # PREPPING FOR THE SIMULATION
   ## check correct object types used as arguments
@@ -74,17 +89,17 @@ sim_iviRA <- function(arms, input_data, pars, model_structures,
   arminds <- matrix(match(arms, treatment_lookup), nrow = nrow(arms),
                     ncol = ncol(arms))
   
+  ## indexing
+  cdmards.ind <- which(iviRA::treatments$sname == "cdmards") - 1
+  nbt.ind <- which(iviRA::treatments$sname == "nbt") - 1
+  arminds <- arminds - 1
+  
   ## default internal values
   treat_gap <- 0
   if (is.null(max_months)){
     max_months <- 12 * 150
   }
   prob.switch.da <- matrix(rep(c(0, 0, 1, 1), each = pars$n), ncol = 4)
-  
-  ## indexing
-  cdmards.ind <- cdmards_ind - 1
-  nbt.ind <- nbt_ind - 1
-  arminds <- arminds - 1
 
   ## survival parameters
   ttd.dist <- model_structures[1, "ttd_dist"]
@@ -164,16 +179,34 @@ sim_iviRA <- function(arms, input_data, pars, model_structures,
                      tc_list = c(list(agents = agents), tc[c("cost", "discount")]), 
                      weight = input_data$weight, 
                      coefs_wailoo = parsamp.utility.wailoo, 
-                     pars_util_mix = pars$utility.mixture, si_ul = pars$si.ul)
-  sim.out <- as.data.table(sim.out)
-  
-  ## C++ to R indices
-  sim.out[, model := model + 1]
-  sim.out[, sim := sim + 1]
-  sim.out[, id := id + 1]
-  sim.out[, tx_seq := tx_seq + 1]
-  sim.out[, tx_cycle := tx_cycle + 1]
-  sim.out[, tx := tx + 1]
+                     pars_util_mix = pars$utility.mixture, si_ul = pars$si.ul,
+                     discount_rate = list(qalys = discount_qalys, cost = discount_cost),
+                     output = output)
+  if (output == "data"){
+      sim.out <- as.data.table(sim.out)
+      
+      ## C++ to R indices
+      sim.out[, model := model + 1]
+      sim.out[, sim := sim + 1]
+      sim.out[, id := id + 1]
+      sim.out[, tx_seq := tx_seq + 1]
+      sim.out[, tx_cycle := tx_cycle + 1]
+      sim.out[, tx := tx + 1]
+  } else{
+      sim.out$means <- data.table(sim.out$means)
+      sim.out$time.means <- data.table(sim.out$time.means)
+      sim.out$out0 <- data.table(sim.out$out0)
+    
+      ## C++ to R indices
+      sim.out$means[, model := model + 1]
+      sim.out$means[, sim := sim + 1]
+      sim.out$time.means[, model := model + 1]
+      sim.out$time.means[, sim := sim + 1]
+      sim.out$out0[, model := model + 1]
+      sim.out$out0[, sim := sim + 1]
+      sim.out$out0[, id := id + 1]
+      sim.out$out0[, tx := tx + 1]
+  }
   
   # RETURN
   return(sim.out)
