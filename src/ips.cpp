@@ -757,43 +757,44 @@ RCPP_MODULE(mod_SimMeans) {
 // Calculate means by time period for selected variables
 class TimeMeans {         
 private:
-  int sim, mod, cycle;
+  int sim, mod;
+  double month, cycle_length;
   int index;
   int n_indivs, n_sims, n_mods, n_cycles;
   std::vector<int> alive;
   std::map<std::string, std::vector<int> > id;
   std::map<std::string, std::vector<double> > varsums;
 public:  
-  TimeMeans(int n_mods_, int n_sims_, int n_indivs_, int T_);
+  TimeMeans(int n_mods_, int n_sims_, int n_indivs_, int ncycles_, double cycle_length_);
   std::map<std::string, std::vector<double> > get_varsums();
   std::map<std::string, std::vector<int> > get_id();
   int get_index();
   std::vector<int> get_alive();
-  void set_iterators(int m, int s, int cycle);
+  void set_iterators(int m, int s, double month_);
   void set_id();
-  void increment_id(int m, int s, int t);
+  void increment_id(int m, int s, double month_);
   void increment_alive();
   void increment_varsums(double qalys, double haq); 
   std::map<std::string, std::vector<double> > calc_means();
 };
 
-TimeMeans::TimeMeans(int n_mods_, int n_sims_, int n_indivs_, int n_cycles_){
+TimeMeans::TimeMeans(int n_mods_, int n_sims_, int n_indivs_, int n_cycles_, 
+                     double cycle_length_){
   sim = 0;
   mod = 0;
-  cycle = 0;
+  month = 0.0;
+  cycle_length = cycle_length_;
   n_indivs = n_indivs_;
   n_sims = n_sims_;
   n_mods = n_mods_;
   n_cycles = n_cycles_;
   index = 0;
   int N = n_sims * n_mods * n_cycles;
-  id = std::map<std::string, std::vector<int> > ();
-  varsums = std::map<std::string, std::vector<double> >();
   alive = std::vector<int> (N);
   std::fill (alive.begin(), alive.end(), 0);
   id["sim"] = std::vector<int> (N);
   id["mod"] = std::vector<int> (N);
-  id["cycle"] = std::vector<int> (N);
+  id["month"] = std::vector<int> (N);
   varsums["qalys"] = std::vector<double> (N);
   varsums["haq"] = std::vector<double> (N);
 }
@@ -814,21 +815,22 @@ std::vector<int> TimeMeans::get_alive(){
   return alive;
 }
 
-void TimeMeans::set_iterators(int m, int s, int t){
+void TimeMeans::set_iterators(int m, int s, double month_){
   mod = m;
   sim = s;
-  cycle = t;
+  month = month_;
+  int cycle = (int) month/cycle_length - 1;
   index = mod * n_sims * n_cycles +  sim * n_cycles + cycle;
 }
 
 void TimeMeans::set_id(){
   id["mod"][index] = mod;
   id["sim"][index] = sim;
-  id["cycle"][index] = cycle;
+  id["month"][index] = month;
 }
 
-void TimeMeans::increment_id(int m, int s, int t){
-  set_iterators(m, s, t);
+void TimeMeans::increment_id(int m, int s, double month_){
+  set_iterators(m, s, month_);
   set_id();
 }
 
@@ -847,7 +849,12 @@ std::map<std::string, std::vector<double> > TimeMeans::calc_means(){
   for (it = varmeans.begin(); it != varmeans.end(); ++it){
     int J = it->second.size();
     for (int j = 0; j < J; ++j){
-      it->second[j] = it->second[j]/alive[j];
+      if (alive[j] > 0){
+        it->second[j] = it->second[j]/alive[j];
+      }
+      else{
+        it->second[j] = NA_REAL;
+      }
     }
   }
   return varmeans;
@@ -856,7 +863,7 @@ std::map<std::string, std::vector<double> > TimeMeans::calc_means(){
 RCPP_MODULE(mod_TimeMeans) {
   
   class_<TimeMeans>("TimeMeans")
-  .constructor<int, int, int, int>()
+  .constructor<int, int, int, int, double>()
   .method("get_varsums", &TimeMeans::get_varsums)
   .method("get_id", &TimeMeans::get_id)
   .method("get_index", &TimeMeans::get_index)
@@ -1063,6 +1070,7 @@ List sim_iviRA_C(arma::mat arm_inds, CharacterMatrix model_structures_mat,
   // Constants
   const double cycle_length = 6;
   const int maxt = 100 * (12/cycle_length);
+  const int max_cycles = (int) max_months/cycle_length;
   const int treat_gap = 0;
   const int n_mods = model_structures.size();
   const int n_treatments = arm_inds.n_cols;
@@ -1084,7 +1092,8 @@ List sim_iviRA_C(arma::mat arm_inds, CharacterMatrix model_structures_mat,
   arma::rowvec utilmix_w(4);
   double qalys = 0.0;
   SimMeans sim_means(n_mods, n_sims, n_pat, discount_qalys, discount_cost);
-  TimeMeans time_means(n_mods, n_sims, n_pat, maxt);
+  TimeMeans time_means(n_mods, n_sims, n_pat, std::min(maxt, max_cycles),
+                       cycle_length);
   Out0 out0(n_mods, n_sims, n_pat, n_treatments);
   
   // Information to store
@@ -1294,7 +1303,8 @@ List sim_iviRA_C(arma::mat arm_inds, CharacterMatrix model_structures_mat,
             if (output == "summary"){
               sim_means.increment_id(m, s, month/12);
               sim_means.increment_varsums(qalys);
-              time_means.increment_id(m, s, month/cycle_length); //note: requires assumption of constant model cycles!!!
+              time_means.increment_id(m, s, month); //note: requires assumption of constant model cycles!!!
+              time_means.increment_alive();
               time_means.increment_varsums(qalys, haq);
               out0.push_back(t, m, s, i, j, sim_h_t1.acr, sim_h_t1.eular,
                              ttd_j, ttsi_j);
@@ -1408,7 +1418,8 @@ List sim_iviRA_C(arma::mat arm_inds, CharacterMatrix model_structures_mat,
     Rcpp::DataFrame time_means_df = Rcpp::DataFrame::create(
       _["model"] = time_means_id["mod"],
       _["sim"] = time_means_id["sim"],
-      _["cycle"] = time_means_id["cycle"],
+      _["month"] = time_means_id["month"],
+      _["alive"] = time_means.get_alive(),
       _["qalys"] = time_means_out["qalys"],
       _["haq"] = time_means_out["haq"] 
     );

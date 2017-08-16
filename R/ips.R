@@ -195,6 +195,7 @@ sim_iviRA <- function(arms, input_data, pars, model_structures,
   } else{
       sim.out$means <- data.table(sim.out$means)
       sim.out$time.means <- data.table(sim.out$time.means)
+      sim.out$time.means <- sim.out$time.means[alive > 0]
       sim.out$out0 <- data.table(sim.out$out0)
     
       ## C++ to R indices

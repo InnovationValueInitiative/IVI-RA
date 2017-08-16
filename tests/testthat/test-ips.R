@@ -449,7 +449,7 @@ sm$calc_means()
 # Summary output for time means -----------------------------------------------
 mod.TimeMeans <- Rcpp::Module('mod_TimeMeans', PACKAGE = "iviRA")
 TimeMeans <- mod.TimeMeans$TimeMeans
-tm <- new(TimeMeans, 2, 3, 4, 5)
+tm <- new(TimeMeans, 2, 3, 4, 5, 6.0)
 tm$get_id()
 tm$get_alive()
 tm$increment_id(1, 1, 2)
@@ -459,6 +459,7 @@ tm$increment_varsums(.3, .5)
 tm$get_id()
 tm$get_index()
 tm$get_varsums()
+tm$calc_means()
 
 # Summary output during model cycle 0 -----------------------------------------
 mod.Out0 <- Rcpp::Module('mod_Out0', PACKAGE = "iviRA")
@@ -469,7 +470,7 @@ out$get_acr()
 out$get_ttsi()
 
 # small integration test ------------------------------------------------------
-pop <- sample_pats(n = 10)
+pop <- sample_pats(n = 100)
 arm.names <- c("adamtx", "cdmards")
 parsamp <- sample_pars(n = 100)
 mod.structs <- select_model_structures(tx_ihaq = c("acr-haq", "acr-eular-haq"),
