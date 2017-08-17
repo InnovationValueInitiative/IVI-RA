@@ -675,7 +675,8 @@ public:
   void set_iterators(int m, int s, double y);
   void set_id();
   void increment_id(int m, int s, double y);
-  void increment_varsums(double qalys); 
+  void increment_varsums(double yrlen, double qalys, double tx_cost, double hosp_cost,
+                         double mgmt_cost, double si_cost, double prod_loss); 
   std::map<std::string, std::vector<double> > calc_means();
 };
 
@@ -694,8 +695,20 @@ SimMeans::SimMeans(int n_mods_, int n_sims_, int n_indivs_, double r_qalys, doub
   varsums = std::map<std::string, std::vector<double> >();
   id["sim"] = std::vector<int> (N);
   id["mod"] = std::vector<int> (N);
+  varsums["lys"] = std::vector<double> (N);
+  varsums["dlys"] = std::vector<double> (N);
   varsums["qalys"] = std::vector<double> (N);
   varsums["dqalys"] = std::vector<double> (N);
+  varsums["tx_cost"] = std::vector<double> (N);
+  varsums["dtx_cost"] = std::vector<double> (N);
+  varsums["hosp_cost"] = std::vector<double> (N);
+  varsums["dhosp_cost"] = std::vector<double> (N);
+  varsums["mgmt_cost"] = std::vector<double> (N);
+  varsums["dmgmt_cost"] = std::vector<double> (N);
+  varsums["si_cost"] = std::vector<double> (N);
+  varsums["dsi_cost"] = std::vector<double> (N);
+  varsums["prod_loss"] = std::vector<double> (N);
+  varsums["dprod_loss"] = std::vector<double> (N);
 }
 
 std::map<std::string, std::vector<double> > SimMeans::get_varsums(){
@@ -723,9 +736,24 @@ void SimMeans::increment_id(int m, int s, double y){
   set_id();
 }
 
-void SimMeans::increment_varsums(double qalys){
+void SimMeans::increment_varsums(double yrlen, double qalys, double tx_cost, double hosp_cost,
+                                 double mgmt_cost, double si_cost, double prod_loss){
+  double dfq = discount_factor(year, discount_qalys);
+  double dfc = discount_factor(year, discount_cost);
+  varsums["lys"][index] = varsums["lys"][index] + yrlen;
+  varsums["dlys"][index] = varsums["dlys"][index] + yrlen * dfq;
   varsums["qalys"][index] = varsums["qalys"][index] + qalys;
-  varsums["dqalys"][index] = varsums["dqalys"][index] + qalys * discount_factor(year, discount_qalys);
+  varsums["dqalys"][index] = varsums["dqalys"][index] + qalys * dfq;
+  varsums["tx_cost"][index] = varsums["tx_cost"][index] + tx_cost;
+  varsums["dtx_cost"][index] = varsums["dtx_cost"][index] + tx_cost * dfc;
+  varsums["hosp_cost"][index] = varsums["hosp_cost"][index] + hosp_cost;
+  varsums["dhosp_cost"][index] = varsums["dhosp_cost"][index] + hosp_cost * dfc;
+  varsums["mgmt_cost"][index] = varsums["mgmt_cost"][index] + mgmt_cost;
+  varsums["dmgmt_cost"][index] = varsums["dmgmt_cost"][index] + mgmt_cost * dfc;
+  varsums["si_cost"][index] = varsums["si_cost"][index] + si_cost;
+  varsums["dsi_cost"][index] = varsums["dsi_cost"][index] + si_cost * dfc;
+  varsums["prod_loss"][index] = varsums["prod_loss"][index] + prod_loss;
+  varsums["dprod_loss"][index] = varsums["dprod_loss"][index] + prod_loss * dfc;
 }
 
 std::map<std::string, std::vector<double> > SimMeans::calc_means(){
@@ -774,7 +802,8 @@ public:
   void set_id();
   void increment_id(int m, int s, double month_);
   void increment_alive();
-  void increment_varsums(double qalys, double haq); 
+  void increment_varsums(double qalys, double haq, double tx_cost, double hosp_cost, double mgmt_cost, 
+                         double si_cost, double prod_loss); 
   std::map<std::string, std::vector<double> > calc_means();
 };
 
@@ -797,6 +826,11 @@ TimeMeans::TimeMeans(int n_mods_, int n_sims_, int n_indivs_, int n_cycles_,
   id["month"] = std::vector<int> (N);
   varsums["qalys"] = std::vector<double> (N);
   varsums["haq"] = std::vector<double> (N);
+  varsums["tx_cost"] = std::vector<double> (N);
+  varsums["hosp_cost"] = std::vector<double> (N);
+  varsums["mgmt_cost"] = std::vector<double> (N);
+  varsums["si_cost"] = std::vector<double> (N);
+  varsums["prod_loss"] = std::vector<double> (N);
 }
 
 std::map<std::string, std::vector<double> > TimeMeans::get_varsums(){
@@ -838,9 +872,15 @@ void TimeMeans::increment_alive(){
   alive[index] += 1;
 }
 
-void TimeMeans::increment_varsums(double qalys, double haq){
+void TimeMeans::increment_varsums(double qalys, double haq, double tx_cost, double hosp_cost, double mgmt_cost, 
+                                  double si_cost, double prod_loss){
   varsums["qalys"][index] = varsums["qalys"][index] + qalys;
   varsums["haq"][index] = varsums["haq"][index] + haq;
+  varsums["tx_cost"][index] = varsums["tx_cost"][index] + tx_cost;
+  varsums["hosp_cost"][index] = varsums["hosp_cost"][index] + hosp_cost;
+  varsums["mgmt_cost"][index] = varsums["mgmt_cost"][index] + mgmt_cost;
+  varsums["si_cost"][index] = varsums["si_cost"][index] + si_cost;
+  varsums["prod_loss"][index] = varsums["prod_loss"][index] + prod_loss;
 }
 
 std::map<std::string, std::vector<double> > TimeMeans::calc_means(){
@@ -1302,10 +1342,12 @@ List sim_iviRA_C(arma::mat arm_inds, CharacterMatrix model_structures_mat,
             
             if (output == "summary"){
               sim_means.increment_id(m, s, month/12);
-              sim_means.increment_varsums(qalys);
+              sim_means.increment_varsums(cycle_length/12, qalys, sim_cost.tx, sim_cost.hosp,
+                                          sim_cost.mgmt, sim_cost.si, sim_cost.prod);
               time_means.increment_id(m, s, month); //note: requires assumption of constant model cycles!!!
               time_means.increment_alive();
-              time_means.increment_varsums(qalys, haq);
+              time_means.increment_varsums(qalys, haq, sim_cost.tx, sim_cost.hosp, sim_cost.mgmt, 
+                                           sim_cost.si, sim_cost.prod);
               out0.push_back(t, m, s, i, j, sim_h_t1.acr, sim_h_t1.eular,
                              ttd_j, ttsi_j);
             }
@@ -1410,8 +1452,20 @@ List sim_iviRA_C(arma::mat arm_inds, CharacterMatrix model_structures_mat,
     Rcpp::DataFrame sim_means_df = Rcpp::DataFrame::create(
       _["model"] = sim_means_id["mod"],
       _["sim"] = sim_means_id["sim"],
+      _["lys"] = sim_means_out["lys"],
+      _["dlys"] = sim_means_out["dlys"],
       _["qalys"] = sim_means_out["qalys"],
-      _["dqalys"] = sim_means_out["dqalys"] 
+      _["dqalys"] = sim_means_out["dqalys"], 
+      _["tx_cost"] = sim_means_out["tx_cost"],
+      _["dtx_cost"] = sim_means_out["dtx_cost"],                           
+      _["hosp_cost"] = sim_means_out["hosp_cost"], 
+      _["dhosp_cost"] = sim_means_out["dhosp_cost"],
+      _["mgmt_cost"] = sim_means_out["mgmt_cost"],
+      _["dmgmt_cost"] = sim_means_out["dmgmt_cost"],
+      _["si_cost"] = sim_means_out["si_cost"],
+      _["dsi_cost"] = sim_means_out["dsi_cost"],
+      _["prod_loss"] = sim_means_out["prod_loss"],
+      _["dprod_loss"] = sim_means_out["dprod_loss"]  
     );
     std::map<std::string, std::vector<double> > time_means_out = time_means.calc_means();
     std::map<std::string, std::vector<int> > time_means_id = time_means.get_id();
@@ -1421,7 +1475,12 @@ List sim_iviRA_C(arma::mat arm_inds, CharacterMatrix model_structures_mat,
       _["month"] = time_means_id["month"],
       _["alive"] = time_means.get_alive(),
       _["qalys"] = time_means_out["qalys"],
-      _["haq"] = time_means_out["haq"] 
+      _["haq"] = time_means_out["haq"],
+      _["tx_cost"] = time_means_out["tx_cost"],
+      _["hosp_cost"] = time_means_out["hosp_cost"],
+      _["mgmt_cost"] = time_means_out["mgmt_cost"],
+      _["si_cost"] = time_means_out["si_cost"],
+      _["prod_loss"] = time_means_out["prod_loss"]
     );
     Rcpp::DataFrame out0_df = Rcpp::DataFrame::create(
       _["model"] = out0.get_mod(),
