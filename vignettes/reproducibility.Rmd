@@ -1,0 +1,9 @@
+---
+title: Reproducing our parameter estimates
+output: 
+   html_document:
+    toc: true
+    toc_depth: 1
+---
+
+Although all parameter values in the model can be changed by the user, the package loads with baseline parameter values. All R scripts for parameter estimation are in the `data-raw` directory on GitHub, and all estimates are built using the Makefile found [here](https://github.com/InnovationValueInitiative/IVI-RA/blob/master/data-raw/Makefile). 

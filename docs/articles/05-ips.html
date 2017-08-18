@@ -68,9 +68,14 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
-<li class="dropdown-header">Suggested improvements</li>
+<li>
+      <a href="../articles/ways-to-contribute.html">Ways to contribute</a>
+    </li>
     <li>
-      <a href="../articles/collaborate.html">Contribute</a>
+      <a href="../articles/suggested-improvements.html">Suggested improvements</a>
+    </li>
+    <li>
+      <a href="../articles/pull-requests.html">GitHub pull requests</a>
     </li>
   </ul>
 </li>
@@ -86,8 +91,12 @@
       <a href="../model-description/model-description.pdf">Model description</a>
     </li>
     <li class="dropdown-header">Release history</li>
-    <li class="dropdown-header">Reproducibility</li>
-    <li class="dropdown-header">hesim</li>
+    <li>
+      <a href="../articles/reproducibility.html">Reproducibility</a>
+    </li>
+    <li>
+      <a href="../articles/hesim.html">hesim</a>
+    </li>
   </ul>
 </li>
 <li>
@@ -133,12 +142,12 @@
 <p>The function returns all patient characteristics needed to run the simulation (HAQ score at baseline, age, gender, DAS28, SDAI, CDAI, weight, and the number of previous DMARDs). It also stores two types of matrices of explanatory variables. First, <code>x.mort</code>, contains all patient characteristics known at baseline used to adjust mortality with a log odds ratio. By default, only the baseline HAQ score is used to adjust mortality.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(input.dat$x.mort)</code></pre></div>
 <pre><code>##           haq0
-## [1,] 0.1430960
-## [2,] 1.3716961
-## [3,] 1.0643199
-## [4,] 0.9628729
-## [5,] 1.2583120
-## [6,] 2.7052381</code></pre>
+## [1,] 1.2725516
+## [2,] 1.2853906
+## [3,] 0.1149008
+## [4,] 1.2351085
+## [5,] 1.6027509
+## [6,] 2.7847670</code></pre>
 <p>The second set of matrices are the design matrices used to simulate time to treatment discontinuation. They include <code>x.ttd.all</code>, <code>x.ttd.da</code>, and <code>x.ttd.eular</code>. The required matrices depnd on the model structures chosen. <code>x.ttd.all</code> is required if treatment duration does not depend on disease activity or EULAR respone (i.e., pathway <strong>S1</strong>), <code>x.ttd.da</code> is required if treatment duration depends on disease activity (i.e., pathways <strong>S2-S5</strong> ), and <code>x.ttd.eular</code> is required if treatment duration depends on EULAR response (i.e., pathway <strong>S6</strong>). This matrix depends on the the model structure chosen since treatment duration depends on the pathway <strong>S1-S6</strong> used for treatment switching. In our selected model structures, <code>tx_iswitch = acr-eular-switch</code> or <code>tx_iswitch = acr-switch</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(input.dat$x.ttd.all)</code></pre></div>
 <pre><code>##      [,1]
@@ -171,27 +180,27 @@ sim.out2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/si
 sim.out2[, arm :<span class="er">=</span><span class="st"> "Arm 2"</span>]
 sim.out &lt;-<span class="st"> </span><span class="kw">rbind</span>(sim.out1, sim.out2)
 <span class="kw">head</span>(sim.out)</code></pre></div>
-<pre><code>##    model sim id month tx tx_seq tx_cycle death      age        ttd acr
-## 1:     1   1  1     6  3      1        1     0 55.17278  0.0000000   0
-## 2:     1   1  1    12  5      2        1     0 55.67278  0.2949533   0
-## 3:     1   1  1    18  5      2        2     0 56.17278 -0.7050467   0
-## 4:     1   1  1    24  8      3        1     0 56.67278  0.0000000   2
-## 5:     1   1  1    30 14      4        1     1 57.17278         NA   0
-## 6:     1   1  2     6  3      1        1     0 68.15844  1.9717487   1
-##    eular das28 sdai cdai      haq       ttsi si yrlen    tx_cost hosp_cost
-## 1:     0    NA   NA   NA 2.658256 115.998176  0   0.5 21005.7194 3089.5142
-## 2:     1    NA   NA   NA 2.379522   7.569656  0   0.5 21009.2120 1057.3196
-## 3:     1    NA   NA   NA 2.631432   6.569656  0   0.5 21009.2120 3089.5142
-## 4:     0    NA   NA   NA 2.631432  16.600115  0   0.5 13222.1968 3089.5142
-## 5:     0    NA   NA   NA 2.631432         NA  0   0.5   595.9237 3089.5142
-## 6:     2    NA   NA   NA 1.245892  10.531893  0   0.5 21005.7194  189.7012
-##    mgmt_cost si_cost prod_loss     utility         qalys   arm
-## 1:  177.5397       0  6862.521 -0.21950825 -0.1097541256 Arm 1
-## 2:  177.5397       0  6142.944  0.66364492  0.3318224591 Arm 1
-## 3:  177.5397       0  6793.272  0.03191376  0.0159568821 Arm 1
-## 4:  177.5397       0  6793.272  0.01397579  0.0069878972 Arm 1
-## 5:  177.5397       0  6793.272 -0.00160050 -0.0008002501 Arm 1
-## 6:  177.5397       0  3216.378  0.81925007  0.4096250338 Arm 1</code></pre>
+<pre><code>##    model sim id month tx tx_seq tx_cycle death      age      ttd acr eular
+## 1:     1   1  1     6  3      1        1     0 44.59055 17.60612   1     1
+## 2:     1   1  1    12  3      1        2     0 45.09055 16.60612   1     1
+## 3:     1   1  1    18  3      1        3     0 45.59055 15.60612   1     1
+## 4:     1   1  1    24  3      1        4     0 46.09055 14.60612   1     1
+## 5:     1   1  1    30  3      1        5     0 46.59055 13.60612   1     1
+## 6:     1   1  1    36  3      1        6     0 47.09055 12.60612   1     1
+##    das28 sdai cdai       haq       ttsi si yrlen  tx_cost    hosp_cost
+## 1:    NA   NA   NA 0.9290903  3.8031107  0   0.5 22901.25 5.335864e-05
+## 2:    NA   NA   NA 0.9275003  2.8031107  0   0.5 22901.25 5.335864e-05
+## 3:    NA   NA   NA 0.9259103  1.8031107  0   0.5 22901.25 5.335864e-05
+## 4:    NA   NA   NA 0.9243203  0.8031107  0   0.5 22901.25 5.335864e-05
+## 5:    NA   NA   NA 0.9227303 -0.1968893  0   0.5 22901.25 5.335864e-05
+## 6:    NA   NA   NA 0.9211404 -1.1968893  0   0.5 22901.25 5.335864e-05
+##    mgmt_cost si_cost prod_loss   utility     qalys   arm
+## 1:  190.6115       0  2320.172 0.6452355 0.3226177 Arm 1
+## 2:  190.6115       0  2316.201 0.6968917 0.3484459 Arm 1
+## 3:  190.6115       0  2312.231 0.7511151 0.3755575 Arm 1
+## 4:  190.6115       0  2308.260 0.7022039 0.3511019 Arm 1
+## 5:  190.6115       0  2304.290 0.6746919 0.3373459 Arm 1
+## 6:  190.6115       0  2300.319 0.6512153 0.3256076 Arm 1</code></pre>
 <p><code>sim_iviRA</code> returns a data.table which is an enhanced data.frame from the data.table package designed for fast data manipulation. For a given model structure (<code>model</code>) and sampled parameter set (<code>sim</code>), a sampled patient (<code>id</code>) remains on a given therapy until time to treatment discontinuation (<code>ttd</code>) becomes less than zero in a given month. Treatment discontinuation is caused by a serious infection (<code>si = 1</code>) if the sampled time to serious infection at treatment initiation is less than the sampled time to discontinuation. After discontinuation, a patient switches to the next therapy and <code>therapy_seq</code> increments by one. Patient age (<code>age</code>) increases in 6-month increments.</p>
 <p>The HAQ score (<code>haq</code>) during the initial 6-month period (<code>therapy_cycle = 1</code>), disease activity measures (<code>das28</code>, <code>sdai</code>, and <code>cdai</code>), and <code>ttd</code> depend on the model structure chosen. For example, in the first model structure, HAQ and time to treatment discontinuation depend on ACR response (<code>acr</code>) and in turn, EULAR response (<code>eular</code>). The simulation returned NA values for the three disease activity measures because treatment switching is is not a function of disease activity (i.e., <strong>S6</strong> was chosen in the first model structure). The simulation ends when a patient dies (<code>death = 1</code>).</p>
 <p>Health care sector costs consist of treatment costs (<code>treat_cost</code>); hospital costs (<code>hosp_cost</code>), which increase with the HAQ score; general management costs (<code>mgmt_cost</code>); and the costs of caused by serious infections (<code>si_cost</code>). Non-health care sector costs are those due to lost wages. Analyses performed from a societal perspective should include these productivity losses (<code>prod_loss</code>).</p>

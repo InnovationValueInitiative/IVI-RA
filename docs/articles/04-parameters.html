@@ -68,9 +68,14 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
-<li class="dropdown-header">Suggested improvements</li>
+<li>
+      <a href="../articles/ways-to-contribute.html">Ways to contribute</a>
+    </li>
     <li>
-      <a href="../articles/collaborate.html">Contribute</a>
+      <a href="../articles/suggested-improvements.html">Suggested improvements</a>
+    </li>
+    <li>
+      <a href="../articles/pull-requests.html">GitHub pull requests</a>
     </li>
   </ul>
 </li>
@@ -86,8 +91,12 @@
       <a href="../model-description/model-description.pdf">Model description</a>
     </li>
     <li class="dropdown-header">Release history</li>
-    <li class="dropdown-header">Reproducibility</li>
-    <li class="dropdown-header">hesim</li>
+    <li>
+      <a href="../articles/reproducibility.html">Reproducibility</a>
+    </li>
+    <li>
+      <a href="../articles/hesim.html">hesim</a>
+    </li>
   </ul>
 </li>
 <li>
@@ -142,7 +151,7 @@
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">parsamp2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pars.html">sample_pars</a></span>(<span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">si_cost =</span> <span class="dv">7000</span>)
 <span class="kw">summary</span>(parsamp2$si.cost)</code></pre></div>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##    5648    6374    7124    7131    7958    8395</code></pre>
+##    5607    6266    7062    7060    7762    8385</code></pre>
 <p>To view the full list of arguments in <code>sample_pars</code> that can changed by the user view the documentation by typing <code><a href="../reference/sample_pars.html">?sample_pars</a></code>. All default arguments are loaded with the package and are based on IVI’s statistical estimates and synthesis of the literature. The parameter estimates can be viewed by typing the command <code>data(package = "iviRA")</code> into the R console.</p>
 <p>Below we describe these parameter estimates and separate them into 8 main categories: treatment effects estimated from a network meta-analysis (NMA); mappings between various measured of treatment response, disease activity, and/or function; long-term progression of disease, treatment duration, serious infections, mortality, utility, and costs.</p>
 <div id="nma" class="section level2">

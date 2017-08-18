@@ -91,9 +91,14 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
-    <li class="dropdown-header">Suggested improvements</li>
     <li>
-      <a href="../articles/collaborate.html">Contribute</a>
+      <a href="../articles/ways-to-contribute.html">Ways to contribute</a>
+    </li>
+    <li>
+      <a href="../articles/suggested-improvements.html">Suggested improvements</a>
+    </li>
+    <li>
+      <a href="../articles/pull-requests.html">GitHub pull requests</a>
     </li>
   </ul>
 </li>
@@ -109,8 +114,12 @@
       <a href="../model-description/model-description.pdf">Model description</a>
     </li>
     <li class="dropdown-header">Release history</li>
-    <li class="dropdown-header">Reproducibility</li>
-    <li class="dropdown-header">hesim</li>
+    <li>
+      <a href="../articles/reproducibility.html">Reproducibility</a>
+    </li>
+    <li>
+      <a href="../articles/hesim.html">hesim</a>
+    </li>
   </ul>
 </li>
 <li>
@@ -144,9 +153,8 @@
     
 
     <pre class="usage"><span class='fu'>sim_iviRA</span>(<span class='no'>arms</span>, <span class='no'>input_data</span>, <span class='no'>pars</span>, <span class='no'>model_structures</span>, <span class='kw'>max_months</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>treatment_lookup</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/treatments'>treatments</a></span>$<span class='no'>sname</span>,
-  <span class='kw'>cdmards_ind</span> <span class='kw'>=</span> <span class='fu'>which</span>(<span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/treatments'>treatments</a></span>$<span class='no'>sname</span> <span class='kw'>==</span> <span class='st'>"cdmards"</span>),
-  <span class='kw'>nbt_ind</span> <span class='kw'>=</span> <span class='fu'>which</span>(<span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/treatments'>treatments</a></span>$<span class='no'>sname</span> <span class='kw'>==</span> <span class='st'>"nbt"</span>), <span class='kw'>check</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+  <span class='kw'>treatment_lookup</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/treatments'>treatments</a></span>$<span class='no'>sname</span>, <span class='kw'>output</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"data"</span>, <span class='st'>"summary"</span>),
+  <span class='kw'>discount_qalys</span> <span class='kw'>=</span> <span class='fl'>0.03</span>, <span class='kw'>discount_cost</span> <span class='kw'>=</span> <span class='fl'>0.03</span>, <span class='kw'>check</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -170,13 +178,21 @@ a single treatment sequence or a matrix of unique sequences for each patient.</p
 the model is simulated over each patient's lifetime.</p></td>
     </tr>
     <tr>
-      <th>cdmards_ind</th>
-      <td><p>Index for cDMARDs.</p></td>
+      <th>output</th>
+      <td><p>Specifies the format of output returned from the simulation. Options are <code>data</code> 
+and <code>summary</code>. When <code>data</code> is specified, each simulated value (i.e, by model,
+sampled parameter set, individual, and time-period) is returned in a <code>data.table</code>. If 
+<code>summary</code> is selected, then only summary measures are returned.</p></td>
     </tr>
     <tr>
-      <th>nbt_ind</th>
-      <td><p>Index for the non-biologic (i.e. a term used to define a selection of treatments clinicians use
-after the last biologic in a treatment sequence).</p></td>
+      <th>discount_qalys</th>
+      <td><p>Discount rate for QALYs. Only used when <code>output = "summary"</code>; 
+otherwise, discounts can be applied to the simulated output.</p></td>
+    </tr>
+    <tr>
+      <th>discount_cost</th>
+      <td><p>Discount rate for cost variables. Only used when <code>output = "summary"</code>;
+otherwise, discounts can be applied to the simulated output.</p></td>
     </tr>
     <tr>
       <th>model_structure</th>
@@ -193,7 +209,13 @@ in the same order as treatments in <code>treatments_lookup</code>.</p></td>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A <code>data.table</code> with the following columns:</p><dl class='dl-horizontal'>
+    <p>The <code>output = "data"</code> options returns all simulated output. However, since output is 
+returned for each model, sampled parameter set, individual, and model cycle, 
+the size of the output can be very large and can cause memory management issues. The 
+<code>output = "summary"</code>, which only provides summaries of the simulation output, can be 
+useful in the cases.</p>
+<p>When <code>output = "data"</code> is selected, the simulation returns a <code>data.table</code> with the 
+following columns:</p><dl class='dl-horizontal'>
 <dt>sim</dt><dd><p>Simulation number. Indexed from 1 to S where S is the number of randomly sampled parameter sets (e.g. n from <a href='sample_pars.html'>sample_pars</a>).</p></dd>
 <dt>id</dt><dd><p>ID number. Indexed from 1 to N where N is the number of simulated patients (e.g. n from <a href='sample_pats.html'>sample_pats</a>).</p></dd>
 <dt>month</dt><dd><p>Month since a simulated patient began the first treatment in a treatment sequence.</p></dd>

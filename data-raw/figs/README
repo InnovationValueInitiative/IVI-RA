@@ -1,1 +1,1 @@
-Figures from data-raw analyses are stored here. Create them by running Makefile; that is, type "Make" from the command line within the data-raw directory.
+Figures from data-raw analyses are stored here. Create them by running Makefile; that is, type `Make` from the command line within the data-raw directory.

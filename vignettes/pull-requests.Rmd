@@ -1,14 +1,12 @@
 ---
-title: Contribute to the model
+title: GitHub pull requests
 output: 
    html_document:
     toc: true
     toc_depth: 1
 ---
 
-There are two ways to collaborate with IVI. First, you can comment on the structure of the model or the evidence considered at [url]. IVI and a technical panel will review the comments and determine whether they should be incorporated into the model. Second, you can make changes to the code itself and make a [pull request](https://help.github.com/articles/about-pull-requests/). Code changes that affect the structure of the model or parameter values will only be incorporated after a review by the technical panel but other changes such as bug fixes or performance improvements may be immediately accepted. 
-
-The purpose of this page is to help you make changes to the code. We use [Git](https://git-scm.com/) and host our code on [GitHub](https://github.com/). To collaborate, you will therefore need to create a GitHub account and [install](https://help.github.com/articles/set-up-git/) Git on your machine. Once your setup you can then follow the steps outlined below to contribute to the model.
+We use [Git](https://git-scm.com/) and host our code on [GitHub](https://github.com/). To collaborate, you will need to create a GitHub account and [install](https://help.github.com/articles/set-up-git/) Git on your machine. Once your setup you can then follow the steps outlined below to contribute to the model.
 
 **Step 1**: After signing into [GitHub](https://github.com/), you need to create your own remote repository of the IVI model. Click the "Fork" button  in the upper right corner of the [IVI-RA Github](https://github.com/InnovationValueInitiative/IVI-RA) page. When asked "Where should we fork this repository?" select your username.
 

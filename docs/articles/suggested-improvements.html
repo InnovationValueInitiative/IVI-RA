@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The patient population • iviRA</title>
+<title>Suggested model improvements • iviRA</title>
 <!-- jquery --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/simplex/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 <!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
@@ -122,64 +122,25 @@
       </header><div class="row">
   <div class="col-md-9">
     <div class="page-header toc-ignore">
-      <h1>The patient population</h1>
+      <h1>Suggested model improvements</h1>
             
           </div>
 
     
     
 <div class="contents">
-<p>An assessment of a health technology is always conditional on the patient population studied. The first step in an analysis is thus to specify the population considered. Below, we consider two ways to generate the patient population: first, the cohort can be randomly sampled using the <code>sample_pats</code> function from the <code>iviRA</code> package, and, second, a user can supply their own patient data.</p>
-<div id="randomly-sampling-a-patient-population" class="section level2">
+<p>The IVI-RA model is an iterative open-source model that is updated based on evidence-based suggestions for improvement.</p>
+<p>This page summarizes the suggested improvements that we have received from the public. Suggestions are separated into those that can be incorporated quickly (i.e., short-term) and those that involve data acquisition, more involved analyes, or large changes to the current code base (i.e., long-term). Code related issues with the model can be found on GitHub <a href="https://github.com/InnovationValueInitiative/IVI-RA/issues">here</a>.</p>
+<p>The suggestions will be reviewed by the technical expert panel, which will prioritize and recommend improvements to incorporate into the next version of the model. Suggested improvements that are not incorporated into the model due to time or resource constraints will remain on this page and will be considered during future model updates.</p>
+<div id="short-term-suggestions" class="section level2">
 <h2 class="hasAnchor">
-<a href="#randomly-sampling-a-patient-population" class="anchor"></a>Randomly sampling a patient population</h2>
-<p>The simplest way to generate a patient cohort is to use the <code>sample_pats</code> function. The variables included in the cohort are age, gender, HAQ score at baseline, weight, the number of previous DMARDs, and three measures of disease activity (Disease Activity Score with 28-joint counts (DAS28), Simple Disease Activity Index (SDAI), and the Clinical Disease Activity Index (CDAI)). The <code>type</code> argument specifies whether the patient cohort is homogeneous or heterogeneous. If the cohort is homogeneous, then the cohort consists of male and female patients that are identical in all respects other than gender; if the cohort is heterogeneous, then all variables vary across patients.</p>
-<p>We can randomly sample a heterogeneous population with default setting. To examine these settings type <code><a href="../reference/sample_pats.html">?sample_pats</a></code> into the console.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pop &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pats.html">sample_pats</a></span>(<span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">type =</span> <span class="st">"heterog"</span>)
-<span class="kw">head</span>(pop)</code></pre></div>
-<pre><code>##           age male weight prev_dmards    das28     sdai     cdai     haq0
-## [1,] 57.28242    0     75           3 6.896869 56.41051 58.72280 1.208694
-## [2,] 56.10258    0     75           2 7.312880 54.33924 55.45556 2.491500
-## [3,] 44.64592    1     89           3 4.289910 30.73788 26.63111 1.236947
-## [4,] 39.58281    1     89           2 6.343386 45.11006 38.13241 2.023025
-## [5,] 61.84250    0     75           0 5.555498 37.95153 31.16053 1.668290
-## [6,] 34.38311    0     75           3 4.479956 33.89710 28.51727 2.500586</code></pre>
-<p>We can also customize the distribution of patients. For example, suppose we want to study a younger and healthier population. We might then sample patients by customizing arguments in <code>sample_pats</code>,</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pop2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pats.html">sample_pats</a></span>(<span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">type =</span> <span class="st">"heterog"</span>, <span class="dt">age_mean =</span> <span class="dv">45</span>, <span class="dt">das28_mean =</span> <span class="dv">4</span>, <span class="dt">sdai_mean =</span> <span class="dv">20</span>, 
-                    <span class="dt">cdai_mean =</span> <span class="dv">18</span>)
-<span class="kw">head</span>(pop2)</code></pre></div>
-<pre><code>##           age male weight prev_dmards    das28      sdai      cdai
-## [1,] 57.08882    0     75           3 2.677167 12.339645 12.351926
-## [2,] 36.57056    1     89           1 3.179822  4.613763  5.272681
-## [3,] 22.14042    0     75           3 3.101671 10.004502  4.247574
-## [4,] 52.49063    1     89           4 4.579207 21.832329 24.575700
-## [5,] 40.21040    1     89           2 3.015338 18.788811 16.695219
-## [6,] 48.09747    0     75           1 4.314643 20.309565  9.913392
-##           haq0
-## [1,] 1.3452590
-## [2,] 1.5024663
-## [3,] 0.7534723
-## [4,] 1.6717831
-## [5,] 0.7418847
-## [6,] 0.5923763</code></pre>
+<a href="#short-term-suggestions" class="anchor"></a>Short-term suggestions</h2>
+<p>To be added.</p>
 </div>
-<div id="using-your-own-patient-population" class="section level2">
+<div id="long-term-suggestions" class="section level2">
 <h2 class="hasAnchor">
-<a href="#using-your-own-patient-population" class="anchor"></a>Using your own patient population</h2>
-<p>Users who have data on their own patient population may wish to run the simulation using their own data. To do this, users can simply load their own data and convert it to an R matrix. The matrix must have 1 row for each patient and the same columns as returned by <code>sample_pats</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">colnames</span>(pop)</code></pre></div>
-<pre><code>## [1] "age"         "male"        "weight"      "prev_dmards" "das28"      
-## [6] "sdai"        "cdai"        "haq0"</code></pre>
-<div>
-<ul class="pager">
-<li class="previous">
-<a href="00-intro.html">Previous</a>
-</li>
-<li class="next">
-<a href="02-arms.html">Next</a>
-</li>
-</ul>
-</div>
+<a href="#long-term-suggestions" class="anchor"></a>Long-term suggestions</h2>
+<p>To be added.</p>
 </div>
 </div>
   </div>
@@ -189,8 +150,8 @@
       <h2 class="hasAnchor">
 <a href="#tocnav" class="anchor"></a>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
-<li><a href="#randomly-sampling-a-patient-population">Randomly sampling a patient population</a></li>
-      <li><a href="#using-your-own-patient-population">Using your own patient population</a></li>
+<li><a href="#short-term-suggestions">Short-term suggestions</a></li>
+      <li><a href="#long-term-suggestions">Long-term suggestions</a></li>
       </ul>
 </div>
       </div>

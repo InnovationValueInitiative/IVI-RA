@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Introduction • iviRA</title>
+<title>GitHub pull requests • iviRA</title>
 <!-- jquery --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/simplex/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 <!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
@@ -122,69 +122,55 @@
       </header><div class="row">
   <div class="col-md-9">
     <div class="page-header toc-ignore">
-      <h1>Introduction</h1>
+      <h1>GitHub pull requests</h1>
             
           </div>
 
     
     
 <div class="contents">
-<div id="overview" class="section level2">
-<h2 class="hasAnchor">
-<a href="#overview" class="anchor"></a>Overview</h2>
-<p>This tutorial describes how to run the IVI-RA model. The model is a discrete-time individual patient simulation (IPS) that simulates patient outcomes over a lifetime or a specified number of years. The primary measure of disease burden is the health assessment questionnaire (HAQ) score, which is a measure of function among patients with rheumatoid arthritis. Since the model is designed for cost-effectiveness analysis, it also simulates quality-adjusted life-years (QALYs) and various types of costs.</p>
-<p>The model accounts for both parameter and structural uncertainty. Parameter uncertainty is quantified using probabilistic sensitivity analysis (PSA), which propagates uncertainty in input parameters throughout the model by randomly sampling the parameters from their (joint) probability distribution and running the model for each sampled parameter set. Unlike most models, the IVI-RA model does not commit to a single model structure, but instead allows for a number of scientifically defensible approaches. Since the model can be run for any of the model structures, structural uncertainty can be evaluated by comparing estimates of value across the different structures.</p>
-<p>Users wishing to learn more about the model should consult the <a href="https://innovationvalueinitiative.github.io/IVI-RA/model-description/model-description.pdf">model description</a>.</p>
-</div>
-<div id="installation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h2>
-<p>The <code>iviRA</code> package can be installed from GitHub using the <code>devtools</code> package.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># install.packages("devtools")</span>
-<span class="kw">library</span>(devtools)
-devtools::<span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"InnovationValueInitiative/IVI-RA"</span>)</code></pre></div>
-</div>
-<div id="usage" class="section level2">
-<h2 class="hasAnchor">
-<a href="#usage" class="anchor"></a>Usage</h2>
-<p>To use the model, simply load the installed package into R.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(iviRA)</code></pre></div>
-<p>The model can be simulated within the <code>iviRA</code> package using the <code>sim_iviRA</code> function. The simulation depends on three primary factors: (1) the population considered, (2) the values of the parameters, and (3) the selected model structures. The steps needed to run the model can consequently be summarized as follows:</p>
-<ol style="list-style-type: decimal">
-<li>Generate a patient population.</li>
-<li>Select treatment arms</li>
-<li>Choose model structures</li>
-<li>Sample model parameters.</li>
-<li>Simulate disease progression, mortality, and costs using the IPS.</li>
-<li>Analyze the output.</li>
-</ol>
-</div>
-<div id="continue-tutorial" class="section level2">
-<h2 class="hasAnchor">
-<a href="#continue-tutorial" class="anchor"></a>Continue tutorial</h2>
-<p>Click next to continue the tutorial and learn about step 1.</p>
-<div>
-<ul class="pager">
-<li class="next">
-<a href="01-population.html">Next</a>
+<p>We use <a href="https://git-scm.com/">Git</a> and host our code on <a href="https://github.com/">GitHub</a>. To collaborate, you will need to create a GitHub account and <a href="https://help.github.com/articles/set-up-git/">install</a> Git on your machine. Once your setup you can then follow the steps outlined below to contribute to the model.</p>
+<p><strong>Step 1</strong>: After signing into <a href="https://github.com/">GitHub</a>, you need to create your own remote repository of the IVI model. Click the “Fork” button in the upper right corner of the <a href="https://github.com/InnovationValueInitiative/IVI-RA">IVI-RA Github</a> page. When asked “Where should we fork this repository?” select your username.</p>
+<p><strong>Step 2</strong>: Use the command line to create a directory where you would like your local repository to live, and navigate to this directory.</p>
+<p><strong>Step 3</strong>: Create a local repository by typing the following command into the command line:</p>
+<pre><code>git clone https://github.com/[github-username]/IVI-RA.git</code></pre>
+<p><strong>Step 4</strong>: Use the command line to navigate to the local IVI-RA directory.</p>
+<p><strong>Step 5</strong>: In order to make it easier to <a href="https://help.github.com/articles/github-glossary/#push">Push</a> your local work and <a href="https://help.github.com/articles/github-glossary/#pull">pull</a> changes made by others to the IVI-RA code type the following command into the command line:</p>
+<pre><code>git remote add upstream https://github.com/InnovationValueInitiative/IVI-RA.git</code></pre>
+<p><strong>Step 6</strong>: Before editing your local copy of the IVI-RA code, make sure you have the latest version of the code using the following three commands:</p>
+<ul>
+<li>
+<p>Step 6a: Download all content from the central IVI-RA repository. Navigate to your local IVI-RA repository and type the following command into the command line:</p>
+<pre><code>git fetch upstream</code></pre>
+</li>
+<li>
+<p>Step 6b: Switch to the master branch in your local IVI-RA repository by typing the following command into the command line:</p>
+<pre><code>git checkout master</code></pre>
+</li>
+<li>
+<p>Step 6c: Update your local master IVI-RA branch to the latest version of the central IVI-RA master branch by using the <a href="https://help.github.com/articles/github-glossary/#merge">merge</a> command:</p>
+<pre><code>git merge upstream/master</code></pre>
 </li>
 </ul>
-</div>
-</div>
+<p><strong>Step 7</strong>: Create a new <a href="https://help.github.com/articles/github-glossary/#branch">branch</a> on your local machine. Branches are a way to organize your project. To create a new branch type the following command into the command line:</p>
+<pre><code>git checkout -b [new-branch-name]</code></pre>
+<p><strong>Step 8</strong>: After making changes to your local IVI-RA repository, <a href="https://help.github.com/articles/github-glossary/#commit">commit</a> your changes to the central IVI-RA repository. To add a new file type the following command into the command file:</p>
+<pre><code>git add [filename]</code></pre>
+<p>To commit the added file or an edited file type the following command into the command line:</p>
+<pre><code>git commit -m "[description-of-the-changes-you-made]"</code></pre>
+<p>To find all files that were edited or new files that were created, but not yet committed, type the following command into the command line:</p>
+<pre><code>git status</code></pre>
+<p><strong>Step 9</strong>: Periodically check whether the branch created in Step 7 is in sync with changes made by other contributors by fetching upstream and merging upstream master into your branch:</p>
+<pre><code>git fetch upstream
+git merge upstream/master</code></pre>
+<p>If the changes you made to your local branch are in the same section as changes made by other contributors, you may need to resolve conflicts.</p>
+<p><strong>Step 10</strong>: If the code is ready to be reviewed by other contributors, make a final commit and push your local branch to your remote repository:</p>
+<pre><code>git push origin [new-branch-name]</code></pre>
+<p><strong>Step 11</strong>: Using the GitHub user interface, <a href="https://help.github.com/articles/creating-a-pull-request/#creating-the-pull-request">open a pull request</a>.</p>
 </div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-        <div id="tocnav">
-      <h2 class="hasAnchor">
-<a href="#tocnav" class="anchor"></a>Contents</h2>
-      <ul class="nav nav-pills nav-stacked">
-<li><a href="#overview">Overview</a></li>
-      <li><a href="#installation">Installation</a></li>
-      <li><a href="#usage">Usage</a></li>
-      <li><a href="#continue-tutorial">Continue tutorial</a></li>
-      </ul>
-</div>
       </div>
 
 </div>

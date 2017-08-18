@@ -1,1 +1,1 @@
-Tables from data-raw analyses are stored here. Create them by running Makefile; that is, type "Make" from the command line within the data-raw directory.
+Tables from data-raw analyses are stored here. Create them by running Makefile; that is, type `Make` from the command line within the data-raw directory.

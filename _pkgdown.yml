@@ -14,7 +14,13 @@ articles:
     - 06-analysis
   - title: "Collaborate"
     contents:
-    - collaborate
+    - ways-to-contribute
+    - suggested-improvements
+    - pull-requests
+  - title: "About"
+    contents:
+    - reproducibility
+    - hesim
 
 reference:
   - title: "Model inputs"
@@ -88,9 +94,12 @@ navbar:
     href: reference/index.html
   - text: "Collaborate"
     menu:
+      - text: "Ways to contribute"
+        href: articles/ways-to-contribute.html
       - text: "Suggested improvements"
-      - text: "Contribute"
-        href: articles/collaborate.html
+        href: articles/suggested-improvements.html
+      - text: "GitHub pull requests"
+        href: articles/pull-requests.html
   - text: "About"
     menu:
       - text: "OSVP"
@@ -98,6 +107,8 @@ navbar:
         href: model-description/model-description.pdf
       - text: "Release history"
       - text: "Reproducibility"
+        href: articles/reproducibility.html
       - text: "hesim"
+        href: articles/hesim.html
   - text: "Web app"
     href: https://innovationandvalueinitiative.shinyapps.io/ivi-ra/
