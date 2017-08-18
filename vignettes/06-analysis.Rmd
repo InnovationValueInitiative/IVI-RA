@@ -26,7 +26,7 @@ sim.out.means <- sim.out[, .(grp = 1,
                    by = c("sim", "arm")]
 ```
 
-The `sim.out.means` object can be analyzed in `hesim` using the `pcea` and `pcea_pw` functions, which are designed for indiviualized (i.e., subgroup) cost-effectiveness analysis. Since these functions are designed for subgroup analyses, a group variable must be specified. The current analysis does not specify subgroups so we assume a single large group. Analysis from a health care sector perspective would compare clinical effectiveness as measured by discounted QALYs (`dqalys`) to costs as measured by discounted health care sector costs (`dhc_cost`). An analysis from a societal perspective would add productivity losses to health care sector costs.  
+The `sim.out.means` object can be analyzed in `hesim` using the `icea` and `icea_pw` functions, which are designed for indiviualized (i.e., subgroup) cost-effectiveness analysis. Since these functions are designed for subgroup analyses, a group variable must be specified. The current analysis does not specify subgroups so we assume a single large group. Analysis from a health care sector perspective would compare clinical effectiveness as measured by discounted QALYs (`dqalys`) to costs as measured by discounted health care sector costs (`dhc_cost`). An analysis from a societal perspective would add productivity losses to health care sector costs.  
 
 <div>
 <ul class="pager">
