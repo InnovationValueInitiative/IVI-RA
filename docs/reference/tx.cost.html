@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Simulate productivity loss from simulated HAQ score — sim_prod_loss • iviRA</title>
+<title>Treatment costs — tx.cost • iviRA</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -51,12 +51,9 @@
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-        <li>
-  <a href="../reference/index.html">Reference</a>
-</li>
-<li class="dropdown">
+        <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Run the model
+    Tutorial
      
     <span class="caret"></span>
   </a>
@@ -71,7 +68,7 @@
       <a href="../articles/02-arms.html">2. Select treatment sequences</a>
     </li>
     <li>
-      <a href="../articles/03-structure.html">3. Select model structure</a>
+      <a href="../articles/03-structures.html">3. Select model structures</a>
     </li>
     <li>
       <a href="../articles/04-parameters.html">4. Sample parameters</a>
@@ -80,12 +77,53 @@
       <a href="../articles/05-ips.html">5. Run simulation</a>
     </li>
     <li>
-      <a href="../articles/06-cea.html">6. Cost-effectiveness analysis</a>
+      <a href="../articles/06-analysis.html">6. Value assessment</a>
     </li>
   </ul>
 </li>
 <li>
-  <a href="../articles/collaborate.html">Collaborate</a>
+  <a href="../reference/index.html">API</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Collaborate
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/ways-to-contribute.html">Ways to contribute</a>
+    </li>
+    <li>
+      <a href="../articles/suggested-improvements.html">Suggested improvements</a>
+    </li>
+    <li>
+      <a href="../articles/pull-requests.html">GitHub pull requests</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    About
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">OSVP</li>
+    <li>
+      <a href="../model-description/model-description.pdf">Model description</a>
+    </li>
+    <li class="dropdown-header">Release history</li>
+    <li>
+      <a href="../articles/reproducibility.html">Reproducibility</a>
+    </li>
+    <li>
+      <a href="../articles/hesim.html">hesim</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra/">Web app</a>
 </li>
       </ul>
       
@@ -107,41 +145,42 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Simulate productivity loss from simulated HAQ score</h1>
+    <h1>Treatment costs</h1>
     </div>
 
     
-    <p>Simulate productivity loss from HAQ score simulated using <code>sim_haq</code></p>
+    <p>Drug acquisition and administration costs for medications used to treat rheumatoid
+arthritis.</p>
     
 
-    <pre class="usage"><span class='fu'>sim_prod_loss</span>(<span class='no'>simhaq</span>, <span class='no'>pl_haq</span>, <span class='kw'>check</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
-    
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>simhaq</th>
-      <td><p>Simulation output from <a href='sim_haq.html'>sim_haq</a>.</p></td>
-    </tr>
-    <tr>
-      <th>pl_haq</th>
-      <td><p>Decrease in wages (i.e. productivity loss) per one-unit increase in HAQ. Equivalent to output <code>prod.loss</code> from
-<a href='sample_pars.html'>sample_pars</a>.</p></td>
-    </tr>
-    </table>
-    
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    <pre class="usage"><span class='no'>tx.cost</span></pre>
+        
+    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
-    <p>Vector of simulated productivity loss for each simulated patient and time-period.</p>
+    <p>A data table with 5 variables.</p><dl class='dl-horizontal'>
+  <dt>name</dt><dd><p>Long-form name of treatment.</p></dd>
+  <dt>sname</dt><dd><p>Short-form name of treatment.</p></dd>
+  <dt>dosage</dt><dd><p>FDA approved dosage.</p></dd>
+  <dt>strength_dosage_form</dt><dd><p>Strength and dosage form of treatment</p></dd>
+  <dt>init_dose_val</dt><dd><p>Numeric value of dose approved by FDA during the first 6 months of
+  treatment.</p></dd>
+  <dt>ann_dose_val</dt><dd><p>Numeric value of dose approved by FDA beyond the first 6 months.</p></dd>
+  <dt>dose_unit</dt><dd><p>Unit of FDA approved dose.</p></dd>
+  <dt>init_num_doses</dt><dd><p>Number of doses based on FDA used during the first 6 months.</p></dd>
+  <dt>ann_num_doses</dt><dd><p>Annual number of doses based on FDA beyond the first 6 months.</p></dd>
+  <dt>strength_val</dt><dd><p>Numeric value of strength of treatment.</p></dd>
+  <dt>strength_unit</dt><dd><p>Unit of treatment.</p></dd>
+  <dt>wac_per_unit</dt><dd><p>Wholesale acquisition cost per unit of treatment.</p></dd>
+  <dt>infusion_cost</dt><dd><p>Cost per infusion.</p></dd>
+</dl>
     
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
       
-      <li><a href="#value">Value</a></li>
+      <li><a href="#format">Format</a></li>
           </ul>
 
   </div>

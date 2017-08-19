@@ -299,7 +299,7 @@
 #'   \item{wac_per_unit}{Wholesale acquisition cost per unit of treatment.}
 #'   \item{infusion_cost}{Cost per infusion.}
 #' }
-"treat.cost"
+"tx.cost"
 
 #' Hospitalization costs
 #'

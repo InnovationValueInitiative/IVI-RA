@@ -12,3 +12,4 @@ list2array(l)
 \description{
 Convert a list of matrices to an array.
 }
+\keyword{internal}

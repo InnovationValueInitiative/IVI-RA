@@ -1,7 +1,7 @@
 # file directories
 DATA=../data
 
-# all datasets for package
+# All datasets, tables, and figures for package
 all: $(DATA)/treatments.rda 
 all: $(DATA)/nma-acr-naive.rda $(DATA)/nma-acr-naive-nice.rda 
 all: $(DATA)/nma-das28-naive.rda $(DATA)/nma-haq-naive.rda
@@ -10,7 +10,7 @@ all: $(DATA)/acr2eular.rda $(DATA)/eular2haq.rda $(DATA)/acr2haq.rda
 all: $(DATA)/haq-lprog.rda  $(DATA)/haq-lcgm.rda
 all: $(DATA)/ttd.rda $(DATA)/ttsi.rda
 all: $(DATA)/mort-or.rda $(DATA)/mort-hr-haqdif.rda $(DATA)/lifetable-male.rda $(DATA)/lifetable-female.rda 
-all: $(DATA)/treat-cost.rda $(DATA)/hosp-cost.rda $(DATA)/mgmt-cost.rda $(DATA)/prod-loss.rda 
+all: $(DATA)/tx-cost.rda $(DATA)/hosp-cost.rda $(DATA)/mgmt-cost.rda $(DATA)/prod-loss.rda 
 all: $(DATA)/utility-mixture.rda $(DATA)/utility-wailoo.rda 
 all: figs/ttd-corrona-ipdsurv-gengamma.pdf figs/ttd-corrona-ipdsurv-gengamma.pdf
 all: figs/ttd-bsrbr-ipdsurv-comp-gengamma-by-eular.pdf
@@ -18,7 +18,7 @@ all: figs/haq-lcgm-obsexp.pdf
 all: tables/ttd-corrona-ipdsurv-ic.csv tables/ttd-bsrbr-ipdsurv-eular-ic.csv
 all: tables/ttd-bsrbr-ipdsurv-eular-adjusted-ic.csv
 
-# treatment lookup
+# Treatment lookup
 $(DATA)/treatments.rda: treatments.R treatments.csv
 	Rscript treatments.R
 	
@@ -45,7 +45,7 @@ $(DATA)/haq-lprog.rda: haq-lprog.R treatments.csv
 $(DATA)/haq-lcgm.rda figs/haq-lcgm-obsexp.pdf: haq-lcgm.R coef-norton-2014.csv
 	Rscript haq-lcgm.R
 	
-# treatment duration
+# Treatment duration
 TD_DEPS := ttd.R func.R ttd-bsrbr-eular-good-ggamma.csv ttd-bsrbr-eular-good-risk.csv 
 TD_DEPS += ttd-bsrbr-eular-moderate-ggamma.csv ttd-bsrbr-eular-moderate-risk.csv
 TD_DEPS += ttd-corrona-allpat.csv ttd-corrona-allpat-risk.csv
@@ -57,7 +57,7 @@ TD_TARGET := tables/ttd-bsrbr-ipdsurv-eular-adjusted-ic.csv
 $(TD_TARGET): $(TD_DEPS)
 	Rscript ttd.R
 	
-# serious infections
+# Serious infections
 $(DATA)/ttsi.rda:	ttsi.R treatments.csv
 	Rscript ttsi.R
 	
@@ -75,11 +75,11 @@ $(DATA)/lifetable-male.rda: lifetable.R
 $(DATA)/lifetable-female.rda: lifetable.R
 	Rscript lifetable.R
 	
-# utility
+# Utility
 $(DATA)/pain.rda $(DATA)/utility-mixture.rda $(DATA)/utility-wailoo.rda: utility.R coef-alava-2013.csv vcov-alava-2013.csv
 	Rscript utility.R 
 	
 # Costs
-$(DATA)/treat-cost.rda $(DATA)/hosp-cost.rda $(DATA)/mgmt-cost.rda $(DATA)/prod-loss.rda: cost.R cost.xlsx
+$(DATA)/tx-cost.rda $(DATA)/hosp-cost.rda $(DATA)/mgmt-cost.rda $(DATA)/prod-loss.rda: cost.R cost.xlsx
 	Rscript cost.R
 	

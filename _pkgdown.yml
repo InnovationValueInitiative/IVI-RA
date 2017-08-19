@@ -39,7 +39,7 @@ reference:
       - lifetable
       - mort.or
       - mort.hr.haqdif
-      - treat.cost
+      - tx.cost
       - hosp.cost
       - mgmt.cost
       - pain

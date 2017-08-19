@@ -15,7 +15,7 @@
 #' @param ltmale Identical to \code{ltfemale} but for men.
 #' @param acr2eular_mat A two-way frequency matrix with columns denoting EULAR response
 #'  (none, moderate, good) and rows denoting ACR response  (<20, 20-50, 50-70, 70+).
-#' @param treat_cost Treatment cost matrix and treatment lookup in format of iviRA::treat.cost.
+#' @param tx_cost Treatment cost matrix and treatment lookup in format of iviRA::tx.cost.
 #' @param mort_logor Log odds ratio of impact of baseline HAQ on probability of mortality.
 #' @param mort_logor_se Standard error of log odds ratio of impact of baseline HAQ on probability of mortality.
 #' @param mort_loghr_haqdif Log hazard ratio of impact of change in HAQ from baseline on mortality rate. A vector with
@@ -52,7 +52,7 @@
 #' for biologic experienced patients (i.e., lines 2 and later).
 #' @param nma_haq_rr_upper Upper bound for proportion reduction (i.e., relative risk) in HAQ
 #' for biologic experienced patients (i.e., lines 2 and later).
-#' @param treat_hist Is patient biologic naive or experienced. If naive NMA results for biologic 
+#' @param tx_hist Is patient biologic naive or experienced. If naive NMA results for biologic 
 #' naive patients are used during 1st line and biologic experienced NMA results are used
 #' for subsequent lines. If experienced, NMA results for biologic
 #' experienced patients are using during 1st and subsequent lines.
@@ -95,7 +95,7 @@
 #' @return List containing samples for the following model parameters:
 #' 
 #' \describe{
-#'  \item{treat.cost}{\code{data.table} of treatment cost data.}
+#'  \item{tx.cost}{\code{data.table} of treatment cost data.}
 #'  \item{ltmale}{Lifetable for males with qx transformed using the logit function.}
 #'   \item{ltfemale}{Lifetable for females with qx transformed using the logit function.}
 #'  \item{acr2eular}{An array of matrices. Each matrix represents a random sample of the conditional 
@@ -214,7 +214,7 @@
 sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
                        ltfemale = iviRA::lifetable.female, ltmale = iviRA::lifetable.male,
                        acr2eular_mat = iviRA::acr2eular,
-                       treat_cost = iviRA::treat.cost,
+                       tx_cost = iviRA::tx.cost,
                        mort_logor = iviRA::mort.or$logor, mort_logor_se = iviRA::mort.or$logor_se,
                        mort_loghr_haqdif = iviRA::mort.hr.haqdif$loghr,
                        mort_loghr_se_haqdif = iviRA::mort.hr.haqdif$loghr_se,
@@ -228,7 +228,7 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
                        nma_haq_mean = iviRA::nma.haq.naive$mean,
                        nma_haq_vcov = iviRA::nma.haq.naive$vcov,
                        nma_haq_rr_lower = .75, nma_haq_rr_upper = .92,
-                       treat_hist = c("naive", "exp"),
+                       tx_hist = c("naive", "exp"),
                        haq_lprog_tx_mean = iviRA::haq.lprog$tx$est,
                        haq_lprog_tx_se = iviRA::haq.lprog$tx$se,
                        haq_lcgm_pars = iviRA::haq.lcgm,
@@ -261,10 +261,10 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
   sim$n <- n
   sim$rebound <- runif(n, rebound_lower, rebound_upper)
   sim$lt <- lt_data(ltmale, ltfemale)
-  sim$treat.cost <- c(treat_cost,
-                      list(discount = sample_uniforms(n, lower = treat_cost$cost$discount_lower, 
-                                      treat_cost$cost$discount_upper, 
-                                      col_names = treat_cost$cost$sname)))
+  sim$tx.cost <- c(tx_cost,
+                      list(discount = sample_uniforms(n, lower = tx_cost$cost$discount_lower, 
+                                      tx_cost$cost$discount_upper, 
+                                      col_names = tx_cost$cost$sname)))
   sim$acr2eular <- sample_dirichlets(n, acr2eular_mat)
   sim$acr2sdai <- sample_uniforms(n, acr2sdai_lower, acr2sdai_upper, acr.cats)
   sim$acr2cdai <- sample_uniforms(n, acr2cdai_lower, acr2cdai_upper, acr.cats)
@@ -275,15 +275,15 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
   sim$ttd.all <- sample_survpars(n, ttd_all)
   sim$ttd.da <- sample_survpars(n, ttd_da)
   sim$ttd.eular <- sample_stratified_survpars(n, ttd_eular)
-  treat_hist <- match.arg(treat_hist)
+  tx_hist <- match.arg(tx_hist)
   sim$acr <- sample_nma_acr(n, nma_acr_mean, nma_acr_vcov, rr_lower = nma_acr_rr_lower,
-                            rr_upper = nma_acr_rr_upper, hist = treat_hist,
+                            rr_upper = nma_acr_rr_upper, hist = tx_hist,
                             tx_names = tx_names)
   sim$das28 <- sample_nma_lm(n, nma_das28_mean, nma_das28_vcov, rr_lower = nma_das28_rr_lower,
-                             rr_upper = nma_das28_rr_upper, hist = treat_hist,
+                             rr_upper = nma_das28_rr_upper, hist = tx_hist,
                              tx_names = tx_names)
   sim$haq <- sample_nma_lm(n, nma_haq_mean, nma_haq_vcov, rr_lower = nma_haq_rr_lower,
-                           rr_upper = nma_haq_rr_upper, hist = treat_hist,
+                           rr_upper = nma_haq_rr_upper, hist = tx_hist,
                            tx_names = tx_names)
   sim$eular2haq <- sample_normals(n, eular2haq_mean, eular2haq_se,
                                  col_names = c("no_response", "moderate_response", "good_response"))
@@ -437,7 +437,7 @@ sample_uniforms <- function(n, lower, upper, col_names = NULL){
 #' @param vcov Variance-covariance matrix of coefficients.
 #' @param rr_lower Lower bound for relative risk.
 #' @param rr_upper Upper bound for relative risk.
-#' @param hist Patient history equivalent to treat_hist in \link{sample_pars}
+#' @param hist Patient history equivalent to tx_hist in \link{sample_pars}
 #' @return List containing posterior samples of changes in outcomes.
 #' 
 #' @export
@@ -466,7 +466,7 @@ sample_nma_lm <- function(nsims, m, vcov, rr_lower, rr_upper, hist, tx_names){
 #' @param vcov Variance-covariance matrix of coefficients.
 #' @param rr_lower Lower bound for relative risk.
 #' @param rr_upper Upper bound for relative risk.
-#' @param hist Patient history equivalent to treat_hist in \link{sample_pars}.
+#' @param hist Patient history equivalent to tx_hist in \link{sample_pars}.
 #' @return List containing posterior sample of ACR response for each therapy
 #' 
 #' @export

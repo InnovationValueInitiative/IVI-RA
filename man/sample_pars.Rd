@@ -6,7 +6,7 @@
 \usage{
 sample_pars(n = 100, rebound_lower = 0.7, rebound_upper = 1,
   ltfemale = iviRA::lifetable.female, ltmale = iviRA::lifetable.male,
-  acr2eular_mat = iviRA::acr2eular, treat_cost = iviRA::treat.cost,
+  acr2eular_mat = iviRA::acr2eular, tx_cost = iviRA::tx.cost,
   mort_logor = iviRA::mort.or$logor,
   mort_logor_se = iviRA::mort.or$logor_se,
   mort_loghr_haqdif = iviRA::mort.hr.haqdif$loghr,
@@ -18,7 +18,7 @@ sample_pars(n = 100, rebound_lower = 0.7, rebound_upper = 1,
   nma_das28_vcov = iviRA::nma.das28.naive$vcov, nma_das28_rr_lower = 0.75,
   nma_das28_rr_upper = 0.92, nma_haq_mean = iviRA::nma.haq.naive$mean,
   nma_haq_vcov = iviRA::nma.haq.naive$vcov, nma_haq_rr_lower = 0.75,
-  nma_haq_rr_upper = 0.92, treat_hist = c("naive", "exp"),
+  nma_haq_rr_upper = 0.92, tx_hist = c("naive", "exp"),
   haq_lprog_tx_mean = iviRA::haq.lprog$tx$est,
   haq_lprog_tx_se = iviRA::haq.lprog$tx$se, haq_lcgm_pars = iviRA::haq.lcgm,
   eular2haq_mean = iviRA::eular2haq$mean,
@@ -62,7 +62,7 @@ the probability of death at a given age.}
 \item{acr2eular_mat}{A two-way frequency matrix with columns denoting EULAR response
 (none, moderate, good) and rows denoting ACR response  (<20, 20-50, 50-70, 70+).}
 
-\item{treat_cost}{Treatment cost matrix and treatment lookup in format of iviRA::treat.cost.}
+\item{tx_cost}{Treatment cost matrix and treatment lookup in format of iviRA::tx.cost.}
 
 \item{mort_logor}{Log odds ratio of impact of baseline HAQ on probability of mortality.}
 
@@ -119,7 +119,7 @@ for biologic experienced patients (i.e., lines 2 and later).}
 \item{nma_haq_rr_upper}{Upper bound for proportion reduction (i.e., relative risk) in HAQ
 for biologic experienced patients (i.e., lines 2 and later).}
 
-\item{treat_hist}{Is patient biologic naive or experienced. If naive NMA results for biologic 
+\item{tx_hist}{Is patient biologic naive or experienced. If naive NMA results for biologic 
 naive patients are used during 1st line and biologic experienced NMA results are used
 for subsequent lines. If experienced, NMA results for biologic
 experienced patients are using during 1st and subsequent lines.}
@@ -192,7 +192,7 @@ for general management of RA.}
 List containing samples for the following model parameters:
 
 \describe{
- \item{treat.cost}{\code{data.table} of treatment cost data.}
+ \item{tx.cost}{\code{data.table} of treatment cost data.}
  \item{ltmale}{Lifetable for males with qx transformed using the logit function.}
   \item{ltfemale}{Lifetable for females with qx transformed using the logit function.}
  \item{acr2eular}{An array of matrices. Each matrix represents a random sample of the conditional 

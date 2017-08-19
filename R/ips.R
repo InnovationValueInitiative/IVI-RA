@@ -135,11 +135,11 @@ sim_iviRA <- function(arms, input_data, pars, model_structures,
   }
   
   ## treatment costs
-  tc <- pars$treat.cost
+  tc <- pars$tx.cost
   tc.arms <- cbind(arms, "nbt")
   lookup.inds <- match(tc.arms, tc$lookup$sname)
   agents <- aperm(array(match(unlist(tc$lookup[lookup.inds, -1, with = FALSE]),
-                         iviRA::treat.cost$cost$sname) - 1,
+                         iviRA::tx.cost$cost$sname) - 1,
                    dim = c(nrow(tc.arms), ncol(tc.arms), ncol(tc$lookup) - 1)),
                   perm = c(2, 3, 1))
   
@@ -481,13 +481,13 @@ check_pars <- function(x, arminds, mod_struct){
   }
   
   # treatment costs
-  if(is.null(x$treat.cost)) stop("'treat.cost' element of pars not given")
-  if(!is.list(x$treat.cost)) top("'treat.cost' element of pars must be a list")
+  if(is.null(x$tx.cost)) stop("'tx.cost' element of pars not given")
+  if(!is.list(x$tx.cost)) top("'tx.cost' element of pars must be a list")
   for (i in c("sname", "init_dose_val", "ann_dose_val", "strength_val",
               "init_num_doses", "ann_num_doses", "price_per_unit",
               "infusion_cost", "loading_dose", "weight_based")){
-    if(is.null(x$treat.cost$cost[[i]])) {
-      stop(paste0("'treat.cost' element of pars must contain column ", "'", i, "'"))
+    if(is.null(x$tx.cost$cost[[i]])) {
+      stop(paste0("'tx.cost' element of pars must contain column ", "'", i, "'"))
     } 
   }
   

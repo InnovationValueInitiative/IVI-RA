@@ -3,7 +3,7 @@
 #' Convert a list of matrices to an array.
 #' 
 #' @param l List of matrices
-#' @export
+#' @keywords internal
 list2array <- function(l){
   if (class(l[[1]]) == "numeric"){
       dim1 <- 1; dim2 <- length(l[[1]]); dim3 <- length(l)

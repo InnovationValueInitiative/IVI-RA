@@ -154,7 +154,7 @@
 
     <pre class="usage"><span class='fu'>sample_pars</span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>rebound_lower</span> <span class='kw'>=</span> <span class='fl'>0.7</span>, <span class='kw'>rebound_upper</span> <span class='kw'>=</span> <span class='fl'>1</span>,
   <span class='kw'>ltfemale</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/lifetable'>lifetable.female</a></span>, <span class='kw'>ltmale</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/lifetable'>lifetable.male</a></span>,
-  <span class='kw'>acr2eular_mat</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/acr2eular'>acr2eular</a></span>, <span class='kw'>treat_cost</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/treat.cost'>treat.cost</a></span>,
+  <span class='kw'>acr2eular_mat</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/acr2eular'>acr2eular</a></span>, <span class='kw'>tx_cost</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/tx.cost'>tx.cost</a></span>,
   <span class='kw'>mort_logor</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/mort.or'>mort.or</a></span>$<span class='no'>logor</span>,
   <span class='kw'>mort_logor_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/mort.or'>mort.or</a></span>$<span class='no'>logor_se</span>,
   <span class='kw'>mort_loghr_haqdif</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/mort.hr.haqdif'>mort.hr.haqdif</a></span>$<span class='no'>loghr</span>,
@@ -166,7 +166,7 @@
   <span class='kw'>nma_das28_vcov</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/nma'>nma.das28.naive</a></span>$<span class='no'>vcov</span>, <span class='kw'>nma_das28_rr_lower</span> <span class='kw'>=</span> <span class='fl'>0.75</span>,
   <span class='kw'>nma_das28_rr_upper</span> <span class='kw'>=</span> <span class='fl'>0.92</span>, <span class='kw'>nma_haq_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/nma'>nma.haq.naive</a></span>$<span class='no'>mean</span>,
   <span class='kw'>nma_haq_vcov</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/nma'>nma.haq.naive</a></span>$<span class='no'>vcov</span>, <span class='kw'>nma_haq_rr_lower</span> <span class='kw'>=</span> <span class='fl'>0.75</span>,
-  <span class='kw'>nma_haq_rr_upper</span> <span class='kw'>=</span> <span class='fl'>0.92</span>, <span class='kw'>treat_hist</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"naive"</span>, <span class='st'>"exp"</span>),
+  <span class='kw'>nma_haq_rr_upper</span> <span class='kw'>=</span> <span class='fl'>0.92</span>, <span class='kw'>tx_hist</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"naive"</span>, <span class='st'>"exp"</span>),
   <span class='kw'>haq_lprog_tx_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/haq.lprog'>haq.lprog</a></span>$<span class='no'>tx</span>$<span class='no'>est</span>,
   <span class='kw'>haq_lprog_tx_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/haq.lprog'>haq.lprog</a></span>$<span class='no'>tx</span>$<span class='no'>se</span>, <span class='kw'>haq_lcgm_pars</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/haq.lcgm'>haq.lcgm</a></span>,
   <span class='kw'>eular2haq_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/eular2haq'>eular2haq</a></span>$<span class='no'>mean</span>,
@@ -225,8 +225,8 @@ the probability of death at a given age.</p></td>
 (none, moderate, good) and rows denoting ACR response  (&lt;20, 20-50, 50-70, 70+).</p></td>
     </tr>
     <tr>
-      <th>treat_cost</th>
-      <td><p>Treatment cost matrix and treatment lookup in format of iviRA::treat.cost.</p></td>
+      <th>tx_cost</th>
+      <td><p>Treatment cost matrix and treatment lookup in format of iviRA::tx.cost.</p></td>
     </tr>
     <tr>
       <th>mort_logor</th>
@@ -322,7 +322,7 @@ for biologic experienced patients (i.e., lines 2 and later).</p></td>
 for biologic experienced patients (i.e., lines 2 and later).</p></td>
     </tr>
     <tr>
-      <th>treat_hist</th>
+      <th>tx_hist</th>
       <td><p>Is patient biologic naive or experienced. If naive NMA results for biologic 
 naive patients are used during 1st line and biologic experienced NMA results are used
 for subsequent lines. If experienced, NMA results for biologic
@@ -455,7 +455,7 @@ for general management of RA.</p></td>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>List containing samples for the following model parameters:</p><dl class='dl-horizontal'>
- <dt>treat.cost</dt><dd><p><code>data.table</code> of treatment cost data.</p></dd>
+ <dt>tx.cost</dt><dd><p><code>data.table</code> of treatment cost data.</p></dd>
  <dt>ltmale</dt><dd><p>Lifetable for males with qx transformed using the logit function.</p></dd>
   <dt>ltfemale</dt><dd><p>Lifetable for females with qx transformed using the logit function.</p></dd>
  <dt>acr2eular</dt><dd><p>An array of matrices. Each matrix represents a random sample of the conditional 
