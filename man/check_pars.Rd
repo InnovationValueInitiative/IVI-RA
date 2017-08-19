@@ -2,20 +2,10 @@
 % Please edit documentation in R/ips.R
 \name{check_pars}
 \alias{check_pars}
-\title{Check parameters for ivi_RA}
+\title{Check parameters passed to ivi_RA}
 \usage{
-check_pars(arminds, input_data, pars, tx_ihaq, tx_iswitch)
-}
-\arguments{
-\item{input_data}{\code{input_data} as passed to \link{sim_haq}.}
-
-\item{pars}{\code{pars} as passed to \link{sim_haq}.}
-
-\item{tx_ihaq}{Treatment to HAQ pathway first 6 months.}
-
-\item{tx_iswitch}{Treatment switching pathway first 6 months.}
+check_pars(x, arminds, mod_struct)
 }
 \description{
-Error messages when incorrect parameters are passed to ivi_RA.
+Check parameters passed to ivi_RA
 }
-\keyword{internal}

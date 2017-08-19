@@ -89,6 +89,11 @@ sim_iviRA <- function(arms, input_data, pars, model_structures,
   arminds <- matrix(match(arms, treatment_lookup), nrow = nrow(arms),
                     ncol = ncol(arms))
   
+  # check parameter samples are the right format
+  if (check == TRUE){
+    check_pars(pars, arminds, model_structures)
+  }
+  
   ## indexing
   cdmards.ind <- which(iviRA::treatments$sname == "cdmards") - 1
   nbt.ind <- which(iviRA::treatments$sname == "nbt") - 1
@@ -344,107 +349,86 @@ select_model_structures <- function(tx_ihaq = "acr-haq",
   return(model.structure)
 }
 
-#' Check parameters for ivi_RA
-#'
-#' Error messages when incorrect parameters are passed to ivi_RA.
-#' 
-#' @param input_data \code{input_data} as passed to \link{sim_haq}.
-#' @param pars \code{pars} as passed to \link{sim_haq}.
-#' @param tx_ihaq Treatment to HAQ pathway first 6 months.
-#' @param tx_iswitch Treatment switching pathway first 6 months.
-#' @keywords internal
-check_pars <- function(arminds, input_data, pars, tx_ihaq, tx_iswitch){
+#' Check parameters passed to ivi_RA
+check_pars <- function(x, arminds, mod_struct){
   names.dist <- c("exponential", "exp", "weibull", "gompertz", "gamma", "llogis",
                   "lnorm", "gengamma")
   arminds.unique <- unique(c(arminds))
+  n <- x$n
+  tx.ihaq <- unique(mod_struct[, "tx_ihaq"])
+  tx.iswitch <- unique(mod_struct[, "tx_iswitch"])
   
-  # check input data
-  if(is.null(input_data$haq0)) stop("'haq0' element of input_data list not given")
-  if(is.null(input_data$age)) stop("'age' element of input_data list not given")
-  if(is.null(input_data$male)) stop("'male' element of input_data list not given")
-  if(is.null(input_data$x.mort)) stop("'x.mort' element of input_data list not given")
-  if(is.null(input_data$x.ttd)) stop("'x.ttd' element of input_data list not given")
-  n <- input_data$n
-  if(length(input_data$age) != n  |
-     nrow(input_data$x.mort) !=n | nrow(input_data$x.ttd) != n) {
-      stop(paste0("Number of patients not consistent accross elements of the input_data list.",
-                  " Should equal ", n))
-  }
-  
-  # check parameter inputs
-  n <- pars$n
-  
-  ## rebound
-  if(is.null(pars$rebound)) stop("'rebound' element of pars list not given")
-  if(!is.vector(pars$rebound))  stop("'rebound' element of pars list must be a vector")
-  if(length(pars$rebound) != n) {
+  # rebound
+  if(is.null(x$rebound)) stop("'rebound' element of pars list not given")
+  if(!is.vector(x$rebound))  stop("'rebound' element of pars list must be a vector")
+  if(length(x$rebound) != n) {
     stop(paste0("Length of 'rebound' element of pars must be equal to the number of ",
          "sampled parameter sets which equals ", n))
   }
   
-  ## acr2eular
-  if(is.null(pars$acr2eular)) stop("'acr2eular' element of pars list not given")
-  if(!is.array(pars$acr2eular))  stop("'acr2eular' element of pars list must be an array")
-  if(dim(pars$acr2eular)[1] != 4) stop("First dimension of 'acr2eular' element of pars must be 4")
-  if(dim(pars$acr2eular)[2] != 3) stop("Second dimension of 'acr2eular' element of pars must be 3")
-  if(dim(pars$acr2eular)[3] != n) {
+  # acr2eular
+  if(is.null(x$acr2eular)) stop("'acr2eular' element of pars list not given")
+  if(!is.array(x$acr2eular))  stop("'acr2eular' element of pars list must be an array")
+  if(dim(x$acr2eular)[1] != 4) stop("First dimension of 'acr2eular' element of pars must be 4")
+  if(dim(x$acr2eular)[2] != 3) stop("Second dimension of 'acr2eular' element of pars must be 3")
+  if(dim(x$acr2eular)[3] != n) {
     stop(paste0("Third dimension of 'acr2eular' element of pars must be equal to the number of",
          "sampled parameter sets which equals ", n))
   }
 
-  ## eular2haq
-  if(is.null(pars$eular2haq)) stop("'eular2haq' element of pars list not given")
-  if(!is.matrix(pars$eular2haq))  stop("'eular2haq' element of pars list must be a matrix")
-  if(ncol(pars$eular2haq) != 3) stop("Number of columns of 'eular2haq' element of pars must be 3")
-  if(nrow(pars$eular2haq) != n){
+  # eular2haq
+  if(is.null(x$eular2haq)) stop("'eular2haq' element of pars list not given")
+  if(!is.matrix(x$eular2haq))  stop("'eular2haq' element of pars list must be a matrix")
+  if(ncol(x$eular2haq) != 3) stop("Number of columns of 'eular2haq' element of pars must be 3")
+  if(nrow(x$eular2haq) != n){
     stop(paste0("Number of rows in 'eular2haq' element of pars must be equal to the number ",
          "of sampled parameter sets which equals ", n))
   } 
   
-  ## haq.lprog.tx
-  if(is.null(pars$haq.lprog.tx)) stop("'haq.lprog.tx' element of pars list not given")
-  if(!is.matrix(pars$haq.lprog.tx))  stop("'haq.lprog.tx' element of pars list must be a matrix")
-  if(nrow(pars$haq.lprog.tx) != n) {
+  # haq.lprog.tx
+  if(is.null(x$haq.lprog.tx)) stop("'haq.lprog.tx' element of pars list not given")
+  if(!is.matrix(x$haq.lprog.tx))  stop("'haq.lprog.tx' element of pars list must be a matrix")
+  if(nrow(x$haq.lprog.tx) != n) {
     stop(paste0("Number of rows in 'haq.lprog.tx' element of pars must be equal to the number ",
                 "of sampled parameter sets which equals ", n))
   } 
   
-  ## haq.lprog.age
-  if(is.null(pars$haq.lprog.age)) stop("'haq.lprog.age' element of pars list not given")
-  if(!is.matrix(pars$haq.lprog.age))  stop("'haq.lprog.age' element of pars list must be a matrix")
-  if(ncol(pars$haq.lprog.age) != 3) stop("Number of columns in 'haq.lprog.age' element of pars must be 3")
-  if(nrow(pars$haq.lprog.age) != n) {
+  # haq.lprog.age
+  if(is.null(x$haq.lprog.age)) stop("'haq.lprog.age' element of pars list not given")
+  if(!is.matrix(x$haq.lprog.age))  stop("'haq.lprog.age' element of pars list must be a matrix")
+  if(ncol(x$haq.lprog.age) != 3) stop("Number of columns in 'haq.lprog.age' element of pars must be 3")
+  if(nrow(x$haq.lprog.age) != n) {
     stop(paste0("Number of rows in 'haq.lprog.age' element of pars must be equal to the number ",
                 "of sampled parameter sets which equals ", n))
   }
 
-  ## logor.mort
-  if(is.null(pars$logor.mort)) stop("'logor.mort' element of pars list not given")
-  if(!is.matrix(pars$logor.mort))  stop("'logor.mort' element of pars list must be a matrix")
-  if(nrow(pars$logor.mort) != n) {
+  # logor.mort
+  if(is.null(x$logor.mort)) stop("'logor.mort' element of pars list not given")
+  if(!is.matrix(x$logor.mort))  stop("'logor.mort' element of pars list must be a matrix")
+  if(nrow(x$logor.mort) != n) {
     stop(paste0("Number of rows in 'logor.mort' element of pars must be equal to the number ",
                 "of sampled parameter sets which equals ", n))
   }
   
-  ## mort.loghr.haqdif
-  if(is.null(pars$mort.loghr.haqdif)) stop("'mort.loghr.haqdif' element of pars list not given")
-  if(!is.matrix(pars$mort.loghr.haqdif))  stop("'mort.loghr.haqdif' element of pars list must be a matrix")
-  if(ncol(pars$mort.loghr.haqdif) != 5) stop("Number of columns in 'mort.loghr.haqdif' element of pars must be 5")
-  if(nrow(pars$mort.loghr.haqdif) != n) {
+  # mort.loghr.haqdif
+  if(is.null(x$mort.loghr.haqdif)) stop("'mort.loghr.haqdif' element of pars list not given")
+  if(!is.matrix(x$mort.loghr.haqdif))  stop("'mort.loghr.haqdif' element of pars list must be a matrix")
+  if(ncol(x$mort.loghr.haqdif) != 5) stop("Number of columns in 'mort.loghr.haqdif' element of pars must be 5")
+  if(nrow(x$mort.loghr.haqdif) != n) {
     stop(paste0("Number of rows in 'mort.loghr.haqdif' element of pars must be equal to the number ",
                 "of sampled parameter sets which equals ", n))
   }
   
-  ## ttsi
-  if(is.null(pars$ttsi)) stop("'ttsi' element of pars list not given")
-  if(!is.matrix(pars$ttsi))  stop("'ttsi' element of pars list must be a matrix")
+  # ttsi
+  if(is.null(x$ttsi)) stop("'ttsi' element of pars list not given")
+  if(!is.matrix(x$ttsi))  stop("'ttsi' element of pars list must be a matrix")
   
-  ## ttd.eular
-  if(is.null(pars$ttd.eular)) stop("'ttd.eular' element of pars list not given")
-  for (i in 1:length(pars$ttd.eular)){
-    if(!is.list(pars$ttd.eular[[i]]))  stop("Second level of 'ttd.eular' element of pars list 
+  # ttd.eular
+  if(is.null(x$ttd.eular)) stop("'ttd.eular' element of pars list not given")
+  for (i in 1:length(x$ttd.eular)){
+    if(!is.list(x$ttd.eular[[i]]))  stop("Second level of 'ttd.eular' element of pars list 
                                           must be a list")
-    J <- length(pars$ttd.eular[[i]])
+    J <- length(x$ttd.eular[[i]])
     # for (j in 1:J){
     #   if(all(!names(pars$ttd.eular.mod) %in% names.dist)) {
     #     dists.bad <- names(pars$ttd.eular.mod)[which(!names(pars$ttd.eular.mod) %in% names.dist)]
@@ -455,45 +439,118 @@ check_pars <- function(arminds, input_data, pars, tx_ihaq, tx_iswitch){
     #   }
     # }  # code similar to this needs to be added to all ttd survival distributions
   }
-  ## ttd.da
-  if(is.null(pars$ttd.da)) stop("'ttd.da' element of pars list not given")
+  # ttd.da
+  if(is.null(x$ttd.da)) stop("'ttd.da' element of pars list not given")
   
-  ## lt 
-  if(is.null(pars$lt)) stop("'lt' element of pars list not given")
-  if (!all(names(pars$lt) %in% c("female", "male"))) stop(paste0("'lt' element of pars must contain ",
+  # lt 
+  if(is.null(x$lt)) stop("'lt' element of pars list not given")
+  if (!all(names(x$lt) %in% c("female", "male"))) stop(paste0("'lt' element of pars must contain ",
                                                           "lifetables named 'male' and 'female'"))
-  if(ncol(pars$lt$male) != 3 | ncol(pars$lt$female) != 3){
+  if(ncol(x$lt$male) != 3 | ncol(x$lt$female) != 3){
     stop("Number of columns in 'lt$female' element of pars and 'lt$male' must be 3")
   } 
   
-  ## NMA ACR
-  nma.acr1 <- pars$acr$p1[, , arminds.unique]
-  nma.acr2 <- pars$acr$p2[, , arminds.unique]
-  if (tx_ihaq %in% c("acr-haq", "acr-eular-haq")){
+  # NMA ACR
+  nma.acr1 <- x$acr$p1[, , arminds.unique]
+  nma.acr2 <- x$acr$p2[, , arminds.unique]
+  if (any(tx.ihaq %in% c("acr-haq", "acr-eular-haq"))){
     if (any(is.na(nma.acr1) | is.na(nma.acr2))){
       stop ("'acr' element of pars has missing parameter values for one of the selected treatment 
             arms; that is, the NMA results are missing.")
     }
   }
 
-  ## NMA HAQ
-  nma.haq1 <- pars$haq$dy1[, arminds.unique]
-  nma.haq2 <- pars$haq$dy2[, arminds.unique] 
-  if (tx_ihaq == "haq"){
+  # NMA HAQ
+  nma.haq1 <- x$haq$dy1[, arminds.unique]
+  nma.haq2 <- x$haq$dy2[, arminds.unique] 
+  if (any(tx.ihaq %in% "haq")){
     if (any(is.na(nma.haq1) | is.na(nma.haq2))){
       stop ("'haq' element of pars has missing parameter values for one of the selected treatment 
             arms; that is, the NMA results are missing.")
     }
   }
   
-  ## NMA DA28
-  nma.das28.1 <- pars$das28$dy1[, arminds.unique]
-  nma.das28.2 <- pars$das28$dy2[, arminds.unique] 
-  if (tx_iswitch == "das28-switch"){
+  # NMA DA28
+  nma.das28.1 <- x$das28$dy1[, arminds.unique]
+  nma.das28.2 <- x$das28$dy2[, arminds.unique] 
+  if (any(tx.iswitch %in% "das28-switch")){
     if (any(is.na(nma.das28.1) | is.na(nma.das28.1))){
       stop ("'das28' element of pars has missing parameter values for one of the selected treatment 
             arms; that is, the NMA results are missing.")
     }
+  }
+  
+  # treatment costs
+  if(is.null(x$treat.cost)) stop("'treat.cost' element of pars not given")
+  if(!is.list(x$treat.cost)) top("'treat.cost' element of pars must be a list")
+  for (i in c("sname", "init_dose_val", "ann_dose_val", "strength_val",
+              "init_num_doses", "ann_num_doses", "price_per_unit",
+              "infusion_cost", "loading_dose", "weight_based")){
+    if(is.null(x$treat.cost$cost[[i]])) {
+      stop(paste0("'treat.cost' element of pars must contain column ", "'", i, "'"))
+    } 
+  }
+  
+  # hospital cost
+  if(is.null(x$hosp.cost)) stop("'hosp.cost' element of pars not given")
+  if(!any(names(x$hosp.cost) %in% "hosp.days")){
+    stop("'hosp.days' element of pars$hosp.cost not given")
+  }
+  if(!is.matrix(x$hosp.cost$hosp.days)){
+    stop("'hosp.days' element of pars$hosp.cost must be a matrix")
+  }
+  if(ncol(x$hosp.cost$hosp.days) != 6){
+    stop("Number of columns in 'hosp.days' element of pars$hosp.cost must be 6")
+  }
+  if(nrow(x$hosp.cost$hosp.days) != n){
+    stop(paste0("Number of rows in 'hosp.days' element of pars$hosp.cost must ",
+                "be equal to the number of sampled parameter sets which equals ", n))
+  }
+  if(!any(names(x$hosp.cost) %in% "cost.pday")){
+    stop("'cost.pday' element of pars$hosp.cost not given")
+  }
+  if(!is.matrix(x$hosp.cost$cost.pday)){
+    stop("'cost.pday' element of pars$hosp.cost must be a matrix")
+  }
+  if(ncol(x$hosp.cost$cost.pday) != 6){
+    stop("Number of columns in 'cost.pday' element of pars$hosp.cost must be 6")
+  }
+  if(nrow(x$hosp.cost$cost.pday) != n){
+    stop(paste0("Number of rows in 'cost.pday' element of pars$hosp.cost must ",
+                "be equal to the number of sampled parameter sets which equals ", n))
+  }
+  
+  # management cost
+  if(is.null(x$mgmt.cost)) stop("'mgmt.cost' element of pars not given")
+  if(!is.matrix(x$mgmt.cost)) stop("'mgmt.cost' element of pars must be a matrix")
+  if(ncol(x$mgmt.cost) != 4) stop("Number of columns in 'mgmt.cost' element of pars must be 4")
+  if(nrow(x$mgmt.cost) != n){
+    stop(paste0("Number of rows of 'mgmt.cost' element of pars must be equal to the number ",
+                "of sampled parameter sets which equals ", n))
+  }
+  
+  # serious infection cost
+  if(is.null(x$si.cost)) stop("'si.cost' element of pars not given")
+  if(!is.vector(x$si.cost)) stop("'si.cost' element of pars must be a vector")
+  if(length(x$si.cost) != n) {
+    stop(paste0("Length of 'si.cost' element of pars must be equal to the number ",
+                "of sampled parameter sets which equals ", n))
+  }
+  
+  # productivity loss
+  if(is.null(x$prod.loss)) stop("'prod.loss' element of pars not given")
+  if(!is.vector(x$prod.loss)) stop("'prod.loss' element of pars must be a vector")
+  if(length(x$prod.loss) != n){
+    stop(paste0("Number of rows in 'prod.loss' element of pars must ",
+                "be equal to the number of sampled parameter sets which equals ", n))
+  }
+  
+  # serious infection utility loss
+  if(is.null(x$si.ul)) stop("'si.ul' element of pars not given")
+  if(!is.vector(x$si.ul)) stop("'si.ul' element of pars must be a vector")
+  if(length(x$si.ul) != n){
+    stop(paste0("Number of rows in 'si.ul' element of pars must ",
+                "be equal to the number of sampled parameter sets which equals ", n))
   }
 }
 
@@ -668,108 +725,6 @@ check_sim_utility_wailoo <- function(simhaq, haq0, male, prev_dmards, coefs){
   }
 }
 
-#' Check parameters of sim_hc_cost
-#'
-#' Error messages when incorrect inputs are passed to sim_hc_cost.
-#' 
-#' @param simhaq Simulation output from \link{sim_haq}.
-#' @param weight Weight of patient.
-#' @param pars \code{pars} as passed to \link{sim_hc_cost}.
-#' @keywords internal
-check_sim_hc_cost <- function(simhaq, weight, pars){
-  # simhaq
-  if(is.null(simhaq$tx)) stop("'tx' column of 'simhaq' is missing")
-  if(is.null(simhaq$tx_cycle)) stop("'tx_cycle' column of 'simhaq' is missing")
-  if(is.null(simhaq$id)) stop("'id' column of 'simhaq' is missing")
-  if(is.null(simhaq$haq)) stop("'haq' column of 'simhaq' is missing")
-  if(is.null(simhaq$yrlen)) stop("'yrlen' column of 'simhaq' is missing")
-  if(is.null(simhaq$sim)) stop("'sim' column of 'simhaq' is missing")
-  
-  ## weight
-  if(is.null(weight)) stop("'weight' element not given")
-  
-  ## pars
-  n <- pars$n
-  # treatment costs
-  if(is.null(pars$treat.cost)) stop("'treat.cost' element of pars not given")
-  if(!is.data.frame(pars$treat.cost)) top("'treat.cost' element of pars must be a data.frame")
-  for (i in c("ann_infusion_cost", "ann_rx_cost", "init_infusion_cost", "init_rx_cost",
-              "weight_based", "ann_wgt_slope", "init_wgt_slope", "ann_util", 
-              "init_util", "strength", "price")){
-    if(is.null(pars$treat.cost[[i]])) {
-      stop(paste0("'treat.cost' element of pars must contain column ", "'", i, "'"))
-    } 
-  }
-  
-  # hospital cost
-  if(is.null(pars$hosp.cost)) stop("'hosp.cost' element of pars not given")
-  if(!any(names(pars$hosp.cost) %in% "hosp.days")){
-    stop("'hosp.days' element of pars$hosp.cost not given")
-  }
-  if(!is.matrix(pars$hosp.cost$hosp.days)){
-    stop("'hosp.days' element of pars$hosp.cost must be a matrix")
-  }
-  if(ncol(pars$hosp.cost$hosp.days) != 6){
-    stop("Number of columns in 'hosp.days' element of pars$hosp.cost must be 6")
-  }
-  if(nrow(pars$hosp.cost$hosp.days) != n){
-    stop(paste0("Number of rows in 'hosp.days' element of pars$hosp.cost must ",
-                "be equal to the number of sampled parameter sets which equals ", n))
-  }
-  if(!any(names(pars$hosp.cost) %in% "cost.pday")){
-    stop("'cost.pday' element of pars$hosp.cost not given")
-  }
-  if(!is.matrix(pars$hosp.cost$cost.pday)){
-    stop("'cost.pday' element of pars$hosp.cost must be a matrix")
-  }
-  if(ncol(pars$hosp.cost$cost.pday) != 6){
-    stop("Number of columns in 'cost.pday' element of pars$hosp.cost must be 6")
-  }
-  if(nrow(pars$hosp.cost$cost.pday) != n){
-    stop(paste0("Number of rows in 'cost.pday' element of pars$hosp.cost must ",
-                "be equal to the number of sampled parameter sets which equals ", n))
-  }
-  
-  # management cost
-  if(is.null(pars$mgmt.cost)) stop("'mgmt.cost' element of pars not given")
-  if(!is.matrix(pars$mgmt.cost)) stop("'mgmt.cost' element of pars must be a matrix")
-  if(ncol(pars$mgmt.cost) != 4) stop("Number of columns in 'mgmt.cost' element of pars must be 4")
-  if(nrow(pars$mgmt.cost) != n){
-    stop(paste0("Number of rows of 'mgmt.cost' element of pars must be equal to the number ",
-                "of sampled parameter sets which equals ", n))
-  }
-  
-  # serious infection cost
-  if(is.null(pars$si.cost)) stop("'si.cost' element of pars not given")
-  if(!is.vector(pars$si.cost)) stop("'si.cost' element of pars must be a vector")
-  if(length(pars$si.cost) != n) {
-    stop(paste0("Length of 'si.cost' element of pars must be equal to the number ",
-                "of sampled parameter sets which equals ", n))
-  }
-}
-
-#' Check parameters of prod_loss
-#'
-#' Error messages when incorrect inputs are passed to prod_loss.
-#' 
-#' @param pl_haq \code{pl_haq} as passed to \link{prod_loss}
-#' @keywords internal
-check_prod_loss <- function(simhaq, pl_haq){
-  # simhaq
-  if(is.null(simhaq$haq)) stop("'haq' column of 'simhaq' is missing")
-  if(is.null(simhaq$yrlen)) stop("'yrlen' column of 'simhaq' is missing")
-  if(is.null(simhaq$sim)) stop("'sim' column of 'simhaq' is missing")
-  
-  # pl_haq
-  n <- max(simhaq$sim)
-  if(is.null(pl_haq)) stop("'pl_haq' is missing")
-  if(!is.vector(pl_haq)) stop("'pl_haq' must be a vector")
-  if(length(pl_haq) != n){
-    stop(paste0("Number of rows in 'pl_haq' must ",
-                "be equal to the number of sampled parameter sets which equals ", n))
-  }
-}
-
 #' Simulate QALYs
 #'
 #' Simulate QALYs using using output produced from \code{sim_haq}.
@@ -812,5 +767,3 @@ check_sim_qalys <- function(simhaq, utility, si_ul){
                 "be equal to the number of sampled parameter sets which equals ", n))
   }
 }
-
-
