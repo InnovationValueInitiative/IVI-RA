@@ -93,6 +93,10 @@ sim_iviRA <- function(arms, input_data, pars, model_structures,
   if (check == TRUE){
     check_pars(pars, arminds, model_structures)
   }
+  if(ncol(pars$tx.attr.ug) != ncol(input_data$x.attr)){
+    stop(paste0("The number of columns in 'tx.attr.ug' element of pars list must equal ",
+                " the number of columns in 'x.attr' elemnt of input_data list."))
+  }
   
   ## indexing
   cdmards.ind <- which(iviRA::treatments$sname == "cdmards") - 1
@@ -185,6 +189,8 @@ sim_iviRA <- function(arms, input_data, pars, model_structures,
                      weight = input_data$weight, 
                      coefs_wailoo = parsamp.utility.wailoo, 
                      pars_util_mix = pars$utility.mixture, si_ul = pars$si.ul,
+                     tx_attr = list(data = input_data$x.attr, 
+                                    ug = pars$tx.attr.ug),
                      discount_rate = list(qalys = discount_qalys, cost = discount_cost),
                      output = output)
   if (output == "data"){
@@ -734,12 +740,19 @@ check_sim_utility_wailoo <- function(simhaq, haq0, male, prev_dmards, coefs){
 #' infection occured during the model cycle. 
 #' @param utility Simulated utility from \link{sim_utility_mixture} or \link{sim_utility_wailoo}.
 #' @param si_ul Sampled utility loss. Equivalent to output \code{si.ul} from \link{sample_pars}.
+#' @param x_attr Treatment attribute data (e.g., ouptut \code{x.attr} from
+#' \link{get_input_data})
+#' @param tx_attr_ug Utility gain from treatment attributes (e.g., output
+#' \code{tx.attr.ug} from \link{sample_pars}.)
 #' @return Vector of QALYs for each simulated patient and time-period.
 #'
 #' @export
-sim_qalys <- function(simhaq, utility, si_ul, check = TRUE){
-  if (check) check_sim_qalys(simhaq, utility, si_ul)
-  qalys <- qalysC(utility, simhaq$yrlen, simhaq$sim - 1, simhaq$si, si_ul)
+sim_qalys <- function(simhaq, utility, si_ul, x_attr, tx_attr_ug, check = TRUE){
+  if (check) check_sim_qalys(simhaq, utility, si_ul, x_attr, tx_attr_ug)
+  qalys <- sim_qalysC(utility = utility, yrlen = simhaq$yrlen, 
+                      sim = simhaq$sim - 1, tx = simhaq$tx - 1,
+                      si = simhaq$si, si_ul = si_ul,
+                      x_attr = x_attr, tx_attr_ug = tx_attr_ug)
   return(qalys)
 }
 
@@ -749,7 +762,7 @@ sim_qalys <- function(simhaq, utility, si_ul, check = TRUE){
 #' 
 #' @param si_ul \code{si_ul} as passed to \link{sim_qalys}
 #' @keywords internal
-check_sim_qalys <- function(simhaq, utility, si_ul){
+check_sim_qalys <- function(simhaq, utility, si_ul, x_attr, tx_attr_ug){
   # utility 
   if(is.null(utility)) stop("'utility' is missing")
   
@@ -757,6 +770,7 @@ check_sim_qalys <- function(simhaq, utility, si_ul){
   if(is.null(simhaq$yrlen)) stop("'yrlen' column of 'simhaq' is missing")
   if(is.null(simhaq$sim)) stop("'sim' column of 'simhaq' is missing")
   if(is.null(simhaq$si)) stop("'si' column of 'simhaq' is missing")
+  if(is.null(simhaq$tx)) stop("'tx' column of 'simhaq' is missing")
   
   # si_ul
   n <- max(simhaq$sim)
@@ -766,4 +780,12 @@ check_sim_qalys <- function(simhaq, utility, si_ul){
     stop(paste0("Number of rows in 'si_ul' must ",
                 "be equal to the number of sampled parameter sets which equals ", n))
   }
+  
+  # x_attr
+  if(is.null(x_attr)) stop("'x_attr' is missing")
+  if(!is.matrix(x_attr)) stop("'x_attr' must be a matrix")
+  
+  # tx_attr_ug
+  if(is.null(tx_attr_ug)) stop("'tx_attr_ug' is missing")
+  if(!is.matrix(tx_attr_ug)) stop("'tx_attr_ug' must be a matrix")
 }

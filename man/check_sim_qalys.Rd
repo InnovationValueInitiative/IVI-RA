@@ -4,7 +4,7 @@
 \alias{check_sim_qalys}
 \title{Check parameters of sim_qalys}
 \usage{
-check_sim_qalys(simhaq, utility, si_ul)
+check_sim_qalys(simhaq, utility, si_ul, x_attr, tx_attr_ug)
 }
 \arguments{
 \item{si_ul}{\code{si_ul} as passed to \link{sim_qalys}}

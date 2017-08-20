@@ -1015,15 +1015,18 @@ RCPP_MODULE(mod_Out0) {
 }
 
 // Calculate vector of QALYs given simulation output
-//' @export
 // [[Rcpp::export]]
-std::vector<double> qalysC(std::vector<double> &utility, std::vector<double> &yrlen,
-                           std::vector<int> &sim, std::vector<int> &si, std::vector<double> &si_ul){
+std::vector<double> sim_qalysC(std::vector<double> &utility, std::vector<double> &yrlen,
+                           std::vector<int> &sim, std::vector<int> &tx,
+                           std::vector<int> &si, std::vector<double> &si_ul,
+                           arma::mat &x_attr, arma::mat &tx_attr_ug){
   int N = utility.size();
   std::vector<double> qalys_vec;
   qalys_vec.reserve(N);
   for (int i = 0; i < N; ++i){
-    qalys_vec.push_back(yrlen[i] * (utility[i] - si[i] * si_ul[sim[i]]/12));
+    double utility1 = std::min(1.0, utility[i] - si[i] * si_ul[sim[i]]/12 + 
+      arma::dot(x_attr.row(tx[i]), tx_attr_ug.row(sim[i])));
+    qalys_vec.push_back(yrlen[i] * utility1);
   }
   return qalys_vec;
 }
@@ -1054,6 +1057,7 @@ List sim_iviRA_C(arma::mat arm_inds, CharacterMatrix model_structures_mat,
              std::vector<double> si_cost, std::vector<double> prod_loss, 
              Rcpp::List tc_list, std::vector<double> weight, 
              arma::mat coefs_wailoo, Rcpp::List pars_util_mix, std::vector<double> si_ul,
+             Rcpp::List tx_attr,
              Rcpp::List discount_rate, std::string output){
   
   // Type conversions
@@ -1102,6 +1106,10 @@ List sim_iviRA_C(arma::mat arm_inds, CharacterMatrix model_structures_mat,
   TTDPars ttd_da = get_ttd_pars(ttd_da_list);
   TTDPars ttd_eular_mod = get_ttd_pars(ttd_eular_mod_list);
   TTDPars ttd_eular_good = get_ttd_pars(ttd_eular_good_list);
+  
+  //// Treatment attributes
+  arma::mat x_attr = as<arma::mat> (tx_attr["data"]);
+  arma::mat tx_attr_ug = as<arma::mat> (tx_attr["ug"]);
   
   //// Discount rate
   double discount_qalys = as<double>(discount_rate["qalys"]);
@@ -1208,6 +1216,7 @@ List sim_iviRA_C(arma::mat arm_inds, CharacterMatrix model_structures_mat,
           else{
             arm_ind_ij = arm_ind_i(j);
           }
+          arma::rowvec x_attr_ij = x_attr.row(arm_ind_ij);
           
           // H1-H3: simulate change in HAQ during initial treatment phase
           TxIHaq sim_h_t1 = sim_tx_ihaq(mod_struct.tx_ihaq, j, arm_ind_ij, nbt,
@@ -1338,7 +1347,9 @@ List sim_iviRA_C(arma::mat arm_inds, CharacterMatrix model_structures_mat,
                                                  utilmix_mu, utilmix_delta.slice(s),
                                                  utilmix_w, utilmix_x);
             }
-            qalys = cycle_length/12 * (utility - si * si_ul[s]);
+            utility = std::min(1.0, utility - si * si_ul[s] + 
+              arma::dot(x_attr_ij, tx_attr_ug.row(s)));
+            qalys = cycle_length/12 * utility;
             
             if (output == "summary"){
               sim_means.increment_id(m, s, month/12);

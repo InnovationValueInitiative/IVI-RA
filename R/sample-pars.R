@@ -90,6 +90,10 @@
 #' @param si_cost Cost of a serious infection.
 #' @param si_cost_range Range used to vary serious infection cost. Default is to calculate upper and lower bound by multiplying 
 #' \code{si_cost} by 1 +/- 0.2 (i.e. a 20\% change).
+#' @param tx_attr_ug_lower Lower bound for utility gain from treatment attributes.
+#' @param tx_attr_ug_upper Upper bound for utility gain from treatment attributes.
+#' @param tx_attr_ug_names Names of treatment attributes to be returned in sampled matrix
+#' \code{tx.attr.ug}.
 #' @param tx_names Vector of treatment names.
 #' 
 #' @return List containing samples for the following model parameters:
@@ -157,6 +161,8 @@
 #'     Columns numbers coincide with therapy indices.}
 #'    \item{si.cost}{Vector of sampled values of the medical cost of a serious infection.}
 #'    \item{si.ul}{Vector of the sampled values of the annualized utility loss from a serious infection.}
+#'    \item{tx.attr.ug}{Matrix of sampled values of utility gains. Each column is a different treatment
+#'    attribute.}
 #' }
 #'
 #' @section Time to treatment discontinuation:
@@ -254,6 +260,9 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
                        ttsi = iviRA::ttsi,
                        si_cost = 5873, si_cost_range = .2,
                        si_ul = .156, si_ul_range = .2,
+                       tx_attr_ug_lower = iviRA::tx.attributes$utility.gain$lower,
+                       tx_attr_ug_upper = iviRA::tx.attributes$utility.gain$upper,
+                       tx_attr_ug_names = iviRA::tx.attributes$utility.gain$var,
                        tx_names = iviRA::treatments$sname,
                        util_mixture_pain = iviRA::pain){
   acr.cats <- c("ACR <20", "ACR 20-50", "ACR 50-70", "ACR 70+")
@@ -308,6 +317,8 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
                              col_names = tx_names)
   sim$si.cost <- runif(n, si_cost * (1 - si_cost_range),  si_cost * (1 + si_cost_range))
   sim$si.ul <- runif(n, si_ul * (1 - si_ul_range), si_ul * (1 + si_ul_range))
+  sim$tx.attr.ug <-  sample_uniforms(n, tx_attr_ug_lower, tx_attr_ug_upper,
+                                     tx_attr_ug_names)
   return(sim)
 }
 

@@ -1,6 +1,28 @@
 rm(list = ls())
 library("data.table")
 
+# TREATMENT ATTRIBUTES --------------------------------------------------------
+# design matrix
+treatments <- fread("treatments.csv")
+tx.attr.dt <- fread("tx-attr.csv")
+tx.attr.dt <- tx.attr.dt[match(treatments[["sname"]], tx.attr.dt[["sname"]])]
+tx.attr.dt[, fda_approval := ifelse(sname %in% c("nbt", "placebo"), 
+                                          "12/31/1988", fda_approval)]
+tx.attr.dt[, years_since_approval := as.numeric(difftime(as.Date(end_date, "%m/%d/%Y"), 
+                                                               as.Date(fda_approval, "%m/%d/%Y"), 
+                                                               unit="weeks"))/52.25]
+tx.attr.dm <- as.matrix(tx.attr.dt[, .(oral, oral_combo, years_since_approval)])
+rownames(tx.attr.dm) <- tx.attr.dt[, sname]
+
+# utility gain
+tx.attr.ug <- data.table(var = colnames(tx.attr.dm),
+                               lower = rep(0, ncol(tx.attr.dm)),
+                   upper = rep(0, ncol(tx.attr.dm)))
+
+# save
+tx.attr <- list(data = tx.attr.dm, utility.gain = tx.attr.ug)
+save(tx.attr, file = "../data/tx-attr.rda", compress = "bzip2") 
+
 # ALAVA (2013) MIXTURE MODEL --------------------------------------------------
 nice <- read.csv("nice-painhaq.csv")
 

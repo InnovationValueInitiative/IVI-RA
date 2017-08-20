@@ -7,7 +7,7 @@ Authors@R: c(
     person("Jeroen P.", "Jansen", , "jeroen.jansen@pheconomics.com", role = "aut")
     )
 Maintainer: <devin.incerti@pheconomics.com>
-Description: Rheumatoid arthritis individual patient simulation
+Description: Rheumatoid arthritis individual patient simulation.
 URL: https://github.com/InnovationValueInitiative/IVI-RA
 BugReports: https://github.com/InnovationValueInitiative/IVI-RA/issues
 License: GPL-3

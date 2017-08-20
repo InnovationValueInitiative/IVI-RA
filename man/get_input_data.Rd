@@ -5,7 +5,7 @@
 \title{Input data for simulation}
 \usage{
 get_input_data(patdata, x_mort = NULL, x_ttd_all = NULL, x_ttd_da = NULL,
-  x_ttd_eular = NULL, model_structures)
+  x_ttd_eular = NULL, x_attr = iviRA::tx.attr$data, model_structures)
 }
 \arguments{
 \item{patdata}{Matrix of patient data. Must contain variables generated from \link{sample_pats}:
@@ -33,7 +33,15 @@ A list containing the following data inputs:
   \item{male}{A vector of patient gender (1 = male, 0 = female).}
   \item{prev.dmards}{A vector of the number of previous DMARDs}
   \item{x.mort}{Design matrix for mortality adjustment with odds ratios}
-  \item{x.ttd}{Design matrix for treatment duration.}
+  \item{x.attr}{Design matrix of treatment attributes.}
+}
+Depending on the selected model structures, the list may also contain:
+\describe{
+\item{x.ttd.all}{Design matrix for treatment duration representative of all patients.}
+\item{x.ttd.da}{Design matrix for treatment duration when disease activity covarariates
+are used to model the location parameter in the survival model.}
+\item{x.ttd.eular}{Design matrix for treatment duration when survival is stratified by
+EULAR response.}
 }
 }
 \description{

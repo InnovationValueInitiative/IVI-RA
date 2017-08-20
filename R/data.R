@@ -386,3 +386,19 @@
 #'  physical disability, clinical and radiographic scores in recent onset rheumatoid arthritis."
 #'  BMC musculoskeletal disorders 3.1 (2002): 1..
 "pain"
+
+#' Treatment attributes
+#'
+#' Impact of treatment attributes other than safety and efficacy on utility.
+#'
+#' @format A list with two elements. 
+#' \describe{
+#'   \item{data}{A matrix where each column is a treatment attribute and each row corresponds
+#'   to a treatment.}
+#'   \item{utility.gain}{A matrix with two columns, lower and upper, corresponing to the lower
+#'   and upper bounds of the utility gain associated with each treatment attribute in the 'data' 
+#'   matrix.}
+#' } 
+#'
+#' @source None. Currently determined by the user. 
+"tx.attr"

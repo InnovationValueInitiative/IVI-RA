@@ -273,14 +273,14 @@ test_that("tx_iswitch", {
 
 # Test simulated costs --------------------------------------------------------
 gen_agents <- function(name){
-  tx.lookup <- iviRA::treat.cost$lookup[sname == name]
+  tx.lookup <- iviRA::tx.cost$lookup[sname == name]
   agents <- matrix(match(unlist(tx.lookup[, -1, with = FALSE]), 
-                            iviRA::treat.cost$cost$sname) - 1,
+                            iviRA::tx.cost$cost$sname) - 1,
                       nrow = nrow(tx.lookup))
   return(agents)
 }
 agents <- gen_agents("etnmtx")
-tc <- iviRA::treat.cost$cost
+tc <- iviRA::tx.cost$cost
 discount <- .25
 pars.tc <- list(t = 0, agents_ind = agents, tx_name = tc$sname, 
              init_dose_val = tc$init_dose_val, ann_dose_val = tc$ann_dose_val,
@@ -434,40 +434,66 @@ test_that("sim_utility_wailoo1C", {
 #                         alpha3 = pars)
 # })
 
+# Test sim_qalys --------------------------------------------------------------
+n <- 10
+parsamp <- sample_pars(n = 5)
+x.attr <- iviRA::tx.attr$data
+simhaq <- data.table(yrlen = rep(.5, n), sim = rep(seq(1, 5), each = n/5),
+                     tx = which(iviRA::treatments$sname == "tof"),
+                     si = rbinom(n, 1, .1))
+utility <- runif(n, 0, 1)
+tx.attr.ug <- parsamp$tx.attr.ug 
+tx.attr.ug[, 1] <- 0.1
+
+test_that("sim_qalys", {
+  sim.qalys <- sim_qalys(simhaq = simhaq, utility = utility,
+                         si_ul = parsamp$si.ul, x_attr = x.attr, 
+                         tx_attr_ug = tx.attr.ug)
+  sim.qalys1 <- simhaq$yrlen[1] * (utility[1] - simhaq$si[1] * parsamp$si.ul[1]/12 +
+                      x.attr[simhaq$tx[1],, drop = FALSE] %*% t(tx.attr.ug[1,, drop = FALSE]))
+  expect_equal(sim.qalys[1], sim.qalys1[1])
+  
+  utility[1] <- 2
+  sim.qalys <- sim_qalys(simhaq = simhaq, utility = utility,
+                         si_ul = parsamp$si.ul, x_attr = x.attr, 
+                         tx_attr_ug = tx.attr.ug)
+  expect_equal(sim.qalys[1], 0.5)
+})
+
 # Summary output for individual means -----------------------------------------
-mod.SimMeans <- Rcpp::Module('mod_SimMeans', PACKAGE = "iviRA")
-SimMeans <- mod.SimMeans$SimMeans
-sm <- new(SimMeans, 2, 5, 10, .03, .03)
-sm$get_id()
-sm$get_varsums()
-sm$increment_id(0, 2, 1)
-sm$increment_varsums(2.0)
-sm$get_id()
-sm$get_varsums()
-sm$calc_means()
+# mod.SimMeans <- Rcpp::Module('mod_SimMeans', PACKAGE = "iviRA")
+# SimMeans <- mod.SimMeans$SimMeans
+# sm <- new(SimMeans, 2, 5, 10, .03, .03)
+# sm$get_id()
+# sm$get_varsums()
+# sm$increment_id(0, 2, 1)
+# sm$increment_varsums(2.0)
+# sm$get_id()
+# sm$get_varsums()
+# sm$calc_means()
 
 # Summary output for time means -----------------------------------------------
-mod.TimeMeans <- Rcpp::Module('mod_TimeMeans', PACKAGE = "iviRA")
-TimeMeans <- mod.TimeMeans$TimeMeans
-tm <- new(TimeMeans, 2, 3, 4, 5, 6.0)
-tm$get_id()
-tm$get_alive()
-tm$increment_id(1, 1, 2)
-tm$increment_alive()
-tm$get_alive()
-tm$increment_varsums(.3, .5)
-tm$get_id()
-tm$get_index()
-tm$get_varsums()
-tm$calc_means()
+# mod.TimeMeans <- Rcpp::Module('mod_TimeMeans', PACKAGE = "iviRA")
+# TimeMeans <- mod.TimeMeans$TimeMeans
+# tm <- new(TimeMeans, 2, 3, 4, 5, 6.0)
+# tm$get_id()
+# tm$get_alive()
+# tm$increment_id(1, 1, 2)
+# tm$increment_alive()
+# tm$get_alive()
+# tm$increment_varsums(.3, .5)
+# tm$get_id()
+# tm$get_index()
+# tm$get_varsums()
+# tm$calc_means()
 
 # Summary output during model cycle 0 -----------------------------------------
-mod.Out0 <- Rcpp::Module('mod_Out0', PACKAGE = "iviRA")
-Out0 <- mod.Out0$Out0
-out <- new(Out0, 2, 5, 10, 5)
-out$push_back(0, 0, 0, 0, 0, 1, 2, 2.4, 2.9)
-out$get_acr()
-out$get_ttsi()
+# mod.Out0 <- Rcpp::Module('mod_Out0', PACKAGE = "iviRA")
+# Out0 <- mod.Out0$Out0
+# out <- new(Out0, 2, 5, 10, 5)
+# out$push_back(0, 0, 0, 0, 0, 1, 2, 2.4, 2.9)
+# out$get_acr()
+# out$get_ttsi()
 
 # small integration test ------------------------------------------------------
 pop <- sample_pats(n = 100)

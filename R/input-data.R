@@ -145,12 +145,21 @@ lt_data <- function(ltfemale, ltmale){
 #'   \item{male}{A vector of patient gender (1 = male, 0 = female).}
 #'   \item{prev.dmards}{A vector of the number of previous DMARDs}
 #'   \item{x.mort}{Design matrix for mortality adjustment with odds ratios}
-#'   \item{x.ttd}{Design matrix for treatment duration.}
+#'   \item{x.attr}{Design matrix of treatment attributes.}
+#' }
+#' Depending on the selected model structures, the list may also contain:
+#' \describe{
+#' \item{x.ttd.all}{Design matrix for treatment duration representative of all patients.}
+#' \item{x.ttd.da}{Design matrix for treatment duration when disease activity covarariates
+#' are used to model the location parameter in the survival model.}
+#' \item{x.ttd.eular}{Design matrix for treatment duration when survival is stratified by
+#' EULAR response.}
 #' }
 #' 
 #' @export
 get_input_data <- function(patdata, x_mort = NULL, 
                            x_ttd_all = NULL, x_ttd_da = NULL, x_ttd_eular = NULL, 
+                           x_attr = iviRA::tx.attr$data,
                            model_structures){
   if (!inherits(model_structures, "model_structures")){
     stop("The argument 'model_structures' must be of class 'model_structures'")
@@ -202,12 +211,23 @@ get_input_data <- function(patdata, x_mort = NULL,
       }
   }
   
+  # treatment attributes
+  if (!is.matrix(x_attr)){
+    if (is.data.frame(x_attr)){
+        x.attr <- as.matrix(x_attr)
+    } else{
+        stop("x_attr must be a matrix or data.frame.")
+    }
+  } else{
+      x.attr <- x_attr
+  }
+  
   # combine
   l <- list(n = nrow(patdata), haq0 = patdata[, "haq0"], age = patdata[, "age"],
               male = patdata[, "male"], das28 = patdata[, "das28"],
               sdai = patdata[, "sdai"], cdai = patdata[, "cdai"],
               weight = patdata[, "weight"], prev.dmards = patdata[, "prev_dmards"],
-              x.mort = x.mort)
+              x.mort = x.mort, x.attr = x.attr)
   if (exists("x.ttd.all")){
     l <- c(l, list(x.ttd.all = x.ttd.all))
   }

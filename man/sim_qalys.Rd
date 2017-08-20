@@ -4,7 +4,7 @@
 \alias{sim_qalys}
 \title{Simulate QALYs}
 \usage{
-sim_qalys(simhaq, utility, si_ul, check = TRUE)
+sim_qalys(simhaq, utility, si_ul, x_attr, tx_attr_ug, check = TRUE)
 }
 \arguments{
 \item{simhaq}{Simulation output from \link{sim_haq}. Must include columns \code{yrlen} for
@@ -14,6 +14,12 @@ infection occured during the model cycle.}
 \item{utility}{Simulated utility from \link{sim_utility_mixture} or \link{sim_utility_wailoo}.}
 
 \item{si_ul}{Sampled utility loss. Equivalent to output \code{si.ul} from \link{sample_pars}.}
+
+\item{x_attr}{Treatment attribute data (e.g., ouptut \code{x.attr} from
+\link{get_input_data})}
+
+\item{tx_attr_ug}{Utility gain from treatment attributes (e.g., output
+\code{tx.attr.ug} from \link{sample_pars}.)}
 }
 \value{
 Vector of QALYs for each simulated patient and time-period.
