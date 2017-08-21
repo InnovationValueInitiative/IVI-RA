@@ -15,10 +15,12 @@ LazyData: TRUE
 LinkingTo: Rcpp, RcppArmadillo, hesim
 Imports:
     Rcpp,
+    hesim,
     data.table,
     MASS,
     msm,
     tmvtnorm
+Remotes: InnovationValueInitiative/hesim
 Suggests:
     testthat,
     flexsurv

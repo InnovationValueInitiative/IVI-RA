@@ -498,13 +498,14 @@ test_that("sim_qalys", {
 # small integration test ------------------------------------------------------
 pop <- sample_pats(n = 100)
 arm.names <- c("adamtx", "cdmards")
-parsamp <- sample_pars(n = 100)
 mod.structs <- select_model_structures(tx_ihaq = c("acr-haq", "acr-eular-haq"),
-                                     tx_iswitch = c("acr-das28-switch", "acr-eular-switch"),
+                                     tx_iswitch = c("acr-switch", "acr-eular-switch"),
                                      cdmards_haq_model = c("lcgm", "linear"),
                                      ttd_dist = c("gengamma", "lnorm"),
                                      utility_model = c("mixture", "wailoo"))
 input.dat <- get_input_data(patdata = pop, model_structure = mod.structs)
+parsamp <- sample_pars(n = 100)
 sim.out <- sim_iviRA(arms = arm.names, input_data = input.dat, pars = parsamp,
                      model_structures = mod.structs, output = "summary")
+
 

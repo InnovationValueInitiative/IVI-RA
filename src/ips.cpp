@@ -32,78 +32,168 @@ void update_haq_t1(double &haq, double haq_change){
   haq = haq + haq_change;
 }
 
+// NMA ACR class
+class nmaACR {
+public:
+  double rr;
+  double A;
+  double z2;
+  double z3;
+  arma::rowvec d_beta;
+  arma::rowvec x;
+  void set(double rr_, double A_, double z2_, double z3_, 
+           arma::rowvec d_beta_, arma::rowvec x_, int line);
+  arma::rowvec nma_acrprob();
+  double sim_acr();
+};
+
+void nmaACR::set(double rr_, double A_, double z2_, double z3_,
+                 arma::rowvec d_beta_, arma::rowvec x_, int line){
+  if (line == 0){
+    rr = 1;
+  } 
+  else{
+    rr = rr_;
+  }
+  A = A_;
+  z2 = z2_;
+  z3 = z3_;
+  d_beta = d_beta_;
+  x = x_;
+}
+
+arma::rowvec nmaACR::nma_acrprob(){
+  double d = arma::dot(d_beta, x);
+  
+  // probability less than category
+  double pl_70 = R::pnorm5(A + z3 + d, 0, 1, 1, 0); // less than ACR 70
+  double pl_50 = R::pnorm5(A + z2 + d, 0, 1, 1, 0); // less than ACR 50
+  double pl_20 = R::pnorm5(A + d, 0, 1, 1, 0); // less than ACR 20
+  
+  // probability in overlapping categories
+  double po_g70 =  rr * (1 - pl_70); // greater than ACR 70
+  double po_g50 = rr * (1 - pl_50); // greater than ACR 50
+  double po_g20 = rr * (1 - pl_20); // greater than ACR 20
+  double po_l20 = 1 - po_g20; // less than ACR 20
+  
+  // probability in mutually exclusive categories
+  arma::rowvec p(4);
+  p(0) = po_l20;  // less than ACR 20
+  p(1) = po_g20 - po_g50; // ACR 20-50
+  p(2) = po_g50 - po_g70; // ACR 50-70
+  p(3) = po_g70; // greater than ACR 70
+  
+  // return
+  return p;
+}
+
+double nmaACR::sim_acr(){
+  arma::rowvec p = nma_acrprob();
+  double acr = hesim::rcat1C(p);
+  return acr;
+}
+
+
+// NMA class for linear model
+class nmaLM {
+public:
+  double rr;
+  double A;
+  arma::rowvec d_beta;
+  arma::rowvec x;
+  void set(double rr_, double A_, 
+           arma::rowvec d_beta_, arma::rowvec x_, int line);
+  double sim_dy();
+};
+
+void nmaLM::set(double rr_, double A_,
+                 arma::rowvec d_beta_, arma::rowvec x_, int line){
+  if (line == 0){
+    rr = 1;
+  } 
+  else{
+    rr = rr_;
+  }
+  A = A_;
+  d_beta = d_beta_;
+  x = x_;
+}
+
+double nmaLM::sim_dy(){
+  return rr * (A + arma::dot(d_beta, x));
+}
+
 // Effect of treatment on HAQ during the initial treatment phase
-struct TxIHaq {
+class TxIHaq {
+public:
   TxIHaq(): acr(NA_REAL), eular(NA_REAL), dhaq(0.0){ } 
   int acr;
   int eular;
   double dhaq;
+  void sim(std::string tx_ihaq_model, int line, int therapy, int nbt,
+           nmaACR nma_acr, nmaLM nma_dhaq,
+           arma::mat acr2eular, arma::rowvec acr2haq, arma::rowvec eular2haq);
+  
 };
 
-TxIHaq sim_tx_ihaq(std::string tx_ihaq_model, int line, int therapy, int nbt,
-                     arma::rowvec nma_acr1, arma::rowvec nma_acr2, 
-                     double nma_dhaq1, double nma_dhaq2,
+void TxIHaq::sim(std::string model, int line, int therapy, int nbt,
+                    nmaACR nma_acr, nmaLM nma_dhaq,
                      arma::mat acr2eular, arma::rowvec acr2haq, arma::rowvec eular2haq){
-  TxIHaq sim;
   
   // ACR response
-  if (tx_ihaq_model == "acr-haq" || tx_ihaq_model == "acr-eular-haq"){
+  if (model == "acr-haq" || model == "acr-eular-haq"){
       if (therapy != nbt){
-        if (line == 0){
-          sim.acr = hesim::rcat1C(nma_acr1);
-        }  
-        else{
-          sim.acr = hesim::rcat1C(nma_acr2);
-        }
+          acr = nma_acr.sim_acr();
       }
       else{
-          sim.acr = 0;
+          acr = 0;
       }
   }
   
   // EULAR response
-  if (tx_ihaq_model == "acr-eular-haq"){
+  if (model == "acr-eular-haq"){
       if (therapy != nbt){
-        sim.eular = hesim::rcat1C(acr2eular.row(sim.acr));
+        eular = hesim::rcat1C(acr2eular.row(acr));
       }
       else{
-        sim.eular = 0;
+        eular = 0;
       }
   }
   
   // HAQ
-  if (tx_ihaq_model == "acr-haq" && therapy != nbt){
-        sim.dhaq = acr2haq(sim.acr);
+  if (model == "acr-haq" && therapy != nbt){
+        dhaq = acr2haq(acr);
   } 
-  else if (tx_ihaq_model == "acr-eular-haq" && therapy != nbt){
-      sim.dhaq = eular2haq(sim.eular);
+  else if (model == "acr-eular-haq" && therapy != nbt){
+      dhaq = eular2haq(eular);
   } 
-  else if (tx_ihaq_model == "haq" && therapy != nbt) {
-      if (line == 0){
-        sim.dhaq = nma_dhaq1;
-      } else {
-        sim.dhaq = nma_dhaq2;
-      }
+  else if (model == "haq" && therapy != nbt) {
+      dhaq = nma_dhaq.sim_dy();
   }
   else if (therapy == nbt){
-      sim.dhaq = 0.0;
+      dhaq = 0.0;
   }
-  
-  // return
-  return sim;
 }
 
-// [[Rcpp::export]]
-List test_tx_ihaq(std::string tx_ihaq_model, int line, int therapy, int nbt,
-                      arma::rowvec nma_acr1, arma::rowvec nma_acr2, 
-                      double nma_dhaq1, double nma_dhaq2,
-                      arma::mat acr2eular, arma::rowvec acr2haq, arma::rowvec eular2haq){
-  TxIHaq sim = sim_tx_ihaq(tx_ihaq_model, line, therapy, nbt,
-                        nma_acr1, nma_acr2, nma_dhaq1, nma_dhaq2,
-                        acr2eular, acr2haq, eular2haq);
-  return List::create(Rcpp::Named("acr") = sim.acr, Rcpp::Named("eular") = sim.eular,
-                      Rcpp::Named("dhaq") = sim.dhaq);
-}
+//// [[Rcpp::export]]
+// List test_tx_ihaq(std::string tx_ihaq_model, int line, int therapy, int nbt,
+//                       Rcpp::List nma_acr_list,
+//                       double nma_dhaq1, double nma_dhaq2,
+//                       arma::mat acr2eular, arma::rowvec acr2haq, arma::rowvec eular2haq){
+//   double acr_rr = as<double> (nma_acr_list["rr"]);
+//   double acr_A = as<double> (nma_acr_list["A"]);
+//   double acr_z2 = as<double> (nma_acr_list["z2"]);
+//   double acr_z3 = as<double> (nma_acr_list["z3"]);
+//   arma::rowvec acr_d_beta = as<arma::rowvec>(nma_acr_list["d"]);
+//   arma::rowvec acr_x = as<arma::rowvec>(nma_acr_list["x"]);
+//   nmaACR nma_acr;
+//   nma_acr.set(acr_rr, acr_A, acr_z2, acr_z3, acr_d_beta, acr_x, line);
+//   TxIHaq sim = sim_tx_ihaq(tx_ihaq_model, line, therapy, nbt,
+//                         nma_acr, nma_dhaq1, nma_dhaq2,
+//                         acr2eular, acr2haq, eular2haq);
+//   return List::create(Rcpp::Named("acr") = sim.acr, Rcpp::Named("eular") = sim.eular,
+//                       Rcpp::Named("dhaq") = sim.dhaq);
+// }
 
 // Update HAQ after initial response with linear progression
 void update_haq_t(double &haq, double haq_change_therapy, 
@@ -122,17 +212,24 @@ void update_haq_t(double &haq, double haq_change_therapy,
 }
 
 // Effect of treatment on switching treatment during the treatment phase
-struct Tx_ISwitch {
-  Tx_ISwitch(): tswitch(0), das28(NA_REAL), sdai(NA_REAL), cdai(NA_REAL), da_cat(0){ } 
+class TxISwitch {
+public:
   int tswitch;
   double das28;
   double sdai;
   double cdai;
   int da_cat;
+  int get_das28_cat();
+  int get_sdai_cat();
+  int get_cdai_cat();
+  TxISwitch(): tswitch(0), das28(NA_REAL), sdai(NA_REAL), cdai(NA_REAL), da_cat(0){ } 
+  double get_da_new(double da_old, double da_change, double lower, double upper);
+  void sim(std::string model, int line, int therapy, int nbt, int acr, int eular,
+           arma::rowvec acr2das28, arma::rowvec acr2sdai, arma::rowvec acr2cdai,
+           nmaLM nma_das28, arma::rowvec p);
 };
 
-// [[Rcpp::export]]
-int get_das28_cat(double das28){
+int TxISwitch::get_das28_cat(){
   int cat = 0;
   if (das28 >= 2.6 & das28 < 3.2){
     cat = 1;
@@ -146,8 +243,7 @@ int get_das28_cat(double das28){
   return cat;
 }
 
-// [[Rcpp::export]]
-int get_sdai_cat(double sdai){
+int TxISwitch::get_sdai_cat(){
   int cat = 0;
   if (sdai > 3.3 & sdai <= 11.0){
     cat = 1;
@@ -161,8 +257,7 @@ int get_sdai_cat(double sdai){
   return cat;
 }
 
-// [[Rcpp::export]]
-int get_cdai_cat(double cdai){
+int TxISwitch::get_cdai_cat(){
   int cat = 0;
   if (cdai > 2.8 & cdai <= 10.0){
     cat = 1;
@@ -176,8 +271,7 @@ int get_cdai_cat(double cdai){
   return cat;
 }
 
-// [[Rcpp::export]]
-double get_da_new(double da_old, double da_change, double lower, double upper){
+double TxISwitch::get_da_new(double da_old, double da_change, double lower, double upper){
   double da_new = da_old + da_change;
   if (da_new < lower){
     da_new = 0;
@@ -187,78 +281,69 @@ double get_da_new(double da_old, double da_change, double lower, double upper){
   return da_new;
 }
 
-Tx_ISwitch sim_tx_iswitch(std::string tx_iswitch_model, int line, int therapy, int nbt,
-                  int acr, int eular, double das28, double sdai, double cdai,
+void TxISwitch::sim(std::string model, int line, int therapy, int nbt,
+                  int acr, int eular,
                   arma::rowvec acr2das28, arma::rowvec acr2sdai,arma::rowvec acr2cdai,
-                  arma::rowvec nma_das28_1, arma::rowvec nma_das28_2, arma::rowvec p){
+                  nmaLM nma_dhaq, arma::rowvec p){
   
-  Tx_ISwitch sim;
-  sim.tswitch = 0;
-  sim.da_cat = 0;
+  tswitch = 0;
   double da_change = 0.0;
   
   // Switching rules
-  if (tx_iswitch_model == "acr-switch"){ // Treatment -> ACR -> Switch
+  if (model == "acr-switch"){ // Treatment -> ACR -> Switch
     if (acr == 0){
-      sim.tswitch = 1;
+      tswitch = 1;
     }
   }
-  else if (tx_iswitch_model == "acr-das28-switch" ||   // Treatment -> ACR -> DA -> Switch
-           tx_iswitch_model == "acr-sdai-switch" ||
-           tx_iswitch_model == "acr-cdai-switch") {
-      if (tx_iswitch_model == "acr-das28-switch"){
+  else if (model == "acr-das28-switch" ||   // Treatment -> ACR -> DA -> Switch
+           model == "acr-sdai-switch" ||
+           model == "acr-cdai-switch") {
+      if (model == "acr-das28-switch"){
         da_change = acr2das28(acr);
-        sim.das28 = get_da_new(das28, da_change, 0, 9.4);
-        sim.da_cat = get_das28_cat(sim.das28);
+        das28 = get_da_new(das28, da_change, 0, 9.4);
+        da_cat = get_das28_cat();
       }
-      else if (tx_iswitch_model == "acr-sdai-switch"){
+      else if (model == "acr-sdai-switch"){
         da_change = acr2sdai(acr);
-        sim.sdai = get_da_new(sdai, da_change, 0, 86);
-        sim.da_cat = get_sdai_cat(sdai);
+        sdai = get_da_new(sdai, da_change, 0, 86);
+        da_cat = get_sdai_cat();
       }
-      else if (tx_iswitch_model == "acr-cdai-switch"){
+      else if (model == "acr-cdai-switch"){
         da_change = acr2cdai(acr);
-        sim.cdai = get_da_new(cdai, da_change, 0, 76);
-        sim.da_cat = get_cdai_cat(sim.cdai);
+        cdai = get_da_new(cdai, da_change, 0, 76);
+        da_cat = get_cdai_cat();
       }
-      sim.tswitch = R::rbinom(1, p(sim.da_cat));
+      tswitch = R::rbinom(1, p(da_cat));
     }
-  else if (tx_iswitch_model == "das28-switch"){ // Treatment -> DA -> Switch
-      if (line == 0){
-        sim.das28 = das28 + nma_das28_1(therapy);
-        sim.da_cat = get_das28_cat(sim.das28);
-      }
-      else{
-        sim.das28 = das28 + nma_das28_2(therapy);
-        sim.da_cat = get_das28_cat(sim.das28);
-      }
-      sim.tswitch = R::rbinom(1, p(sim.da_cat));
+  else if (model == "das28-switch"){ // Treatment -> DA -> Switch
+        das28 = das28 + nma_dhaq.sim_dy();
+        da_cat = get_das28_cat();
+        tswitch = R::rbinom(1, p(da_cat));
   }
-  else if (tx_iswitch_model == "acr-eular-switch"){ // Treatment -> ACR -> EULAR -> Switch
+  else if (model == "acr-eular-switch"){ // Treatment -> ACR -> EULAR -> Switch
     if (eular == 0){
-      sim.tswitch = 1;
+      tswitch = 1;
     }
   }
   
   // NBT
   if (therapy == nbt){
-    sim.tswitch = 0;
+    tswitch = 0;
   }
-  return sim;
 }
 
-//' @export
-// [[Rcpp::export]]
-List test_tx_iswitch(std::string tx_iswitch_model, int line, int therapy, int nbt,
-                        int acr, int eular, double das28, double sdai, double cdai,
-                        arma::rowvec acr2das28, arma::rowvec acr2sdai, arma::rowvec acr2cdai,
-                        arma::rowvec nma_das28_1, arma::rowvec nma_das28_2, arma::rowvec p){
-  Tx_ISwitch sim = sim_tx_iswitch(tx_iswitch_model, line, therapy, nbt, acr, eular,
-                                     das28, sdai, cdai, acr2das28, acr2sdai, acr2cdai,
-                                     nma_das28_1, nma_das28_2, p);
-  return List::create(Rcpp::Named("tswitch") = sim.tswitch, Rcpp::Named("das28") = sim.das28,
-                      Rcpp::Named("sdai") = sim.sdai, Rcpp::Named("cdai") = sim.cdai);
-}
+// //' @export
+//// [[Rcpp::export]]
+// List test_tx_iswitch(std::string tx_iswitch_model, int line, int therapy, int nbt,
+//                         int acr, int eular, double das28, double sdai, double cdai,
+//                         arma::rowvec acr2das28, arma::rowvec acr2sdai, arma::rowvec acr2cdai,
+//                         arma::rowvec nma_das28_1, arma::rowvec nma_das28_2, arma::rowvec p){
+//   Tx_ISwitch sim = sim_tx_iswitch(tx_iswitch_model, line, therapy, nbt, acr, eular,
+//                                      das28, sdai, cdai, acr2das28, acr2sdai, acr2cdai,
+//                                      nma_das28_1, nma_das28_2, p);
+//   return List::create(Rcpp::Named("tswitch") = sim.tswitch, Rcpp::Named("das28") = sim.das28,
+//                       Rcpp::Named("sdai") = sim.sdai, Rcpp::Named("cdai") = sim.cdai);
+// }
 
 
 // Time to treatment discontinuation by eular response 
@@ -1038,8 +1123,9 @@ List sim_iviRA_C(arma::mat arm_inds, CharacterMatrix model_structures_mat,
              std::vector<double> sdai0, std::vector<double> cdai0,
              std::vector<double> age0, std::vector<int> male,
              std::vector<int> prev_dmards,
-             arma::cube nma_acr1, arma::cube nma_acr2, arma::mat nma_dhaq1, arma::mat nma_dhaq2,
-             arma::mat nma_das28_1, arma::mat nma_das28_2,
+             Rcpp::List nma_acr_list, arma::mat x_acr,
+             Rcpp::List nma_haq_list, arma::mat x_haq,
+             Rcpp::List nma_das28_list, arma::mat x_das28,
              arma::cube acr2eular,arma::mat acr2haq, arma::mat eular2haq, 
              arma::mat acr2das28, arma::mat acr2sdai, arma::mat acr2cdai,
              arma::mat tswitch_da,
@@ -1078,6 +1164,23 @@ List sim_iviRA_C(arma::mat arm_inds, CharacterMatrix model_structures_mat,
   std::vector<double> infusion_cost = as<std::vector<double> >(tc["infusion_cost"]);
   std::vector<int> loading_dose = as<std::vector<int> >(tc["loading_dose"]);
   std::vector<int> weight_based = as<std::vector<int> >(tc["weight_based"]);
+  
+  // NMA ACR response
+  std::vector<double> acr_rr = as<std::vector<double> > (nma_acr_list["rr"]);
+  std::vector<double> acr_A = as<std::vector<double> > (nma_acr_list["A"]);
+  std::vector<double> acr_z2 = as<std::vector<double> > (nma_acr_list["z2"]);
+  std::vector<double> acr_z3 = as<std::vector<double> > (nma_acr_list["z3"]);
+  arma::cube acr_d_beta = as<arma::cube>(nma_acr_list["d"]);
+  
+  // NMA HAQ
+  std::vector<double> nma_haq_rr = as<std::vector<double> > (nma_haq_list["rr"]);
+  std::vector<double> nma_haq_A = as<std::vector<double> > (nma_haq_list["A"]);
+  arma::cube nma_haq_d_beta = as<arma::cube>(nma_haq_list["d"]);
+  
+  // NMA DAS28
+  std::vector<double> nma_das28_rr = as<std::vector<double> > (nma_das28_list["rr"]);
+  std::vector<double> nma_das28_A = as<std::vector<double> > (nma_das28_list["A"]);
+  arma::cube nma_das28_d_beta = as<arma::cube>(nma_das28_list["d"]);
   
   //// Utility mixture model
   arma::mat utilmix_beta1 = as<arma::mat> (pars_util_mix["beta1"]);
@@ -1133,6 +1236,10 @@ List sim_iviRA_C(arma::mat arm_inds, CharacterMatrix model_structures_mat,
   int arm_row = 0;
   arma::rowvec arm_ind_i = arm_inds.row(0);
   int arm_ind_ij = 0;
+  nmaACR nma_acr;
+  nmaLM nma_haq;
+  nmaLM nma_das28;
+  TxIHaq tx_ihaq;
   Cost sim_cost;
   ModelStructure mod_struct;
   double utility = 0.0;
@@ -1191,10 +1298,10 @@ List sim_iviRA_C(arma::mat arm_inds, CharacterMatrix model_structures_mat,
           arm_ind_i = arm_inds.row(i);
         }
         int t_cdmards = 0;
-        Tx_ISwitch sim_s_t1;
-        sim_s_t1.das28 = das28_0[i];
-        sim_s_t1.sdai = sdai0[i];
-        sim_s_t1.cdai = cdai0[i];
+        TxISwitch tx_iswitch;
+        tx_iswitch.das28 = das28_0[i];
+        tx_iswitch.sdai = sdai0[i];
+        tx_iswitch.cdai = cdai0[i];
         arma::rowvec x_ttd_da_i;
         double utilmix_mu = R::rnorm(0, utilmix_mu_sd[s]);
         
@@ -1219,21 +1326,25 @@ List sim_iviRA_C(arma::mat arm_inds, CharacterMatrix model_structures_mat,
           arma::rowvec x_attr_ij = x_attr.row(arm_ind_ij);
           
           // H1-H3: simulate change in HAQ during initial treatment phase
-          TxIHaq sim_h_t1 = sim_tx_ihaq(mod_struct.tx_ihaq, j, arm_ind_ij, nbt,
-                                          nma_acr1.slice(arm_ind_ij).row(s), 
-                                          nma_acr2.slice(arm_ind_ij).row(s), 
-                                          nma_dhaq1.col(arm_ind_ij)(s),
-                                          nma_dhaq2.col(arm_ind_ij)(s),
+          nma_acr.set(acr_rr[s], acr_A[s], acr_z2[s], acr_z3[s],
+                      acr_d_beta.slice(arm_ind_ij).row(s), x_acr.row(i),
+                      j);
+          nma_haq.set(nma_haq_rr[s], nma_haq_A[s],
+                      nma_haq_d_beta.slice(arm_ind_ij).row(s), x_haq.row(i),
+                      j);
+          nma_das28.set(nma_das28_rr[s], nma_das28_A[s],
+                      nma_das28_d_beta.slice(arm_ind_ij).row(s), x_das28.row(i),
+                      j);
+          tx_ihaq.sim(mod_struct.tx_ihaq, j, arm_ind_ij, nbt,
+                                          nma_acr, nma_haq,
                                           acr2eular.slice(s), acr2haq.row(s), 
                                           eular2haq.row(s));
           
           // S1-S6: simulate treatment switching during first 6 months
-          sim_s_t1 = sim_tx_iswitch(mod_struct.tx_iswitch, j, arm_ind_ij, nbt,
-                                                    sim_h_t1.acr, sim_h_t1.eular,
-                                                    sim_s_t1.das28, sim_s_t1.sdai, sim_s_t1.cdai,
-                                                    acr2das28.row(s), acr2sdai.row(s), acr2cdai.row(s),
-                                                    nma_das28_1.row(s), nma_das28_2.row(s), 
-                                                    tswitch_da.row(s));
+          tx_iswitch.sim(mod_struct.tx_iswitch, j, arm_ind_ij, nbt,
+                        tx_ihaq.acr, tx_ihaq.eular,
+                        acr2das28.row(s), acr2sdai.row(s), acr2cdai.row(s),
+                        nma_das28, tswitch_da.row(s));
           
           // Time to treatment discontinuation and serious infections
           double ttsi_j = (-cycle_length/12 + rsurvC(as_scalar(si_loc.row(s).col(arm_ind_ij)), 
@@ -1245,18 +1356,18 @@ List sim_iviRA_C(arma::mat arm_inds, CharacterMatrix model_structures_mat,
               ttd_j = sim_ttd_eular(x_ttd_eular.row(i), 
                                     ttd_eular_mod.loc[mod_struct.ttd_dist].row(s), ttd_eular_mod.anc1[mod_struct.ttd_dist](s), 
                                     ttd_eular_good.loc[mod_struct.ttd_dist].row(s), ttd_eular_good.anc1[mod_struct.ttd_dist](s),
-                                    sim_h_t1.eular, mod_struct.ttd_dist, cycle_length, ttsi_j,
+                                    tx_ihaq.eular, mod_struct.ttd_dist, cycle_length, ttsi_j,
                                     ttd_eular_mod.anc2[mod_struct.ttd_dist](s), ttd_eular_good.anc2[mod_struct.ttd_dist](s));
           }
           else if (mod_struct.tx_iswitch == "acr-switch"){
             ttd_j = sim_ttd(x_ttd_all.row(i), ttd_all.loc[mod_struct.ttd_dist].row(s), ttd_all.anc1[mod_struct.ttd_dist](s),
-                                sim_s_t1.tswitch, mod_struct.ttd_dist, cycle_length, ttsi_j,
+                                tx_iswitch.tswitch, mod_struct.ttd_dist, cycle_length, ttsi_j,
                                 ttd_all.anc2[mod_struct.ttd_dist](s));
           }
           else {
-            x_ttd_da_i = update_x_ttd_da(x_ttd_da.row(i), sim_s_t1.da_cat);
+            x_ttd_da_i = update_x_ttd_da(x_ttd_da.row(i), tx_iswitch.da_cat);
             ttd_j = sim_ttd(x_ttd_da.row(i), ttd_da.loc[mod_struct.ttd_dist].row(s), ttd_da.anc1[mod_struct.ttd_dist](s),
-                            sim_s_t1.tswitch, mod_struct.ttd_dist, cycle_length, ttsi_j,
+                            tx_iswitch.tswitch, mod_struct.ttd_dist, cycle_length, ttsi_j,
                             ttd_da.anc2[mod_struct.ttd_dist](s));
           }
           
@@ -1287,10 +1398,10 @@ List sim_iviRA_C(arma::mat arm_inds, CharacterMatrix model_structures_mat,
             // Update HAQ score
             if (t == 0){ // initial haq change
               if (ttd_j == 0){ // immediate rebound for patients switching treatment during the initial period
-                  // haq = haq + sim_h_t1.dhaq - sim_h_t1.dhaq * rebound_factor[s]; 
+                  // haq = haq + tx_ihaq.dhaq - tx_ihaq.dhaq * rebound_factor[s]; 
                   haq = haq;
               } else{
-                haq = haq + sim_h_t1.dhaq; 
+                haq = haq + tx_ihaq.dhaq; 
               }
             }
             else if (t > 0 && t <= ttd_j){
@@ -1303,7 +1414,7 @@ List sim_iviRA_C(arma::mat arm_inds, CharacterMatrix model_structures_mat,
               }
             }
             else if (t > ttd_j && t < ttd_j + 1 && j < n_treatments){ // rebound
-              haq = haq - sim_h_t1.dhaq * rebound_factor[s];
+              haq = haq - tx_ihaq.dhaq * rebound_factor[s];
             }
             else {
               update_haq_t(haq, as_scalar(haq_lprog_therapy.row(s).col(nbt)),
@@ -1359,7 +1470,7 @@ List sim_iviRA_C(arma::mat arm_inds, CharacterMatrix model_structures_mat,
               time_means.increment_alive();
               time_means.increment_varsums(qalys, haq, sim_cost.tx, sim_cost.hosp, sim_cost.mgmt, 
                                            sim_cost.si, sim_cost.prod);
-              out0.push_back(t, m, s, i, j, sim_h_t1.acr, sim_h_t1.eular,
+              out0.push_back(t, m, s, i, arm_ind_ij, tx_ihaq.acr, tx_ihaq.eular,
                              ttd_j, ttsi_j);
             }
             
@@ -1380,11 +1491,11 @@ List sim_iviRA_C(arma::mat arm_inds, CharacterMatrix model_structures_mat,
               ttd_vec.push_back(NA_REAL);
             }
             
-            acr_vec.push_back(sim_h_t1.acr);
-            eular_vec.push_back(sim_h_t1.eular);
-            das28_vec.push_back(sim_s_t1.das28);
-            sdai_vec.push_back(sim_s_t1.sdai);
-            cdai_vec.push_back(sim_s_t1.cdai);
+            acr_vec.push_back(tx_ihaq.acr);
+            eular_vec.push_back(tx_ihaq.eular);
+            das28_vec.push_back(tx_iswitch.das28);
+            sdai_vec.push_back(tx_iswitch.sdai);
+            cdai_vec.push_back(tx_iswitch.cdai);
             haq_vec.push_back(haq);
             if (arm_ind_ij != nbt){
               ttsi_vec.push_back(ttsi_j - t);

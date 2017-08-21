@@ -14,11 +14,12 @@ sample_pars(n = 100, rebound_lower = 0.7, rebound_upper = 1,
   ttd_all = iviRA::ttd.all, ttd_da = iviRA::ttd.da,
   ttd_eular = iviRA::ttd.eular, nma_acr_mean = iviRA::nma.acr.naive$mean,
   nma_acr_vcov = iviRA::nma.acr.naive$vcov, nma_acr_rr_lower = 0.75,
-  nma_acr_rr_upper = 0.92, nma_das28_mean = iviRA::nma.das28.naive$mean,
+  nma_acr_rr_upper = 0.92, nma_acr_ncovs = 1,
+  nma_das28_mean = iviRA::nma.das28.naive$mean,
   nma_das28_vcov = iviRA::nma.das28.naive$vcov, nma_das28_rr_lower = 0.75,
   nma_das28_rr_upper = 0.92, nma_haq_mean = iviRA::nma.haq.naive$mean,
   nma_haq_vcov = iviRA::nma.haq.naive$vcov, nma_haq_rr_lower = 0.75,
-  nma_haq_rr_upper = 0.92, tx_hist = c("naive", "exp"),
+  nma_haq_rr_upper = 0.92, nma_haq_ncovs = 1,
   haq_lprog_tx_mean = iviRA::haq.lprog$tx$est,
   haq_lprog_tx_se = iviRA::haq.lprog$tx$se, haq_lcgm_pars = iviRA::haq.lcgm,
   eular2haq_mean = iviRA::eular2haq$mean,
@@ -40,9 +41,9 @@ sample_pars(n = 100, rebound_lower = 0.7, rebound_upper = 1,
   pl_mean = iviRA::prod.loss$est, pl_se = iviRA::prod.loss$se,
   ttsi = iviRA::ttsi, si_cost = 5873, si_cost_range = 0.2,
   si_ul = 0.156, si_ul_range = 0.2,
-  tx_attr_ug_lower = iviRA::tx.attributes$utility.gain$lower,
-  tx_attr_ug_upper = iviRA::tx.attributes$utility.gain$upper,
-  tx_attr_ug_names = iviRA::tx.attributes$utility.gain$var,
+  tx_attr_ug_lower = iviRA::tx.attr$utility.gain$lower,
+  tx_attr_ug_upper = iviRA::tx.attr$utility.gain$upper,
+  tx_attr_ug_names = iviRA::tx.attr$utility.gain$var,
   tx_names = iviRA::treatments$sname, util_mixture_pain = iviRA::pain)
 }
 \arguments{
@@ -98,6 +99,9 @@ overlapping ACR response probabilities (ACR20/50/70) for biologic experienced pa
 overlapping ACR response probabilities (ACR20/50/70) for biologic experienced patients 
 (i.e., lines 2 and later).}
 
+\item{nma_acr_ncovs}{Number of treatment by covariates interactions. Default is 1, implying
+that treatment effects do not vary across patients.}
+
 \item{nma_das28_mean}{Posterior means for DAS28 NMA parameters for biologic naive 
 patients (i.e., 1st line). Change in DAS28 from baseline is modeled using a linear model.}
 
@@ -121,11 +125,6 @@ for biologic experienced patients (i.e., lines 2 and later).}
 
 \item{nma_haq_rr_upper}{Upper bound for proportion reduction (i.e., relative risk) in HAQ
 for biologic experienced patients (i.e., lines 2 and later).}
-
-\item{tx_hist}{Is patient biologic naive or experienced. If naive NMA results for biologic 
-naive patients are used during 1st line and biologic experienced NMA results are used
-for subsequent lines. If experienced, NMA results for biologic
-experienced patients are using during 1st and subsequent lines.}
 
 \item{haq_lprog_tx_mean}{Point estimate of linear yearly HAQ progression rate by treatment.}
 

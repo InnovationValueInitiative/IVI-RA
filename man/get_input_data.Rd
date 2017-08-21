@@ -5,7 +5,8 @@
 \title{Input data for simulation}
 \usage{
 get_input_data(patdata, x_mort = NULL, x_ttd_all = NULL, x_ttd_da = NULL,
-  x_ttd_eular = NULL, x_attr = iviRA::tx.attr$data, model_structures)
+  x_ttd_eular = NULL, x_acr = NULL, x_haq = NULL, x_das28 = NULL,
+  x_attr = iviRA::tx.attr$data, model_structures)
 }
 \arguments{
 \item{patdata}{Matrix of patient data. Must contain variables generated from \link{sample_pats}:

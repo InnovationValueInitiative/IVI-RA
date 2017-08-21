@@ -36,6 +36,8 @@
 #' @param nma_acr_rr_upper Upper bound for proportion reduction (i.e., relative risk) in
 #'  overlapping ACR response probabilities (ACR20/50/70) for biologic experienced patients 
 #'  (i.e., lines 2 and later).
+#' @param nma_acr_ncovs Number of treatment by covariates interactions. Default is 1, implying
+#' that treatment effects do not vary across patients.  
 #' @param nma_das28_mean Posterior means for DAS28 NMA parameters for biologic naive 
 #' patients (i.e., 1st line). Change in DAS28 from baseline is modeled using a linear model.
 #' @param nma_das28_vcov Variance-covariance matrix for DAS28 NMA paramters for biologic naive
@@ -52,10 +54,6 @@
 #' for biologic experienced patients (i.e., lines 2 and later).
 #' @param nma_haq_rr_upper Upper bound for proportion reduction (i.e., relative risk) in HAQ
 #' for biologic experienced patients (i.e., lines 2 and later).
-#' @param tx_hist Is patient biologic naive or experienced. If naive NMA results for biologic 
-#' naive patients are used during 1st line and biologic experienced NMA results are used
-#' for subsequent lines. If experienced, NMA results for biologic
-#' experienced patients are using during 1st and subsequent lines.
 #' @param haq_lprog_tx_mean Point estimate of linear yearly HAQ progression rate by treatment.
 #' @param haq_lprog_tx_se Standard error of linear yearly HAQ progression rate by treatment.
 #' @param haq_lcgm_pars Parameters of LCGM for HAQ progression.
@@ -228,13 +226,14 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
                        nma_acr_mean = iviRA::nma.acr.naive$mean,
                        nma_acr_vcov = iviRA::nma.acr.naive$vcov,
                        nma_acr_rr_lower = .75, nma_acr_rr_upper = .92,
+                       nma_acr_ncovs = 1,
                        nma_das28_mean = iviRA::nma.das28.naive$mean,
                        nma_das28_vcov = iviRA::nma.das28.naive$vcov,
                        nma_das28_rr_lower = .75, nma_das28_rr_upper = .92,
                        nma_haq_mean = iviRA::nma.haq.naive$mean,
                        nma_haq_vcov = iviRA::nma.haq.naive$vcov,
                        nma_haq_rr_lower = .75, nma_haq_rr_upper = .92,
-                       tx_hist = c("naive", "exp"),
+                       nma_haq_ncovs = 1,
                        haq_lprog_tx_mean = iviRA::haq.lprog$tx$est,
                        haq_lprog_tx_se = iviRA::haq.lprog$tx$se,
                        haq_lcgm_pars = iviRA::haq.lcgm,
@@ -260,9 +259,9 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
                        ttsi = iviRA::ttsi,
                        si_cost = 5873, si_cost_range = .2,
                        si_ul = .156, si_ul_range = .2,
-                       tx_attr_ug_lower = iviRA::tx.attributes$utility.gain$lower,
-                       tx_attr_ug_upper = iviRA::tx.attributes$utility.gain$upper,
-                       tx_attr_ug_names = iviRA::tx.attributes$utility.gain$var,
+                       tx_attr_ug_lower = iviRA::tx.attr$utility.gain$lower,
+                       tx_attr_ug_upper = iviRA::tx.attr$utility.gain$upper,
+                       tx_attr_ug_names = iviRA::tx.attr$utility.gain$var,
                        tx_names = iviRA::treatments$sname,
                        util_mixture_pain = iviRA::pain){
   acr.cats <- c("ACR <20", "ACR 20-50", "ACR 50-70", "ACR 70+")
@@ -284,15 +283,14 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
   sim$ttd.all <- sample_survpars(n, ttd_all)
   sim$ttd.da <- sample_survpars(n, ttd_da)
   sim$ttd.eular <- sample_stratified_survpars(n, ttd_eular)
-  tx_hist <- match.arg(tx_hist)
   sim$acr <- sample_nma_acr(n, nma_acr_mean, nma_acr_vcov, rr_lower = nma_acr_rr_lower,
-                            rr_upper = nma_acr_rr_upper, hist = tx_hist,
+                            rr_upper = nma_acr_rr_upper, ncovs = nma_acr_ncovs,
                             tx_names = tx_names)
   sim$das28 <- sample_nma_lm(n, nma_das28_mean, nma_das28_vcov, rr_lower = nma_das28_rr_lower,
-                             rr_upper = nma_das28_rr_upper, hist = tx_hist,
+                             rr_upper = nma_das28_rr_upper, ncovs = nma_haq_ncovs,
                              tx_names = tx_names)
   sim$haq <- sample_nma_lm(n, nma_haq_mean, nma_haq_vcov, rr_lower = nma_haq_rr_lower,
-                           rr_upper = nma_haq_rr_upper, hist = tx_hist,
+                           rr_upper = nma_haq_rr_upper, ncovs = nma_haq_ncovs,
                            tx_names = tx_names)
   sim$eular2haq <- sample_normals(n, eular2haq_mean, eular2haq_se,
                                  col_names = c("no_response", "moderate_response", "good_response"))
@@ -448,21 +446,15 @@ sample_uniforms <- function(n, lower, upper, col_names = NULL){
 #' @param vcov Variance-covariance matrix of coefficients.
 #' @param rr_lower Lower bound for relative risk.
 #' @param rr_upper Upper bound for relative risk.
-#' @param hist Patient history equivalent to tx_hist in \link{sample_pars}
 #' @return List containing posterior samples of changes in outcomes.
 #' 
 #' @export
-sample_nma_lm <- function(nsims, m, vcov, rr_lower, rr_upper, hist, tx_names){
+sample_nma_lm <- function(nsims, m, vcov, rr_lower, rr_upper, ncovs, tx_names){
   rr.sim <- runif(nsims, rr_lower, rr_upper)
   sim <- sample_mvnorm(nsims, m, vcov)
-  if (hist == "naive"){
-    dy1 <- nma_lm2prob(A = sim[, "A"], delta = sim[, 2:ncol(sim), drop = FALSE])
-    dy2 <- dy1 * rr.sim
-  } else if (hist == "exp"){
-    dy1 <- dy2 <- nma_lm2prob(A = sim[, "A"], delta = sim[, 2:ncol(sim), drop = FALSE]) * rr.sim
-  }
-  colnames(dy1) <- colnames(dy2) <- tx_names
-  return(list(dy1 = dy1, dy2 = dy2, pars = sim, rr = rr.sim))
+  d <- array(sim[, -c(1)], dim = c(nrow(sim), ncovs, ncol(sim[, -c(1)])))
+  dimnames(d)[[3]] <- colnames(sim[, -c(1)])
+  return(list(rr = rr.sim, A = sim[, 1], d = d))
 }
 
 #' Sample ACR response from ordered probit NMA
@@ -477,29 +469,16 @@ sample_nma_lm <- function(nsims, m, vcov, rr_lower, rr_upper, hist, tx_names){
 #' @param vcov Variance-covariance matrix of coefficients.
 #' @param rr_lower Lower bound for relative risk.
 #' @param rr_upper Upper bound for relative risk.
-#' @param hist Patient history equivalent to tx_hist in \link{sample_pars}.
+#' @param ncovs Number of treatment by covariate interactions.
 #' @return List containing posterior sample of ACR response for each therapy
 #' 
 #' @export
-sample_nma_acr <- function(nsims, m, vcov, rr_lower, rr_upper, hist, tx_names){
-  rr2.sim <- runif(nsims, rr_lower, rr_upper)
-  if (hist == "naive"){
-      rr1.sim <- 1
-  } else if (hist == "exp"){
-      rr1.sim <- rr2.sim
-  }
+sample_nma_acr <- function(nsims, m, vcov, rr_lower, rr_upper, ncovs, tx_names){
+  rr.sim <- runif(nsims, rr_lower, rr_upper)
   sim <- sample_mvnorm(nsims, m, vcov)
-  p1 <- nma_acrprob(A = sim[, "A"], z2 = sim[, "z2"], z3 = sim[, "z3"],
-                      delta = sim[, 5:ncol(sim), drop = FALSE],
-                      rr = rr1.sim)
-  p2 <- nma_acrprob(A = sim[, "A"], z2 = sim[, "z2"], z3 = sim[, "z3"],
-                    delta = sim[, 5:ncol(sim), drop = FALSE],
-                    rr = rr2.sim) 
-  dimnames(p1$non.overlap)[[3]] <- dimnames(p2$non.overlap)[[3]] <- tx_names
-  dimnames(p1$overlap)[[3]] <- dimnames(p2$overlap)[[3]] <- tx_names
-  return(list(p1 = p1$non.overlap, p1.overlap = p1$overlap,
-              p2 = p2$non.overlap, p2.overlap = p2$overlap,
-              rr = rr2.sim, pars = sim))
+  d <- array(sim[, -c(1:4)], dim = c(nrow(sim), ncovs, ncol(sim[, -c(1:4)])))
+  dimnames(d)[[3]] <- colnames(sim[, -c(1:4)])
+  return(list(rr = rr.sim, A = sim[, 1], z2 = sim[, 3], z3 = sim[, 4], d = d))
 }
 
 #' Sample survival parameters

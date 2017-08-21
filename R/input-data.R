@@ -159,6 +159,7 @@ lt_data <- function(ltfemale, ltmale){
 #' @export
 get_input_data <- function(patdata, x_mort = NULL, 
                            x_ttd_all = NULL, x_ttd_da = NULL, x_ttd_eular = NULL, 
+                           x_acr = NULL, x_haq = NULL, x_das28 = NULL,
                            x_attr = iviRA::tx.attr$data,
                            model_structures){
   if (!inherits(model_structures, "model_structures")){
@@ -174,6 +175,36 @@ get_input_data <- function(patdata, x_mort = NULL,
           stop("Number of rows in 'x_mort' must equal number of simulated patients.")
       }
     x.mort <- x_mort
+  }
+  
+  # ACR response matrix for treatment by covariate interactions for d's
+  if (is.null(x_acr)){
+    x.acr <- matrix(1, nrow = nrow(patdata), ncol = 1)
+  } else{
+    if (nrow(x_acr) != npats){
+      stop("Number of rows in 'x_acr' must equal number of simulated patients.")
+    }
+    x.acr <- x.acr
+  }
+  
+  # Change in HAQ matrix for treatment by covariate interactions for d's
+  if (is.null(x_haq)){
+    x.haq <- matrix(1, nrow = nrow(patdata), ncol = 1)
+  } else{
+    if (nrow(x_haq) != npats){
+      stop("Number of rows in 'x_acr' must equal number of simulated patients.")
+    }
+    x.haq <- x.haq
+  }
+  
+  # DAS28 matrix for treatment by covariate interactions for d's
+  if (is.null(x_das28)){
+    x.das28 <- matrix(1, nrow = nrow(patdata), ncol = 1)
+  } else{
+    if (nrow(x_das28) != npats){
+      stop("Number of rows in 'x_das28' must equal number of simulated patients.")
+    }
+    x.da28 <- x.das28
   }
   
   # time to treatment discontinuation
@@ -227,7 +258,8 @@ get_input_data <- function(patdata, x_mort = NULL,
               male = patdata[, "male"], das28 = patdata[, "das28"],
               sdai = patdata[, "sdai"], cdai = patdata[, "cdai"],
               weight = patdata[, "weight"], prev.dmards = patdata[, "prev_dmards"],
-              x.mort = x.mort, x.attr = x.attr)
+              x.mort = x.mort, x.acr = x.acr, x.haq = x.haq, x.das28 = x.das28,
+            x.attr = x.attr)
   if (exists("x.ttd.all")){
     l <- c(l, list(x.ttd.all = x.ttd.all))
   }

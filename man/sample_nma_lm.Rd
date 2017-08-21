@@ -4,7 +4,7 @@
 \alias{sample_nma_lm}
 \title{Sample from Bayesian linear model}
 \usage{
-sample_nma_lm(nsims, m, vcov, rr_lower, rr_upper, hist, tx_names)
+sample_nma_lm(nsims, m, vcov, rr_lower, rr_upper, ncovs, tx_names)
 }
 \arguments{
 \item{nsims}{Number of observations.}
@@ -16,8 +16,6 @@ sample_nma_lm(nsims, m, vcov, rr_lower, rr_upper, hist, tx_names)
 \item{rr_lower}{Lower bound for relative risk.}
 
 \item{rr_upper}{Upper bound for relative risk.}
-
-\item{hist}{Patient history equivalent to tx_hist in \link{sample_pars}}
 }
 \value{
 List containing posterior samples of changes in outcomes.

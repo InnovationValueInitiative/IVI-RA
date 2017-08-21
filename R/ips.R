@@ -162,9 +162,16 @@ sim_iviRA <- function(arms, input_data, pars, model_structures,
                      sdai0 = input_data$sdai, cdai0 = input_data$cdai,
                      age0 = input_data$age, male = input_data$male, 
                      prev_dmards = input_data$prev.dmards,
-                     nma_acr1 = pars$acr$p1, nma_acr2 = pars$acr$p2, 
-                     nma_dhaq1 = pars$haq$dy1, nma_dhaq2 = pars$haq$dy2,
-                     nma_das28_1 = pars$das28$dy1, nma_das28_2 = pars$das28$dy2,
+                     nma_acr_list = list(rr = pars$acr$rr, A = pars$acr$A, 
+                                         z2 = pars$acr$z2, z3 = pars$acr$z3, 
+                                         d = pars$acr$d),
+                     x_acr = input_data$x.acr,
+                     nma_haq_list = list(rr = pars$haq$rr, A = pars$haq$A,
+                                         d = pars$haq$d),
+                     x_haq = input_data$x.haq,
+                     nma_das28_list = list(rr = pars$das28$rr, A = pars$das28$A,
+                                           d = pars$das28$d),
+                     x_das28 = input_data$x.das28,
                      acr2eular = pars$acr2eular, acr2haq = pars$acr2haq, eular2haq = pars$eular2haq,
                      acr2das28 = pars$acr2das28, acr2sdai = pars$acr2sdai, acr2cdai = pars$acr2cdai,
                      tswitch_da = prob.switch.da,
@@ -457,10 +464,9 @@ check_pars <- function(x, arminds, mod_struct){
   } 
   
   # NMA ACR
-  nma.acr1 <- x$acr$p1[, , arminds.unique]
-  nma.acr2 <- x$acr$p2[, , arminds.unique]
+  acr.d <- x$acr$d[, , arminds.unique]
   if (any(tx.ihaq %in% c("acr-haq", "acr-eular-haq"))){
-    if (any(is.na(nma.acr1) | is.na(nma.acr2))){
+    if (any(is.na(acr.d) | is.na(acr.d))){
       stop ("'acr' element of pars has missing parameter values for one of the selected treatment 
             arms; that is, the NMA results are missing.")
     }
