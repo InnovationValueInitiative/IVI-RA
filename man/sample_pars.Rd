@@ -4,7 +4,7 @@
 \alias{sample_pars}
 \title{Sample parameters}
 \usage{
-sample_pars(n = 100, rebound_lower = 0.7, rebound_upper = 1,
+sample_pars(n = 100, input_data, rebound_lower = 0.7, rebound_upper = 1,
   ltfemale = iviRA::lifetable.female, ltmale = iviRA::lifetable.male,
   acr2eular_mat = iviRA::acr2eular, tx_cost = iviRA::tx.cost,
   mort_logor = iviRA::mort.or$logor,
@@ -14,13 +14,11 @@ sample_pars(n = 100, rebound_lower = 0.7, rebound_upper = 1,
   ttd_all = iviRA::ttd.all, ttd_da = iviRA::ttd.da,
   ttd_eular = iviRA::ttd.eular, nma_acr_mean = iviRA::nma.acr.naive$mean,
   nma_acr_vcov = iviRA::nma.acr.naive$vcov, nma_acr_rr_lower = 0.75,
-  nma_acr_rr_upper = 0.92, nma_acr_ncovs = 1,
-  nma_das28_mean = iviRA::nma.das28.naive$mean,
+  nma_acr_rr_upper = 0.92, nma_das28_mean = iviRA::nma.das28.naive$mean,
   nma_das28_vcov = iviRA::nma.das28.naive$vcov, nma_das28_rr_lower = 0.75,
   nma_das28_rr_upper = 0.92, nma_haq_mean = iviRA::nma.haq.naive$mean,
   nma_haq_vcov = iviRA::nma.haq.naive$vcov, nma_haq_rr_lower = 0.75,
-  nma_haq_rr_upper = 0.92, nma_haq_ncovs = 1,
-  haq_lprog_tx_mean = iviRA::haq.lprog$tx$est,
+  nma_haq_rr_upper = 0.92, haq_lprog_tx_mean = iviRA::haq.lprog$tx$est,
   haq_lprog_tx_se = iviRA::haq.lprog$tx$se, haq_lcgm_pars = iviRA::haq.lcgm,
   eular2haq_mean = iviRA::eular2haq$mean,
   eular2haq_se = iviRA::eular2haq$se, acr2haq_mean = iviRA::acr2haq$mean,
@@ -44,10 +42,14 @@ sample_pars(n = 100, rebound_lower = 0.7, rebound_upper = 1,
   tx_attr_ug_lower = iviRA::tx.attr$utility.gain$lower,
   tx_attr_ug_upper = iviRA::tx.attr$utility.gain$upper,
   tx_attr_ug_names = iviRA::tx.attr$utility.gain$var,
-  tx_names = iviRA::treatments$sname, util_mixture_pain = iviRA::pain)
+  tx_names = iviRA::treatments$sname,
+  incidence_female = iviRA::incidence.female,
+  incidence_male = iviRA::incidence.male, util_mixture_pain = iviRA::pain)
 }
 \arguments{
 \item{n}{Size of the posterior sample.}
+
+\item{input_data}{An object of class 'input_data' returned from \link{get_input_data}.}
 
 \item{rebound_lower}{The rebound is the increase in HAQ following treatment. It is defined as 
 a proportion \emph{f} times the size of the inititial treatment response. \code{rebound_lower} defines the
@@ -98,9 +100,6 @@ overlapping ACR response probabilities (ACR20/50/70) for biologic experienced pa
 \item{nma_acr_rr_upper}{Upper bound for proportion reduction (i.e., relative risk) in
 overlapping ACR response probabilities (ACR20/50/70) for biologic experienced patients 
 (i.e., lines 2 and later).}
-
-\item{nma_acr_ncovs}{Number of treatment by covariates interactions. Default is 1, implying
-that treatment effects do not vary across patients.}
 
 \item{nma_das28_mean}{Posterior means for DAS28 NMA parameters for biologic naive 
 patients (i.e., 1st line). Change in DAS28 from baseline is modeled using a linear model.}
@@ -196,14 +195,30 @@ for general management of RA.}
 \code{tx.attr.ug}.}
 
 \item{tx_names}{Vector of treatment names.}
+
+\item{incidence_female}{Incidence rates for females. A \code{data.table} that must contain a
+row for each single-year of age from 0 to 100, a variable \code{events} (the number of events
+ (i.e. cases of rheumatoid arthritis) for each age), and the variable \code{person_years}(the 
+ time at risk for an event).}
+
+\item{incidence_male}{Identical to \code{incidence_female} but for males.}
+
+\item{util_mixture_pain}{Summary statistics for bivariate distribution of HAQ and pain. Format
+should be the same as iviRA::pain. Currently, each element of the list must be of length 1.}
+
+\item{model_structures}{An object of class 'model_structures' returned from 
+\link{select_model_structures}.}
 }
 \value{
 List containing samples for the following model parameters:
 
 \describe{
  \item{tx.cost}{\code{data.table} of treatment cost data.}
- \item{ltmale}{Lifetable for males with qx transformed using the logit function.}
-  \item{ltfemale}{Lifetable for females with qx transformed using the logit function.}
+ \item{lt}{A list with two elements for consisting of two matrics, one for males and
+ one for females. Each matrix contains three variables: \code{age}, \code{qx} 
+ (probability of death) and \code{logit_qx} (the logit of the probability of death). 
+ Importantly, there is a row for each single-year of age from 0 to 100, which is passed to
+ the \link{sim_iviRA} function.}
  \item{acr2eular}{An array of matrices. Each matrix represents a random sample of the conditional 
  probability of each EULAR response category for a given ACR response.}
   \item{logor.mort}{Matrix of log odds ratio used to adjust mortality. One row for each sample
@@ -265,6 +280,10 @@ List containing samples for the following model parameters:
    \item{si.ul}{Vector of the sampled values of the annualized utility loss from a serious infection.}
    \item{tx.attr.ug}{Matrix of sampled values of utility gains. Each column is a different treatment
    attribute.}
+   \item{incidence}{A list with two elements for consisting of two matrics, one for males and
+ one for females. Each column is a random sample of the incidence rate for a given age. 
+ Importantly, there is a column for each single-year of age from 0 to 100, which is passed to
+ the \link{sim_iviRA} function.}
 }
 }
 \description{

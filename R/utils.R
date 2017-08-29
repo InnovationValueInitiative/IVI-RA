@@ -22,18 +22,18 @@ list2array <- function(l){
 #' 
 #' @param A A vector from the posterior distribution of the probability that ACR response < 20 
 #' from cDMARDS.
-#' @param delta A matrix from the posterior distribution of regression coefficients 
-#' for each therapy in the NMA.
+#' @param d A matrix from the posterior distribution of the "d's" 
+#' for each treatment in the NMA.
 #' 
 #' @return Matrix of change in continuous outcome variable for each therapy. 
 #' 
 #' @export
-nma_lm2prob <- function(A, delta){
-  nther <- ncol(delta)
+nma_lm_dy <- function(A, d){
+  nther <- ncol(d)
   nsims <- length(A)
   dy <- matrix(NA, nrow = nsims, ncol = nther)
   for (i in 1:nther){
-    dy[, i] <- A +  delta[, i]
+    dy[, i] <- A +  d[, i]
     #dy[, i] <- ifelse(dy[, i] < 0, rr * dy[, i], 1/rr * dy[, i])
   }
   return(dy)
@@ -47,16 +47,16 @@ nma_lm2prob <- function(A, delta){
 #' from cDMARDS.
 #' @param z2 A vector from the posterior distribution for the ACR 50 cutpoint.
 #' @param z3 A vector from the posterior distribution for the ACR 70 cutpoint.
-#' @param delta A matrix from the posterior distribution of regression coefficients 
-#' (on the probit scale) for each therapy in the NMA.
+#' @param d A matrix from the posterior distribution of the "d's" 
+#' for each treatment in the NMA.
 #' @param rr Sampled value of elative risk.
 #' 
 #' @return List containing an array \code{non.overlap} (the probability of ACR < 20, ACR 20-50,
 #' ACR 50-70, and ACR 70+) and \code{overlap} (the probability of ACR20/50/70).
 #' 
 #' @export
-nma_acrprob <- function(A, z2, z3, delta, rr = 1){
-  nther <- ncol(delta)
+nma_acrprob <- function(A, z2, z3, d, rr = 1){
+  nther <- ncol(d)
   nsims <- length(A)
   p <- array(NA, dim = c(nsims, 4, nther))
   pl <- matrix(NA, nrow = nsims, ncol = 3)
@@ -64,9 +64,9 @@ nma_acrprob <- function(A, z2, z3, delta, rr = 1){
   if (is.numeric(pl)) pl <- t(as.matrix(pl))
   for (i in 1:nther){
     # probability less than category
-    pl[, 3] <- pnorm(A + z3 + delta[, i]) # less than ACR 70
-    pl[, 2] <- pnorm(A + z2 + delta[, i]) # less than ACR 50
-    pl[, 1] <- pnorm(A + delta[, i]) # less than ACR 20
+    pl[, 3] <- pnorm(A + z3 + d[, i]) # less than ACR 70
+    pl[, 2] <- pnorm(A + z2 + d[, i]) # less than ACR 50
+    pl[, 1] <- pnorm(A + d[, i]) # less than ACR 20
     
     # probability in overlapping categories
     po[, 4, i] <- rr * (1 - pl[, 3]) # greater than ACR 70

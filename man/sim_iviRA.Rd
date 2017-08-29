@@ -6,7 +6,8 @@
 \usage{
 sim_iviRA(arms, input_data, pars, model_structures, max_months = NULL,
   treatment_lookup = iviRA::treatments$sname, output = c("data", "summary"),
-  discount_qalys = 0.03, discount_cost = 0.03, check = TRUE)
+  discount_qalys = 0.03, discount_cost = 0.03, insurance_value = FALSE,
+  incidence = 0.006, mrs = 2, check = TRUE)
 }
 \arguments{
 \item{arms}{Name of arms in the treatment treatment sequence. May be a vector consisting of 
@@ -29,6 +30,8 @@ otherwise, discounts can be applied to the simulated output.}
 
 \item{discount_cost}{Discount rate for cost variables. Only used when \code{output = "summary"};
 otherwise, discounts can be applied to the simulated output.}
+
+\item{insurance_value}{If TRUE, insurance value is simulated. Defeault is FALSE.}
 
 \item{model_structure}{Object of class model structure generated from \link{select_model_structure}.}
 

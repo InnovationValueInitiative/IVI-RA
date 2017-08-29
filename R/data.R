@@ -237,6 +237,27 @@
 #' @rdname lifetable
 "lifetable.male"
 
+#' Incidence
+#'
+#' Annual incidence rate of rheumatoid arthritis in the United States.
+#'
+#' @name incidence
+#' @format A data frame with 101 rows and 4 variables:
+#' \describe{
+#'   \item{age}{Age in years.}
+#'   \item{events}{Number of events (i.e., number of patients with RA).}
+#'   \item{person_years}{Person years, or, time at risk of event.}
+#'   \item{incidence_rate}{Annual incidence rate.}
+#'
+#' }
+#' @source Myasoedova, Elena, et al. "Is the incidence of rheumatoid arthritis rising?: 
+#'results from Olmsted County, Minnesota, 1955–2007." 
+#' Arthritis & Rheumatology 62.6 (2010): 1576-1582.
+#' @name incidence
+"incidence.female"
+#' @rdname incidence
+"incidence.male"
+
 #' Mortality odds ratios by patient characteristics
 #'
 #' Impact of HAQ on odds ratio for mortality from table 4 in Wolfe et al (2003).

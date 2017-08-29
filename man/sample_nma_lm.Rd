@@ -4,7 +4,8 @@
 \alias{sample_nma_lm}
 \title{Sample from Bayesian linear model}
 \usage{
-sample_nma_lm(nsims, m, vcov, rr_lower, rr_upper, ncovs, tx_names)
+sample_nma_lm(nsims, m, vcov, rr_lower = 1, rr_upper = 1, ncovs = 1,
+  tx_names = NULL)
 }
 \arguments{
 \item{nsims}{Number of observations.}

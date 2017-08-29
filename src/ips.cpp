@@ -1622,6 +1622,10 @@ List sim_iviRA_C(arma::mat arm_inds, CharacterMatrix model_structures_mat,
   }
 }
 
+double sum(double x, double y){
+  return x + y;
+}
+
 
 
 

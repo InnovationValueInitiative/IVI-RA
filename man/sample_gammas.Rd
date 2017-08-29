@@ -4,7 +4,8 @@
 \alias{sample_gammas}
 \title{Sample from gamma distributions}
 \usage{
-sample_gammas(n, mean, se, col_names = NULL)
+sample_gammas(n, mean = NULL, se = NULL, shape = NULL, rate = NULL,
+  col_names = NULL)
 }
 \arguments{
 \item{n}{Number of samples to draw.}
@@ -12,6 +13,8 @@ sample_gammas(n, mean, se, col_names = NULL)
 \item{mean}{Vector of means.}
 
 \item{se}{Vector of standard errors.}
+
+\item{col_names}{Column names to returned matrix.}
 }
 \value{
 Matrix with each column a sample from a gamma distribution.

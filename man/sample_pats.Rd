@@ -2,7 +2,7 @@
 % Please edit documentation in R/input-data.R
 \name{sample_pats}
 \alias{sample_pats}
-\title{Sample patients}
+\title{Sample a patient population}
 \usage{
 sample_pats(n = 1, type = c("homog", "heterog"), age_mean = 55,
   age_sd = 13, male_prop = 0.21, haq0_mean = 1.5, haq0_sd = 0.7,
@@ -10,7 +10,8 @@ sample_pats(n = 1, type = c("homog", "heterog"), age_mean = 55,
   prev_dmards_sd = 1.72, das28_mean = 6, das28_sd = 1.2, sdai_mean = 43,
   sdai_sd = 13, cdai_mean = 41, cdai_sd = 13, cor_das28_sdai = 0.86,
   cor_das28_cdai = 0.86, cor_das28_haq = 0.38, cor_sdai_cdai = 0.94,
-  cor_sdai_haq = 0.34, cor_cdai_haq = 0.34)
+  cor_sdai_haq = 0.34, cor_cdai_haq = 0.34, mrs_lower = 1.1,
+  mrs_upper = 1.5)
 }
 \arguments{
 \item{n}{Number of samples.}
@@ -58,6 +59,13 @@ sample_pats(n = 1, type = c("homog", "heterog"), age_mean = 55,
 \item{cor_sdai_haq}{Correlation between SDAI and HAQ.}
 
 \item{cor_cdai_haq}{Correlation between CDAI and HAQ.}
+
+\item{mrs_lower}{Lower bound for the marginal rate of substitution between sick 
+(i.e., have rheumatoid arthritis) and healthy states. In other words, the amount of consumption that an individual is willing to 
+  give up while healthy for an additiional dollar of consumption when sick.}
+
+\item{mrs_upper}{Upper bound for the marginal rate of substitution between sick and 
+healthy states.}
 }
 \value{
 Matrix of patient characteristics. One row for each patient and one column
@@ -71,8 +79,16 @@ for each variable. Current variables are:
   \item{sdai}{SDAI score}
   \item{cdai}{CDAI score}
   \item{haq0}{Baseline HAQ score}
+  \item{mrs}{THe marginal rate of substitution between sick and 
+  healthy states as described above.}
 }
 }
 \description{
-Sample patients for rheumatoid arthritis individual patient simulation.
+Sample a patient population for use in the individual patient simulation (\link{sim_iviRA}).
+}
+\details{
+If a homogeneous population is chosen, the marginal rate of substitution is equal to
+\code{(mrs_lower + mrs_upper)/2}. The marginal rate of substitution is only relevant when 
+estimating the insurance value (i.e., value from the perspective of a healthy individual) of
+a technology.
 }

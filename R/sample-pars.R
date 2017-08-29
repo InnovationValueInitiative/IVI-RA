@@ -3,6 +3,9 @@
 #' Randomly draw parameters from their (joint) probability distribution.
 #' 
 #' @param n Size of the posterior sample.
+#' @param input_data An object of class 'input_data' returned from \link{get_input_data}.
+#' @param model_structures An object of class 'model_structures' returned from 
+#' \link{select_model_structures}.
 #' @param rebound_lower The rebound is the increase in HAQ following treatment. It is defined as 
 #' a proportion \emph{f} times the size of the inititial treatment response. \code{rebound_lower} defines the
 #' lower bound for \emph{f}. Default is 0.7, which implies
@@ -36,8 +39,6 @@
 #' @param nma_acr_rr_upper Upper bound for proportion reduction (i.e., relative risk) in
 #'  overlapping ACR response probabilities (ACR20/50/70) for biologic experienced patients 
 #'  (i.e., lines 2 and later).
-#' @param nma_acr_ncovs Number of treatment by covariates interactions. Default is 1, implying
-#' that treatment effects do not vary across patients.  
 #' @param nma_das28_mean Posterior means for DAS28 NMA parameters for biologic naive 
 #' patients (i.e., 1st line). Change in DAS28 from baseline is modeled using a linear model.
 #' @param nma_das28_vcov Variance-covariance matrix for DAS28 NMA paramters for biologic naive
@@ -93,13 +94,23 @@
 #' @param tx_attr_ug_names Names of treatment attributes to be returned in sampled matrix
 #' \code{tx.attr.ug}.
 #' @param tx_names Vector of treatment names.
+#' @param incidence_female Incidence rates for females. A \code{data.table} that must contain a
+#'  row for each single-year of age from 0 to 100, a variable \code{events} (the number of events
+#'   (i.e. cases of rheumatoid arthritis) for each age), and the variable \code{person_years}(the 
+#'   time at risk for an event). 
+#' @param incidence_male Identical to \code{incidence_female} but for males.
+#' @param util_mixture_pain Summary statistics for bivariate distribution of HAQ and pain. Format
+#' should be the same as iviRA::pain. Currently, each element of the list must be of length 1.
 #' 
 #' @return List containing samples for the following model parameters:
 #' 
 #' \describe{
 #'  \item{tx.cost}{\code{data.table} of treatment cost data.}
-#'  \item{ltmale}{Lifetable for males with qx transformed using the logit function.}
-#'   \item{ltfemale}{Lifetable for females with qx transformed using the logit function.}
+#'  \item{lt}{A list with two elements for consisting of two matrics, one for males and
+#'  one for females. Each matrix contains three variables: \code{age}, \code{qx} 
+#'  (probability of death) and \code{logit_qx} (the logit of the probability of death). 
+#'  Importantly, there is a row for each single-year of age from 0 to 100, which is passed to
+#'  the \link{sim_iviRA} function.}
 #'  \item{acr2eular}{An array of matrices. Each matrix represents a random sample of the conditional 
 #'  probability of each EULAR response category for a given ACR response.}
 #'   \item{logor.mort}{Matrix of log odds ratio used to adjust mortality. One row for each sample
@@ -161,6 +172,10 @@
 #'    \item{si.ul}{Vector of the sampled values of the annualized utility loss from a serious infection.}
 #'    \item{tx.attr.ug}{Matrix of sampled values of utility gains. Each column is a different treatment
 #'    attribute.}
+#'    \item{incidence}{A list with two elements for consisting of two matrics, one for males and
+#'  one for females. Each column is a random sample of the incidence rate for a given age. 
+#'  Importantly, there is a column for each single-year of age from 0 to 100, which is passed to
+#'  the \link{sim_iviRA} function.}
 #' }
 #'
 #' @section Time to treatment discontinuation:
@@ -215,7 +230,8 @@
 #' }
 #' 
 #' @export
-sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
+sample_pars <- function(n = 100, input_data,
+                        rebound_lower = .7, rebound_upper = 1,
                        ltfemale = iviRA::lifetable.female, ltmale = iviRA::lifetable.male,
                        acr2eular_mat = iviRA::acr2eular,
                        tx_cost = iviRA::tx.cost,
@@ -226,14 +242,12 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
                        nma_acr_mean = iviRA::nma.acr.naive$mean,
                        nma_acr_vcov = iviRA::nma.acr.naive$vcov,
                        nma_acr_rr_lower = .75, nma_acr_rr_upper = .92,
-                       nma_acr_ncovs = 1,
                        nma_das28_mean = iviRA::nma.das28.naive$mean,
                        nma_das28_vcov = iviRA::nma.das28.naive$vcov,
                        nma_das28_rr_lower = .75, nma_das28_rr_upper = .92,
                        nma_haq_mean = iviRA::nma.haq.naive$mean,
                        nma_haq_vcov = iviRA::nma.haq.naive$vcov,
                        nma_haq_rr_lower = .75, nma_haq_rr_upper = .92,
-                       nma_haq_ncovs = 1,
                        haq_lprog_tx_mean = iviRA::haq.lprog$tx$est,
                        haq_lprog_tx_se = iviRA::haq.lprog$tx$se,
                        haq_lcgm_pars = iviRA::haq.lcgm,
@@ -263,7 +277,21 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
                        tx_attr_ug_upper = iviRA::tx.attr$utility.gain$upper,
                        tx_attr_ug_names = iviRA::tx.attr$utility.gain$var,
                        tx_names = iviRA::treatments$sname,
+                       incidence_female = iviRA::incidence.female,
+                       incidence_male = iviRA::incidence.male,
                        util_mixture_pain = iviRA::pain){
+  
+  # input data and model structures
+  if (!inherits(input_data, "input_data")){
+    stop("The argument 'input_data' must be of class 'input_data'")
+  }
+
+  # number of covariates in NMA treatment by covariate interactions
+  nma.acr.ncovs <- ncol(input_data$x.acr)
+  nma.haq.ncovs <- ncol(input_data$x.haq)
+  nma.das28.ncovs <- ncol(input_data$x.das28)
+  
+  # sampling
   acr.cats <- c("ACR <20", "ACR 20-50", "ACR 50-70", "ACR 70+")
   sim <- list()
   sim$n <- n
@@ -282,33 +310,34 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
                                          col_names = paste0("month_", c("less6", "6to12", "12to24", "24to36", "36to48")))
   sim$ttd.all <- sample_survpars(n, ttd_all)
   sim$ttd.da <- sample_survpars(n, ttd_da)
-  sim$ttd.eular <- sample_stratified_survpars(n, ttd_eular)
-  sim$acr <- sample_nma_acr(n, nma_acr_mean, nma_acr_vcov, rr_lower = nma_acr_rr_lower,
-                            rr_upper = nma_acr_rr_upper, ncovs = nma_acr_ncovs,
-                            tx_names = tx_names)
-  sim$das28 <- sample_nma_lm(n, nma_das28_mean, nma_das28_vcov, rr_lower = nma_das28_rr_lower,
-                             rr_upper = nma_das28_rr_upper, ncovs = nma_haq_ncovs,
-                             tx_names = tx_names)
-  sim$haq <- sample_nma_lm(n, nma_haq_mean, nma_haq_vcov, rr_lower = nma_haq_rr_lower,
-                           rr_upper = nma_haq_rr_upper, ncovs = nma_haq_ncovs,
-                           tx_names = tx_names)
+  sim$ttd.eular <- sample_stratified_survpars(n, ttd_eular) # make depend on distribution
   sim$eular2haq <- sample_normals(n, eular2haq_mean, eular2haq_se,
-                                 col_names = c("no_response", "moderate_response", "good_response"))
-  sim$acr2haq <- sample_normals(n, acr2haq_mean, acr2haq_se, acr.cats)
+                                    col_names = c("no_response", "moderate_response", 
+                                                  "good_response"))
+  sim$acr <- sample_nma_acr(n, nma_acr_mean, nma_acr_vcov, rr_lower = nma_acr_rr_lower,
+                              rr_upper = nma_acr_rr_upper, ncovs = nma.acr.ncovs,
+                              tx_names = tx_names) 
+  sim$das28 <- sample_nma_lm(n, nma_das28_mean, nma_das28_vcov, rr_lower = nma_das28_rr_lower,
+                               rr_upper = nma_das28_rr_upper, ncovs = nma.das28.ncovs,
+                               tx_names = tx_names) 
+  sim$haq <- sample_nma_lm(n, nma_haq_mean, nma_haq_vcov, rr_lower = nma_haq_rr_lower,
+                             rr_upper = nma_haq_rr_upper, ncovs = nma.haq.ncovs,
+                             tx_names = tx_names) 
+  sim$acr2haq <- sample_normals(n, acr2haq_mean, acr2haq_se, acr.cats) 
   sim$haq.lprog.tx <- sample_normals(n, haq_lprog_tx_mean,
                                                   haq_lprog_tx_se)
   sim$haq.lprog.age <- sample_normals(n, haq_lprog_age_mean, haq_lprog_age_se,
                                      col_names =  c("age_less40", "age40to64", "age_65plus"))
-  sim$haq.lcgm <- sample_pars_haq_lcgm(n, pars = haq_lcgm_pars)
-  sim$utility.mixture <- sample_pars_utility_mixture(n, util_mixture_pain)
+  sim$haq.lcgm <- sample_pars_haq_lcgm(n, pars = haq_lcgm_pars) 
+  sim$utility.mixture <- sample_pars_utility_mixture(n, util_mixture_pain)    
   sim$utility.wailoo <- sample_normals(n, iviRA::utility.wailoo$est, iviRA::utility.wailoo$se,
-                                      col_names = utility.wailoo$var)
+                                         col_names = utility.wailoo$var) 
   hosp.cost.names <- c("haq_less0.5", "haq0.5to1", "haq1to1.5", "haq1.5to2", "haq2to2.5", "haq2.5plus")
-  sim$hosp.cost <- list(hosp.days = sample_gammas(n, hosp_days_mean, hosp_days_se,
+  sim$hosp.cost <- list(hosp.days = sample_gammas(n, mean =hosp_days_mean, se =hosp_days_se,
                                                  col_names = hosp.cost.names),
                      cost.pday = sample_gammas(n, mean = hosp_cost_mean, se = hosp_cost_se,
                                               col_names = hosp.cost.names))
-  sim$mgmt.cost <- sample_gammas(n, mgmt_cost_mean, mgmt_cost_se,
+  sim$mgmt.cost <- sample_gammas(n, mean = mgmt_cost_mean, se = mgmt_cost_se,
                                 col_names = c("chest_xray", "xray_visit", "outpatient_followup", "tuberculin_test"))
   sim$prod.loss <- rnorm(n, pl_mean, pl_se)
   sim$ttsi <- sample_normals(n, mean = ttsi$lograte, sd = ttsi$lograte_se,
@@ -317,6 +346,10 @@ sample_pars <- function(n = 100, rebound_lower = .7, rebound_upper = 1,
   sim$si.ul <- runif(n, si_ul * (1 - si_ul_range), si_ul * (1 + si_ul_range))
   sim$tx.attr.ug <-  sample_uniforms(n, tx_attr_ug_lower, tx_attr_ug_upper,
                                      tx_attr_ug_names)
+  sim$incidence <- list(female = sample_gammas(n, shape = incidence_female$events, 
+                                 rate = incidence_female$person_years),
+                        male = sample_gammas(n, shape = incidence_male$events, 
+                                             rate = incidence_male$person_years))
   return(sim)
 }
 
@@ -449,7 +482,7 @@ sample_uniforms <- function(n, lower, upper, col_names = NULL){
 #' @return List containing posterior samples of changes in outcomes.
 #' 
 #' @export
-sample_nma_lm <- function(nsims, m, vcov, rr_lower, rr_upper, ncovs, tx_names){
+sample_nma_lm <- function(nsims, m, vcov, rr_lower = 1, rr_upper = 1, ncovs = 1, tx_names = NULL){
   rr.sim <- runif(nsims, rr_lower, rr_upper)
   sim <- sample_mvnorm(nsims, m, vcov)
   d <- array(sim[, -c(1)], dim = c(nrow(sim), ncovs, ncol(sim[, -c(1)])))
@@ -473,7 +506,8 @@ sample_nma_lm <- function(nsims, m, vcov, rr_lower, rr_upper, ncovs, tx_names){
 #' @return List containing posterior sample of ACR response for each therapy
 #' 
 #' @export
-sample_nma_acr <- function(nsims, m, vcov, rr_lower, rr_upper, ncovs, tx_names){
+sample_nma_acr <- function(nsims, m, vcov, rr_lower = 1, rr_upper = 1, 
+                           ncovs = 1, tx_names = NULL){
   rr.sim <- runif(nsims, rr_lower, rr_upper)
   sim <- sample_mvnorm(nsims, m, vcov)
   d <- array(sim[, -c(1:4)], dim = c(nrow(sim), ncovs, ncol(sim[, -c(1:4)])))
@@ -654,19 +688,35 @@ mom_beta <- function(mean, sd, quant = NULL){
 #' @param n Number of samples to draw.
 #' @param mean Vector of means.
 #' @param se Vector of standard errors. 
-#' @parm col_names Column names to returned matrix.
-#' 
+#' @param col_names Column names to returned matrix.
 #' @return Matrix with each column a sample from a gamma distribution. 
 #' 
 #' @export
-sample_gammas <- function(n, mean, se, col_names = NULL){
-  which.fixed <- which(se == 0); which.gamma <- which(se > 0)
-  gamma.pars <- mom_gamma(mean[which.gamma], se[which.gamma])
+sample_gammas <- function(n, mean = NULL, se = NULL, shape = NULL, rate = NULL,
+                          col_names = NULL){
+  if ((!is.null(mean) | !is.null(se)) & (!is.null(shape) | !is.null(rate))){
+    stop("Specify mean and and se or shape and rate but not both.")
+  }
+  if ((!is.null(mean) & is.null(se)) | !is.null(se) & is.null(mean)){
+    stop("mean and se must both be specified.")
+  }
+  if ((!is.null(shape) & is.null(rate)) | !is.null(rate) & is.null(shape)){
+    stop("shape and rate must both be specified.")
+  }
+  if (!is.null(mean)){
+      which.fixed <- which(se == 0); which.gamma <- which(se > 0)
+      gamma.pars <- mom_gamma(mean[which.gamma], se[which.gamma])
+      samp.fixed <- matrix(mean[which.fixed], nrow = n, ncol = length(which.fixed), byrow = T)
+      samp <- matrix(NA, nrow = n, ncol = length(se))
+  } else{
+      which.fixed <- which(shape == 0); which.gamma <- which(shape > 0)
+      gamma.pars <- list(scale = 1/rate[which.gamma], shape = shape[which.gamma]) 
+      samp.fixed <- matrix(shape[which.fixed], nrow = n, ncol = length(which.fixed), byrow = T)
+      samp <- matrix(NA, nrow = n, ncol = length(rate))
+  }
   samp.gamma <- rgamma(n * length(which.gamma), 
                  shape = gamma.pars$shape, scale = gamma.pars$scale)
   samp.gamma <- matrix(samp.gamma, nrow = n, ncol = length(which.gamma), byrow = T)
-  samp.fixed <- matrix(mean[which.fixed], nrow = n, ncol = length(which.fixed), byrow = T)
-  samp <- matrix(NA, nrow = n, ncol = length(se))
   samp[, which.gamma] <- samp.gamma
   samp[, which.fixed] <- samp.fixed
   colnames(samp) <- col_names

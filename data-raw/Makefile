@@ -11,7 +11,8 @@ all: $(DATA)/haq-lprog.rda  $(DATA)/haq-lcgm.rda
 all: $(DATA)/ttd.rda $(DATA)/ttsi.rda
 all: $(DATA)/mort-or.rda $(DATA)/mort-hr-haqdif.rda $(DATA)/lifetable-male.rda $(DATA)/lifetable-female.rda 
 all: $(DATA)/tx-cost.rda $(DATA)/hosp-cost.rda $(DATA)/mgmt-cost.rda $(DATA)/prod-loss.rda 
-all: $(DATA)/tx-attr.rda $(DATA)/utility-mixture.rda $(DATA)/utility-wailoo.rda 
+all: $(DATA)/tx-attr.rda $(DATA)/utility-mixture.rda $(DATA)/utility-wailoo.rda
+all: $(DATA)/incidence-female.rda $(DATA)/incidence-male.rda 
 all: figs/ttd-corrona-ipdsurv-gengamma.pdf figs/ttd-corrona-ipdsurv-gengamma.pdf
 all: figs/ttd-bsrbr-ipdsurv-comp-gengamma-by-eular.pdf
 all: figs/haq-lcgm-obsexp.pdf
@@ -85,4 +86,8 @@ $(UTILITY_TARGET): $(UTILITY_DEPS)
 # Costs
 $(DATA)/tx-cost.rda $(DATA)/hosp-cost.rda $(DATA)/mgmt-cost.rda $(DATA)/prod-loss.rda: cost.R cost.xlsx
 	Rscript cost.R
+	
+# Incidence
+$(DATA)/incidence-female.rda $(DATA)/incidence-male.rda: incidence.R incidence.csv
+	Rscript incidence.R
 	

@@ -4,7 +4,7 @@
 \alias{nma_acrprob}
 \title{NMA parameters to ACR response probabilities}
 \usage{
-nma_acrprob(A, z2, z3, delta, rr = 1)
+nma_acrprob(A, z2, z3, d, rr = 1)
 }
 \arguments{
 \item{A}{A vector from the posterior distribution of the probability that ACR response < 20 
@@ -14,8 +14,8 @@ from cDMARDS.}
 
 \item{z3}{A vector from the posterior distribution for the ACR 70 cutpoint.}
 
-\item{delta}{A matrix from the posterior distribution of regression coefficients 
-(on the probit scale) for each therapy in the NMA.}
+\item{d}{A matrix from the posterior distribution of the "d's" 
+for each treatment in the NMA.}
 
 \item{rr}{Sampled value of elative risk.}
 }

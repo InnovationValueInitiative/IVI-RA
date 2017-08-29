@@ -1,6 +1,6 @@
-#' Sample patients
+#' Sample a patient population
 #'
-#' Sample patients for rheumatoid arthritis individual patient simulation.
+#' Sample a patient population for use in the individual patient simulation (\link{sim_iviRA}).
 #' 
 #' @param n Number of samples.
 #' @param type Should male and female patients be heterogeneous or homogeneous. Default is homogeneous.
@@ -25,6 +25,17 @@
 #' @param cor_sdai_cdai Correlation between SDAI and CDAI.
 #' @param cor_sdai_haq Correlation between SDAI and HAQ.
 #' @param cor_cdai_haq Correlation between CDAI and HAQ.
+#' @param mrs_lower Lower bound for the marginal rate of substitution between sick 
+#' (i.e., have rheumatoid arthritis) and healthy states. In other words, the amount of consumption that an individual is willing to 
+#'   give up while healthy for an additiional dollar of consumption when sick.
+#' @param mrs_upper Upper bound for the marginal rate of substitution between sick and 
+#' healthy states.
+#' 
+#' @details If a homogeneous population is chosen, the marginal rate of substitution is equal to
+#' \code{(mrs_lower + mrs_upper)/2}. The marginal rate of substitution is only relevant when 
+#' estimating the insurance value (i.e., value from the perspective of a healthy individual) of
+#' a technology.
+#' 
 #' @return Matrix of patient characteristics. One row for each patient and one column
 #' for each variable. Current variables are:
 #' \describe{
@@ -36,6 +47,8 @@
 #'   \item{sdai}{SDAI score}
 #'   \item{cdai}{CDAI score}
 #'   \item{haq0}{Baseline HAQ score}
+#'   \item{mrs}{THe marginal rate of substitution between sick and 
+#'   healthy states as described above.}
 #' }
 #' @export
 sample_pats <- function(n = 1, type = c("homog", "heterog"), age_mean = 55, age_sd = 13, male_prop = .21,
@@ -46,7 +59,8 @@ sample_pats <- function(n = 1, type = c("homog", "heterog"), age_mean = 55, age_
                       cdai_mean = 41, cdai_sd = 13,
                       cor_das28_sdai = .86, cor_das28_cdai = .86, cor_das28_haq = .38,
                       cor_sdai_cdai = .94, cor_sdai_haq = .34,
-                      cor_cdai_haq = .34){
+                      cor_cdai_haq = .34,
+                      mrs_lower = 1.1, mrs_upper = 1.5){
   if (age_mean > 85 | age_mean < 18){
     stop("Patients age must be between 18 and 85")
   }
@@ -61,6 +75,7 @@ sample_pats <- function(n = 1, type = c("homog", "heterog"), age_mean = 55, age_
       sdai <- rep(sdai_mean, n)
       cdai <- rep(cdai_mean, n)
       da <- matrix(c(das28, sdai, cdai, haq0), ncol = 4)
+      mrs <- rep((mrs_lower + mrs_upper)/2, n)
   } else if (type == "heterog"){
       age <- msm::rtnorm(n, age_mean, age_sd, lower = 18, upper = 85) 
       haq0 <- msm::rtnorm(n, haq0_mean, haq0_sd, lower = 0, upper = 3)
@@ -77,12 +92,13 @@ sample_pats <- function(n = 1, type = c("homog", "heterog"), age_mean = 55, age_
       da <- tmvtnorm::rtmvnorm(n, mean = mu, sigma = covmat,
                                lower = rep(0, length(mu)),
                                upper = c(9.4, 86, 76, 3))
+      mrs <- runif(n, min = mrs_lower, max = mrs_upper)
   }
   x <- matrix(c(age, male, weight, prev_dmards, 
-                da[, 1], da[, 2], da[, 3], da[, 4]), 
-              nrow = n, ncol = 8, byrow = F)
+                da[, 1], da[, 2], da[, 3], da[, 4], mrs),
+              nrow = n, ncol = 9, byrow = F)
   colnames(x) <- c("age", "male", "weight", "prev_dmards", 
-                   "das28", "sdai", "cdai", "haq0")
+                   "das28", "sdai", "cdai", "haq0", "mrs")
   return(x)
 }
 
@@ -134,8 +150,6 @@ lt_data <- function(ltfemale, ltmale){
 #' @param x_ttd_all The design matrix for time to treatment discontinuation representative of all patients (i.e., unstratified).
 #' @param x_ttd_da The design matrix for time to treatment discontinuation stratified by disease activity level.
 #' @param x_ttd_eular The design matrix for time to treatment discontinuation for each EULAR response category (moderate, good). 
-#' @param model_structures An object of class \code{model_structures} generated from 
-#'  \link{select_model_structures}.
 #' 
 #' @return A list containing the following data inputs:
 #' \describe{
@@ -145,26 +159,19 @@ lt_data <- function(ltfemale, ltmale){
 #'   \item{male}{A vector of patient gender (1 = male, 0 = female).}
 #'   \item{prev.dmards}{A vector of the number of previous DMARDs}
 #'   \item{x.mort}{Design matrix for mortality adjustment with odds ratios}
+#'   \item{x.ttd.all}{Design matrix for treatment duration representative of all patients.}
+#'   \item{x.ttd.da}{Design matrix for treatment duration when disease activity covarariates
+#'       are used to model the location parameter in the survival model.}
+#'  \item{x.ttd.eular}{Design matrix for treatment duration when survival is stratified by
+#'        EULAR response.}
 #'   \item{x.attr}{Design matrix of treatment attributes.}
-#' }
-#' Depending on the selected model structures, the list may also contain:
-#' \describe{
-#' \item{x.ttd.all}{Design matrix for treatment duration representative of all patients.}
-#' \item{x.ttd.da}{Design matrix for treatment duration when disease activity covarariates
-#' are used to model the location parameter in the survival model.}
-#' \item{x.ttd.eular}{Design matrix for treatment duration when survival is stratified by
-#' EULAR response.}
 #' }
 #' 
 #' @export
 get_input_data <- function(patdata, x_mort = NULL, 
                            x_ttd_all = NULL, x_ttd_da = NULL, x_ttd_eular = NULL, 
                            x_acr = NULL, x_haq = NULL, x_das28 = NULL,
-                           x_attr = iviRA::tx.attr$data,
-                           model_structures){
-  if (!inherits(model_structures, "model_structures")){
-    stop("The argument 'model_structures' must be of class 'model_structures'")
-  }
+                           x_attr = iviRA::tx.attr$data){
   npats <- nrow(patdata)
   
   # mortality
@@ -208,39 +215,32 @@ get_input_data <- function(patdata, x_mort = NULL,
   }
   
   # time to treatment discontinuation
-  if ("acr-switch" %in% model_structures[, "tx_iswitch"]){
-      if(is.null(x_ttd_all)){
-          x.ttd.all <- matrix(1, nrow = nrow(patdata), ncol = 1)
-      } else{
-        if (nrow(x_ttd_all) != npats){
-          stop("Number of rows in 'x_ttd_all' must equal number of simulated patients.")
-        }
-        x.ttd.all <- x_ttd_all
+    if(is.null(x_ttd_all)){
+        x.ttd.all <- matrix(1, nrow = nrow(patdata), ncol = 1)
+    } else{
+      if (nrow(x_ttd_all) != npats){
+        stop("Number of rows in 'x_ttd_all' must equal number of simulated patients.")
       }
-  } 
+      x.ttd.all <- x_ttd_all
+    }
   
-  if("acr-eular-switch" %in% model_structures[, "tx_iswitch"]){
-      if(is.null(x_ttd_eular)){
-        x.ttd.eular <- matrix(1, nrow = nrow(patdata), ncol = 1)
-      } else{
-        if (nrow(x_ttd_eular) != npats){
-          stop("Number of rows in 'x_ttd_eular' must equal number of simulated patients.")
-        }
-        x.ttd.eular <- x_ttd_eular
+    if(is.null(x_ttd_eular)){
+      x.ttd.eular <- matrix(1, nrow = nrow(patdata), ncol = 1)
+    } else{
+      if (nrow(x_ttd_eular) != npats){
+        stop("Number of rows in 'x_ttd_eular' must equal number of simulated patients.")
       }
-  } 
+      x.ttd.eular <- x_ttd_eular
+    }
   
-  if (any(c("acr-das28-switch", "acr-sdai-switch", "acr-cdai-switch", "das28-switch") %in% 
-      model_structures[, "tx_iswitch"])){
-      if(is.null(x_ttd_da)){
-        x.ttd.da <- matrix(c(1, 0, 0), nrow = nrow(patdata), ncol = 3, byrow = TRUE)
-      } else{
-        if (nrow(x_ttd_da) != npats){
-          stop("Number of rows in 'x_ttd_da' must equal number of simulated patients.")
-        }
-        x.ttd.da <- x_ttd_da
+    if(is.null(x_ttd_da)){
+      x.ttd.da <- matrix(c(1, 0, 0), nrow = nrow(patdata), ncol = 3, byrow = TRUE)
+    } else{
+      if (nrow(x_ttd_da) != npats){
+        stop("Number of rows in 'x_ttd_da' must equal number of simulated patients.")
       }
-  }
+      x.ttd.da <- x_ttd_da
+    }
   
   # treatment attributes
   if (!is.matrix(x_attr)){
@@ -259,16 +259,8 @@ get_input_data <- function(patdata, x_mort = NULL,
               sdai = patdata[, "sdai"], cdai = patdata[, "cdai"],
               weight = patdata[, "weight"], prev.dmards = patdata[, "prev_dmards"],
               x.mort = x.mort, x.acr = x.acr, x.haq = x.haq, x.das28 = x.das28,
+              x.ttd.all = x.ttd.all, x.ttd.eular = x.ttd.eular, x.ttd.da = x.ttd.da,
             x.attr = x.attr)
-  if (exists("x.ttd.all")){
-    l <- c(l, list(x.ttd.all = x.ttd.all))
-  }
-  if (exists("x.ttd.eular")){
-    l <- c(l, list(x.ttd.eular = x.ttd.eular))
-  }
-  if (exists("x.ttd.da")){
-    l <- c(l, list(x.ttd.da = x.ttd.da))
-  }
   class(l) <- "input_data"
   return(l)
 }

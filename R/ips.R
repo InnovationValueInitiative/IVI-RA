@@ -21,6 +21,7 @@
 #' otherwise, discounts can be applied to the simulated output.
 #' @param discount_cost Discount rate for cost variables. Only used when \code{output = "summary"};
 #' otherwise, discounts can be applied to the simulated output.
+#' @param insurance_value If TRUE, insurance value is simulated. Defeault is FALSE.
 #' 
 #' @return 
 #' The \code{output = "data"} options returns all simulated output. However, since output is 
@@ -72,6 +73,8 @@ sim_iviRA <- function(arms, input_data, pars, model_structures,
                       max_months = NULL, treatment_lookup = iviRA::treatments$sname,
                       output = c("data", "summary"), 
                       discount_qalys = .03, discount_cost = .03,
+                      insurance_value = FALSE, incidence = .006,
+                      mrs = 2,
                       check = TRUE){
   output <- match.arg(output)
   
@@ -120,23 +123,9 @@ sim_iviRA <- function(arms, input_data, pars, model_structures,
   pars.si <- pars$ttsi
   
   ## time to treatment discontinuation
-  if (is.null(input_data$x.ttd.all)){
-    x.ttd.all <- matrix()
-  } else{
-    x.ttd.all <- input_data$x.ttd.all
-  }
-  
-  if (is.null(input_data$x.ttd.eular)){
-    x.ttd.eular <- matrix()
-  } else{
-    x.ttd.eular <- input_data$x.ttd.eular
-  }
-  
-  if (is.null(input_data$x.ttd.da)){
-    x.ttd.da <- matrix()
-  } else{
-    x.ttd.da <- input_data$x.ttd.da
-  }
+  x.ttd.all <- input_data$x.ttd.all
+  x.ttd.eular <- input_data$x.ttd.eular
+  x.ttd.da <- input_data$x.ttd.da
   
   ## treatment costs
   tc <- pars$tx.cost

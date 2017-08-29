@@ -1,7 +1,4 @@
-// [[Rcpp::depends(RcppArmadillo)]]
-
-#include <RcppArmadillo.h>
-using namespace Rcpp;
+#include <Rcpp.h>
 
 // Discount factor
 double discount_factor(double t, double discount){
@@ -20,7 +17,7 @@ std::vector<std::vector<std::string> > stdvec2matrix(std::vector<std::string> x,
 }
 
 // Convert character matrix to 2-dimensional std string vector
-std::vector<std::vector<std::string> > charmat2stdvec(CharacterMatrix x){
+std::vector<std::vector<std::string> > charmat2stdvec(Rcpp::CharacterMatrix x){
   int N = x.ncol();
   int M = x.nrow();
   std::vector<std::vector<std::string> > vecs(M, std::vector<std::string>(N));

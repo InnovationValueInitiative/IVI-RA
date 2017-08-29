@@ -6,7 +6,7 @@
 \usage{
 get_input_data(patdata, x_mort = NULL, x_ttd_all = NULL, x_ttd_da = NULL,
   x_ttd_eular = NULL, x_acr = NULL, x_haq = NULL, x_das28 = NULL,
-  x_attr = iviRA::tx.attr$data, model_structures)
+  x_attr = iviRA::tx.attr$data)
 }
 \arguments{
 \item{patdata}{Matrix of patient data. Must contain variables generated from \link{sample_pats}:
@@ -21,9 +21,6 @@ for number of previous DMARDs.}
 \item{x_ttd_da}{The design matrix for time to treatment discontinuation stratified by disease activity level.}
 
 \item{x_ttd_eular}{The design matrix for time to treatment discontinuation for each EULAR response category (moderate, good).}
-
-\item{model_structures}{An object of class \code{model_structures} generated from 
-\link{select_model_structures}.}
 }
 \value{
 A list containing the following data inputs:
@@ -34,15 +31,12 @@ A list containing the following data inputs:
   \item{male}{A vector of patient gender (1 = male, 0 = female).}
   \item{prev.dmards}{A vector of the number of previous DMARDs}
   \item{x.mort}{Design matrix for mortality adjustment with odds ratios}
+  \item{x.ttd.all}{Design matrix for treatment duration representative of all patients.}
+  \item{x.ttd.da}{Design matrix for treatment duration when disease activity covarariates
+      are used to model the location parameter in the survival model.}
+ \item{x.ttd.eular}{Design matrix for treatment duration when survival is stratified by
+       EULAR response.}
   \item{x.attr}{Design matrix of treatment attributes.}
-}
-Depending on the selected model structures, the list may also contain:
-\describe{
-\item{x.ttd.all}{Design matrix for treatment duration representative of all patients.}
-\item{x.ttd.da}{Design matrix for treatment duration when disease activity covarariates
-are used to model the location parameter in the survival model.}
-\item{x.ttd.eular}{Design matrix for treatment duration when survival is stratified by
-EULAR response.}
 }
 }
 \description{
