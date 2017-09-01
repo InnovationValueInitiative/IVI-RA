@@ -71,13 +71,16 @@
       <a href="../articles/03-structures.html">3. Select model structures</a>
     </li>
     <li>
-      <a href="../articles/04-parameters.html">4. Sample parameters</a>
+      <a href="../articles/04-input-data.html">4. Generate input data</a>
     </li>
     <li>
-      <a href="../articles/05-ips.html">5. Run simulation</a>
+      <a href="../articles/05-parameters.html">5. Sample parameters</a>
     </li>
     <li>
-      <a href="../articles/06-analysis.html">6. Value assessment</a>
+      <a href="../articles/06-ips.html">6. Run simulation</a>
+    </li>
+    <li>
+      <a href="../articles/07-analysis.html">7. Value assessment</a>
     </li>
   </ul>
 </li>
@@ -152,7 +155,7 @@
     <p>Randomly draw parameters from their (joint) probability distribution.</p>
     
 
-    <pre class="usage"><span class='fu'>sample_pars</span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>rebound_lower</span> <span class='kw'>=</span> <span class='fl'>0.7</span>, <span class='kw'>rebound_upper</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+    <pre class="usage"><span class='fu'>sample_pars</span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='no'>input_data</span>, <span class='kw'>rebound_lower</span> <span class='kw'>=</span> <span class='fl'>0.7</span>, <span class='kw'>rebound_upper</span> <span class='kw'>=</span> <span class='fl'>1</span>,
   <span class='kw'>ltfemale</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/lifetable'>lifetable.female</a></span>, <span class='kw'>ltmale</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/lifetable'>lifetable.male</a></span>,
   <span class='kw'>acr2eular_mat</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/acr2eular'>acr2eular</a></span>, <span class='kw'>tx_cost</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/tx.cost'>tx.cost</a></span>,
   <span class='kw'>mort_logor</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/mort.or'>mort.or</a></span>$<span class='no'>logor</span>,
@@ -166,8 +169,7 @@
   <span class='kw'>nma_das28_vcov</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/nma'>nma.das28.naive</a></span>$<span class='no'>vcov</span>, <span class='kw'>nma_das28_rr_lower</span> <span class='kw'>=</span> <span class='fl'>0.75</span>,
   <span class='kw'>nma_das28_rr_upper</span> <span class='kw'>=</span> <span class='fl'>0.92</span>, <span class='kw'>nma_haq_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/nma'>nma.haq.naive</a></span>$<span class='no'>mean</span>,
   <span class='kw'>nma_haq_vcov</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/nma'>nma.haq.naive</a></span>$<span class='no'>vcov</span>, <span class='kw'>nma_haq_rr_lower</span> <span class='kw'>=</span> <span class='fl'>0.75</span>,
-  <span class='kw'>nma_haq_rr_upper</span> <span class='kw'>=</span> <span class='fl'>0.92</span>, <span class='kw'>tx_hist</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"naive"</span>, <span class='st'>"exp"</span>),
-  <span class='kw'>haq_lprog_tx_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/haq.lprog'>haq.lprog</a></span>$<span class='no'>tx</span>$<span class='no'>est</span>,
+  <span class='kw'>nma_haq_rr_upper</span> <span class='kw'>=</span> <span class='fl'>0.92</span>, <span class='kw'>haq_lprog_tx_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/haq.lprog'>haq.lprog</a></span>$<span class='no'>tx</span>$<span class='no'>est</span>,
   <span class='kw'>haq_lprog_tx_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/haq.lprog'>haq.lprog</a></span>$<span class='no'>tx</span>$<span class='no'>se</span>, <span class='kw'>haq_lcgm_pars</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/haq.lcgm'>haq.lcgm</a></span>,
   <span class='kw'>eular2haq_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/eular2haq'>eular2haq</a></span>$<span class='no'>mean</span>,
   <span class='kw'>eular2haq_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/eular2haq'>eular2haq</a></span>$<span class='no'>se</span>, <span class='kw'>acr2haq_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/acr2haq'>acr2haq</a></span>$<span class='no'>mean</span>,
@@ -187,8 +189,13 @@
   <span class='kw'>mgmt_cost_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/mgmt.cost'>mgmt.cost</a></span>$<span class='no'>est</span>, <span class='kw'>mgmt_cost_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/mgmt.cost'>mgmt.cost</a></span>$<span class='no'>se</span>,
   <span class='kw'>pl_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/prod.loss'>prod.loss</a></span>$<span class='no'>est</span>, <span class='kw'>pl_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/prod.loss'>prod.loss</a></span>$<span class='no'>se</span>,
   <span class='kw'>ttsi</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/ttsi'>ttsi</a></span>, <span class='kw'>si_cost</span> <span class='kw'>=</span> <span class='fl'>5873</span>, <span class='kw'>si_cost_range</span> <span class='kw'>=</span> <span class='fl'>0.2</span>,
-  <span class='kw'>si_ul</span> <span class='kw'>=</span> <span class='fl'>0.156</span>, <span class='kw'>si_ul_range</span> <span class='kw'>=</span> <span class='fl'>0.2</span>, <span class='kw'>tx_names</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/treatments'>treatments</a></span>$<span class='no'>sname</span>,
-  <span class='kw'>util_mixture_pain</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/pain'>pain</a></span>)</pre>
+  <span class='kw'>si_ul</span> <span class='kw'>=</span> <span class='fl'>0.156</span>, <span class='kw'>si_ul_range</span> <span class='kw'>=</span> <span class='fl'>0.2</span>,
+  <span class='kw'>tx_attr_ug_lower</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/tx.attr'>tx.attr</a></span>$<span class='no'>utility.gain</span>$<span class='no'>lower</span>,
+  <span class='kw'>tx_attr_ug_upper</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/tx.attr'>tx.attr</a></span>$<span class='no'>utility.gain</span>$<span class='no'>upper</span>,
+  <span class='kw'>tx_attr_ug_names</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/tx.attr'>tx.attr</a></span>$<span class='no'>utility.gain</span>$<span class='no'>var</span>,
+  <span class='kw'>tx_names</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/treatments'>treatments</a></span>$<span class='no'>sname</span>,
+  <span class='kw'>incidence_female</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/incidence'>incidence.female</a></span>,
+  <span class='kw'>incidence_male</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/incidence'>incidence.male</a></span>, <span class='kw'>util_mixture_pain</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/pain'>pain</a></span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -196,6 +203,10 @@
     <tr>
       <th>n</th>
       <td><p>Size of the posterior sample.</p></td>
+    </tr>
+    <tr>
+      <th>input_data</th>
+      <td><p>An object of class 'input_data' returned from <a href='get_input_data.html'>get_input_data</a>.</p></td>
     </tr>
     <tr>
       <th>rebound_lower</th>
@@ -322,13 +333,6 @@ for biologic experienced patients (i.e., lines 2 and later).</p></td>
 for biologic experienced patients (i.e., lines 2 and later).</p></td>
     </tr>
     <tr>
-      <th>tx_hist</th>
-      <td><p>Is patient biologic naive or experienced. If naive NMA results for biologic 
-naive patients are used during 1st line and biologic experienced NMA results are used
-for subsequent lines. If experienced, NMA results for biologic
-experienced patients are using during 1st and subsequent lines.</p></td>
-    </tr>
-    <tr>
       <th>haq_lprog_tx_mean</th>
       <td><p>Point estimate of linear yearly HAQ progression rate by treatment.</p></td>
     </tr>
@@ -447,8 +451,42 @@ for general management of RA.</p></td>
 <code>si_ul</code> by 1 +/- 0.2 (i.e. a 20% change).</p></td>
     </tr>
     <tr>
+      <th>tx_attr_ug_lower</th>
+      <td><p>Lower bound for utility gain from treatment attributes.</p></td>
+    </tr>
+    <tr>
+      <th>tx_attr_ug_upper</th>
+      <td><p>Upper bound for utility gain from treatment attributes.</p></td>
+    </tr>
+    <tr>
+      <th>tx_attr_ug_names</th>
+      <td><p>Names of treatment attributes to be returned in sampled matrix
+<code>tx.attr.ug</code>.</p></td>
+    </tr>
+    <tr>
       <th>tx_names</th>
       <td><p>Vector of treatment names.</p></td>
+    </tr>
+    <tr>
+      <th>incidence_female</th>
+      <td><p>Incidence rates for females. A <code>data.table</code> that must contain a
+row for each single-year of age from 0 to 100, a variable <code>events</code> (the number of events
+ (i.e. cases of rheumatoid arthritis) for each age), and the variable <code>person_years</code>(the 
+ time at risk for an event).</p></td>
+    </tr>
+    <tr>
+      <th>incidence_male</th>
+      <td><p>Identical to <code>incidence_female</code> but for males.</p></td>
+    </tr>
+    <tr>
+      <th>util_mixture_pain</th>
+      <td><p>Summary statistics for bivariate distribution of HAQ and pain. Format
+should be the same as iviRA::pain. Currently, each element of the list must be of length 1.</p></td>
+    </tr>
+    <tr>
+      <th>model_structures</th>
+      <td><p>An object of class 'model_structures' returned from 
+<a href='select_model_structures.html'>select_model_structures</a>.</p></td>
     </tr>
     </table>
     
@@ -456,8 +494,11 @@ for general management of RA.</p></td>
 
     <p>List containing samples for the following model parameters:</p><dl class='dl-horizontal'>
  <dt>tx.cost</dt><dd><p><code>data.table</code> of treatment cost data.</p></dd>
- <dt>ltmale</dt><dd><p>Lifetable for males with qx transformed using the logit function.</p></dd>
-  <dt>ltfemale</dt><dd><p>Lifetable for females with qx transformed using the logit function.</p></dd>
+ <dt>lt</dt><dd><p>A list with two elements for consisting of two matrics, one for males and
+ one for females. Each matrix contains three variables: <code>age</code>, <code>qx</code> 
+ (probability of death) and <code>logit_qx</code> (the logit of the probability of death). 
+ Importantly, there is a row for each single-year of age from 0 to 100, which is passed to
+ the <a href='sim_iviRA.html'>sim_iviRA</a> function.</p></dd>
  <dt>acr2eular</dt><dd><p>An array of matrices. Each matrix represents a random sample of the conditional 
  probability of each EULAR response category for a given ACR response.</p></dd>
   <dt>logor.mort</dt><dd><p>Matrix of log odds ratio used to adjust mortality. One row for each sample
@@ -516,6 +557,12 @@ for general management of RA.</p></td>
     Columns numbers coincide with therapy indices.</p></dd>
    <dt>si.cost</dt><dd><p>Vector of sampled values of the medical cost of a serious infection.</p></dd>
    <dt>si.ul</dt><dd><p>Vector of the sampled values of the annualized utility loss from a serious infection.</p></dd>
+   <dt>tx.attr.ug</dt><dd><p>Matrix of sampled values of utility gains. Each column is a different treatment
+   attribute.</p></dd>
+   <dt>incidence</dt><dd><p>A list with two elements for consisting of two matrics, one for males and
+ one for females. Each column is a random sample of the incidence rate for a given age. 
+ Importantly, there is a column for each single-year of age from 0 to 100, which is passed to
+ the <a href='sim_iviRA.html'>sim_iviRA</a> function.</p></dd>
 </dl>
 
     

@@ -11,31 +11,7 @@ library("iviRA")
 load("output.RData")
 ```
 
-Once treatment arms have been select, the model structures have been defined, and parameter values have been sampled, the IPS can be run. However, first, we must derive data inputs for the model specific to the model structure chosen.    
 
-## Generate input data
-Data inputs are model inputs that are fixed at baseline. Given a patient population and model structure, we can generate the required data with the function `get_input_data`
-
-```{r, cache = TRUE }
-input.dat <- get_input_data(patdata = pop, model_structures = mod.structs)
-names(input.dat)
-```
-
-The function returns all patient characteristics needed to run the simulation (HAQ score at baseline, age, gender, DAS28, SDAI, CDAI, weight, and the number of previous DMARDs). It also stores two types of matrices of explanatory variables. First, `x.mort`, contains all patient characteristics known at baseline used to adjust mortality with a log odds ratio. By default, only the baseline HAQ score is used to adjust mortality. 
-
-```{r, cache = TRUE }
-head(input.dat$x.mort)
-```
-
-The second set of matrices are the design matrices used to simulate time to treatment discontinuation. They include `x.ttd.all`, `x.ttd.da`, and `x.ttd.eular`. The required matrices depnd on the model structures chosen. `x.ttd.all` is required if treatment duration does not depend on disease activity or EULAR respone (i.e., pathway **S1**), `x.ttd.da` is required if treatment duration depends on disease activity (i.e., pathways **S2-S5** ), and `x.ttd.eular` is required if treatment duration depends on EULAR response (i.e., pathway **S6**). This matrix depends on the the model structure chosen since treatment duration depends on the pathway **S1-S6** used for treatment switching. In our selected model structures, `tx_iswitch = acr-eular-switch` or `tx_iswitch = acr-switch`.
-
-```{r, cache = TRUE }
-head(input.dat$x.ttd.all)
-head(input.dat$x.ttd.eular)
-input.dat$x.ttd.da
-```
-
-## Simulate
 We run the IPS using the function `sim_iviRA`. The main arguments are the selected treatment arms, the input data, the parameter samples, and the model structure. Here, we simulate outcomes for Arm 1 and Arm 2.
 
 ```{r }

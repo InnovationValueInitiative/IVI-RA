@@ -9,9 +9,10 @@ articles:
     - 01-population
     - 02-arms
     - 03-structures
-    - 04-parameters
-    - 05-ips
-    - 06-analysis
+    - 04-input-data
+    - 05-parameters
+    - 06-ips
+    - 07-analysis
   - title: "Collaborate"
     contents:
     - ways-to-contribute
@@ -47,7 +48,7 @@ reference:
       - utility.wailoo
   - title: "Generate patient population"
     contents:
-      - sample_pats
+      - sample_pop
   - title: "Sample parameters for PSA"
     contents:
       - sample_pars
@@ -84,12 +85,14 @@ navbar:
         href: articles/02-arms.html
       - text: "3. Select model structures"
         href: articles/03-structures.html
-      - text: "4. Sample parameters"
-        href: articles/04-parameters.html
-      - text: "5. Run simulation"
-        href: articles/05-ips.html
-      - text: "6. Value assessment"
-        href: articles/06-analysis.html
+      - text: "4. Generate input data"
+        href: articles/04-input-data.html
+      - text: "5. Sample parameters"
+        href: articles/05-parameters.html
+      - text: "6. Run simulation"
+        href: articles/06-ips.html
+      - text: "7. Value assessment"
+        href: articles/07-analysis.html
   - text: "API"
     href: reference/index.html
   - text: "Collaborate"

@@ -496,7 +496,7 @@ test_that("sim_qalys", {
 # out$get_ttsi()
 
 # small integration test ------------------------------------------------------
-pop <- sample_pats(n = 100, type = "homog")
+pop <- sample_pop(n = 100, type = "homog")
 arm.names <- c("adamtx", "cdmards")
 mod.structs <- select_model_structures(tx_ihaq = c("acr-haq", "acr-eular-haq"),
                                      tx_iswitch = c("acr-switch", "acr-eular-switch"),

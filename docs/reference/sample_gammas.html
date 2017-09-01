@@ -71,13 +71,16 @@
       <a href="../articles/03-structures.html">3. Select model structures</a>
     </li>
     <li>
-      <a href="../articles/04-parameters.html">4. Sample parameters</a>
+      <a href="../articles/04-input-data.html">4. Generate input data</a>
     </li>
     <li>
-      <a href="../articles/05-ips.html">5. Run simulation</a>
+      <a href="../articles/05-parameters.html">5. Sample parameters</a>
     </li>
     <li>
-      <a href="../articles/06-analysis.html">6. Value assessment</a>
+      <a href="../articles/06-ips.html">6. Run simulation</a>
+    </li>
+    <li>
+      <a href="../articles/07-analysis.html">7. Value assessment</a>
     </li>
   </ul>
 </li>
@@ -154,7 +157,8 @@ the means and standard errors. Produces a unique sample of size <code>n</code> u
 <code>mean</code> and <code>sd</code>.</p>
     
 
-    <pre class="usage"><span class='fu'>sample_gammas</span>(<span class='no'>n</span>, <span class='no'>mean</span>, <span class='no'>se</span>, <span class='kw'>col_names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>sample_gammas</span>(<span class='no'>n</span>, <span class='kw'>mean</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>se</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>shape</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>rate</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>col_names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -170,6 +174,10 @@ the means and standard errors. Produces a unique sample of size <code>n</code> u
     <tr>
       <th>se</th>
       <td><p>Vector of standard errors.</p></td>
+    </tr>
+    <tr>
+      <th>col_names</th>
+      <td><p>Column names to returned matrix.</p></td>
     </tr>
     </table>
     

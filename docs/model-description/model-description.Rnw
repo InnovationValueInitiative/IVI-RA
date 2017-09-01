@@ -99,7 +99,9 @@
 \newcommand\SD{{\rm SD}}
 \newcommand\bone{\mathbf{1}}
 \newcommand\bzero{\mathbf{0}}
-\newcommand\logit{{\rm logit}}
+\DeclareMathOperator{\logit}{logit}
+\DeclareMathOperator{\Cat}{Cat}
+\DeclareMathOperator{\Multinomial}{Multinomial}
 
 % file paths and definitions
 \makeatletter
@@ -164,9 +166,11 @@ CACHE <- TRUE
 \section*{Executive summary}\label{sec:executive-summary}
 \addcontentsline{toc}{section}{Executive summary}  
 \subsection*{The Open-Source Value Project}
-This document describes version 1.0 of the \href{http://www.thevalueinitiative.org/}{Innovation and Value Initiative's (IVIs)} individual patient simulation model for rheumatoid arthritis (RA) (the IVI-RA model). The IVI-RA model is part of IVIs Open Source Value Project (OSVP), which is is an open, collaborative, and consensus-based process for the development of tools for value assessment. Models developed under the OSVP process are iterative, evolving as the science of value assessment advances and as new evidence becomes available.
+This document describes version 1.0 of the \href{http://www.thevalueinitiative.org/}{Innovation and Value Initiative's (IVIs)} individual patient simulation model for rheumatoid arthritis (RA) (the IVI-RA model). The IVI-RA model is part of IVIs Open Source Value Project (OSVP), which is building an open, collaborative, and consensus-based process for the development of tools for value assessment. Models developed by the OSVP process are iterative, evolving as the science of value assessment advances and as new evidence becomes available.
 
-Version 1.0 is IVIs first release of the IVI-RA model, and is designed to provide a starting point for open debate. As such, the model is very flexible and allows users to choose from a large number of the plausible model structures based on clinical practice and previous decision-analytic modeling for RA. To help increase understanding and facilitate debate, OSVP models are released along with the following:
+Version 1.0 is IVIs first release of the IVI-RA model, and is designed to provide a starting point for open debate. As such, the model is very flexible and allows users to choose from a large number of the plausible model structures supported by clinical practice and prior decision-analytic modeling research in RA. General users may run the model online with our web-based user interfaces. 
+
+To facilitate transparency, understanding, and debate, OSVP models are released along with the following:
 
 \begin{itemize}
 \item Source code (on \href{https://github.com/}{GitHub})
@@ -175,9 +179,9 @@ Version 1.0 is IVIs first release of the IVI-RA model, and is designed to provid
 \item Web-based user interfaces
 \end{itemize}
 
-The IVI-RA model is released specifically as an \href{https://cran.r-project.org/}{\R{}} package with documentation available \href{https://innovationvalueinitiative.github.io/IVI-RA/index.html}{online}. Technical users can view the source code for the model, run the model using the R package, or even modify the original source code. This document contains technical documentation for the model including the model structure, statistical methods for parameter estimation, and source data. Finally, users may run the model online with our web-based user interfaces. 
+The IVI-RA model is released specifically as an \href{https://cran.r-project.org/}{\R{}} package with documentation available \href{https://innovationvalueinitiative.github.io/IVI-RA/index.html}{online}. Technical users can view the source code for the model, run the model using the R package, or even modify the original source code. This technical documentation provides detail on the model structure, statistical methods for parameter estimation, and source data.
 
-Following version 1.0, each major release of an OSVP model (i.e., version 2.0) will occur following a three step process:
+Following version 1.0, each major release of an OSVP model (i.e., version 2.0) will occur following a three-step process:
 
 \begin{enumerate}
 \item \textbf{Public comment period}: IVI will collect evidence-based suggestions for improvement. 
@@ -185,7 +189,7 @@ Following version 1.0, each major release of an OSVP model (i.e., version 2.0) w
 \item \textbf{Model updates}: Based on the feedback from the technical expert panel, IVI will update the GitHub source code, create a new version of the model documentation, and release a new version of the R package. 
 \end{enumerate}
 
-Over time, the number of model structures may shrink as IVI moves toward scientific consensus with the OSVP process. To be sure, the OSVP process will not eliminate all the variation in results of value assessment since perspectives on value will vary and disagreements about relevant clinical evidence may persist. But the consensus-based approach will allows users to better understand legitimate and intrinsic reasons why value estimates vary.
+Over time, the number of model structures may shrink as the OSVP process moves toward scientific consensus. To be sure, the OSVP process will not eliminate all the variation in results of value assessment since perspectives on value will vary and disagreements about relevant clinical evidence may persist. But the consensus-based approach will allows users to better understand legitimate and intrinsic reasons why value estimates vary.
 
 \subsection*{Guiding principles}
 IVI aims to design models under the OSVP process that are:
@@ -194,7 +198,7 @@ IVI aims to design models under the OSVP process that are:
 \item \textbf{Decision-focused:} Since there are always be gaps in the available evidence and the appropriate scientific assumptions, it is important to quantify uncertainty. OSVP models quantify parameter uncertainty using probabilistic sensitivity analysis (PSA) and quantify structural uncertainty by estimating value across a range of scientifically defensible model structures.
 \item \textbf{Patient-centered:} Models should capture differences in individual characteristics, preferences, circumstances, and response to treatment.
 \item \textbf{Adaptable:} Models should be flexible enough to meet the specific needs and perspectives of diverse different decision-makers including insurers, patients, providers, and policymakers. Analyses can be tailored to specific populations and estimated from multiple perspectives \citep{sanders2016recommendations, ioannidis2011individualized}.
-\item \textbf{Consensus-driven:} Models should reflects a range of scientifically defensible approaches. Potentially controversial elements are highlighted so that they can be debated and introduced as part of the OSVP process. 
+\item \textbf{Consensus-driven:} Models should reflect a range of scientifically defensible approaches. Potentially controversial elements are highlighted so that they can be debated and introduced as part of the OSVP process. 
 \end{itemize}
 
 Toward these ends, the IVI-RA model incorporates:
@@ -202,52 +206,52 @@ Toward these ends, the IVI-RA model incorporates:
 \begin{itemize}
 \item \textbf{Structural uncertainty:} The model includes 336 possible model structures that reflect different assumptions about the effect of treatment on morbidity, reasons for switching treatment, time on treatment, the progression of disease over time, and patient preferences. 
 \item \textbf{Patient heterogeneity:} The progression of disease, mortality, and preferences for treatment vary according to individual characteristics.
-\item \textbf{Preferences for treatment attributes other than efficacy/safety}: Most decision-analytic models capture preferences for living in particular disease states and from adverse events; the IVI-RA model incorporates preferences for other treatment attributes such as ease of use and time a medication has been on the market as well. 
+\item \textbf{Preferences for treatment attributes other than efficacy/safety}: Most decision-analytic models capture preferences for living in particular disease states and from adverse events; the IVI-RA model incorporates preferences for other treatment attributes such as ease of use and the time a medication has been on the market. 
 \item \textbf{Subpopulation treatment effects:} Although current evidence is scarce, users can adapt the model so that treatment effects vary across patients (e.g., as a function of patient characteristics or prognostic factors). 
 \item \textbf{The value of treatment to the healthy:} Conventional value assessments focus on value to the sick, but recent research provides a framework for valuing technology for the healthy (i.e., "insurance value") as well \citet{lakdawalla2017insurance}. The IVI-RA model allows users to optionally incorporate insurance value, but we note that it is less well established than conventional approaches.  
 \item \textbf{Real-world evidence:} To ensure that simulated clinical and economic outcomes reflect outcomes in routine practice, we model "baseline event rates" (i.e., disease progression, mortality, time on treatment), patient preferences, and costs using real-world data. To minimize bias, relative treatment effects (i.e., differences in safety and efficacy across treatments) are, when possible, based on randomized clinical trials (RCTs), and then applied to the baseline event rates.
 \end{itemize}
 
 \subsection*{Value assessment}
-Cost-effectiveness analysis (CEA) is a well-established approach for value assessment grounded in economic theory and widely used in the scientific literature \citep{briggs2006decision, meltzer2011theoretical, drummond2015methods}. CEAs calculate cost per quality-adjusted life-years (QALYs) for a medical intervention relative to the previous standard of care and deem an intervention cost-effectiveness when total (incremental) benefits outweigh total (incremental) costs. Some researchers have suggested multiple-criteria decision analysis (MCDA) as an alternative to CEA \citep{thokala2012multiple}, although, like CEA, static versions of this framework are often limited by the fact that there is often significant disagreement on the relative value of different MCDA components depending on the perspective of the decision-maker. 
+Cost-effectiveness analysis (CEA) is a well-established approach for value assessment grounded in economic theory and widely used in the scientific literature \citep{briggs2006decision, meltzer2011theoretical, drummond2015methods}. CEAs calculate cost per quality-adjusted life-years (QALYs) for a medical intervention relative to the previous standard of care and deem an intervention ``cost-effectiveness'' when total (incremental) benefits outweigh total (incremental) costs. Some researchers have suggested multiple-criteria decision analysis (MCDA) as an alternative to CEA \citep{thokala2012multiple}, although, like CEA, static versions of this framework are often limited by the fact that there is often significant disagreement on the relative value of different MCDA components depending on the perspective of the decision-maker. 
 
 The IVI-RA model is not a value assessment framework but a model that simulates clinical and economic outcomes for each individual in the population of interest. It can therefore be used with any value framework preferred by the user. Currently, the web-based user interface supports both CEA and MCDA (where users can enter their own decision weights for each criterion). IVI has also developed an R package, \code{\href{https://innovationvalueinitiative.github.io/hesim/}{hesim}}, for health-economic simulation modeling and decision analysis that can be used to perform individualized CEA \citep{basu2007value, ioannidis2011individualized, espinoza2014value} on simulation output from the IVI-RA model. 
 
 \subsection*{Model overview}
-The IVI-RA model is a discrete-time individual patient simulation that simulates clinical and economic outcomes for individual patients. Model cycles are 6-months long, which is consistent with clinical trial evidence. Parameter uncertainty is assessed using probabilistic sensitivity analysis (PSA) and structural uncertainty can by estimating value across the 336 possible model structures. The model simulates the progression of the health assessment questionnaire disability index (HAQ), a measure of functional status in RA. 
+The IVI-RA model is a discrete-time individual patient simulation that simulates clinical and economic outcomes for individual patients. Model cycles are 6-months long, which is consistent with clinical trial evidence. Parameter uncertainty is assessed using probabilistic sensitivity analysis (PSA) and structural uncertainty can be assessed by estimating value across the 336 possible model structures. The model simulates the progression of the health assessment questionnaire disability index (HAQ), a measure of functional status in RA. 
 
 Serious infection rates and changes in HAQ score during the first 6 months from baseline are based on clinical trial evidence. The change in HAQ can be modeled indirectly as a function of the American College of Rheumatology (ACR) response to treatment, the European League Against Rheumatism (EULAR) response to treatment, or directly as a function of the treatment. Patients switch treatment during the initial 6 months if they have a serious infection. Additionally, the user can chose whether treatment switching should be based on disease activity level or treatment response. 
 
 After the first 6 months on a new treatment, the HAQ score progresses over time at a rate based on observational data. Progression can either be assumed to be linear \citep{wolfe2010loss, michaud2011treatment} or modeled using a non-linear mixture model \citep{norton2014health}. 
 
-Patients remain on treatment until treatment discontinuation or death. Time to treatment discontinuation is based on parametric survival analyses of real-world data. Seven possible distributions can be chosen by the user. Male and female mortality is based on US lifetables and increases with the HAQ score at baseline and the change in the HAQ score from baseline. 
+Patients remain on treatment until treatment discontinuation or death. Time to treatment discontinuation is based on parametric survival analyses of real-world data. Seven possible distributions (exponential, Weibull, Gompertz, log-logistic, lognormal, and generalized gamma) can be chosen by the user. Male and female mortality is based on US lifetables and increases with the HAQ score at baseline and the change in the HAQ score from baseline. 
 
 Health care sector costs consist of drug acquisition and administration costs, hospital costs (which increase with the HAQ score), general management costs, and costs caused by serious infections. Non-health care sector costs are those due to lost wages.
 
-Users wishing to calculate utility for CEA can map HAQ and individual characteristics to utility using the logistic regression algorithm of \citet{wailoo2006modeling} or the \citet{alava2013relationship} mixture model. Utility is calculated as a function of the HAQ and individual patient characteristic mapping, serious infections, and preferences for treatment attributes unrelated to safety and efficacy. QALYs combine life expectancy with per cycle utility.  
+Users wishing to calculate utility for CEA can map HAQ and individual characteristics to utility using the logistic regression algorithm of \citet{wailoo2006modeling} or the \citet{alava2013relationship} mixture model. With both the \citet{wailoo2006modeling} and \citet{wailoo2006modeling} mappings, utility  is calculated as a function of the HAQ and individual patient characteristic mapping, serious infections, and preferences for treatment attributes unrelated to safety and efficacy. QALYs combine life expectancy with per cycle utility.  
 
 We have found that model outcomes are especially sensitive to certain parameters and model structures, which highlights the importance of a flexible and consensus-based model. Primary sources of uncertainty include:
 
 \begin{itemize}
 \item The effect of treatment on the change in HAQ from baseline during the first 6 months of treatment
-\item The longterm progression of HAQ
+\item The long-term progression of HAQ
 \item The reduction in treatment response after previous treatment failures
-\item The extend to which the HAQ score "rebounds" to its initial level after failing treatment
+\item The extent to which the HAQ score "rebounds" to its initial level after failing treatment
 \item Time on biologic treatment
 \item The relationship between HAQ and quality of life
 \end{itemize}
 
 \section{Open-source consensus-based models for value assessment}\label{sec:osvp}
-The continuing increase in US healthcare costs has stimulated the introduction of initiatives to promote the use of high-value care. Decision-analytic models can be used to inform efficient use of health care resources, but are only relevant when deemed credible by different stakeholders, are representative of the local context and patient population, and can be easily updated without duplication of efforts.
+The continuing increase in US healthcare costs has stimulated the introduction of initiatives to promote the use of high-value care. Decision-analytic models can be used to inform efficient use of health care resources, but are only relevant when deemed credible by different stakeholders, are representative of the local context and patient population, and can be easily updated without duplication of effort.
 
-The nature of simulation modeling often leads to scientific disagreements and distrust among decision-makers. Models are typically complex and difficult to understand. Even modeling experts may not be able to fully understand a model without public source code and detailed model documentation. Furthermore, efforts to make models accessible to non-experts are lacking. Models also become quickly outdated as new evidence arises or new scientific approaches are developed, which means that previous finding quickly become irrelevant to decision-makers.
+The nature of simulation modeling often leads to scientific disagreements and mistrust among decision-makers. Models are typically complex and difficult to understand. Even modeling experts may not be able to fully understand a model without public source code and detailed model documentation. Furthermore, efforts to make models accessible to non-experts are lacking. Models also become quickly outdated as new evidence arises or new scientific approaches are developed, which means that previous finding quickly become irrelevant to decision-makers.
 
 The OSVP aims to increase understanding and relevance to diverse stakeholders by developing open-source consensus-based models. The hope is that these efforts can increase confidence in efforts to base reimbursement and policy decisions on value.
 
-OSVP models are released and updated following a four step process:
+OSVP models are released and updated using a four step process:
 
 \begin{enumerate}
-\item Develop an open-source flexible decision-analytic model reflecting a range of plausible modeling approaches based on clinical practice and previous scientific literature.
+\item Develop a flexible, open-source decision-analytic model reflecting a range of plausible modeling approaches based on clinical practice and prior scientific literature.
 \item Invite feedback and suggested improvements to the model in a public comment period.
 \item A panel of experts determines which of the evidence-based suggestions for improvement suggested in Step 2 should be implemented by means of peer-review and a formal voting process. 
 \item Revise the model based on the feedback from the technical expert panel in Step 3. 
@@ -264,11 +268,11 @@ To help increase understanding and accessibility, each version of an OSVP model 
 \item Web-based user interfaces
 \end{itemize}
 
-This document is an example of the model documentation, which will include details on the model structure, statistical methods for parameter estimation, and source data. The GitHub source code and code documentation are designed for researchers with programming experience. The code documentation provides tutorials and references to functions so that users can run the model. For example, the IVI-RA model is released as an \R{} package and can be run using the \R{} programming language (see \autoref{sec:software} for more details). Users can also modify the source code directly after "cloning" a GitHub repository, although a model version will not be considered an official IVI model unless the modifications were recommended by the technical expert panel.  
+This document comprises the model documentation, which includes details on the model structure, statistical methods for parameter estimation, and source data. The GitHub source code and code documentation are designed for researchers with programming experience. The code documentation provides tutorials and references to functions so that users can run the model. For example, the IVI-RA model is released as an \R{} package and can be run using the \R{} programming language (see \autoref{sec:software} for more details). Users can also modify the source code directly after "cloning" a GitHub repository, although a model version will not be considered an official IVI model unless the modifications were recommended by the technical expert panel.  
 
-IVI develops web-based graphical user interfaces to make its models accessible to non-programmers. Stakeholders can modify the models (e.g., by changing the model structure, parameter values, time-horizon, discount factor, etc.) with a point and click interface. Users choose from a simpler interface in which some default values are preselected or a more flexible interface where nearly all model inputs can be modified. 
+IVI develops web-based graphical user interfaces to make its models accessible to non-technical users. Stakeholders can modify the models (e.g., by changing the model structure, parameter values, time-horizon, discount factor, etc.) using a point and click interface. Users can choose from a simpler interface in which some default values are preselected or a more flexible interface where nearly all model inputs can be modified. 
 
-Researchers may collaborate with IVI in two primary ways. First, they can provide feedback during the public comment period. Second, programmers can make direct changes to the source code by making a "pull request" on GitHub. IVI will review the proposed changes. Code modifications that affect the scientific approach or evidence considered will only be incorporated after a review by the technical panel but other changes such as bug fixes or performance improvements may be immediately accepted.
+Researchers may collaborate with IVI in at least two ways. First, they can provide feedback during the public comment period. Second, programmers can make direct changes to the source code by making a "pull request" on GitHub. IVI will review the proposed changes. Code modifications that affect the scientific approach or evidence considered will only be incorporated after a review by the technical panel but other changes such as bug fixes or performance improvements may be immediately accepted.
 
 \section{Overview of the IVI-RA model}\label{sec:overview-ra}
 
@@ -287,7 +291,7 @@ The IVI-RA model is a discrete-time individual patient simulation (IPS) with 6 m
 
 To ensure that simulated clinical and economic outcomes reflect outcomes in routine practice, we model ``baseline event rates'' (i.e., disease progression, mortality, time on treatment), patient preferences, and costs using real-world data. To minimize bias, relative treatment effects (i.e., differences in safety and efficacy across treatments) are, when possible, based on randomized clinical trials (RCTs), and then applied to the baseline event rates.
 
-The IPS approach allows us to take an ``individualized'' modeling approach that captures both observable and unobservable patient heterogeneity. Disease progression, mortality, and preferences all vary across patients. In addition, although the evidence base is limited, users of the \R{} package can model treatment effects as a function of any combination of patient characteristics (e.g., demographics, prognostic factors). (Note however that the user interface does not yet allow treatment effects to vary across patients due to the limited evidence.) Finally, the model incorporates preferences for treatment attributes unrelated to safety and efficacy. 
+The IPS approach allows us to take an ``individualized'' modeling approach that captures both observable and unobservable patient heterogeneity. Disease progression, mortality, and preferences all vary across patients. In addition, although the evidence base is limited, users of the \R{} package can model treatment effects as a function of any combination of patient characteristics (e.g., demographics, prognostic factors). Finally, the model incorporates preferences for treatment attributes unrelated to safety and efficacy. 
 
 As recommended by the Second Panel on Cost-Effectiveness in Health and Medicine \citep{sanders2016recommendations}, costs are simulated from both a health care sector perspective and a societal perspective. Productivity losses from lost earnings are included in the societal perspective but not the health care sector perspective. As discussed below (\autoref{sec:use-model}), our individualized approach implies that the model could also be tailored to fit the perspective of a patient or provider.     
 
@@ -308,7 +312,7 @@ The IVI-RA model simulates clinical and economic outcomes for each individual in
 Although simulation output can be used with any value assessment framework, IVI tools currently support two methodologies for decision analysis: CEA and MCDA. Cost-effectiveness results and MCDA value scores are automatically generated when users run IVIs web-based user interfaces. In addition, IVI has developed an R package, \code{\href{https://innovationvalueinitiative.github.io/hesim/}{hesim}}, for health-economic simulation modeling and decision analysis that can be used to perform individualized CEA \citep{basu2007value, ioannidis2011individualized, espinoza2014value}. 
 
 \subsection{Cost-effectiveness analysis}\label{sec:cea}
-CEA is a well-established technique for health technology assessment grounded in economic theory \citep{meltzer2011theoretical}. In general, CEA can be thought of as a methodology for maximizing health or well being subject to a resource constraint. The total value of a new health technology relative to a comparator is typically assessed using the incremental net monetary benefit (INMB), 
+CEA is a well-established technique for health technology assessment grounded in economic theory \citep{meltzer2011theoretical}. In general, CEA can be thought of as a methodology for maximizing health or well being subject to a resource constraint \citep{garber1997economic}. The total value of a new health technology relative to a comparator is typically assessed using the incremental net monetary benefit (INMB), 
 
 \begin{align}
 INMB = k \cdot \Delta e - \Delta p, 
@@ -319,7 +323,7 @@ where $e = e_1 - e_0$ is a measure of the incremental benefits or effects from t
 \frac{\Delta p}{\Delta e} < k.
 \end{align}
 
-"Effects" are measured in terms of health gains or patient well-being. Since treatments can effect both morbidity and mortality, CEAs typically use the quality-adjusted life-year (QALY). Since costs and effects vary across patients, some researchers have argued for individualized CEA \citep{basu2007value, ioannidis2011individualized, espinoza2014value} so that INMBs and ICERs are calculated separately for different subpopulations. It can be shown that if treatment response varies across the population, then making separate decisions in different populations will increase social welfare \citep{basu2007value}.
+"Effects" are measured in terms of health gains or patient well-being. Since treatments can affect both morbidity and mortality, CEAs typically use the quality-adjusted life-year (QALY). Since costs and effects vary across patients, some researchers have argued for individualized CEA \citep{basu2007value, ioannidis2011individualized, espinoza2014value} so that INMBs and ICERs are calculated separately for different subpopulations. It can be shown that if treatment response varies across the population, then making separate decisions in different populations will increase social welfare \citep{basu2007value}.
 
 In practice, costs and effects are subject to statistical uncertainty. We quantify this uncertainty using probabilistic sensitivity analysis (PSA) and structural uncertainty analysis, which is described in more detail in \autoref{sec:sim-uncertainty}. This approach allows us to generate standard measures of uncertainty in CEA including cost-effectiveness planes, cost-effectiveness acceptability curves (CEACs), and estimates of the expected value of perfect information (EVPI).
 
@@ -328,9 +332,11 @@ An alternative approach to CEA is MCDA. \citet{keeney1993decisions} define MCDA 
 
 MCDA is a complex topic and there are a number of different methodologies. Here, we discuss the approach used by IVI in the web-based user interface.
 
-In this context, decision makers (e.g., users of the user interface) must select the relevant criteria, which, in our context, refers to clinical or economic outcomes from the simulation. Since different criterion may be measured with different units, performance on each criterion is converted into a common scale, for instance, ranging from 0 to 100. There are a number of techniques for creating a common scale; we use a simple linear partial value function to translate scores, which assumes a linear relationship between performance on a given criterion and the standardized score.
+In this context, decision makers (e.g., users of the user interface) must select the relevant criteria, which, in our context, refers to clinical or economic outcomes from the simulation. 
 
-Each criterion is given points ranging from 0 to 100 by the decision maker, and weighted by dividing each criterion's points by the sum of points across all criteria. For example, if there were 3 criteria and each criterion was given a score of 50, then each criterion would receive a weight of 1/3. If, on the other hand, the three criteria were given scores of 25, 50, and 75, then they would be given weights of .167, .33, and .5, respectively. 
+Since different criteria may be measured using different units, performance on each criterion is converted into a common scale, for instance, ranging from 0 to 100. There are a number of techniques for creating a common scale; we use a simple linear partial value function to translate scores, which assumes a linear relationship between performance on a given criterion and the standardized score.
+
+Each criterion is assigned points ranging from 0 to 100 by the decision maker, and weighted by dividing each criterion's points by the sum of points across all criteria. For example, if there were 3 criteria and each criterion was given a score of 50, then each criterion would receive a weight of 1/3. If, on the other hand, the three criteria were given scores of 25, 50, and 75, then they would be given weights of .167, .33, and .5, respectively. 
 
 To aggregate results, we assume an additive model. In other words, the total score for a given treatment sequence is calculated by multiplying each criterion by the simulated standardized score and summing across criteria.
 
@@ -339,9 +345,9 @@ As with CEA, MCDA results are subject to statistical uncertainty. In the user in
 \section{Broader concepts of value}\label{sec:braoder-value}
 \citet{garrison2017toward} suggest five concepts of value that researchers should consider adding to the standard cost per QALY based CEA: (1) a reduction in uncertainty from a diagnostic test; (2) insurance value for healthy patients due to reduction against physical risk; (3) the value of hope for individuals who become risk-loving and would rather pay for a therapy with a long right survival tail than a therapy with a shorter right survival tail but an equivalent (or shorter) expected life-expectancy; (4) real option value when a therapy allows an individual to benefit from future medical innovations; and (5) scientific spillovers when the benefits of an innovation cannot be entirely appropriated by the innovator. 
 
-The concept that is arguably most salient to RA is insurance value, which focuses on valuing morbidity-reducing innovations and has the largest effects relative to conventional CEA on treatments for severe diseases where risks to consumers are the greatest. The IVI-RA model allows users to incorporate insurance value into their analyses, while noting that the approach is less well-established than conventional CEA. 
+The concept that is arguably most salient to RA is insurance value, which focuses on valuing morbidity-reducing innovations and has the largest effects relative to conventional CEA on treatments for severe diseases where the burden of illness is the greatest. The IVI-RA model allows users to incorporate insurance value into their analyses, while noting that the approach is less well-established than conventional CEA. 
 
-\citet{lakdawalla2017insurance} provide a general framework for incorporating the effects of medical innovation on physical and financial risk. The general idea is that innovation can lower physical risk to healthy patients who might get sick in the future. And while innovation certainly increases financial risk, it can be mitigated by healthcare insurance.  
+\citet{lakdawalla2017insurance} provide a general mathematical framework for incorporating the effects of medical innovation on physical and financial risk. The general idea is that innovation can lower physical risk to healthy patients who might get sick in the future. New medical technologies act like ``insurance policies'' that protect a healthy person from all or part of the costs of falling ill. And while innovation certainly increases financial risk, this increase in financial risk can be mitigated by healthcare insurance.  
 
 The insurance value framework is an extension of the conventional CEA approach from the perspective of a healthy individual deriving utility from non-health consumption, $c$ and health, $h$, according to $u(c,h)$. The individual is sick with probability $\pi$ and well with probability $1-\pi$.  Health when well is $h^w$ and health when sick is $h^s < h^w$. Income is $y^w$ when well and $y^s <y^w$ when sick. The marginal utility of good $j \in {c,h}$ in state $i \in {s,w}$ is denoted by $u_j^i$. 
 
@@ -361,9 +367,9 @@ dV^{NHI} &= \pi (k \cdot dh - dp) + \pi (1 - \pi)(k \cdot dh - dp)\left(\frac{u_
 
 where $k = \partial u_h^s/\partial u_c^s$ is the marginal value of a one unit health gain in dollar terms, $dh$ is the marginal health gain from the technology, and $dp$ is the marginal cost of the technology. The term $k \cdot dh - dp$ is equivalent to the INMB in conventional CEA. The insurance value framework can therefore be implemented with knowledge of only two additional parameters beyond those in conventional CEA: the probability of illness, $\pi$, and the marginal rate of substitution between the sick and the well states, $u_c^s/u_c^w$. 
 
-The probability of illness can be estimated using incidence of disease in the population of interest (e.g., in the RA population). The second term, $u_c^s/u_c^w$, is harder to estimate, but we allows users to specify it directly in our model and web-based user interfaces. 
+The probability of illness can be estimated using incidence of disease in the population of interest (e.g., in the RA population). The second term, $u_c^s/u_c^w$, is harder to estimate, but we allows users to specify it directly in our model and web-based user interfaces. Intuitively, this term reflects the amount of money the consumer would give up when healthy in exchange for gaining an additional dollar when sick. It rises when the consumer faces greater risks from illness.
 
-It is worth emphasizing that insurance value is only larger than conventional value if the marginal utility of consumption in the sick state is greater than the marginal utility of consumption in the healthy state (i.e., $u_c^s/u_c^w > 1$). A second interpretation of $u_c^s/u_c^w$ shows that there are empirical reasons for this to be the case. In particular, it can be thought of as the value of one dollar of health insurance coverage, which implies that if demand for health insurance is positive, then $u_c^s/u_c^w > 1$.
+It is worth emphasizing that insurance value is only larger than conventional value if the consumer is willing to give up more than \$1 in the well state in exchange for an additional \$1 in the sick state (i.e., $u_c^s/u_c^w > 1$). This is likely to be true, because if the demand for healthcare insurance is positive, then $u_c^s/u_c^w > 1$.
 
 The difference between the insurance value of a technology and its conventional value is even larger when individuals can purchase health insurance. For example, consider an actuarially fair insurance contract that pays the consumer I(p) when she falls sick. In this case, the insurance value of a health technology can be shown to be:
 
@@ -371,7 +377,7 @@ The difference between the insurance value of a technology and its conventional 
 dV^{WHI} &= dV^{NHI} + \pi (1 - \pi)\left(\frac{u_c^s/u_c^w - 1}{\pi u_c^s/u_c^w + 1 - \pi}\right)\frac{dI}{dp}dp.
 \end{align}
 
-The term $dI/dp$ is the marginal payment made to the insuree per 1 dollar spent on healthcare. In the extreme case where there is no cost-sharing so that $I(p) = p$ and $dI/dp = 1$, health insurance completely eliminates spending risk the value of a technology is equal to its conventional value plus the value of physical risk reduction. More generally, $dI/dp < 1$ and the value of a health technology with health insurance is equal to the sum of its conventional value, the insurance value absent health insurance, and the value of health insurance made possible by the technology. 
+The term $dI/dp$ is the marginal payment made to the insuree per 1 dollar spent on healthcare. In the extreme case where there is no cost-sharing so that $I(p) = p$ and $dI/dp = 1$. Here, health insurance completely eliminates spending risk the value of a technology is equal to its conventional value plus the value of physical risk reduction. More generally, $dI/dp < 1$ and the value of a health technology with health insurance is equal to the sum of its conventional value, the insurance value absent health insurance, and the value of health insurance made possible by the technology. 
 
 \section{Populations}\label{sec:populations}
 To run the IPS, a patient population must be specified. The model is designed for patients who are cDMARD experienced. The patient characteristics that must be included in the analysis are age, HAQ, gender, weight, the number of previous DMARDs, and disease activity. These variables are measured at the start of the simulation (i.e., model cycle 0).  
@@ -379,7 +385,7 @@ To run the IPS, a patient population must be specified. The model is designed fo
 Two default options for the patient population are available. First, a homogeneous cohort of men and women with gender-specific weights but otherwise identical characteristics can be used. Second, a heterogeneous cohort of patients with gender-specific weights but varying across all other characteristics can be specified. Other populations (i.e., for certain subgroups or based on registry data) can be used as well but are not prespecified in our \R{} package. 
 
 <<pop, echo = FALSE, include = FALSE>>=
-args <- formals(sample_pats)
+args <- formals(sample_pop)
 mean <- c(args$age_mean, args$male_prop, args$wtfemale, args$wtmale,
           args$prev_dmards_mean, args$das28_mean, args$sdai_mean, args$cdai_mean, args$haq0_mean)
 mean <- formatC(mean, format = "f", digits = 2)
@@ -809,7 +815,7 @@ sim6_summary <- function(arms, arm_names, nouter = 1000, ninner = 1000,
   eular.mean <- matrix(NA, nrow = length(arms), ncol = 3)
   eular.lower <- eular.upper <- eular.mean
   dhaq.mean <- dhaq.lower <- dhaq.upper <- rep(NA, length(arms))
-  pat <- sample_pats(n = ninner, das28_mean = das28_mean)
+  pat <- sample_pop(n = ninner, das28_mean = das28_mean)
   input.dat <- get_input_data(patdata = pat)
   parsamp <- sample_pars(n = nouter, input_data = input.dat)
   for (i in 1:length(arms)){
@@ -996,7 +1002,7 @@ We also model the rate of HAQ progression in the absence of bDMARDs using a mixt
 
 <<haq_lcgm_probs, echo = FALSE, include = FALSE>>=
 # latent class probabilities 
-args <- formals(sample_pats)
+args <- formals(sample_pop)
 rf <- .73
 acr.criteria <- 1 
 imdq <- 0.49
@@ -1226,7 +1232,7 @@ Based on the NMA by \citet{singh2011adverse} and in accordance with \citet{steve
 
 <<si, echo=FALSE, include=FALSE, cache=CACHE>>=
 set.seed(100)
-pop <- sample_pats(n = 1000)
+pop <- sample_pop(n = 1000)
 input.dat <- get_input_data(patdata = pop)
 parsamp <- sample_pars(n = 1000, input_data = input.dat)
 arm.snames <- c("cdmards", "adamtx")
@@ -1363,7 +1369,7 @@ Notes: Coefficients are from the logistic regression reported in \citet{wailoo20
 
 <<utility, echo=FALSE, include=FALSE, cache=CACHE>>=
 n <- 1000
-pat <- sample_pats(n = n)
+pat <- sample_pop(n = n)
 haq = seq(0, 3, .1)
 simhaq <- data.table(id = 1, sim = rep(seq(1, n), each = length(haq)), haq = rep(haq, n), age = 55)
 input.dat <- get_input_data(pat)
@@ -1494,13 +1500,13 @@ tab[, init_cost := init_dose_val/strength_val * init_num_doses * price_per_unit 
 tab[, ann_cost := ann_dose_val/strength_val * ann_num_doses * price_per_unit + ann_num_doses * infusion_cost]
 
 # cost for weight based dosing
-wt <- sample_pats(1000)[, "weight"]
-male.prop <- formals(sample_pats)$male_prop * 100
-wtmale <- formals(sample_pats)$wtmale
-wtfemale <- formals(sample_pats)$wtfemale
+wt <- sample_pop(1000)[, "weight"]
+male.prop <- formals(sample_pop)$male_prop * 100
+wtmale <- formals(sample_pop)$wtmale
+wtfemale <- formals(sample_pop)$wtfemale
 ifx <- tab[sname == "ifx"]
-init.cost.ifx <- mean(ceiling(wt * ifx$init_dose_val / ifx$strength_val) * ifx$init_num_doses * ifx$wac_per_unit + ifx$init_num_doses * ifx$infusion_cost)
-ann.cost.ifx <- mean(ceiling(wt * ifx$ann_dose_val / ifx$strength_val) * ifx$ann_num_doses * ifx$wac_per_unit + ifx$ann_num_doses * ifx$infusion_cost) 
+init.cost.ifx <- mean(ceiling(wt * ifx$init_dose_val / ifx$strength_val) * ifx$init_num_doses * ifx$price_per_unit + ifx$init_num_doses * ifx$infusion_cost)
+ann.cost.ifx <- mean(ceiling(wt * ifx$ann_dose_val / ifx$strength_val) * ifx$ann_num_doses * ifx$price_per_unit + ifx$ann_num_doses * ifx$infusion_cost) 
 tab[sname == "ifx", init_cost := init.cost.ifx]
 tab[sname == "ifx", ann_cost := ann.cost.ifx]
 
@@ -1823,7 +1829,7 @@ When generating heterogeneous patient populations, we sample binary variables fr
 In particular, the proportion of the female population is drawn from a binomial distribution while age, disease duration and the number of previous DMARDs are drawn from truncated normal distributions. Each sampled value of the number of previous DMARDs is rounded to the nearest integer. Baseline HAQ and three disease activity measures (DAS28, SDAI, and CDAI) are drawn from truncated multivariate normal distributions. The covariance matrix is calculated using the correlations reported in \citet{aletaha2005acute} (\autoref{fig:da-cor}).
 
 <<da-cor, echo = FALSE, include = FALSE>>=
-args <- formals(sample_pats)
+args <- formals(sample_pop)
 cor <- matrix(NA, nrow = 4, ncol = 4)
 cor[1, 1] <- 1
 cor[1, 2] <- args$cor_das28_sdai 
@@ -1869,7 +1875,7 @@ We used the correlations from the routine cohort (during visit 1) rather than co
 
 <<pop-app, echo = FALSE, include = FALSE>>=
 npats <- 1000
-pats <- sample_pats(n = npats, type = "heterog")
+pats <- sample_pop(n = npats, type = "heterog")
 pats <- pats[, -c(which(colnames(pats) %in% c("mrs")))]
 tab <- cbind(apply(pats, 2, mean, na.rm = TRUE), 
             apply(pats, 2, quantile, .025, na.rm = TRUE),
@@ -2182,7 +2188,7 @@ We sampled from the mixture model as follows.
 \item For each individual $i$, sample the error term, $\mu_{i} \sim N(0, \sigma^2_\mu)$.
 \item For each individual $i$ and time-period $t$: 
 \begin{enumerate}
-\item Sample class membership conditional on $w_{it}$; that is, sample $C_{it} \sim \rm{Cat}(p_1, p_2, p_3, p_4)$ where $p_c$ is the probability of being in class $c$.
+\item Sample class membership conditional on $w_{it}$; that is, sample $C_{it} \sim \Cat(p_1, p_2, p_3, p_4)$ where $p_c$ is the probability of being in class $c$.
 \item Predict the intercept $\alpha_{ic}$.
 \item Sample the error term, $\epsilon_{it} \sim N(0, \sigma^2_\epsilon)$.
 \item Predict the HAQ score, $y_{it}$. 
@@ -2209,7 +2215,7 @@ When dosing depends on weight, costs are calculated separately for each patient 
 cost &= \lceil weight \cdot dose_{amt}/strength_{amt}\rceil \cdot doses_{num} \cdot WAC,
 \end{align}
 
-where $\rm{weight}$ is patient weight, $dose_{amt}$ is the dose per weight, and $strength_{amt}$, $WAC$, and $doses_{num}$ are defined in the same way as in the non-weight based scenario. To illustrate, the acquisition cost for infliximab after the first 6 months is calculated by multiplying each patient's weight by the dose (6 mg/kg) and dividing by the size of a vial (100 mg), and then multiplying by the number of doses (\Sexpr{formatC(ifx.cost$ann_num_doses, format = "f", digits = 2)}) and the WAC (\$\Sexpr{formatC(ifx.cost$wac_per_unit, format = "f", big.mark = ",", digits = 2)}).  
+where $weight$ is patient weight, $dose_{amt}$ is the dose per weight, and $strength_{amt}$, $WAC$, and $doses_{num}$ are defined in the same way as in the non-weight based scenario. To illustrate, the acquisition cost for infliximab after the first 6 months is calculated by multiplying each patient's weight by the dose (6 mg/kg) and dividing by the size of a vial (100 mg), and then multiplying by the number of doses (\Sexpr{formatC(ifx.cost$ann_num_doses, format = "f", digits = 2)}) and the WAC (\$\Sexpr{formatC(ifx.cost$wac_per_unit, format = "f", big.mark = ",", digits = 2)}).  
 
 \section{Network Meta-Analysis}\label{appendix:NMA}
 
@@ -2315,7 +2321,7 @@ ACR response, 6 month change in HAQ from baseline, and 6 month change in DAS28 f
 More specifically, let $r_{jkl}$ be the number of patients in trial $j$ for treatment $k$ in the mutually exclusive category $l = 1,2,3,4$. The model can be written as,
 
 \begin{align}
-r_{jkl} \sim \rm{Multinomial}(p_{jk1}, p_{jk2}, p_{jk3}, p_{jk4}, n_{jk}),
+r_{jkl} \sim \Multinomial(p_{jk1}, p_{jk2}, p_{jk3}, p_{jk4}, n_{jk}),
 \end{align}
 
 where $p_{jkl}$ is the probability that a patient from trial $j$ and treatment $k$ is in category $l$ and there are $n_{jk}$ patients in trial $j$ and treatment $k$. Probabilities are modeled using a probit function,

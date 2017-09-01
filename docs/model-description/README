@@ -1,0 +1,5 @@
+Convert model-description.tex to word using:
+
+pandoc model-description.tex --bibliography=../../vignettes/vignettes.bib  -o model-description.docx
+
+

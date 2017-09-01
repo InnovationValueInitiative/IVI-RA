@@ -1,0 +1,45 @@
+---
+title: "Generate input data"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library("iviRA")
+library(knitr)
+load("output.RData")
+```
+
+The IVI-RA model simulates outcomes conditional on parameters and data. Given a patient population, we can generate the required data with the function `get_input_data`
+
+```{r, cache = TRUE }
+input.dat <- get_input_data(patdata = pop)
+names(input.dat)
+```
+
+The function returns all patient characteristics needed to run the simulation (HAQ score at baseline, age, gender, DAS28, SDAI, CDAI, weight, and the number of previous DMARDs). It also stores a numbe of of matrices of explanatory variables. These include:
+
+* `x.mort`: 
+* `x.acr`:
+* `x.haq`:
+* `x.das28`:
+* `x.ttd.all`:
+* `x.ttd.eular`:
+* `x.ttd.da`:
+* `x.attr`
+
+First, `x.mort`, contains all patient characteristics known at baseline used to adjust mortality with a log odds ratio. By default, only the baseline HAQ score is used to adjust mortality. 
+
+```{r, cache = TRUE }
+head(input.dat$x.mort)
+```
+
+The second set of matrices are the design matrices used to simulate time to treatment discontinuation. They include `x.ttd.all`, `x.ttd.da`, and `x.ttd.eular`. The required matrices depnd on the model structures chosen. `x.ttd.all` is required if treatment duration does not depend on disease activity or EULAR respone (i.e., pathway **S1**), `x.ttd.da` is required if treatment duration depends on disease activity (i.e., pathways **S2-S5** ), and `x.ttd.eular` is required if treatment duration depends on EULAR response (i.e., pathway **S6**). This matrix depends on the the model structure chosen since treatment duration depends on the pathway **S1-S6** used for treatment switching. In our selected model structures, `tx_iswitch = acr-eular-switch` or `tx_iswitch = acr-switch`.
+
+```{r, cache = TRUE }
+head(input.dat$x.ttd.all)
+head(input.dat$x.ttd.eular)
+```
+
+```{r include=FALSE}
+save.image("output.RData")
+```

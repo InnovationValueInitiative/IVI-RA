@@ -16,7 +16,7 @@ The `iviRA` package does not allow users to run the IPS with parameters set to f
 The random samples depend on the underlying statistical estimates of the distribution of the parameters. We can generate a sample of size 100 using default values.
 
 ```{r }
-parsamp <- sample_pars(n = 100)
+parsamp <- sample_pars(n = 100, input_data = input.dat)
 ```
 
 The object `parsamp` returned from `sample_pars` is a list of random draws of the parameters used in the IPS.
@@ -34,7 +34,7 @@ parsamp$n
 Users can generate samples with `iviRA` defaults or feed custom inputs into `sample_pars`. For example, we can generate a sample in which the cost of a serious infection is \$7,000 instead of its default value of \$5,873.
 
 ```{r }
-parsamp2 <- sample_pars(n = 100, si_cost = 7000)
+parsamp2 <- sample_pars(n = 100, input_data = input.dat, si_cost = 7000)
 summary(parsamp2$si.cost)
 ```
 
@@ -211,19 +211,19 @@ The model incorporates 3 main types of health care sector costs: (1) drug acquis
 ### Treatment costs
 Drug acquisition and administration costs are separated into costs associated with the first 6 months of treatment and costs after the first 6 months. Costs are a function of the FDA recommended dose and frequency of administration, strength and dosage form, the price, and infusion. Prices with the simulation are reduced according to assumed discounts and rebates. If dosing is weight based, then the dose is calculated by multiplying the dose value (e.g., `init_dose_val` and `ann_dose_val`) by each patients weight in kilograms; otherwise the dose is simply equal to the dose value. For example, the dose for infliximab during the first six months is equal to 3 multiplied by the weight of the patient. 
 
-Information related to treatment costs are stored in the list `iviRA::treat.cost`. Data related to the costs of treatment for each medication are in the data table `iviRA::treat.cost$cost`.
+Information related to treatment costs are stored in the list `iviRA::tx.cost`. Data related to the costs of treatment for each medication are in the data table `iviRA::tx.cost$cost`.
 
 ```{r }
 library(knitr)
-kable(iviRA::treat.cost$cost)
+kable(iviRA::tx.cost$cost)
 ```
 
 The variable `init_num_doses` is the number of doses during the first 6 months after beginning a new treatment and the variable `ann_num_doses` is the number of doses *per year* after the first 6 months. The variables `discount_lower` and `discount_upper` are lower and upper bounds for the amount by which prices (`price_per_unit`) are decreased after discounts and rebates. 
 
-Costs for individual therapeutic agents are used to calculate costs for the (combination) treatments in a treatment sequence by using the lookup data table `iviRA::treat.cost$lookup`.
+Costs for individual therapeutic agents are used to calculate costs for the (combination) treatments in a treatment sequence by using the lookup data table `iviRA::tx.cost$lookup`.
 
 ```{r }
-iviRA::treat.cost$lookup
+iviRA::tx.cost$lookup
 ```
 
 The treatment names in the first column (`sname`) must match the names of the treatments selected in a treatment sequence. All subsequent columns refer to the names of the therapeutic agents used for a particular treatment. For example, the treatment `etnmtx` contains both etanercept and methotrexate/conventional cDMARDs.

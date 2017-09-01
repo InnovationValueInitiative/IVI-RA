@@ -48,13 +48,16 @@
       <a href="../articles/03-structures.html">3. Select model structures</a>
     </li>
     <li>
-      <a href="../articles/04-parameters.html">4. Sample parameters</a>
+      <a href="../articles/04-input-data.html">4. Generate input data</a>
     </li>
     <li>
-      <a href="../articles/05-ips.html">5. Run simulation</a>
+      <a href="../articles/05-parameters.html">5. Sample parameters</a>
     </li>
     <li>
-      <a href="../articles/06-analysis.html">6. Value assessment</a>
+      <a href="../articles/06-ips.html">6. Run simulation</a>
+    </li>
+    <li>
+      <a href="../articles/07-analysis.html">7. Value assessment</a>
     </li>
   </ul>
 </li>
@@ -134,27 +137,41 @@
 <h2 class="hasAnchor">
 <a href="#randomly-sampling-a-patient-population" class="anchor"></a>Randomly sampling a patient population</h2>
 <p>The simplest way to generate a patient cohort is to use the <code>sample_pats</code> function. The variables included in the cohort are age, gender, HAQ score at baseline, weight, the number of previous DMARDs, and three measures of disease activity (Disease Activity Score with 28-joint counts (DAS28), Simple Disease Activity Index (SDAI), and the Clinical Disease Activity Index (CDAI)). The <code>type</code> argument specifies whether the patient cohort is homogeneous or heterogeneous. If the cohort is homogeneous, then the cohort consists of male and female patients that are identical in all respects other than gender; if the cohort is heterogeneous, then all variables vary across patients.</p>
-<p>We can randomly sample a heterogeneous population with default setting. To examine these settings type <code><a href="../reference/sample_pats.html">?sample_pats</a></code> into the console.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pop &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pats.html">sample_pats</a></span>(<span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">type =</span> <span class="st">"heterog"</span>)
+<p>We can randomly sample a heterogeneous population with default setting. To examine these settings type <code>?sample_pats</code> into the console.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pop &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pop.html">sample_pop</a></span>(<span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">type =</span> <span class="st">"heterog"</span>)
 <span class="kw">head</span>(pop)</code></pre></div>
 <pre><code>##           age male weight prev_dmards    das28     sdai     cdai      haq0
-## [1,] 53.75429    0     75           4 6.827082 55.13482 55.36458 1.4528582
-## [2,] 48.65262    0     75           2 4.656158 27.47546 18.21064 1.3171054
-## [3,] 32.36346    1     89           5 7.527985 52.31504 53.90225 1.7683304
-## [4,] 38.03508    0     75           4 5.003823 38.00402 39.65966 0.9621253
-## [5,] 65.00563    0     75           2 8.373337 67.56525 64.95557 1.6962510
-## [6,] 53.01098    0     75           1 6.298228 53.47013 52.17492 2.6609052</code></pre>
+## [1,] 84.28213    0     75           3 6.332579 32.52494 34.75070 0.7741403
+## [2,] 55.92008    0     75           3 7.125998 61.57282 60.81700 2.8078290
+## [3,] 41.35859    0     75           1 8.021404 63.03844 64.14205 2.9203898
+## [4,] 43.32765    0     75           4 7.544772 59.63845 54.37278 2.9606266
+## [5,] 54.69900    0     75           3 7.729439 59.56362 57.54830 2.5369632
+## [6,] 56.13340    0     75           4 5.836844 40.11045 32.81176 0.6186726
+##           mrs
+## [1,] 1.436554
+## [2,] 1.266955
+## [3,] 1.120214
+## [4,] 1.332335
+## [5,] 1.455924
+## [6,] 1.384892</code></pre>
 <p>We can also customize the distribution of patients. For example, suppose we want to study a younger and healthier population. We might then sample patients by customizing arguments in <code>sample_pats</code>,</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pop2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pats.html">sample_pats</a></span>(<span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">type =</span> <span class="st">"heterog"</span>, <span class="dt">age_mean =</span> <span class="dv">45</span>, <span class="dt">das28_mean =</span> <span class="dv">4</span>, <span class="dt">sdai_mean =</span> <span class="dv">20</span>, 
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pop2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pop.html">sample_pop</a></span>(<span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">type =</span> <span class="st">"heterog"</span>, <span class="dt">age_mean =</span> <span class="dv">45</span>, <span class="dt">das28_mean =</span> <span class="dv">4</span>, <span class="dt">sdai_mean =</span> <span class="dv">20</span>, 
                     <span class="dt">cdai_mean =</span> <span class="dv">18</span>)
 <span class="kw">head</span>(pop2)</code></pre></div>
-<pre><code>##           age male weight prev_dmards    das28     sdai     cdai      haq0
-## [1,] 20.59086    0     75           1 2.083843 13.51923 14.94962 0.7511469
-## [2,] 31.27333    0     75           7 3.383513 12.32579 12.43633 0.3479224
-## [3,] 18.91665    0     75           4 5.031058 28.33861 23.04534 1.2819260
-## [4,] 41.73708    0     75           4 3.707565 20.16727 14.67530 1.3608672
-## [5,] 32.10039    0     75           4 3.437862 22.81490 15.11872 1.2070099
-## [6,] 50.71175    1     89           4 2.718404  4.82133  6.71310 1.3483966</code></pre>
+<pre><code>##           age male weight prev_dmards    das28     sdai      cdai
+## [1,] 53.84904    0     75           3 5.451373 15.91694 20.406820
+## [2,] 52.69281    0     75           2 4.971317 30.37620 33.311273
+## [3,] 46.91315    0     75           4 3.650635 17.11767  7.823945
+## [4,] 40.45132    0     75           2 3.866115 28.13799 20.291963
+## [5,] 50.88215    0     75           4 3.617216 14.31351 16.369713
+## [6,] 37.90079    1     89           2 3.030829 15.45942  3.668905
+##           haq0      mrs
+## [1,] 1.7551261 1.320683
+## [2,] 1.5315535 1.356393
+## [3,] 0.7392509 1.472867
+## [4,] 0.5628407 1.220783
+## [5,] 2.6155843 1.274351
+## [6,] 0.8702405 1.244618</code></pre>
 </div>
 <div id="using-your-own-patient-population" class="section level2">
 <h2 class="hasAnchor">
@@ -162,7 +179,7 @@
 <p>Users who have data on their own patient population may wish to run the simulation using their own data. To do this, users can simply load their own data and convert it to an R matrix. The matrix must have 1 row for each patient and the same columns as returned by <code>sample_pats</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">colnames</span>(pop)</code></pre></div>
 <pre><code>## [1] "age"         "male"        "weight"      "prev_dmards" "das28"      
-## [6] "sdai"        "cdai"        "haq0"</code></pre>
+## [6] "sdai"        "cdai"        "haq0"        "mrs"</code></pre>
 <div>
 <ul class="pager">
 <li class="previous">

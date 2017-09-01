@@ -71,13 +71,16 @@
       <a href="../articles/03-structures.html">3. Select model structures</a>
     </li>
     <li>
-      <a href="../articles/04-parameters.html">4. Sample parameters</a>
+      <a href="../articles/04-input-data.html">4. Generate input data</a>
     </li>
     <li>
-      <a href="../articles/05-ips.html">5. Run simulation</a>
+      <a href="../articles/05-parameters.html">5. Sample parameters</a>
     </li>
     <li>
-      <a href="../articles/06-analysis.html">6. Value assessment</a>
+      <a href="../articles/06-ips.html">6. Run simulation</a>
+    </li>
+    <li>
+      <a href="../articles/07-analysis.html">7. Value assessment</a>
     </li>
   </ul>
 </li>
@@ -153,14 +156,15 @@
     
 
     <pre class="usage"><span class='fu'>get_input_data</span>(<span class='no'>patdata</span>, <span class='kw'>x_mort</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>x_ttd_all</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>x_ttd_da</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>x_ttd_eular</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>model_structures</span>)</pre>
+  <span class='kw'>x_ttd_eular</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>x_acr</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>x_haq</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>x_das28</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>x_attr</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/tx.attr'>tx.attr</a></span>$<span class='no'>data</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>patdata</th>
-      <td><p>Matrix of patient data. Must contain variables generated from <a href='sample_pats.html'>sample_pats</a>:
+      <td><p>Matrix of patient data. Must contain variables generated from <a href='sample_pop.html'>sample_pop</a>:
  'age' for age, 'haq0' for baseline HAQ, 'male' as a indicator equal to
 1 if the patient is male and 0 if female, 'weight' for patient weight, and 'prev_dmards' 
 for number of previous DMARDs.</p></td>
@@ -181,11 +185,6 @@ for number of previous DMARDs.</p></td>
       <th>x_ttd_eular</th>
       <td><p>The design matrix for time to treatment discontinuation for each EULAR response category (moderate, good).</p></td>
     </tr>
-    <tr>
-      <th>model_structures</th>
-      <td><p>An object of class <code>model_structures</code> generated from 
-<a href='select_model_structures.html'>select_model_structures</a>.</p></td>
-    </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -197,7 +196,12 @@ for number of previous DMARDs.</p></td>
   <dt>male</dt><dd><p>A vector of patient gender (1 = male, 0 = female).</p></dd>
   <dt>prev.dmards</dt><dd><p>A vector of the number of previous DMARDs</p></dd>
   <dt>x.mort</dt><dd><p>Design matrix for mortality adjustment with odds ratios</p></dd>
-  <dt>x.ttd</dt><dd><p>Design matrix for treatment duration.</p></dd>
+  <dt>x.ttd.all</dt><dd><p>Design matrix for treatment duration representative of all patients.</p></dd>
+  <dt>x.ttd.da</dt><dd><p>Design matrix for treatment duration when disease activity covarariates
+      are used to model the location parameter in the survival model.</p></dd>
+ <dt>x.ttd.eular</dt><dd><p>Design matrix for treatment duration when survival is stratified by
+       EULAR response.</p></dd>
+  <dt>x.attr</dt><dd><p>Design matrix of treatment attributes.</p></dd>
 </dl>
 
     

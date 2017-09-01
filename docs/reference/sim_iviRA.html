@@ -71,13 +71,16 @@
       <a href="../articles/03-structures.html">3. Select model structures</a>
     </li>
     <li>
-      <a href="../articles/04-parameters.html">4. Sample parameters</a>
+      <a href="../articles/04-input-data.html">4. Generate input data</a>
     </li>
     <li>
-      <a href="../articles/05-ips.html">5. Run simulation</a>
+      <a href="../articles/05-parameters.html">5. Sample parameters</a>
     </li>
     <li>
-      <a href="../articles/06-analysis.html">6. Value assessment</a>
+      <a href="../articles/06-ips.html">6. Run simulation</a>
+    </li>
+    <li>
+      <a href="../articles/07-analysis.html">7. Value assessment</a>
     </li>
   </ul>
 </li>
@@ -154,7 +157,8 @@
 
     <pre class="usage"><span class='fu'>sim_iviRA</span>(<span class='no'>arms</span>, <span class='no'>input_data</span>, <span class='no'>pars</span>, <span class='no'>model_structures</span>, <span class='kw'>max_months</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>treatment_lookup</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/treatments'>treatments</a></span>$<span class='no'>sname</span>, <span class='kw'>output</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"data"</span>, <span class='st'>"summary"</span>),
-  <span class='kw'>discount_qalys</span> <span class='kw'>=</span> <span class='fl'>0.03</span>, <span class='kw'>discount_cost</span> <span class='kw'>=</span> <span class='fl'>0.03</span>, <span class='kw'>check</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+  <span class='kw'>discount_qalys</span> <span class='kw'>=</span> <span class='fl'>0.03</span>, <span class='kw'>discount_cost</span> <span class='kw'>=</span> <span class='fl'>0.03</span>, <span class='kw'>insurance_value</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>incidence</span> <span class='kw'>=</span> <span class='fl'>0.006</span>, <span class='kw'>mrs</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>check</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -195,6 +199,10 @@ otherwise, discounts can be applied to the simulated output.</p></td>
 otherwise, discounts can be applied to the simulated output.</p></td>
     </tr>
     <tr>
+      <th>insurance_value</th>
+      <td><p>If TRUE, insurance value is simulated. Defeault is FALSE.</p></td>
+    </tr>
+    <tr>
       <th>model_structure</th>
       <td><p>Object of class model structure generated from select_model_structure.</p></td>
     </tr>
@@ -217,7 +225,7 @@ useful in the cases.</p>
 <p>When <code>output = "data"</code> is selected, the simulation returns a <code>data.table</code> with the 
 following columns:</p><dl class='dl-horizontal'>
 <dt>sim</dt><dd><p>Simulation number. Indexed from 1 to S where S is the number of randomly sampled parameter sets (e.g. n from <a href='sample_pars.html'>sample_pars</a>).</p></dd>
-<dt>id</dt><dd><p>ID number. Indexed from 1 to N where N is the number of simulated patients (e.g. n from <a href='sample_pats.html'>sample_pats</a>).</p></dd>
+<dt>id</dt><dd><p>ID number. Indexed from 1 to N where N is the number of simulated patients (e.g. n from sample_pats).</p></dd>
 <dt>month</dt><dd><p>Month since a simulated patient began the first treatment in a treatment sequence.</p></dd>
 <dt>tx</dt><dd><p>Treatment used. Given J total therapies, the first J - 1 therapies match the indices from <code>arminds</code>. The final <code>tx</code>
  is always the non-biologic treatment (<code>nbt_ind</code>).</p></dd>

@@ -71,13 +71,16 @@
       <a href="../articles/03-structures.html">3. Select model structures</a>
     </li>
     <li>
-      <a href="../articles/04-parameters.html">4. Sample parameters</a>
+      <a href="../articles/04-input-data.html">4. Generate input data</a>
     </li>
     <li>
-      <a href="../articles/05-ips.html">5. Run simulation</a>
+      <a href="../articles/05-parameters.html">5. Sample parameters</a>
     </li>
     <li>
-      <a href="../articles/06-analysis.html">6. Value assessment</a>
+      <a href="../articles/06-ips.html">6. Run simulation</a>
+    </li>
+    <li>
+      <a href="../articles/07-analysis.html">7. Value assessment</a>
     </li>
   </ul>
 </li>
@@ -155,7 +158,8 @@ A Generalized Linear Modeling Framework for Pairwise and Network Meta-Analysis o
 Randomized Controlled Trials"</p>
     
 
-    <pre class="usage"><span class='fu'>sample_nma_acr</span>(<span class='no'>nsims</span>, <span class='no'>m</span>, <span class='no'>vcov</span>, <span class='no'>rr_lower</span>, <span class='no'>rr_upper</span>, <span class='no'>hist</span>, <span class='no'>tx_names</span>)</pre>
+    <pre class="usage"><span class='fu'>sample_nma_acr</span>(<span class='no'>nsims</span>, <span class='no'>m</span>, <span class='no'>vcov</span>, <span class='kw'>rr_lower</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>rr_upper</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>ncovs</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+  <span class='kw'>tx_names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -181,8 +185,8 @@ Randomized Controlled Trials"</p>
       <td><p>Upper bound for relative risk.</p></td>
     </tr>
     <tr>
-      <th>hist</th>
-      <td><p>Patient history equivalent to tx_hist in <a href='sample_pars.html'>sample_pars</a>.</p></td>
+      <th>ncovs</th>
+      <td><p>Number of treatment by covariate interactions.</p></td>
     </tr>
     </table>
     

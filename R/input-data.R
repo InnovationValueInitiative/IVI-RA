@@ -51,7 +51,7 @@
 #'   healthy states as described above.}
 #' }
 #' @export
-sample_pats <- function(n = 1, type = c("homog", "heterog"), age_mean = 55, age_sd = 13, male_prop = .21,
+sample_pop <- function(n = 1, type = c("homog", "heterog"), age_mean = 55, age_sd = 13, male_prop = .21,
                       haq0_mean = 1.5, haq0_sd = 0.7, wtmale = 89, wtfemale = 75,
                       prev_dmards_mean = 3.28, prev_dmards_sd = 1.72,
                       das28_mean = 6, das28_sd = 1.2, 
@@ -142,7 +142,7 @@ lt_data <- function(ltfemale, ltmale){
 #' 
 #' Generate data inputs for the IPS.
 #' 
-#' @param patdata Matrix of patient data. Must contain variables generated from \link{sample_pats}:
+#' @param patdata Matrix of patient data. Must contain variables generated from \link{sample_pop}:
 #'  'age' for age, 'haq0' for baseline HAQ, 'male' as a indicator equal to
 #' 1 if the patient is male and 0 if female, 'weight' for patient weight, and 'prev_dmards' 
 #' for number of previous DMARDs. 

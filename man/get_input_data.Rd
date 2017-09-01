@@ -9,7 +9,7 @@ get_input_data(patdata, x_mort = NULL, x_ttd_all = NULL, x_ttd_da = NULL,
   x_attr = iviRA::tx.attr$data)
 }
 \arguments{
-\item{patdata}{Matrix of patient data. Must contain variables generated from \link{sample_pats}:
+\item{patdata}{Matrix of patient data. Must contain variables generated from \link{sample_pop}:
  'age' for age, 'haq0' for baseline HAQ, 'male' as a indicator equal to
 1 if the patient is male and 0 if female, 'weight' for patient weight, and 'prev_dmards' 
 for number of previous DMARDs.}
