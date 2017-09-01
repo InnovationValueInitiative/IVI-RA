@@ -250,8 +250,8 @@ iviRA::prod.loss
 
 <div>
 <ul class="pager">
-  <li class="previous"><a href="03-structures.html">Previous</a></li>
-  <li class="next"><a href="05-ips.html">Next</a></li>
+  <li class="previous"><a href="04-input-data.html">Previous</a></li>
+  <li class="next"><a href="06-ips.html">Next</a></li>
 </ul>
 </div>
 

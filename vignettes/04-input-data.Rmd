@@ -40,6 +40,13 @@ head(input.dat$x.ttd.all)
 head(input.dat$x.ttd.eular)
 ```
 
+<div>
+<ul class="pager">
+  <li class="previous"><a href="03-structures.html">Previous</a></li>
+  <li class="next"><a href="05-parameters.html">Next</a></li>
+</ul>
+</div>
+
 ```{r include=FALSE}
 save.image("output.RData")
 ```

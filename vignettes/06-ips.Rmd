@@ -35,8 +35,8 @@ Utility (`utility`) depends on whether the Hernandez-Alava mixture model or Wail
 
 <div>
 <ul class="pager">
-  <li class="previous"><a href="04-parameters.html">Previous</a></li>
-  <li class="next"><a href="06-analysis.html">Next</a></li>
+  <li class="previous"><a href="05-parameters.html">Previous</a></li>
+  <li class="next"><a href="07-analysis.html">Next</a></li>
 </ul>
 </div>
 

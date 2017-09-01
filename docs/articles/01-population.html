@@ -141,37 +141,37 @@
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pop &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pop.html">sample_pop</a></span>(<span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">type =</span> <span class="st">"heterog"</span>)
 <span class="kw">head</span>(pop)</code></pre></div>
 <pre><code>##           age male weight prev_dmards    das28     sdai     cdai      haq0
-## [1,] 84.28213    0     75           3 6.332579 32.52494 34.75070 0.7741403
-## [2,] 55.92008    0     75           3 7.125998 61.57282 60.81700 2.8078290
-## [3,] 41.35859    0     75           1 8.021404 63.03844 64.14205 2.9203898
-## [4,] 43.32765    0     75           4 7.544772 59.63845 54.37278 2.9606266
-## [5,] 54.69900    0     75           3 7.729439 59.56362 57.54830 2.5369632
-## [6,] 56.13340    0     75           4 5.836844 40.11045 32.81176 0.6186726
+## [1,] 53.11101    0     75           0 7.548288 62.03702 64.88191 1.0765126
+## [2,] 47.94035    0     75           3 6.354551 51.90546 55.21301 1.4669824
+## [3,] 66.33283    0     75           3 6.806922 52.52645 57.18414 2.6997797
+## [4,] 42.15867    0     75           4 4.855724 31.75268 37.87992 1.5165179
+## [5,] 71.95264    0     75           9 8.758475 63.21474 56.94773 1.8389811
+## [6,] 66.22462    0     75           4 5.348916 32.67740 32.43375 0.8778618
 ##           mrs
-## [1,] 1.436554
-## [2,] 1.266955
-## [3,] 1.120214
-## [4,] 1.332335
-## [5,] 1.455924
-## [6,] 1.384892</code></pre>
+## [1,] 1.331066
+## [2,] 1.350579
+## [3,] 1.326999
+## [4,] 1.106930
+## [5,] 1.145589
+## [6,] 1.274851</code></pre>
 <p>We can also customize the distribution of patients. For example, suppose we want to study a younger and healthier population. We might then sample patients by customizing arguments in <code>sample_pats</code>,</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pop2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pop.html">sample_pop</a></span>(<span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">type =</span> <span class="st">"heterog"</span>, <span class="dt">age_mean =</span> <span class="dv">45</span>, <span class="dt">das28_mean =</span> <span class="dv">4</span>, <span class="dt">sdai_mean =</span> <span class="dv">20</span>, 
                     <span class="dt">cdai_mean =</span> <span class="dv">18</span>)
 <span class="kw">head</span>(pop2)</code></pre></div>
 <pre><code>##           age male weight prev_dmards    das28     sdai      cdai
-## [1,] 53.84904    0     75           3 5.451373 15.91694 20.406820
-## [2,] 52.69281    0     75           2 4.971317 30.37620 33.311273
-## [3,] 46.91315    0     75           4 3.650635 17.11767  7.823945
-## [4,] 40.45132    0     75           2 3.866115 28.13799 20.291963
-## [5,] 50.88215    0     75           4 3.617216 14.31351 16.369713
-## [6,] 37.90079    1     89           2 3.030829 15.45942  3.668905
+## [1,] 44.09670    1     89           3 6.276494 45.74675 40.035019
+## [2,] 39.50308    1     89           0 4.894266 43.55794 42.143540
+## [3,] 33.71291    0     75           5 7.188245 57.58796 55.979693
+## [4,] 46.22322    1     89           3 2.420282 13.74283  7.099995
+## [5,] 58.11594    0     75           4 4.306757 38.27985 33.784913
+## [6,] 49.57377    0     75           5 3.775290 27.86664 26.217885
 ##           haq0      mrs
-## [1,] 1.7551261 1.320683
-## [2,] 1.5315535 1.356393
-## [3,] 0.7392509 1.472867
-## [4,] 0.5628407 1.220783
-## [5,] 2.6155843 1.274351
-## [6,] 0.8702405 1.244618</code></pre>
+## [1,] 1.8797110 1.473129
+## [2,] 1.2861039 1.183960
+## [3,] 1.7389759 1.358165
+## [4,] 2.3057778 1.257422
+## [5,] 0.2662538 1.175241
+## [6,] 0.4016078 1.240874</code></pre>
 </div>
 <div id="using-your-own-patient-population" class="section level2">
 <h2 class="hasAnchor">
