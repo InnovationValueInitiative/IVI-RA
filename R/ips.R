@@ -13,6 +13,7 @@
 #' estimates. Index of of treatments in \code{arms} are matched against treatments in
 #' \code{treatments_lookup} by name. Indices of treatment-specific parameter estimates must be 
 #' in the same order as treatments in \code{treatments_lookup}.   
+#' @param hist Is the patient biologic naive or biologic experienced?
 #' @param output Specifies the format of output returned from the simulation. Options are \code{data} 
 #' and \code{summary}. When \code{data} is specified, each simulated value (i.e, by model,
 #' sampled parameter set, individual, and time-period) is returned in a \code{data.table}. If 
@@ -71,11 +72,13 @@
 #' @export 
 sim_iviRA <- function(arms, input_data, pars, model_structures, 
                       max_months = NULL, treatment_lookup = iviRA::treatments$sname,
+                      hist = c("naive", "experienced"),
                       output = c("data", "summary"), 
                       discount_qalys = .03, discount_cost = .03,
                       insurance_value = FALSE, incidence = .006,
                       mrs = 2,
                       check = TRUE){
+  hist <- match.arg(hist)
   output <- match.arg(output)
   
   # PREPPING FOR THE SIMULATION
@@ -147,6 +150,7 @@ sim_iviRA <- function(arms, input_data, pars, model_structures,
 
   # RUNNING THE SIMULATION
   sim.out <- sim_iviRA_C(arm_inds = arminds, model_structures_mat = model_structures,
+                         hist = hist,
                          haq0 = input_data$haq0, das28_0 = input_data$das28,
                      sdai0 = input_data$sdai, cdai0 = input_data$cdai,
                      age0 = input_data$age, male = input_data$male, 
@@ -574,7 +578,7 @@ check_pars <- function(x, arminds, mod_struct){
 #' @export
 sim_utility_mixture <- function(simhaq, male, pars, check = TRUE){
   if (check) check_sim_utility_mixture(simhaq, male, pars)
-  util <- sim_utility_mixtureC(id = simhaq$id - 1, sim = simhaq$sim - 1, haq = simhaq$haq, 
+  util <- iviRA:::sim_utility_mixtureC(id = simhaq$id - 1, sim = simhaq$sim - 1, haq = simhaq$haq, 
                                pain_mean = pars$pain$pain.mean, haq_mean = pars$pain$haq.mean, 
                                pain_var = pars$pain$pain.var, haq_var = pars$pain$haq.var, 
                                painhaq_cor = pars$pain$painhaq.cor, 
@@ -680,7 +684,7 @@ sim_utility_wailoo <- function(simhaq, haq0, male, prev_dmards,
                                coefs, check = TRUE){
   if (check) check_sim_utility_wailoo(simhaq, haq0, male, prev_dmards, coefs)
   dis.dur <- 18.65 # based on mean disease duration in Wailoo (2006)
-  util <- sim_utility_wailooC(sim = simhaq$sim - 1, id = simhaq$id - 1, age = simhaq$age,
+  util <- iviRA:::sim_utility_wailooC(sim = simhaq$sim - 1, id = simhaq$id - 1, age = simhaq$age,
                               disease_duration = dis.dur, haq0 = haq0, male = male, 
                               prev_dmards = prev_dmards, haq = simhaq$haq,
                               b_int = coefs[, "int"], b_age = coefs[, "age"], b_disease_duration = coefs[, "dis_dur"], 

@@ -6,10 +6,13 @@
 #include "mort.h"
 #include "logit-prob.h"
 #include "utils.h"
+#include "ips.h"
 #include <hesim.h>
 using namespace Rcpp;
 
-// Model structure
+/*****************
+* Model structure
+*****************/
 struct ModelStructure {
   std::string tx_ihaq;
   std::string tx_iswitch;
@@ -27,29 +30,36 @@ ModelStructure update_model_structure(ModelStructure m, std::vector<std::string>
   return m;
 }
 
-// Update HAQ initial response
+/************************************
+* Update HAQ with linear progression 
+************************************/
 void update_haq_t1(double &haq, double haq_change){
   haq = haq + haq_change;
 }
 
-// NMA ACR class
-class nmaACR {
-public:
-  double rr;
-  double A;
-  double z2;
-  double z3;
-  arma::rowvec d_beta;
-  arma::rowvec x;
-  void set(double rr_, double A_, double z2_, double z3_, 
-           arma::rowvec d_beta_, arma::rowvec x_, int line);
-  arma::rowvec nma_acrprob();
-  double sim_acr();
-};
+// Update HAQ after initial response with linear progression
+void update_haq_t(double &haq, double haq_change_therapy, 
+                  arma::rowvec haq_change_age_vec, double age, double cycle_length){
+  double haq_change_age = 0.0;
+  if (age < 40){
+    haq_change_age = haq_change_age_vec(0);
+  }
+  else if (age >= 40 & age <= 64){
+    haq_change_age = haq_change_age_vec(1);
+  }
+  else {
+    haq_change_age = haq_change_age_vec(2);
+  }
+  haq = haq + (haq_change_age + haq_change_therapy) * (cycle_length/12);
+}
 
-void nmaACR::set(double rr_, double A_, double z2_, double z3_,
+/**************
+* NMA ACR class
+**************/
+void nmaACR::set(std::string hist_, double rr_, double A_, double z2_, double z3_,
                  arma::rowvec d_beta_, arma::rowvec x_, int line){
-  if (line == 0){
+  hist = hist_;
+  if (line == 0 && hist == "naive"){
     rr = 1;
   } 
   else{
@@ -93,22 +103,13 @@ double nmaACR::sim_acr(){
   return acr;
 }
 
-
-// NMA class for linear model
-class nmaLM {
-public:
-  double rr;
-  double A;
-  arma::rowvec d_beta;
-  arma::rowvec x;
-  void set(double rr_, double A_, 
-           arma::rowvec d_beta_, arma::rowvec x_, int line);
-  double sim_dy();
-};
-
-void nmaLM::set(double rr_, double A_,
+/****************************
+* NMA class for linear model
+****************************/
+void nmaLM::set(std::string hist_, double rr_, double A_,
                  arma::rowvec d_beta_, arma::rowvec x_, int line){
-  if (line == 0){
+  hist = hist_;
+  if (line == 0 && hist == "naive"){
     rr = 1;
   } 
   else{
@@ -120,22 +121,19 @@ void nmaLM::set(double rr_, double A_,
 }
 
 double nmaLM::sim_dy(){
-  return rr * (A + arma::dot(d_beta, x));
+  double dy = A + arma::dot(d_beta, x);
+  if (dy <= 0){
+    return rr * dy;
+  } 
+  else{
+    return (1 + 1 - rr) * dy;
+  }
 }
 
-// Effect of treatment on HAQ during the initial treatment phase
-class TxIHaq {
-public:
-  TxIHaq(): acr(NA_REAL), eular(NA_REAL), dhaq(0.0){ } 
-  int acr;
-  int eular;
-  double dhaq;
-  void sim(std::string tx_ihaq_model, int line, int therapy, int nbt,
-           nmaACR nma_acr, nmaLM nma_dhaq,
-           arma::mat acr2eular, arma::rowvec acr2haq, arma::rowvec eular2haq);
-  
-};
-
+/****************************************************************
+* TxIHAQ class:
+* Effect of treatment on HAQ during the initial treatment phase
+****************************************************************/
 void TxIHaq::sim(std::string model, int line, int therapy, int nbt,
                     nmaACR nma_acr, nmaLM nma_dhaq,
                      arma::mat acr2eular, arma::rowvec acr2haq, arma::rowvec eular2haq){
@@ -175,60 +173,10 @@ void TxIHaq::sim(std::string model, int line, int therapy, int nbt,
   }
 }
 
-//// [[Rcpp::export]]
-// List test_tx_ihaq(std::string tx_ihaq_model, int line, int therapy, int nbt,
-//                       Rcpp::List nma_acr_list,
-//                       double nma_dhaq1, double nma_dhaq2,
-//                       arma::mat acr2eular, arma::rowvec acr2haq, arma::rowvec eular2haq){
-//   double acr_rr = as<double> (nma_acr_list["rr"]);
-//   double acr_A = as<double> (nma_acr_list["A"]);
-//   double acr_z2 = as<double> (nma_acr_list["z2"]);
-//   double acr_z3 = as<double> (nma_acr_list["z3"]);
-//   arma::rowvec acr_d_beta = as<arma::rowvec>(nma_acr_list["d"]);
-//   arma::rowvec acr_x = as<arma::rowvec>(nma_acr_list["x"]);
-//   nmaACR nma_acr;
-//   nma_acr.set(acr_rr, acr_A, acr_z2, acr_z3, acr_d_beta, acr_x, line);
-//   TxIHaq sim = sim_tx_ihaq(tx_ihaq_model, line, therapy, nbt,
-//                         nma_acr, nma_dhaq1, nma_dhaq2,
-//                         acr2eular, acr2haq, eular2haq);
-//   return List::create(Rcpp::Named("acr") = sim.acr, Rcpp::Named("eular") = sim.eular,
-//                       Rcpp::Named("dhaq") = sim.dhaq);
-// }
-
-// Update HAQ after initial response with linear progression
-void update_haq_t(double &haq, double haq_change_therapy, 
-                  arma::rowvec haq_change_age_vec, double age, double cycle_length){
-  double haq_change_age = 0.0;
-  if (age < 40){
-    haq_change_age = haq_change_age_vec(0);
-  }
-  else if (age >= 40 & age <= 64){
-    haq_change_age = haq_change_age_vec(1);
-  }
-  else {
-    haq_change_age = haq_change_age_vec(2);
-  }
-  haq = haq + (haq_change_age + haq_change_therapy) * (cycle_length/12);
-}
-
-// Effect of treatment on switching treatment during the treatment phase
-class TxISwitch {
-public:
-  int tswitch;
-  double das28;
-  double sdai;
-  double cdai;
-  int da_cat;
-  int get_das28_cat();
-  int get_sdai_cat();
-  int get_cdai_cat();
-  TxISwitch(): tswitch(0), das28(NA_REAL), sdai(NA_REAL), cdai(NA_REAL), da_cat(0){ } 
-  double get_da_new(double da_old, double da_change, double lower, double upper);
-  void sim(std::string model, int line, int therapy, int nbt, int acr, int eular,
-           arma::rowvec acr2das28, arma::rowvec acr2sdai, arma::rowvec acr2cdai,
-           nmaLM nma_das28, arma::rowvec p);
-};
-
+/**********************************************************************
+* TxISwitch class:
+* Effect of treatment on switching treatment during the treatment phase
+**********************************************************************/
 int TxISwitch::get_das28_cat(){
   int cat = 0;
   if (das28 >= 2.6 & das28 < 3.2){
@@ -332,22 +280,10 @@ void TxISwitch::sim(std::string model, int line, int therapy, int nbt,
   }
 }
 
-// //' @export
-//// [[Rcpp::export]]
-// List test_tx_iswitch(std::string tx_iswitch_model, int line, int therapy, int nbt,
-//                         int acr, int eular, double das28, double sdai, double cdai,
-//                         arma::rowvec acr2das28, arma::rowvec acr2sdai, arma::rowvec acr2cdai,
-//                         arma::rowvec nma_das28_1, arma::rowvec nma_das28_2, arma::rowvec p){
-//   Tx_ISwitch sim = sim_tx_iswitch(tx_iswitch_model, line, therapy, nbt, acr, eular,
-//                                      das28, sdai, cdai, acr2das28, acr2sdai, acr2cdai,
-//                                      nma_das28_1, nma_das28_2, p);
-//   return List::create(Rcpp::Named("tswitch") = sim.tswitch, Rcpp::Named("das28") = sim.das28,
-//                       Rcpp::Named("sdai") = sim.sdai, Rcpp::Named("cdai") = sim.cdai);
-// }
-
-
+/***********************************
+* Time to treatment discontinuation
+***********************************/
 // Time to treatment discontinuation by eular response 
-//' @export
 // [[Rcpp::export]]
 double sim_ttd_eular(arma::rowvec x, arma::rowvec loc_mod, double anc1_mod,
                  arma::rowvec loc_good, double anc1_good, 
@@ -372,7 +308,6 @@ double sim_ttd_eular(arma::rowvec x, arma::rowvec loc_mod, double anc1_mod,
 }
 
 // Time to treatment discontinuation single model
-//' @export
 // [[Rcpp::export]]
 double sim_ttd(arma::rowvec x, arma::rowvec loc, double anc1,
                    int tswitch, std::string dist,
@@ -446,7 +381,9 @@ Rcpp::List test_ttd(Rcpp::List x){
                             Rcpp::Named("anc2") = ttd.anc2);
 }
 
-
+/**********************************
+* Latent class growth model (LCGM)
+**********************************/
 // Simulate latent class from multinomial logistic regression
 //' @export
 // [[Rcpp::export]]
@@ -485,7 +422,9 @@ double sim_dhaq_lcgm1C(double year, double cycle_length, double age, double fema
   return(dyhat);
 }
 
-// Simulate costs
+/****************
+* Simulate costs
+****************/
 struct Cost {
   double tx;
   double hosp;
@@ -606,6 +545,9 @@ double sim_prod_loss1C(double &haq, double yrlen, double beta){
   return haq * beta * yrlen;
 }
 
+/****************************
+* Simulate utility and QALYs
+****************************/
 // Wailoo 2006 HAQ to Utility Conversion
 // [[Rcpp::export]]
 double sim_utility_wailoo1C(double age, double disease_duration,
@@ -617,7 +559,6 @@ double sim_utility_wailoo1C(double age, double disease_duration,
   return 1/(1 + exp(-xb));
 }
 
-//' @export
 // [[Rcpp::export]]
 std::vector<double> sim_utility_wailooC(std::vector<int> sim, std::vector<int> id,
                                         std::vector<double> age, double disease_duration,
@@ -644,7 +585,6 @@ std::vector<double> sim_utility_wailooC(std::vector<int> sim, std::vector<int> i
 
 // Sample from Hernandez Alva (2013) Mixture Model
 // Note the class 4 is the reference category in the paper 
-//' @export
 // [[Rcpp::export]]
 double sim_utility_mixture1C(double haq,
                              double pain_mean, double haq_mean,
@@ -696,7 +636,6 @@ double sim_utility_mixture1C(double haq,
 }
 
 // Mixture Model HAQ to Utility Conversion
-//' @export
 // [[Rcpp::export]]
 std::vector<double> sim_utility_mixtureC(std::vector<int> id, std::vector<int> sim, std::vector<double> haq,
                           double pain_mean, double haq_mean,
@@ -739,6 +678,12 @@ std::vector<double> sim_utility_mixtureC(std::vector<int> id, std::vector<int> s
   return util;
 }
 
+/**************************************************************
+* Calculate summary statistics during simulatin run
+* Note that this is to save RAM in cases where the user
+* does not want to save simulation results for each individual
+* and model cycle
+**************************************************************/
 // Calculate means by individual for selected variables
 class SimMeans {         
 private:
@@ -1116,9 +1061,13 @@ std::vector<double> sim_qalysC(std::vector<double> &utility, std::vector<double>
   return qalys_vec;
 }
 
+/*********************************
+* The MAIN c++ sim_iviRA function
+*********************************/
 // Simulate HAQ score
 // [[Rcpp::export]] 
 List sim_iviRA_C(arma::mat arm_inds, CharacterMatrix model_structures_mat,
+                  std::string hist,
              std::vector<double> haq0, std::vector<double> das28_0,
              std::vector<double> sdai0, std::vector<double> cdai0,
              std::vector<double> age0, std::vector<int> male,
@@ -1326,13 +1275,13 @@ List sim_iviRA_C(arma::mat arm_inds, CharacterMatrix model_structures_mat,
           arma::rowvec x_attr_ij = x_attr.row(arm_ind_ij);
           
           // H1-H3: simulate change in HAQ during initial treatment phase
-          nma_acr.set(acr_rr[s], acr_A[s], acr_z2[s], acr_z3[s],
+          nma_acr.set(hist, acr_rr[s], acr_A[s], acr_z2[s], acr_z3[s],
                       acr_d_beta.slice(arm_ind_ij).row(s), x_acr.row(i),
                       j);
-          nma_haq.set(nma_haq_rr[s], nma_haq_A[s],
+          nma_haq.set(hist, nma_haq_rr[s], nma_haq_A[s],
                       nma_haq_d_beta.slice(arm_ind_ij).row(s), x_haq.row(i),
                       j);
-          nma_das28.set(nma_das28_rr[s], nma_das28_A[s],
+          nma_das28.set(hist, nma_das28_rr[s], nma_das28_A[s],
                       nma_das28_d_beta.slice(arm_ind_ij).row(s), x_das28.row(i),
                       j);
           tx_ihaq.sim(mod_struct.tx_ihaq, j, arm_ind_ij, nbt,
@@ -1621,11 +1570,6 @@ List sim_iviRA_C(arma::mat arm_inds, CharacterMatrix model_structures_mat,
       );
   }
 }
-
-double sum(double x, double y){
-  return x + y;
-}
-
 
 
 

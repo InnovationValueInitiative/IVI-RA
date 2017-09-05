@@ -436,7 +436,9 @@ test_that("sim_utility_wailoo1C", {
 
 # Test sim_qalys --------------------------------------------------------------
 n <- 10
-parsamp <- sample_pars(n = 5)
+pop <- sample_pop(n = 10)
+input.dat <- get_input_data(pop)
+parsamp <- sample_pars(n = 5, input_data = input.dat)
 x.attr <- iviRA::tx.attr$data
 simhaq <- data.table(yrlen = rep(.5, n), sim = rep(seq(1, 5), each = n/5),
                      tx = which(iviRA::treatments$sname == "tof"),
@@ -496,7 +498,7 @@ test_that("sim_qalys", {
 # out$get_ttsi()
 
 # small integration test ------------------------------------------------------
-pop <- sample_pop(n = 100, type = "homog")
+pop <- sample_pop(n = 10, type = "homog")
 arm.names <- c("adamtx", "cdmards")
 mod.structs <- select_model_structures(tx_ihaq = c("acr-haq", "acr-eular-haq"),
                                      tx_iswitch = c("acr-switch", "acr-eular-switch"),
@@ -504,7 +506,7 @@ mod.structs <- select_model_structures(tx_ihaq = c("acr-haq", "acr-eular-haq"),
                                      ttd_dist = c("gengamma", "lnorm"),
                                      utility_model = c("mixture", "wailoo"))
 input.dat <- get_input_data(patdata = pop)
-parsamp <- sample_pars(n = 100, input_dat = input.dat)
+parsamp <- sample_pars(n = 10, input_dat = input.dat)
 sim.out <- sim_iviRA(arms = arm.names, input_data = input.dat, pars = parsamp,
                      model_structures = mod.structs, output = "summary")
 

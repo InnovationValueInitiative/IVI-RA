@@ -5,9 +5,10 @@
 \title{The IVI-RA simulation}
 \usage{
 sim_iviRA(arms, input_data, pars, model_structures, max_months = NULL,
-  treatment_lookup = iviRA::treatments$sname, output = c("data", "summary"),
-  discount_qalys = 0.03, discount_cost = 0.03, insurance_value = FALSE,
-  incidence = 0.006, mrs = 2, check = TRUE)
+  treatment_lookup = iviRA::treatments$sname, hist = c("naive",
+  "experienced"), output = c("data", "summary"), discount_qalys = 0.03,
+  discount_cost = 0.03, insurance_value = FALSE, incidence = 0.006,
+  mrs = 2, check = TRUE)
 }
 \arguments{
 \item{arms}{Name of arms in the treatment treatment sequence. May be a vector consisting of 
@@ -19,6 +20,8 @@ a single treatment sequence or a matrix of unique sequences for each patient.}
 
 \item{max_months}{Maximum number of months to run the model for. Default is NULL which implies that
 the model is simulated over each patient's lifetime.}
+
+\item{hist}{Is the patient biologic naive or biologic experienced?}
 
 \item{output}{Specifies the format of output returned from the simulation. Options are \code{data} 
 and \code{summary}. When \code{data} is specified, each simulated value (i.e, by model,
