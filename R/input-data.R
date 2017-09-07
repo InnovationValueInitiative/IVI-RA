@@ -142,7 +142,7 @@ lt_data <- function(ltfemale, ltmale){
 #' 
 #' Generate data inputs for the IPS.
 #' 
-#' @param patdata Matrix of patient data. Must contain variables generated from \link{sample_pop}:
+#' @param pop Matrix of patient population. Must contain variables generated from \link{sample_pop}:
 #'  'age' for age, 'haq0' for baseline HAQ, 'male' as a indicator equal to
 #' 1 if the patient is male and 0 if female, 'weight' for patient weight, and 'prev_dmards' 
 #' for number of previous DMARDs. 
@@ -153,30 +153,46 @@ lt_data <- function(ltfemale, ltmale){
 #' 
 #' @return A list containing the following data inputs:
 #' \describe{
-#'   \item{n}{Number of simulated patients}
+#'   \item{n}{Number of simulated patients.}
 #'   \item{haq0}{A vector of patient HAQ at baseline.}
 #'   \item{age}{A vector of patient age at baseline.}
 #'   \item{male}{A vector of patient gender (1 = male, 0 = female).}
-#'   \item{prev.dmards}{A vector of the number of previous DMARDs}
-#'   \item{x.mort}{Design matrix for mortality adjustment with odds ratios}
-#'   \item{x.ttd.all}{Design matrix for treatment duration representative of all patients.}
-#'   \item{x.ttd.da}{Design matrix for treatment duration when disease activity covarariates
-#'       are used to model the location parameter in the survival model.}
-#'  \item{x.ttd.eular}{Design matrix for treatment duration when survival is stratified by
-#'        EULAR response.}
-#'   \item{x.attr}{Design matrix of treatment attributes.}
+#'   \item{prev.dmards}{A vector of the number of previous DMARDs.}
+#'   \item{x.mort}{Design matrix where each column is a variable influencing mortality. The impact 
+#'   of each variable is determined by the parameter vector \code{mort.logor} returned by
+#'   \link{sample_pars}.}
+#'   \item{x.ttd.all}{Design matrix where each column is a variable influencing treatment duration
+#'    in a model representative of all patients. The impact of each variable is determined
+#'    by the sampled values of the coefficients used to predict the location parameter in 
+#'    \code{ttd.all} returned by \link{sample_pars}.}
+#'   \item{x.ttd.da}{Design matrix where the first column is the intercept, the second column
+#'   is a dummy variable used to indicate whether a patient has moderate disease activity, and
+#'   the third column is dummy variable used to indicate whether a patient has high disease 
+#'   activity (note, however, that the second and third columns are updated during the simulation
+#'   according to the simulated disease activity level). All remaining columns after the 3rd column
+#'   are variables influencing treatment duration. The impact of each variable is determined 
+#'   by the sampled values of the coefficients used to predict the location parameter in 
+#'    \code{ttd.da} returned by \link{sample_pars}.}
+#'  \item{x.ttd.eular}{Design matrix where each column is a variable influencing
+#'   treatment duration in models stratified by EULAR response. The impact of each variable
+#'   is determined by the sampled values of the coefficients used to predict the location
+#'    parameter in \code{ttd.eular} returned by \link{sample_pars}.}
+#'   \item{x.attr}{Design matrix where each column is a variable related to treatment attributes
+#'   related to the processes of care influencing utility. The impact 
+#'   of each variable is determined by the parameter vector \code{tx.attr.utility} returned by
+#'   \link{sample_pars} }
 #' }
 #' 
 #' @export
-get_input_data <- function(patdata, x_mort = NULL, 
+get_input_data <- function(pop, x_mort = NULL, 
                            x_ttd_all = NULL, x_ttd_da = NULL, x_ttd_eular = NULL, 
                            x_acr = NULL, x_haq = NULL, x_das28 = NULL,
                            x_attr = iviRA::tx.attr$data){
-  npats <- nrow(patdata)
+  npats <- nrow(pop)
   
   # mortality
   if (is.null(x_mort)){
-      x.mort <- patdata[, "haq0", drop = FALSE]
+      x.mort <- pop[, "haq0", drop = FALSE]
   } else{
       if (nrow(x_mort) != npats){
           stop("Number of rows in 'x_mort' must equal number of simulated patients.")
@@ -186,7 +202,7 @@ get_input_data <- function(patdata, x_mort = NULL,
   
   # ACR response matrix for treatment by covariate interactions for d's
   if (is.null(x_acr)){
-    x.acr <- matrix(1, nrow = nrow(patdata), ncol = 1)
+    x.acr <- matrix(1, nrow = nrow(pop), ncol = 1)
   } else{
     if (nrow(x_acr) != npats){
       stop("Number of rows in 'x_acr' must equal number of simulated patients.")
@@ -196,7 +212,7 @@ get_input_data <- function(patdata, x_mort = NULL,
   
   # Change in HAQ matrix for treatment by covariate interactions for d's
   if (is.null(x_haq)){
-    x.haq <- matrix(1, nrow = nrow(patdata), ncol = 1)
+    x.haq <- matrix(1, nrow = nrow(pop), ncol = 1)
   } else{
     if (nrow(x_haq) != npats){
       stop("Number of rows in 'x_acr' must equal number of simulated patients.")
@@ -206,7 +222,7 @@ get_input_data <- function(patdata, x_mort = NULL,
   
   # DAS28 matrix for treatment by covariate interactions for d's
   if (is.null(x_das28)){
-    x.das28 <- matrix(1, nrow = nrow(patdata), ncol = 1)
+    x.das28 <- matrix(1, nrow = nrow(pop), ncol = 1)
   } else{
     if (nrow(x_das28) != npats){
       stop("Number of rows in 'x_das28' must equal number of simulated patients.")
@@ -216,7 +232,7 @@ get_input_data <- function(patdata, x_mort = NULL,
   
   # time to treatment discontinuation
     if(is.null(x_ttd_all)){
-        x.ttd.all <- matrix(1, nrow = nrow(patdata), ncol = 1)
+        x.ttd.all <- matrix(1, nrow = nrow(pop), ncol = 1)
     } else{
       if (nrow(x_ttd_all) != npats){
         stop("Number of rows in 'x_ttd_all' must equal number of simulated patients.")
@@ -225,7 +241,7 @@ get_input_data <- function(patdata, x_mort = NULL,
     }
   
     if(is.null(x_ttd_eular)){
-      x.ttd.eular <- matrix(1, nrow = nrow(patdata), ncol = 1)
+      x.ttd.eular <- matrix(1, nrow = nrow(pop), ncol = 1)
     } else{
       if (nrow(x_ttd_eular) != npats){
         stop("Number of rows in 'x_ttd_eular' must equal number of simulated patients.")
@@ -234,7 +250,7 @@ get_input_data <- function(patdata, x_mort = NULL,
     }
   
     if(is.null(x_ttd_da)){
-      x.ttd.da <- matrix(c(1, 0, 0), nrow = nrow(patdata), ncol = 3, byrow = TRUE)
+      x.ttd.da <- matrix(c(1, 0, 0), nrow = nrow(pop), ncol = 3, byrow = TRUE)
     } else{
       if (nrow(x_ttd_da) != npats){
         stop("Number of rows in 'x_ttd_da' must equal number of simulated patients.")
@@ -254,10 +270,10 @@ get_input_data <- function(patdata, x_mort = NULL,
   }
   
   # combine
-  l <- list(n = nrow(patdata), haq0 = patdata[, "haq0"], age = patdata[, "age"],
-              male = patdata[, "male"], das28 = patdata[, "das28"],
-              sdai = patdata[, "sdai"], cdai = patdata[, "cdai"],
-              weight = patdata[, "weight"], prev.dmards = patdata[, "prev_dmards"],
+  l <- list(n = nrow(pop), haq0 = pop[, "haq0"], age = pop[, "age"],
+              male = pop[, "male"], das28 = pop[, "das28"],
+              sdai = pop[, "sdai"], cdai = pop[, "cdai"],
+              weight = pop[, "weight"], prev.dmards = pop[, "prev_dmards"],
               x.mort = x.mort, x.acr = x.acr, x.haq = x.haq, x.das28 = x.das28,
               x.ttd.all = x.ttd.all, x.ttd.eular = x.ttd.eular, x.ttd.da = x.ttd.da,
             x.attr = x.attr)

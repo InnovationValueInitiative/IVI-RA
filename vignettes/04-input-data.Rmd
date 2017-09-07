@@ -12,22 +12,23 @@ load("output.RData")
 The IVI-RA model simulates outcomes conditional on parameters and data. Given a patient population, we can generate the required data with the function `get_input_data`
 
 ```{r, cache = TRUE }
-input.dat <- get_input_data(patdata = pop)
+input.dat <- get_input_data(pop = pop)
 names(input.dat)
 ```
 
-The function returns all patient characteristics needed to run the simulation (HAQ score at baseline, age, gender, DAS28, SDAI, CDAI, weight, and the number of previous DMARDs). It also stores a numbe of of matrices of explanatory variables. These include:
+The function returns all patient characteristics needed to run the simulation (HAQ score at baseline, age, gender, DAS28, SDAI, CDAI, weight, and the number of previous DMARDs). It also stores a number of of matrices of explanatory variables. These include:
 
-* `x.mort`: 
-* `x.acr`:
-* `x.haq`:
-* `x.das28`:
-* `x.ttd.all`:
-* `x.ttd.eular`:
-* `x.ttd.da`:
-* `x.attr`
-
-First, `x.mort`, contains all patient characteristics known at baseline used to adjust mortality with a log odds ratio. By default, only the baseline HAQ score is used to adjust mortality. 
+```{r , echo = FALSE}
+library(knitr)
+mat <- c("x.mort", "x.acr", "x.haq", "x.das28", "x.ttd.all", "x.ttd.eular", 
+         "x.ttd.da", "x.attr")
+descr <- c("Variables known at baseline that are used to adjust mortality with a log odds ratio. By default, only the baseline HAQ score is contained in the matrix.", rep("", 7))
+parvec <- c("mort.logor", "acr$d", "haq$d", "das28$d", "ttd.all", "ttd.eular",
+            "ttd.da", "tx.attr.utility")
+table <- cbind(mat, descr, parvec)
+colnames(table) <- c("Design matrix", "Description", "Parameters")
+kable(table)
+```
 
 ```{r, cache = TRUE }
 head(input.dat$x.mort)

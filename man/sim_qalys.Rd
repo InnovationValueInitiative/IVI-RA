@@ -19,7 +19,7 @@ infection occured during the model cycle.}
 \link{get_input_data})}
 
 \item{tx_attr_ug}{Utility gain from treatment attributes (e.g., output
-\code{tx.attr.ug} from \link{sample_pars}.)}
+\code{tx.attr.utility} from \link{sample_pars}.)}
 }
 \value{
 Vector of QALYs for each simulated patient and time-period.

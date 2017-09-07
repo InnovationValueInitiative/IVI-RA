@@ -505,7 +505,7 @@ mod.structs <- select_model_structures(tx_ihaq = c("acr-haq", "acr-eular-haq"),
                                      cdmards_haq_model = c("lcgm", "linear"),
                                      ttd_dist = c("gengamma", "lnorm"),
                                      utility_model = c("mixture", "wailoo"))
-input.dat <- get_input_data(patdata = pop)
+input.dat <- get_input_data(pop = pop)
 parsamp <- sample_pars(n = 10, input_dat = input.dat)
 sim.out <- sim_iviRA(arms = arm.names, input_data = input.dat, pars = parsamp,
                      model_structures = mod.structs, output = "summary")

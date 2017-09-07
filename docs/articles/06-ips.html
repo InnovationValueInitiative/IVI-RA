@@ -141,27 +141,27 @@ sim.out2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/si
 sim.out2[, arm :<span class="er">=</span><span class="st"> "Arm 2"</span>]
 sim.out &lt;-<span class="st"> </span><span class="kw">rbind</span>(sim.out1, sim.out2)
 <span class="kw">head</span>(sim.out)</code></pre></div>
-<pre><code>##    model sim id month tx tx_seq tx_cycle death      age       ttd acr
-## 1:     1   1  1     6  3      1        1     0 31.25299 11.607367   2
-## 2:     1   1  1    12  3      1        2     0 31.75299 10.607367   2
-## 3:     1   1  1    18  3      1        3     0 32.25299  9.607367   2
-## 4:     1   1  1    24  3      1        4     0 32.75299  8.607367   2
-## 5:     1   1  1    30  3      1        5     0 33.25299  7.607367   2
-## 6:     1   1  1    36  3      1        6     0 33.75299  6.607367   2
-##    eular    das28     sdai    cdai      haq       ttsi si yrlen  tx_cost
-## 1:     2 5.602834 42.46029 35.2033 1.669759  3.1036333  0   0.5 21851.17
-## 2:     2 5.602834 42.46029 35.2033 1.661612  2.1036333  0   0.5 21851.17
-## 3:     2 5.602834 42.46029 35.2033 1.653464  1.1036333  0   0.5 21851.17
-## 4:     2 5.602834 42.46029 35.2033 1.645316  0.1036333  0   0.5 21851.17
-## 5:     2 5.602834 42.46029 35.2033 1.637169 -0.8963667  0   0.5 21851.17
-## 6:     2 5.602834 42.46029 35.2033 1.629021 -1.8963667  0   0.5 21851.17
+<pre><code>##    model sim id month tx tx_seq tx_cycle death     age      ttd acr eular
+## 1:     1   1  1     6  3      1        1     0 46.6312 23.91484   3     2
+## 2:     1   1  1    12  3      1        2     0 47.1312 22.91484   3     2
+## 3:     1   1  1    18  3      1        3     0 47.6312 21.91484   3     2
+## 4:     1   1  1    24  3      1        4     0 48.1312 20.91484   3     2
+## 5:     1   1  1    30  3      1        5     0 48.6312 19.91484   3     2
+## 6:     1   1  1    36  3      1        6     0 49.1312 18.91484   3     2
+##       das28     sdai     cdai      haq     ttsi si yrlen  tx_cost
+## 1: 5.849673 39.60841 37.24733 1.310878 91.22183  0   0.5 22421.92
+## 2: 5.849673 39.60841 37.24733 1.302859 90.22183  0   0.5 22421.92
+## 3: 5.849673 39.60841 37.24733 1.294840 89.22183  0   0.5 22421.92
+## 4: 5.849673 39.60841 37.24733 1.286821 88.22183  0   0.5 22421.92
+## 5: 5.849673 39.60841 37.24733 1.278802 87.22183  0   0.5 22421.92
+## 6: 5.849673 39.60841 37.24733 1.270783 86.22183  0   0.5 22421.92
 ##    hosp_cost mgmt_cost si_cost prod_loss    utility      qalys   arm
-## 1:  603.0857  176.7722       0  4311.204 0.07546649 0.03773324 Arm 1
-## 2:  603.0857  176.7722       0  4290.167 0.77936742 0.38968371 Arm 1
-## 3:  603.0857  176.7722       0  4269.130 0.72423459 0.36211729 Arm 1
-## 4:  603.0857  176.7722       0  4248.093 0.03358321 0.01679161 Arm 1
-## 5:  603.0857  176.7722       0  4227.056 0.68254849 0.34127424 Arm 1
-## 6:  603.0857  176.7722       0  4206.019 0.62671432 0.31335716 Arm 1</code></pre>
+## 1:  101.9901  185.2355       0  3377.191 0.60806933 0.30403466 Arm 1
+## 2:  101.9901  185.2355       0  3356.532 0.62495323 0.31247661 Arm 1
+## 3:  101.9901  185.2355       0  3335.873 0.06803728 0.03401864 Arm 1
+## 4:  101.9901  185.2355       0  3315.214 0.56458953 0.28229477 Arm 1
+## 5:  101.9901  185.2355       0  3294.554 0.57993325 0.28996663 Arm 1
+## 6:  101.9901  185.2355       0  3273.895 0.58390519 0.29195260 Arm 1</code></pre>
 <p><code>sim_iviRA</code> returns a data.table which is an enhanced data.frame from the data.table package designed for fast data manipulation. For a given model structure (<code>model</code>) and sampled parameter set (<code>sim</code>), a sampled patient (<code>id</code>) remains on a given therapy until time to treatment discontinuation (<code>ttd</code>) becomes less than zero in a given month. Treatment discontinuation is caused by a serious infection (<code>si = 1</code>) if the sampled time to serious infection at treatment initiation is less than the sampled time to discontinuation. After discontinuation, a patient switches to the next therapy and <code>therapy_seq</code> increments by one. Patient age (<code>age</code>) increases in 6-month increments.</p>
 <p>The HAQ score (<code>haq</code>) during the initial 6-month period (<code>therapy_cycle = 1</code>), disease activity measures (<code>das28</code>, <code>sdai</code>, and <code>cdai</code>), and <code>ttd</code> depend on the model structure chosen. For example, in the first model structure, HAQ and time to treatment discontinuation depend on ACR response (<code>acr</code>) and in turn, EULAR response (<code>eular</code>). The simulation returned NA values for the three disease activity measures because treatment switching is is not a function of disease activity (i.e., <strong>S6</strong> was chosen in the first model structure). The simulation ends when a patient dies (<code>death = 1</code>).</p>
 <p>Health care sector costs consist of treatment costs (<code>treat_cost</code>); hospital costs (<code>hosp_cost</code>), which increase with the HAQ score; general management costs (<code>mgmt_cost</code>); and the costs of caused by serious infections (<code>si_cost</code>). Non-health care sector costs are those due to lost wages. Analyses performed from a societal perspective should include these productivity losses (<code>prod_loss</code>).</p>

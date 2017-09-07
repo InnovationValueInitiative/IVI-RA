@@ -192,7 +192,7 @@ for general management of RA.}
 \item{tx_attr_ug_upper}{Upper bound for utility gain from treatment attributes.}
 
 \item{tx_attr_ug_names}{Names of treatment attributes to be returned in sampled matrix
-\code{tx.attr.ug}.}
+\code{tx.attr.utility}.}
 
 \item{tx_names}{Vector of treatment names.}
 
@@ -221,7 +221,7 @@ List containing samples for the following model parameters:
  the \link{sim_iviRA} function.}
  \item{acr2eular}{An array of matrices. Each matrix represents a random sample of the conditional 
  probability of each EULAR response category for a given ACR response.}
-  \item{logor.mort}{Matrix of log odds ratio used to adjust mortality. One row for each sample
+  \item{mort.logor}{Matrix of log odds ratio used to adjust mortality. One row for each sample
   and one column for each variable used to adjust mortality.}
   \item{mort.loghr.haqdif}{Matrix of the log hazard ratio of the impact of a change in HAQ from baseline on mortality. Columns denote
   hazard ratios at times < 6 months, months 6 - <12, months 12 - <24, months 24 - <36, and months 36+.}
@@ -278,7 +278,7 @@ List containing samples for the following model parameters:
     Columns numbers coincide with therapy indices.}
    \item{si.cost}{Vector of sampled values of the medical cost of a serious infection.}
    \item{si.ul}{Vector of the sampled values of the annualized utility loss from a serious infection.}
-   \item{tx.attr.ug}{Matrix of sampled values of utility gains. Each column is a different treatment
+   \item{tx.attr.utility}{Matrix of sampled values of utility gains. Each column is a different treatment
    attribute.}
    \item{incidence}{A list with two elements for consisting of two matrics, one for males and
  one for females. Each column is a random sample of the incidence rate for a given age. 

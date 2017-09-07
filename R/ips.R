@@ -99,8 +99,8 @@ sim_iviRA <- function(arms, input_data, pars, model_structures,
   if (check == TRUE){
     check_pars(pars, arminds, model_structures)
   }
-  if(ncol(pars$tx.attr.ug) != ncol(input_data$x.attr)){
-    stop(paste0("The number of columns in 'tx.attr.ug' element of pars list must equal ",
+  if(ncol(pars$tx.attr.utility) != ncol(input_data$x.attr)){
+    stop(paste0("The number of columns in 'tx.attr.utility' element of pars list must equal ",
                 " the number of columns in 'x.attr' elemnt of input_data list."))
   }
   
@@ -172,7 +172,7 @@ sim_iviRA <- function(arms, input_data, pars, model_structures,
                      haq_lcgm_delta = pars$haq.lcgm$delta, haq_lcgm_beta = pars$haq.lcgm$beta, 
                      rebound_factor = pars$rebound, 
                      lifetable_male = pars$lt$male, lifetable_female = pars$lt$female,
-                     x_mort = input_data$x.mort, logor_mort = pars$logor.mort, 
+                     x_mort = input_data$x.mort, logor_mort = pars$mort.logor, 
                      x_ttd_all = x.ttd.all, x_ttd_da = x.ttd.da, x_ttd_eular = x.ttd.eular,
                      ttd_all_list = pars$ttd.all, ttd_da_list = pars$ttd.da,
                      ttd_eular_mod_list = pars$ttd.eular$moderate, ttd_eular_good_list = pars$ttd.eular$good,
@@ -190,7 +190,7 @@ sim_iviRA <- function(arms, input_data, pars, model_structures,
                      coefs_wailoo = parsamp.utility.wailoo, 
                      pars_util_mix = pars$utility.mixture, si_ul = pars$si.ul,
                      tx_attr = list(data = input_data$x.attr, 
-                                    ug = pars$tx.attr.ug),
+                                    ug = pars$tx.attr.utility),
                      discount_rate = list(qalys = discount_qalys, cost = discount_cost),
                      output = output)
   if (output == "data"){
@@ -408,11 +408,11 @@ check_pars <- function(x, arminds, mod_struct){
                 "of sampled parameter sets which equals ", n))
   }
 
-  # logor.mort
-  if(is.null(x$logor.mort)) stop("'logor.mort' element of pars list not given")
-  if(!is.matrix(x$logor.mort))  stop("'logor.mort' element of pars list must be a matrix")
-  if(nrow(x$logor.mort) != n) {
-    stop(paste0("Number of rows in 'logor.mort' element of pars must be equal to the number ",
+  # mort.logor
+  if(is.null(x$mort.logor)) stop("'mort.logor' element of pars list not given")
+  if(!is.matrix(x$mort.logor))  stop("'mort.logor' element of pars list must be a matrix")
+  if(nrow(x$mort.logor) != n) {
+    stop(paste0("Number of rows in 'mort.logor' element of pars must be equal to the number ",
                 "of sampled parameter sets which equals ", n))
   }
   
@@ -742,7 +742,7 @@ check_sim_utility_wailoo <- function(simhaq, haq0, male, prev_dmards, coefs){
 #' @param x_attr Treatment attribute data (e.g., ouptut \code{x.attr} from
 #' \link{get_input_data})
 #' @param tx_attr_ug Utility gain from treatment attributes (e.g., output
-#' \code{tx.attr.ug} from \link{sample_pars}.)
+#' \code{tx.attr.utility} from \link{sample_pars}.)
 #' @return Vector of QALYs for each simulated patient and time-period.
 #'
 #' @export

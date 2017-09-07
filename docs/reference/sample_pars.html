@@ -461,7 +461,7 @@ for general management of RA.</p></td>
     <tr>
       <th>tx_attr_ug_names</th>
       <td><p>Names of treatment attributes to be returned in sampled matrix
-<code>tx.attr.ug</code>.</p></td>
+<code>tx.attr.utility</code>.</p></td>
     </tr>
     <tr>
       <th>tx_names</th>
@@ -501,7 +501,7 @@ should be the same as iviRA::pain. Currently, each element of the list must be o
  the <a href='sim_iviRA.html'>sim_iviRA</a> function.</p></dd>
  <dt>acr2eular</dt><dd><p>An array of matrices. Each matrix represents a random sample of the conditional 
  probability of each EULAR response category for a given ACR response.</p></dd>
-  <dt>logor.mort</dt><dd><p>Matrix of log odds ratio used to adjust mortality. One row for each sample
+  <dt>mort.logor</dt><dd><p>Matrix of log odds ratio used to adjust mortality. One row for each sample
   and one column for each variable used to adjust mortality.</p></dd>
   <dt>mort.loghr.haqdif</dt><dd><p>Matrix of the log hazard ratio of the impact of a change in HAQ from baseline on mortality. Columns denote
   hazard ratios at times &lt; 6 months, months 6 - &lt;12, months 12 - &lt;24, months 24 - &lt;36, and months 36+.</p></dd>
@@ -557,7 +557,7 @@ should be the same as iviRA::pain. Currently, each element of the list must be o
     Columns numbers coincide with therapy indices.</p></dd>
    <dt>si.cost</dt><dd><p>Vector of sampled values of the medical cost of a serious infection.</p></dd>
    <dt>si.ul</dt><dd><p>Vector of the sampled values of the annualized utility loss from a serious infection.</p></dd>
-   <dt>tx.attr.ug</dt><dd><p>Matrix of sampled values of utility gains. Each column is a different treatment
+   <dt>tx.attr.utility</dt><dd><p>Matrix of sampled values of utility gains. Each column is a different treatment
    attribute.</p></dd>
    <dt>incidence</dt><dd><p>A list with two elements for consisting of two matrics, one for males and
  one for females. Each column is a random sample of the incidence rate for a given age. 

@@ -133,39 +133,70 @@
     
 <div class="contents">
 <p>The IVI-RA model simulates outcomes conditional on parameters and data. Given a patient population, we can generate the required data with the function <code>get_input_data</code></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">input.dat &lt;-<span class="st"> </span><span class="kw"><a href="../reference/get_input_data.html">get_input_data</a></span>(<span class="dt">patdata =</span> pop)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">input.dat &lt;-<span class="st"> </span><span class="kw"><a href="../reference/get_input_data.html">get_input_data</a></span>(<span class="dt">pop =</span> pop)
 <span class="kw">names</span>(input.dat)</code></pre></div>
 <pre><code>##  [1] "n"           "haq0"        "age"         "male"        "das28"      
 ##  [6] "sdai"        "cdai"        "weight"      "prev.dmards" "x.mort"     
 ## [11] "x.acr"       "x.haq"       "x.das28"     "x.ttd.all"   "x.ttd.eular"
 ## [16] "x.ttd.da"    "x.attr"</code></pre>
-<p>The function returns all patient characteristics needed to run the simulation (HAQ score at baseline, age, gender, DAS28, SDAI, CDAI, weight, and the number of previous DMARDs). It also stores a numbe of of matrices of explanatory variables. These include:</p>
-<ul>
-<li>
-<code>x.mort</code>:</li>
-<li>
-<code>x.acr</code>:</li>
-<li>
-<code>x.haq</code>:</li>
-<li>
-<code>x.das28</code>:</li>
-<li>
-<code>x.ttd.all</code>:</li>
-<li>
-<code>x.ttd.eular</code>:</li>
-<li>
-<code>x.ttd.da</code>:</li>
-<li><code>x.attr</code></li>
-</ul>
-<p>First, <code>x.mort</code>, contains all patient characteristics known at baseline used to adjust mortality with a log odds ratio. By default, only the baseline HAQ score is used to adjust mortality.</p>
+<p>The function returns all patient characteristics needed to run the simulation (HAQ score at baseline, age, gender, DAS28, SDAI, CDAI, weight, and the number of previous DMARDs). It also stores a number of of matrices of explanatory variables. These include:</p>
+<table class="table">
+<thead><tr class="header">
+<th align="left">Design matrix</th>
+<th align="left">Description</th>
+<th align="left">Parameters</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">x.mort</td>
+<td align="left">Variables known at baseline that are used to adjust mortality with a log odds ratio. By default, only the baseline HAQ score is contained in the matrix.</td>
+<td align="left">mort.logor</td>
+</tr>
+<tr class="even">
+<td align="left">x.acr</td>
+<td align="left"></td>
+<td align="left">acr$d</td>
+</tr>
+<tr class="odd">
+<td align="left">x.haq</td>
+<td align="left"></td>
+<td align="left">haq$d</td>
+</tr>
+<tr class="even">
+<td align="left">x.das28</td>
+<td align="left"></td>
+<td align="left">das28$d</td>
+</tr>
+<tr class="odd">
+<td align="left">x.ttd.all</td>
+<td align="left"></td>
+<td align="left">ttd.all</td>
+</tr>
+<tr class="even">
+<td align="left">x.ttd.eular</td>
+<td align="left"></td>
+<td align="left">ttd.eular</td>
+</tr>
+<tr class="odd">
+<td align="left">x.ttd.da</td>
+<td align="left"></td>
+<td align="left">ttd.da</td>
+</tr>
+<tr class="even">
+<td align="left">x.attr</td>
+<td align="left"></td>
+<td align="left">tx.attr.utility</td>
+</tr>
+</tbody>
+</table>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(input.dat$x.mort)</code></pre></div>
 <pre><code>##           haq0
-## [1,] 2.2698072
-## [2,] 2.1100291
-## [3,] 2.1497798
-## [4,] 0.6471924
-## [5,] 1.5129441
-## [6,] 1.1789043</code></pre>
+## [1,] 1.9186589
+## [2,] 1.0059979
+## [3,] 2.1499581
+## [4,] 2.7561646
+## [5,] 1.9602079
+## [6,] 0.6864017</code></pre>
 <p>The second set of matrices are the design matrices used to simulate time to treatment discontinuation. They include <code>x.ttd.all</code>, <code>x.ttd.da</code>, and <code>x.ttd.eular</code>. The required matrices depnd on the model structures chosen. <code>x.ttd.all</code> is required if treatment duration does not depend on disease activity or EULAR respone (i.e., pathway <strong>S1</strong>), <code>x.ttd.da</code> is required if treatment duration depends on disease activity (i.e., pathways <strong>S2-S5</strong> ), and <code>x.ttd.eular</code> is required if treatment duration depends on EULAR response (i.e., pathway <strong>S6</strong>). This matrix depends on the the model structure chosen since treatment duration depends on the pathway <strong>S1-S6</strong> used for treatment switching. In our selected model structures, <code>tx_iswitch = acr-eular-switch</code> or <code>tx_iswitch = acr-switch</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(input.dat$x.ttd.all)</code></pre></div>
 <pre><code>##      [,1]

@@ -92,7 +92,7 @@
 #' @param tx_attr_ug_lower Lower bound for utility gain from treatment attributes.
 #' @param tx_attr_ug_upper Upper bound for utility gain from treatment attributes.
 #' @param tx_attr_ug_names Names of treatment attributes to be returned in sampled matrix
-#' \code{tx.attr.ug}.
+#' \code{tx.attr.utility}.
 #' @param tx_names Vector of treatment names.
 #' @param incidence_female Incidence rates for females. A \code{data.table} that must contain a
 #'  row for each single-year of age from 0 to 100, a variable \code{events} (the number of events
@@ -113,7 +113,7 @@
 #'  the \link{sim_iviRA} function.}
 #'  \item{acr2eular}{An array of matrices. Each matrix represents a random sample of the conditional 
 #'  probability of each EULAR response category for a given ACR response.}
-#'   \item{logor.mort}{Matrix of log odds ratio used to adjust mortality. One row for each sample
+#'   \item{mort.logor}{Matrix of log odds ratio used to adjust mortality. One row for each sample
 #'   and one column for each variable used to adjust mortality.}
 #'   \item{mort.loghr.haqdif}{Matrix of the log hazard ratio of the impact of a change in HAQ from baseline on mortality. Columns denote
 #'   hazard ratios at times < 6 months, months 6 - <12, months 12 - <24, months 24 - <36, and months 36+.}
@@ -170,7 +170,7 @@
 #'     Columns numbers coincide with therapy indices.}
 #'    \item{si.cost}{Vector of sampled values of the medical cost of a serious infection.}
 #'    \item{si.ul}{Vector of the sampled values of the annualized utility loss from a serious infection.}
-#'    \item{tx.attr.ug}{Matrix of sampled values of utility gains. Each column is a different treatment
+#'    \item{tx.attr.utility}{Matrix of sampled values of utility gains. Each column is a different treatment
 #'    attribute.}
 #'    \item{incidence}{A list with two elements for consisting of two matrics, one for males and
 #'  one for females. Each column is a random sample of the incidence rate for a given age. 
@@ -305,7 +305,7 @@ sample_pars <- function(n = 100, input_data,
   sim$acr2sdai <- sample_uniforms(n, acr2sdai_lower, acr2sdai_upper, acr.cats)
   sim$acr2cdai <- sample_uniforms(n, acr2cdai_lower, acr2cdai_upper, acr.cats)
   sim$acr2das28 <- sample_uniforms(n, acr2das28_lower, acr2das28_upper, acr.cats)
-  sim$logor.mort <- sample_mvnorm(n, mort_logor, mort_logor_se^2)
+  sim$mort.logor <- sample_mvnorm(n, mort_logor, mort_logor_se^2)
   sim$mort.loghr.haqdif <- sample_normals(n, mort_loghr_haqdif, mort_loghr_se_haqdif,
                                          col_names = paste0("month_", c("less6", "6to12", "12to24", "24to36", "36to48")))
   sim$ttd.all <- sample_survpars(n, ttd_all)
@@ -344,7 +344,7 @@ sample_pars <- function(n = 100, input_data,
                              col_names = tx_names)
   sim$si.cost <- runif(n, si_cost * (1 - si_cost_range),  si_cost * (1 + si_cost_range))
   sim$si.ul <- runif(n, si_ul * (1 - si_ul_range), si_ul * (1 + si_ul_range))
-  sim$tx.attr.ug <-  sample_uniforms(n, tx_attr_ug_lower, tx_attr_ug_upper,
+  sim$tx.attr.utility <-  sample_uniforms(n, tx_attr_ug_lower, tx_attr_ug_upper,
                                      tx_attr_ug_names)
   sim$incidence <- list(female = sample_gammas(n, shape = incidence_female$events, 
                                  rate = incidence_female$person_years),

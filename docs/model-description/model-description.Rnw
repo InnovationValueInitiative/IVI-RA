@@ -816,7 +816,7 @@ sim6_summary <- function(arms, arm_names, nouter = 1000, ninner = 1000,
   eular.lower <- eular.upper <- eular.mean
   dhaq.mean <- dhaq.lower <- dhaq.upper <- rep(NA, length(arms))
   pat <- sample_pop(n = ninner, das28_mean = das28_mean)
-  input.dat <- get_input_data(patdata = pat)
+  input.dat <- get_input_data(pop = pat)
   parsamp <- sample_pars(n = nouter, input_data = input.dat)
   for (i in 1:length(arms)){
     if (!(model_structure[1, "tx_iswitch"] == "das28-switch" & 
@@ -1233,7 +1233,7 @@ Based on the NMA by \citet{singh2011adverse} and in accordance with \citet{steve
 <<si, echo=FALSE, include=FALSE, cache=CACHE>>=
 set.seed(100)
 pop <- sample_pop(n = 1000)
-input.dat <- get_input_data(patdata = pop)
+input.dat <- get_input_data(pop = pop)
 parsamp <- sample_pars(n = 1000, input_data = input.dat)
 arm.snames <- c("cdmards", "adamtx")
 arm.names <- c("cDMARDs or NBT", "bDMARDs")

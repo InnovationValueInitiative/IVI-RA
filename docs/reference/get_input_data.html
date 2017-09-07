@@ -155,7 +155,7 @@
     <p>Generate data inputs for the IPS.</p>
     
 
-    <pre class="usage"><span class='fu'>get_input_data</span>(<span class='no'>patdata</span>, <span class='kw'>x_mort</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>x_ttd_all</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>x_ttd_da</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+    <pre class="usage"><span class='fu'>get_input_data</span>(<span class='no'>pop</span>, <span class='kw'>x_mort</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>x_ttd_all</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>x_ttd_da</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>x_ttd_eular</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>x_acr</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>x_haq</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>x_das28</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>x_attr</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/tx.attr'>tx.attr</a></span>$<span class='no'>data</span>)</pre>
     
@@ -163,8 +163,8 @@
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>patdata</th>
-      <td><p>Matrix of patient data. Must contain variables generated from <a href='sample_pop.html'>sample_pop</a>:
+      <th>pop</th>
+      <td><p>Matrix of patient population. Must contain variables generated from <a href='sample_pop.html'>sample_pop</a>:
  'age' for age, 'haq0' for baseline HAQ, 'male' as a indicator equal to
 1 if the patient is male and 0 if female, 'weight' for patient weight, and 'prev_dmards' 
 for number of previous DMARDs.</p></td>
@@ -190,18 +190,34 @@ for number of previous DMARDs.</p></td>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A list containing the following data inputs:</p><dl class='dl-horizontal'>
-  <dt>n</dt><dd><p>Number of simulated patients</p></dd>
+  <dt>n</dt><dd><p>Number of simulated patients.</p></dd>
   <dt>haq0</dt><dd><p>A vector of patient HAQ at baseline.</p></dd>
   <dt>age</dt><dd><p>A vector of patient age at baseline.</p></dd>
   <dt>male</dt><dd><p>A vector of patient gender (1 = male, 0 = female).</p></dd>
-  <dt>prev.dmards</dt><dd><p>A vector of the number of previous DMARDs</p></dd>
-  <dt>x.mort</dt><dd><p>Design matrix for mortality adjustment with odds ratios</p></dd>
-  <dt>x.ttd.all</dt><dd><p>Design matrix for treatment duration representative of all patients.</p></dd>
-  <dt>x.ttd.da</dt><dd><p>Design matrix for treatment duration when disease activity covarariates
-      are used to model the location parameter in the survival model.</p></dd>
- <dt>x.ttd.eular</dt><dd><p>Design matrix for treatment duration when survival is stratified by
-       EULAR response.</p></dd>
-  <dt>x.attr</dt><dd><p>Design matrix of treatment attributes.</p></dd>
+  <dt>prev.dmards</dt><dd><p>A vector of the number of previous DMARDs.</p></dd>
+  <dt>x.mort</dt><dd><p>Design matrix where each column is a variable influencing mortality. The impact 
+  of each variable is determined by the parameter vector <code>mort.logor</code> returned by
+  <a href='sample_pars.html'>sample_pars</a>.</p></dd>
+  <dt>x.ttd.all</dt><dd><p>Design matrix where each column is a variable influencing treatment duration
+   in a model representative of all patients. The impact of each variable is determined
+   by the sampled values of the coefficients used to predict the location parameter in 
+   <code>ttd.all</code> returned by <a href='sample_pars.html'>sample_pars</a>.</p></dd>
+  <dt>x.ttd.da</dt><dd><p>Design matrix where the first column is the intercept, the second column
+  is a dummy variable used to indicate whether a patient has moderate disease activity, and
+  the third column is dummy variable used to indicate whether a patient has high disease 
+  activity (note, however, that the second and third columns are updated during the simulation
+  according to the simulated disease activity level). All remaining columns after the 3rd column
+  are variables influencing treatment duration. The impact of each variable is determined 
+  by the sampled values of the coefficients used to predict the location parameter in 
+   <code>ttd.da</code> returned by <a href='sample_pars.html'>sample_pars</a>.</p></dd>
+ <dt>x.ttd.eular</dt><dd><p>Design matrix where each column is a variable influencing
+  treatment duration in models stratified by EULAR response. The impact of each variable
+  is determined by the sampled values of the coefficients used to predict the location
+   parameter in <code>ttd.eular</code> returned by <a href='sample_pars.html'>sample_pars</a>.</p></dd>
+  <dt>x.attr</dt><dd><p>Design matrix where each column is a variable related to treatment attributes
+  related to the processes of care influencing utility. The impact 
+  of each variable is determined by the parameter vector <code>tx.attr.utility</code> returned by
+  <a href='sample_pars.html'>sample_pars</a></p></dd>
 </dl>
 
     

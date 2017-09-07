@@ -4,12 +4,12 @@
 \alias{get_input_data}
 \title{Input data for simulation}
 \usage{
-get_input_data(patdata, x_mort = NULL, x_ttd_all = NULL, x_ttd_da = NULL,
+get_input_data(pop, x_mort = NULL, x_ttd_all = NULL, x_ttd_da = NULL,
   x_ttd_eular = NULL, x_acr = NULL, x_haq = NULL, x_das28 = NULL,
   x_attr = iviRA::tx.attr$data)
 }
 \arguments{
-\item{patdata}{Matrix of patient data. Must contain variables generated from \link{sample_pop}:
+\item{pop}{Matrix of patient population. Must contain variables generated from \link{sample_pop}:
  'age' for age, 'haq0' for baseline HAQ, 'male' as a indicator equal to
 1 if the patient is male and 0 if female, 'weight' for patient weight, and 'prev_dmards' 
 for number of previous DMARDs.}
@@ -25,18 +25,34 @@ for number of previous DMARDs.}
 \value{
 A list containing the following data inputs:
 \describe{
-  \item{n}{Number of simulated patients}
+  \item{n}{Number of simulated patients.}
   \item{haq0}{A vector of patient HAQ at baseline.}
   \item{age}{A vector of patient age at baseline.}
   \item{male}{A vector of patient gender (1 = male, 0 = female).}
-  \item{prev.dmards}{A vector of the number of previous DMARDs}
-  \item{x.mort}{Design matrix for mortality adjustment with odds ratios}
-  \item{x.ttd.all}{Design matrix for treatment duration representative of all patients.}
-  \item{x.ttd.da}{Design matrix for treatment duration when disease activity covarariates
-      are used to model the location parameter in the survival model.}
- \item{x.ttd.eular}{Design matrix for treatment duration when survival is stratified by
-       EULAR response.}
-  \item{x.attr}{Design matrix of treatment attributes.}
+  \item{prev.dmards}{A vector of the number of previous DMARDs.}
+  \item{x.mort}{Design matrix where each column is a variable influencing mortality. The impact 
+  of each variable is determined by the parameter vector \code{mort.logor} returned by
+  \link{sample_pars}.}
+  \item{x.ttd.all}{Design matrix where each column is a variable influencing treatment duration
+   in a model representative of all patients. The impact of each variable is determined
+   by the sampled values of the coefficients used to predict the location parameter in 
+   \code{ttd.all} returned by \link{sample_pars}.}
+  \item{x.ttd.da}{Design matrix where the first column is the intercept, the second column
+  is a dummy variable used to indicate whether a patient has moderate disease activity, and
+  the third column is dummy variable used to indicate whether a patient has high disease 
+  activity (note, however, that the second and third columns are updated during the simulation
+  according to the simulated disease activity level). All remaining columns after the 3rd column
+  are variables influencing treatment duration. The impact of each variable is determined 
+  by the sampled values of the coefficients used to predict the location parameter in 
+   \code{ttd.da} returned by \link{sample_pars}.}
+ \item{x.ttd.eular}{Design matrix where each column is a variable influencing
+  treatment duration in models stratified by EULAR response. The impact of each variable
+  is determined by the sampled values of the coefficients used to predict the location
+   parameter in \code{ttd.eular} returned by \link{sample_pars}.}
+  \item{x.attr}{Design matrix where each column is a variable related to treatment attributes
+  related to the processes of care influencing utility. The impact 
+  of each variable is determined by the parameter vector \code{tx.attr.utility} returned by
+  \link{sample_pars} }
 }
 }
 \description{

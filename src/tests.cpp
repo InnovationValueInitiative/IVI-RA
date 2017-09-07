@@ -98,7 +98,6 @@ int sim_lm_test(){
   if (sim.sim_dy() != -.2) {
     Rcpp::stop("Fail hist = experienced, rr = .8, line = 0");
   }
-  
 
   return 0;
 }

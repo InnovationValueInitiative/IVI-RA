@@ -139,14 +139,14 @@
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">names</span>(parsamp)</code></pre></div>
 <pre><code>##  [1] "n"                 "rebound"           "lt"               
 ##  [4] "tx.cost"           "acr2eular"         "acr2sdai"         
-##  [7] "acr2cdai"          "acr2das28"         "logor.mort"       
+##  [7] "acr2cdai"          "acr2das28"         "mort.logor"       
 ## [10] "mort.loghr.haqdif" "ttd.all"           "ttd.da"           
 ## [13] "ttd.eular"         "eular2haq"         "acr"              
 ## [16] "das28"             "haq"               "acr2haq"          
 ## [19] "haq.lprog.tx"      "haq.lprog.age"     "haq.lcgm"         
 ## [22] "utility.mixture"   "utility.wailoo"    "hosp.cost"        
 ## [25] "mgmt.cost"         "prod.loss"         "ttsi"             
-## [28] "si.cost"           "si.ul"             "tx.attr.ug"       
+## [28] "si.cost"           "si.ul"             "tx.attr.utility"  
 ## [31] "incidence"</code></pre>
 <p>The number of samples is also returned for convenience.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">parsamp$n</code></pre></div>
@@ -155,7 +155,7 @@
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">parsamp2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pars.html">sample_pars</a></span>(<span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">input_data =</span> input.dat, <span class="dt">si_cost =</span> <span class="dv">7000</span>)
 <span class="kw">summary</span>(parsamp2$si.cost)</code></pre></div>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##    5628    6120    7102    7010    7744    8389</code></pre>
+##    5606    6371    7102    7019    7653    8386</code></pre>
 <p>To view the full list of arguments in <code>sample_pars</code> that can changed by the user view the documentation by typing <code><a href="../reference/sample_pars.html">?sample_pars</a></code>. All default arguments are loaded with the package and are based on IVI’s statistical estimates and synthesis of the literature. The parameter estimates can be viewed by typing the command <code>data(package = "iviRA")</code> into the R console.</p>
 <p>Below we describe these parameter estimates and separate them into 8 main categories: treatment effects estimated from a network meta-analysis (NMA); mappings between various measured of treatment response, disease activity, and/or function; long-term progression of disease, treatment duration, serious infections, mortality, utility, and costs.</p>
 <div id="nma" class="section level2">
