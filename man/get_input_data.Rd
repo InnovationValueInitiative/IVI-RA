@@ -21,6 +21,10 @@ for number of previous DMARDs.}
 \item{x_ttd_da}{The design matrix for time to treatment discontinuation stratified by disease activity level.}
 
 \item{x_ttd_eular}{The design matrix for time to treatment discontinuation for each EULAR response category (moderate, good).}
+
+\item{x_acr}{}
+
+\item{x_attr}{}
 }
 \value{
 A list containing the following data inputs:
@@ -49,6 +53,9 @@ A list containing the following data inputs:
   treatment duration in models stratified by EULAR response. The impact of each variable
   is determined by the sampled values of the coefficients used to predict the location
    parameter in \code{ttd.eular} returned by \link{sample_pars}.}
+  \item{x.acr}{}
+  \item{x.haq}{}
+  \item{x.das28}{}
   \item{x.attr}{Design matrix where each column is a variable related to treatment attributes
   related to the processes of care influencing utility. The impact 
   of each variable is determined by the parameter vector \code{tx.attr.utility} returned by

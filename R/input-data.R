@@ -149,7 +149,11 @@ lt_data <- function(ltfemale, ltmale){
 #' @param x_mort A matrix with each column a variable used to adjust mortality.
 #' @param x_ttd_all The design matrix for time to treatment discontinuation representative of all patients (i.e., unstratified).
 #' @param x_ttd_da The design matrix for time to treatment discontinuation stratified by disease activity level.
-#' @param x_ttd_eular The design matrix for time to treatment discontinuation for each EULAR response category (moderate, good). 
+#' @param x_ttd_eular The design matrix for time to treatment discontinuation for each EULAR response category (moderate, good).
+#' @param x_acr 
+#' @param x_haq
+#' @param x_das28
+#' @param x_attr
 #' 
 #' @return A list containing the following data inputs:
 #' \describe{
@@ -177,6 +181,9 @@ lt_data <- function(ltfemale, ltmale){
 #'   treatment duration in models stratified by EULAR response. The impact of each variable
 #'   is determined by the sampled values of the coefficients used to predict the location
 #'    parameter in \code{ttd.eular} returned by \link{sample_pars}.}
+#'   \item{x.acr}{}
+#'   \item{x.haq}{}
+#'   \item{x.das28}{}
 #'   \item{x.attr}{Design matrix where each column is a variable related to treatment attributes
 #'   related to the processes of care influencing utility. The impact 
 #'   of each variable is determined by the parameter vector \code{tx.attr.utility} returned by

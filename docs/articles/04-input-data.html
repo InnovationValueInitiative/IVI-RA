@@ -132,14 +132,14 @@
     
     
 <div class="contents">
-<p>The IVI-RA model simulates outcomes conditional on parameters and data. Given a patient population, we can generate the required data with the function <code>get_input_data</code></p>
+<p>The IVI-RA model simulates outcomes conditional on parameters and data. Given a patient population, we can generate the required data with the function <code>get_input_data</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">input.dat &lt;-<span class="st"> </span><span class="kw"><a href="../reference/get_input_data.html">get_input_data</a></span>(<span class="dt">pop =</span> pop)
 <span class="kw">names</span>(input.dat)</code></pre></div>
 <pre><code>##  [1] "n"           "haq0"        "age"         "male"        "das28"      
 ##  [6] "sdai"        "cdai"        "weight"      "prev.dmards" "x.mort"     
 ## [11] "x.acr"       "x.haq"       "x.das28"     "x.ttd.all"   "x.ttd.eular"
 ## [16] "x.ttd.da"    "x.attr"</code></pre>
-<p>The function returns all patient characteristics needed to run the simulation (HAQ score at baseline, age, gender, DAS28, SDAI, CDAI, weight, and the number of previous DMARDs). It also stores a number of of matrices of explanatory variables. These include:</p>
+<p>The function returns all patient characteristics needed to run the simulation (HAQ score at baseline, age, gender, DAS28, SDAI, CDAI, weight, and the number of previous DMARDs). It also stores a number of of matrices of explanatory variables. Details about each matrix are provided in the table below. The first column is the name of the matrix, the second column provides a description of the variables included, and the third column is the name of the corresponding parameter object returned by the function <code>sample_pars</code>.</p>
 <table class="table">
 <thead><tr class="header">
 <th align="left">Design matrix</th>
@@ -154,41 +154,42 @@
 </tr>
 <tr class="even">
 <td align="left">x.acr</td>
-<td align="left"></td>
+<td align="left">Variables known at baseline that are used to predict the relative treatment effects for ACR response. By default, only includes an intercept, which implies that there are no treatment-by-covariate interactions.</td>
 <td align="left">acr$d</td>
 </tr>
 <tr class="odd">
 <td align="left">x.haq</td>
-<td align="left"></td>
+<td align="left">Variables known at baseline that are used to predict the relative treatment effects for change in HAQ from baseline. By default, only includes an intercept, which implies that there are no treatment-by-covariate interactions.</td>
 <td align="left">haq$d</td>
 </tr>
 <tr class="even">
 <td align="left">x.das28</td>
-<td align="left"></td>
+<td align="left">Variables known at baseline that are used to predict the relative treatment effects for change in DAS28 from baseline. By default, only includes an intercept, which implies that there are no treatment-by-covariate interactions.</td>
 <td align="left">das28$d</td>
 </tr>
 <tr class="odd">
 <td align="left">x.ttd.all</td>
-<td align="left"></td>
+<td align="left">Variables known at baseline influencing treatment duration in a model representative of all patients. Explanatory variables correspond to the vector of coefficients using to predict the location parameter for each distribution.</td>
 <td align="left">ttd.all</td>
 </tr>
 <tr class="even">
 <td align="left">x.ttd.eular</td>
-<td align="left"></td>
+<td align="left">Variables known at baseline influencing treatment duration when separate models are estimated by EULAR response category. Explanatory variables correspond to the vector of coefficients using to predict the location parameter for each distribution.</td>
 <td align="left">ttd.eular</td>
 </tr>
 <tr class="odd">
 <td align="left">x.ttd.da</td>
-<td align="left"></td>
+<td align="left">Variables known at baseline influencing treatment duration in models where treatment duration is a function of disease activity. The first column is the intercept, the second column is a dummy variable used to indicate whether a patient has moderate disease activity, and the third column is a dummy variable used to indicate wethe a patient has high disease activity (note, however, that the second and third columns are updated during the simulation according to the simulated disease activity level). All remaining columns after the 3rd column are variables known at baseline that influence tretmnet duration. Explanatory variables correspond to the vector of coefficients using to predict the location parameter for each distribution.</td>
 <td align="left">ttd.da</td>
 </tr>
 <tr class="even">
 <td align="left">x.attr</td>
-<td align="left"></td>
+<td align="left">Treatment attributes related to the processes of care influencing utility.</td>
 <td align="left">tx.attr.utility</td>
 </tr>
 </tbody>
 </table>
+<p>For example, the mortality matrix, <code>x.mort</code>, is a matrix with a single column consisting of the baseline HAQ score for each patient.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(input.dat$x.mort)</code></pre></div>
 <pre><code>##           haq0
 ## [1,] 1.9186589
@@ -197,23 +198,6 @@
 ## [4,] 2.7561646
 ## [5,] 1.9602079
 ## [6,] 0.6864017</code></pre>
-<p>The second set of matrices are the design matrices used to simulate time to treatment discontinuation. They include <code>x.ttd.all</code>, <code>x.ttd.da</code>, and <code>x.ttd.eular</code>. The required matrices depnd on the model structures chosen. <code>x.ttd.all</code> is required if treatment duration does not depend on disease activity or EULAR respone (i.e., pathway <strong>S1</strong>), <code>x.ttd.da</code> is required if treatment duration depends on disease activity (i.e., pathways <strong>S2-S5</strong> ), and <code>x.ttd.eular</code> is required if treatment duration depends on EULAR response (i.e., pathway <strong>S6</strong>). This matrix depends on the the model structure chosen since treatment duration depends on the pathway <strong>S1-S6</strong> used for treatment switching. In our selected model structures, <code>tx_iswitch = acr-eular-switch</code> or <code>tx_iswitch = acr-switch</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(input.dat$x.ttd.all)</code></pre></div>
-<pre><code>##      [,1]
-## [1,]    1
-## [2,]    1
-## [3,]    1
-## [4,]    1
-## [5,]    1
-## [6,]    1</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(input.dat$x.ttd.eular)</code></pre></div>
-<pre><code>##      [,1]
-## [1,]    1
-## [2,]    1
-## [3,]    1
-## [4,]    1
-## [5,]    1
-## [6,]    1</code></pre>
 <div>
 <ul class="pager">
 <li class="previous">
