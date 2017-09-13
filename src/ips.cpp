@@ -1384,7 +1384,7 @@ List sim_iviRA_C(arma::mat arm_inds, Rcpp::DataFrame tx_data,
             }
             
             // Draw death indicator
-            double death = sample_deathC(age_i, male[i], lifetable_male, lifetable_female, 
+            int death = sample_deathC(age_i, male[i], lifetable_male, lifetable_female, 
                                          x_mort.row(i), logor_mort.row(s), haq0[i], haq,
                                         cycle_length, month, haqdelta_loghr.row(s));
             
