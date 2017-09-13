@@ -6,7 +6,7 @@
 \usage{
 get_input_data(pop, x_mort = NULL, x_ttd_all = NULL, x_ttd_da = NULL,
   x_ttd_eular = NULL, x_acr = NULL, x_haq = NULL, x_das28 = NULL,
-  x_attr = iviRA::tx.attr$data)
+  x_attr = iviRA::utility.tx.attr$x)
 }
 \arguments{
 \item{pop}{Matrix of patient population. Must contain variables generated from \link{sample_pop}:

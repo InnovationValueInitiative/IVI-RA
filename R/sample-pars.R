@@ -89,17 +89,17 @@
 #' @param si_cost Cost of a serious infection.
 #' @param si_cost_range Range used to vary serious infection cost. Default is to calculate upper and lower bound by multiplying 
 #' \code{si_cost} by 1 +/- 0.2 (i.e. a 20\% change).
-#' @param tx_attr_ug_lower Lower bound for utility gain from treatment attributes.
-#' @param tx_attr_ug_upper Upper bound for utility gain from treatment attributes.
-#' @param tx_attr_ug_names Names of treatment attributes to be returned in sampled matrix
-#' \code{tx.attr.utility}.
+#' @param tx_attr_utilcoef_lower Lower bound for utility gain from treatment attributes.
+#' @param tx_attr_utilcoef_upper Upper bound for utility gain from treatment attributes.
+#' @param tx_attr_utilcoef_names Names of treatment attributes to be returned in sampled matrix
+#' \code{utility.tx.attr}.
 #' @param tx_names Vector of treatment names.
 #' @param incidence_female Incidence rates for females. A \code{data.table} that must contain a
 #'  row for each single-year of age from 0 to 100, a variable \code{events} (the number of events
 #'   (i.e. cases of rheumatoid arthritis) for each age), and the variable \code{person_years}(the 
 #'   time at risk for an event). 
 #' @param incidence_male Identical to \code{incidence_female} but for males.
-#' @param util_mixture_pain Summary statistics for bivariate distribution of HAQ and pain. Format
+#' @param utility_mixture_pain Summary statistics for bivariate distribution of HAQ and pain. Format
 #' should be the same as iviRA::pain. Currently, each element of the list must be of length 1.
 #' 
 #' @return List containing samples for the following model parameters:
@@ -170,7 +170,7 @@
 #'     Columns numbers coincide with therapy indices.}
 #'    \item{si.cost}{Vector of sampled values of the medical cost of a serious infection.}
 #'    \item{si.ul}{Vector of the sampled values of the annualized utility loss from a serious infection.}
-#'    \item{tx.attr.utility}{Matrix of sampled values of utility gains. Each column is a different treatment
+#'    \item{utility.tx.attr}{Matrix of sampled values of utility gains. Each column is a different treatment
 #'    attribute.}
 #'    \item{incidence}{A list with two elements for consisting of two matrics, one for males and
 #'  one for females. Each column is a random sample of the incidence rate for a given age. 
@@ -273,13 +273,13 @@ sample_pars <- function(n = 100, input_data,
                        ttsi = iviRA::ttsi,
                        si_cost = 5873, si_cost_range = .2,
                        si_ul = .156, si_ul_range = .2,
-                       tx_attr_ug_lower = iviRA::tx.attr$utility.gain$lower,
-                       tx_attr_ug_upper = iviRA::tx.attr$utility.gain$upper,
-                       tx_attr_ug_names = iviRA::tx.attr$utility.gain$var,
+                       tx_attr_utilcoef_lower = iviRA::utility.tx.attr$coef$lower,
+                       tx_attr_utilcoef_upper = iviRA::utility.tx.attr$coef$upper,
+                       tx_attr_utilcoef_names = iviRA::utility.tx.attr$coef$var,
                        tx_names = iviRA::treatments$sname,
                        incidence_female = iviRA::incidence.female,
                        incidence_male = iviRA::incidence.male,
-                       util_mixture_pain = iviRA::pain){
+                       utility_mixture_pain = iviRA::pain){
   
   # input data and model structures
   if (!inherits(input_data, "input_data")){
@@ -329,7 +329,7 @@ sample_pars <- function(n = 100, input_data,
   sim$haq.lprog.age <- sample_normals(n, haq_lprog_age_mean, haq_lprog_age_se,
                                      col_names =  c("age_less40", "age40to64", "age_65plus"))
   sim$haq.lcgm <- sample_pars_haq_lcgm(n, pars = haq_lcgm_pars) 
-  sim$utility.mixture <- sample_pars_utility_mixture(n, util_mixture_pain)    
+  sim$utility.mixture <- sample_pars_utility_mixture(n, utility_mixture_pain)    
   sim$utility.wailoo <- sample_normals(n, iviRA::utility.wailoo$est, iviRA::utility.wailoo$se,
                                          col_names = utility.wailoo$var) 
   hosp.cost.names <- c("haq_less0.5", "haq0.5to1", "haq1to1.5", "haq1.5to2", "haq2to2.5", "haq2.5plus")
@@ -344,8 +344,8 @@ sample_pars <- function(n = 100, input_data,
                              col_names = tx_names)
   sim$si.cost <- runif(n, si_cost * (1 - si_cost_range),  si_cost * (1 + si_cost_range))
   sim$si.ul <- runif(n, si_ul * (1 - si_ul_range), si_ul * (1 + si_ul_range))
-  sim$tx.attr.utility <-  sample_uniforms(n, tx_attr_ug_lower, tx_attr_ug_upper,
-                                     tx_attr_ug_names)
+  sim$utility.tx.attr <-  sample_uniforms(n, tx_attr_utilcoef_lower, tx_attr_utilcoef_upper,
+                                     tx_attr_utilcoef_names)
   sim$incidence <- list(female = sample_gammas(n, shape = incidence_female$events, 
                                  rate = incidence_female$person_years),
                         male = sample_gammas(n, shape = incidence_male$events, 

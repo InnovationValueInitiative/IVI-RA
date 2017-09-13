@@ -3,13 +3,17 @@
 \docType{data}
 \name{treatments}
 \alias{treatments}
-\title{Treatment}
-\format{A data.table object with 1 row for each treatment and 4 columns:
+\title{Treatments}
+\format{A data.table object with 1 row for each treatment and 7 columns:
 \describe{
   \item{name}{Long-form name of treatment.}
   \item{mname}{Medium-form name of treatment.}
   \item{sname}{Short-form name of treatment.}
   \item{biologic}{Indicator equal to 1 if a treatment is a biologic and 0 otherwise.}
+  \item{route}{Route of administration.}
+  \item{approval_date}{Date that treatment was approved in the US by the FDA.}
+  \item{years_since_approval}{Years (from last update of the model) since the 
+  treatment was approved.}
 }}
 \usage{
 treatments

@@ -439,18 +439,18 @@ n <- 10
 pop <- sample_pop(n = 10)
 input.dat <- get_input_data(pop)
 parsamp <- sample_pars(n = 5, input_data = input.dat)
-x.attr <- iviRA::tx.attr$data
+x.attr <- iviRA::utility.tx.attr$x
 simhaq <- data.table(yrlen = rep(.5, n), sim = rep(seq(1, 5), each = n/5),
                      tx = which(iviRA::treatments$sname == "tof"),
                      si = rbinom(n, 1, .1))
 utility <- runif(n, 0, 1)
-tx.attr.ug <- parsamp$tx.attr.ug 
-tx.attr.ug[, 1] <- 0.1
+tx.attr.coef <- parsamp$utility.tx.attr
+tx.attr.coef[, 1] <- 0.1
 
 test_that("sim_qalys", {
   sim.qalys <- sim_qalys(simhaq = simhaq, utility = utility,
                          si_ul = parsamp$si.ul, x_attr = x.attr, 
-                         tx_attr_ug = tx.attr.ug)
+                         tx_attr_coef = tx.attr.coef)
   sim.qalys1 <- simhaq$yrlen[1] * (utility[1] - simhaq$si[1] * parsamp$si.ul[1]/12 +
                       x.attr[simhaq$tx[1],, drop = FALSE] %*% t(tx.attr.ug[1,, drop = FALSE]))
   expect_equal(sim.qalys[1], sim.qalys1[1])

@@ -39,12 +39,13 @@ sample_pars(n = 100, input_data, rebound_lower = 0.7, rebound_upper = 1,
   pl_mean = iviRA::prod.loss$est, pl_se = iviRA::prod.loss$se,
   ttsi = iviRA::ttsi, si_cost = 5873, si_cost_range = 0.2,
   si_ul = 0.156, si_ul_range = 0.2,
-  tx_attr_ug_lower = iviRA::tx.attr$utility.gain$lower,
-  tx_attr_ug_upper = iviRA::tx.attr$utility.gain$upper,
-  tx_attr_ug_names = iviRA::tx.attr$utility.gain$var,
+  tx_attr_utilcoef_lower = iviRA::utility.tx.attr$coef$lower,
+  tx_attr_utilcoef_upper = iviRA::utility.tx.attr$coef$upper,
+  tx_attr_utilcoef_names = iviRA::utility.tx.attr$coef$var,
   tx_names = iviRA::treatments$sname,
   incidence_female = iviRA::incidence.female,
-  incidence_male = iviRA::incidence.male, util_mixture_pain = iviRA::pain)
+  incidence_male = iviRA::incidence.male,
+  utility_mixture_pain = iviRA::pain)
 }
 \arguments{
 \item{n}{Size of the posterior sample.}
@@ -187,12 +188,12 @@ for general management of RA.}
 \item{si_ul_range}{Range used to vary serious infection utility loss. Default is to calculate upper and lower bound by multiplying 
 \code{si_ul} by 1 +/- 0.2 (i.e. a 20\% change).}
 
-\item{tx_attr_ug_lower}{Lower bound for utility gain from treatment attributes.}
+\item{tx_attr_utilcoef_lower}{Lower bound for utility gain from treatment attributes.}
 
-\item{tx_attr_ug_upper}{Upper bound for utility gain from treatment attributes.}
+\item{tx_attr_utilcoef_upper}{Upper bound for utility gain from treatment attributes.}
 
-\item{tx_attr_ug_names}{Names of treatment attributes to be returned in sampled matrix
-\code{tx.attr.utility}.}
+\item{tx_attr_utilcoef_names}{Names of treatment attributes to be returned in sampled matrix
+\code{utility.tx.attr}.}
 
 \item{tx_names}{Vector of treatment names.}
 
@@ -203,7 +204,7 @@ row for each single-year of age from 0 to 100, a variable \code{events} (the num
 
 \item{incidence_male}{Identical to \code{incidence_female} but for males.}
 
-\item{util_mixture_pain}{Summary statistics for bivariate distribution of HAQ and pain. Format
+\item{utility_mixture_pain}{Summary statistics for bivariate distribution of HAQ and pain. Format
 should be the same as iviRA::pain. Currently, each element of the list must be of length 1.}
 
 \item{model_structures}{An object of class 'model_structures' returned from 
@@ -278,7 +279,7 @@ List containing samples for the following model parameters:
     Columns numbers coincide with therapy indices.}
    \item{si.cost}{Vector of sampled values of the medical cost of a serious infection.}
    \item{si.ul}{Vector of the sampled values of the annualized utility loss from a serious infection.}
-   \item{tx.attr.utility}{Matrix of sampled values of utility gains. Each column is a different treatment
+   \item{utility.tx.attr}{Matrix of sampled values of utility gains. Each column is a different treatment
    attribute.}
    \item{incidence}{A list with two elements for consisting of two matrics, one for males and
  one for females. Each column is a random sample of the incidence rate for a given age. 

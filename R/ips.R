@@ -9,10 +9,10 @@
 #' @param model_structure Object of class model structure generated from \link{select_model_structure}.
 #' @param max_months Maximum number of months to run the model for. Default is NULL which implies that
 #' the model is simulated over each patient's lifetime.
-#' @param treatments_lookup Vector of names of all treatments included in the parameter
-#' estimates. Index of of treatments in \code{arms} are matched against treatments in
-#' \code{treatments_lookup} by name. Indices of treatment-specific parameter estimates must be 
-#' in the same order as treatments in \code{treatments_lookup}.   
+#' @param tx_data Dataset of treatments with columns names equivalent to \code{iviRA::treatments}.
+#' Index of of treatments in \code{arms} are matched against treatments in
+#' \code{tx_data$sname} by name. Indices of treatment-specific parameter estimates must be 
+#' in the same order as treatments in \code{tx_data}. 
 #' @param hist Is the patient biologic naive or biologic experienced?
 #' @param output Specifies the format of output returned from the simulation. Options are \code{data} 
 #' and \code{summary}. When \code{data} is specified, each simulated value (i.e, by model,
@@ -22,7 +22,6 @@
 #' otherwise, discounts can be applied to the simulated output.
 #' @param discount_cost Discount rate for cost variables. Only used when \code{output = "summary"};
 #' otherwise, discounts can be applied to the simulated output.
-#' @param insurance_value If TRUE, insurance value is simulated. Defeault is FALSE.
 #' 
 #' @return 
 #' The \code{output = "data"} options returns all simulated output. However, since output is 
@@ -71,12 +70,10 @@
 #'
 #' @export 
 sim_iviRA <- function(arms, input_data, pars, model_structures, 
-                      max_months = NULL, treatment_lookup = iviRA::treatments$sname,
+                      max_months = NULL, tx_data = iviRA::treatments,
                       hist = c("naive", "experienced"),
                       output = c("data", "summary"), 
                       discount_qalys = .03, discount_cost = .03,
-                      insurance_value = FALSE, incidence = .006,
-                      mrs = 2,
                       check = TRUE){
   hist <- match.arg(hist)
   output <- match.arg(output)
@@ -92,15 +89,15 @@ sim_iviRA <- function(arms, input_data, pars, model_structures,
   
   ## treatment arm indices
   if (is.vector(arms)) arms <- matrix(arms, nrow = 1)
-  arminds <- matrix(match(arms, treatment_lookup), nrow = nrow(arms),
+  arminds <- matrix(match(arms, tx_data$sname), nrow = nrow(arms),
                     ncol = ncol(arms))
   
   # check parameter samples are the right format
   if (check == TRUE){
     check_pars(pars, arminds, model_structures)
   }
-  if(ncol(pars$tx.attr.utility) != ncol(input_data$x.attr)){
-    stop(paste0("The number of columns in 'tx.attr.utility' element of pars list must equal ",
+  if(ncol(pars$utility.tx.attr) != ncol(input_data$x.attr)){
+    stop(paste0("The number of columns in 'utility.tx.attr' element of pars list must equal ",
                 " the number of columns in 'x.attr' elemnt of input_data list."))
   }
   
@@ -115,6 +112,9 @@ sim_iviRA <- function(arms, input_data, pars, model_structures,
     max_months <- 12 * 150
   }
   prob.switch.da <- matrix(rep(c(0, 0, 1, 1), each = pars$n), ncol = 4)
+  
+  # convert factors variables to character variables in dataframes
+  tx_data[, route := as.character(route)]
 
   ## survival parameters
   ttd.dist <- model_structures[1, "ttd_dist"]
@@ -149,8 +149,8 @@ sim_iviRA <- function(arms, input_data, pars, model_structures,
   parsamp.utility.wailoo <- pars$utility.wailoo[, wailoo.colindx, drop = FALSE]
 
   # RUNNING THE SIMULATION
-  sim.out <- sim_iviRA_C(arm_inds = arminds, model_structures_mat = model_structures,
-                         hist = hist,
+  sim.out <- sim_iviRA_C(arm_inds = arminds, tx_data = tx_data,
+                         model_structures_mat = model_structures, hist = hist,
                          haq0 = input_data$haq0, das28_0 = input_data$das28,
                      sdai0 = input_data$sdai, cdai0 = input_data$cdai,
                      age0 = input_data$age, male = input_data$male, 
@@ -189,8 +189,8 @@ sim_iviRA <- function(arms, input_data, pars, model_structures,
                      weight = input_data$weight, 
                      coefs_wailoo = parsamp.utility.wailoo, 
                      pars_util_mix = pars$utility.mixture, si_ul = pars$si.ul,
-                     tx_attr = list(data = input_data$x.attr, 
-                                    ug = pars$tx.attr.utility),
+                     utility_tx_attr = list(data = input_data$x.attr, 
+                                    pars = pars$utility.tx.attr),
                      discount_rate = list(qalys = discount_qalys, cost = discount_cost),
                      output = output)
   if (output == "data"){
@@ -741,17 +741,17 @@ check_sim_utility_wailoo <- function(simhaq, haq0, male, prev_dmards, coefs){
 #' @param si_ul Sampled utility loss. Equivalent to output \code{si.ul} from \link{sample_pars}.
 #' @param x_attr Treatment attribute data (e.g., ouptut \code{x.attr} from
 #' \link{get_input_data})
-#' @param tx_attr_ug Utility gain from treatment attributes (e.g., output
-#' \code{tx.attr.utility} from \link{sample_pars}.)
+#' @param tx_attr_coef Distribution of coefficient vector for treatment attributes (e.g., output
+#' \code{utility.tx.attr} from \link{sample_pars}.)
 #' @return Vector of QALYs for each simulated patient and time-period.
 #'
 #' @export
-sim_qalys <- function(simhaq, utility, si_ul, x_attr, tx_attr_ug, check = TRUE){
-  if (check) check_sim_qalys(simhaq, utility, si_ul, x_attr, tx_attr_ug)
+sim_qalys <- function(simhaq, utility, si_ul, x_attr, tx_attr_coef, check = TRUE){
+  if (check) check_sim_qalys(simhaq, utility, si_ul, x_attr, tx_attr_coef)
   qalys <- sim_qalysC(utility = utility, yrlen = simhaq$yrlen, 
                       sim = simhaq$sim - 1, tx = simhaq$tx - 1,
                       si = simhaq$si, si_ul = si_ul,
-                      x_attr = x_attr, tx_attr_ug = tx_attr_ug)
+                      x_attr = x_attr, tx_attr_coef = tx_attr_coef)
   return(qalys)
 }
 

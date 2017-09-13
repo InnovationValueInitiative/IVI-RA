@@ -5,10 +5,9 @@
 \title{The IVI-RA simulation}
 \usage{
 sim_iviRA(arms, input_data, pars, model_structures, max_months = NULL,
-  treatment_lookup = iviRA::treatments$sname, hist = c("naive",
-  "experienced"), output = c("data", "summary"), discount_qalys = 0.03,
-  discount_cost = 0.03, insurance_value = FALSE, incidence = 0.006,
-  mrs = 2, check = TRUE)
+  tx_data = iviRA::treatments, hist = c("naive", "experienced"),
+  output = c("data", "summary"), discount_qalys = 0.03,
+  discount_cost = 0.03, check = TRUE)
 }
 \arguments{
 \item{arms}{Name of arms in the treatment treatment sequence. May be a vector consisting of 
@@ -20,6 +19,11 @@ a single treatment sequence or a matrix of unique sequences for each patient.}
 
 \item{max_months}{Maximum number of months to run the model for. Default is NULL which implies that
 the model is simulated over each patient's lifetime.}
+
+\item{tx_data}{Dataset of treatments with columns names equivalent to \code{iviRA::treatments}.
+Index of of treatments in \code{arms} are matched against treatments in
+\code{tx_data$sname} by name. Indices of treatment-specific parameter estimates must be 
+in the same order as treatments in \code{tx_data}.}
 
 \item{hist}{Is the patient biologic naive or biologic experienced?}
 
@@ -34,14 +38,7 @@ otherwise, discounts can be applied to the simulated output.}
 \item{discount_cost}{Discount rate for cost variables. Only used when \code{output = "summary"};
 otherwise, discounts can be applied to the simulated output.}
 
-\item{insurance_value}{If TRUE, insurance value is simulated. Defeault is FALSE.}
-
 \item{model_structure}{Object of class model structure generated from \link{select_model_structure}.}
-
-\item{treatments_lookup}{Vector of names of all treatments included in the parameter
-estimates. Index of of treatments in \code{arms} are matched against treatments in
-\code{treatments_lookup} by name. Indices of treatment-specific parameter estimates must be 
-in the same order as treatments in \code{treatments_lookup}.}
 }
 \value{
 The \code{output = "data"} options returns all simulated output. However, since output is 

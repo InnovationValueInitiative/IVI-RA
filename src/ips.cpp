@@ -705,8 +705,12 @@ public:
   void set_iterators(int m, int s, double y);
   void set_id();
   void increment_id(int m, int s, double y);
+  double calc_lys_infusion(std::string route, double &lys);
+  double calc_lys_injection(std::string route, double &lys);
+  double calc_lys_oral(std::string route, double &lys);
   void increment_varsums(double yrlen, double qalys, double tx_cost, double hosp_cost,
-                         double mgmt_cost, double si_cost, double prod_loss); 
+                         double mgmt_cost, double si_cost, double prod_loss, double si,
+                         std::string route); 
   std::map<std::string, std::vector<double> > calc_means();
 };
 
@@ -727,6 +731,10 @@ SimMeans::SimMeans(int n_mods_, int n_sims_, int n_indivs_, double r_qalys, doub
   id["mod"] = std::vector<int> (N);
   varsums["lys"] = std::vector<double> (N);
   varsums["dlys"] = std::vector<double> (N);
+  varsums["lys_infusion"] = std::vector<double> (N);
+  varsums["lys_injection"] = std::vector<double> (N);
+  varsums["lys_oral"] = std::vector<double> (N);
+  varsums["si"] = std::vector<double> (N);
   varsums["qalys"] = std::vector<double> (N);
   varsums["dqalys"] = std::vector<double> (N);
   varsums["tx_cost"] = std::vector<double> (N);
@@ -766,12 +774,53 @@ void SimMeans::increment_id(int m, int s, double y){
   set_id();
 }
 
+double  SimMeans::calc_lys_infusion(std::string route, double &lys){
+  if (route == "infusion"){
+    return lys;
+  }
+  else if (route == "infusion/injection"){
+    return lys/2;
+  } 
+  else{
+    return 0;
+  }
+}
+
+double SimMeans::calc_lys_injection(std::string route, double &lys){
+  if (route == "injection"){
+    return lys;
+  }
+  else if (route == "infusion/injection" || route == "oral/injection"){
+    return lys/2;
+  } 
+  else{
+    return 0;
+  }
+}
+
+double SimMeans::calc_lys_oral(std::string route, double &lys){
+  if (route == "oral"){
+    return lys;
+  }
+  else if (route == "oral/injection"){
+    return lys/2;
+  } 
+  else{
+    return 0;
+  }
+}
+
 void SimMeans::increment_varsums(double yrlen, double qalys, double tx_cost, double hosp_cost,
-                                 double mgmt_cost, double si_cost, double prod_loss){
+                                 double mgmt_cost, double si_cost, double prod_loss, double si,
+                                 std::string route){
   double dfq = discount_factor(year, discount_qalys);
   double dfc = discount_factor(year, discount_cost);
   varsums["lys"][index] = varsums["lys"][index] + yrlen;
   varsums["dlys"][index] = varsums["dlys"][index] + yrlen * dfq;
+  varsums["lys_infusion"][index] = varsums["lys_infusion"][index] + calc_lys_infusion(route, yrlen);
+  varsums["lys_injection"][index] = varsums["lys_injection"][index] + calc_lys_injection(route, yrlen);
+  varsums["lys_oral"][index] = varsums["lys_oral"][index] + calc_lys_oral(route, yrlen);
+  varsums["si"][index] = varsums["si"][index] + si;
   varsums["qalys"][index] = varsums["qalys"][index] + qalys;
   varsums["dqalys"][index] = varsums["dqalys"][index] + qalys * dfq;
   varsums["tx_cost"][index] = varsums["tx_cost"][index] + tx_cost;
@@ -1049,25 +1098,25 @@ RCPP_MODULE(mod_Out0) {
 std::vector<double> sim_qalysC(std::vector<double> &utility, std::vector<double> &yrlen,
                            std::vector<int> &sim, std::vector<int> &tx,
                            std::vector<int> &si, std::vector<double> &si_ul,
-                           arma::mat &x_attr, arma::mat &tx_attr_ug){
+                           arma::mat &x_attr, arma::mat &tx_attr_coef){
   int N = utility.size();
   std::vector<double> qalys_vec;
   qalys_vec.reserve(N);
   for (int i = 0; i < N; ++i){
     double utility1 = std::min(1.0, utility[i] - si[i] * si_ul[sim[i]]/12 + 
-      arma::dot(x_attr.row(tx[i]), tx_attr_ug.row(sim[i])));
+      arma::dot(x_attr.row(tx[i]), tx_attr_coef.row(sim[i])));
     qalys_vec.push_back(yrlen[i] * utility1);
   }
   return qalys_vec;
 }
 
 /*********************************
-* The MAIN c++ sim_iviRA function
+* The MAIN C++ sim_iviRA function
 *********************************/
 // Simulate HAQ score
 // [[Rcpp::export]] 
-List sim_iviRA_C(arma::mat arm_inds, CharacterMatrix model_structures_mat,
-                  std::string hist,
+List sim_iviRA_C(arma::mat arm_inds, Rcpp::DataFrame tx_data, 
+                 CharacterMatrix model_structures_mat, std::string hist,
              std::vector<double> haq0, std::vector<double> das28_0,
              std::vector<double> sdai0, std::vector<double> cdai0,
              std::vector<double> age0, std::vector<int> male,
@@ -1092,10 +1141,13 @@ List sim_iviRA_C(arma::mat arm_inds, CharacterMatrix model_structures_mat,
              std::vector<double> si_cost, std::vector<double> prod_loss, 
              Rcpp::List tc_list, std::vector<double> weight, 
              arma::mat coefs_wailoo, Rcpp::List pars_util_mix, std::vector<double> si_ul,
-             Rcpp::List tx_attr,
+             Rcpp::List utility_tx_attr,
              Rcpp::List discount_rate, std::string output){
   
   // Type conversions
+  //// Treatment data
+  std::vector<std::string> route = as<std::vector<std::string> >(tx_data["route"]);
+  
   //// Model structures
   std::vector<std::vector<std::string> > model_structures = charmat2stdvec(model_structures_mat);
   
@@ -1160,8 +1212,8 @@ List sim_iviRA_C(arma::mat arm_inds, CharacterMatrix model_structures_mat,
   TTDPars ttd_eular_good = get_ttd_pars(ttd_eular_good_list);
   
   //// Treatment attributes
-  arma::mat x_attr = as<arma::mat> (tx_attr["data"]);
-  arma::mat tx_attr_ug = as<arma::mat> (tx_attr["ug"]);
+  arma::mat x_attr = as<arma::mat> (utility_tx_attr["data"]);
+  arma::mat tx_attr_utilpars = as<arma::mat> (utility_tx_attr["pars"]);
   
   //// Discount rate
   double discount_qalys = as<double>(discount_rate["qalys"]);
@@ -1407,14 +1459,15 @@ List sim_iviRA_C(arma::mat arm_inds, CharacterMatrix model_structures_mat,
                                                  utilmix_mu, utilmix_delta.slice(s),
                                                  utilmix_w, utilmix_x);
             }
-            utility = std::min(1.0, utility - si * si_ul[s] + 
-              arma::dot(x_attr_ij, tx_attr_ug.row(s)));
+            utility = std::min(1.0, utility - si * si_ul[s]/12 + 
+              arma::dot(x_attr_ij, tx_attr_utilpars.row(s)));
             qalys = cycle_length/12 * utility;
             
             if (output == "summary"){
               sim_means.increment_id(m, s, month/12);
               sim_means.increment_varsums(cycle_length/12, qalys, sim_cost.tx, sim_cost.hosp,
-                                          sim_cost.mgmt, sim_cost.si, sim_cost.prod);
+                                          sim_cost.mgmt, sim_cost.si, sim_cost.prod, si,
+                                          route[arm_ind_ij]);
               time_means.increment_id(m, s, month); //note: requires assumption of constant model cycles!!!
               time_means.increment_alive();
               time_means.increment_varsums(qalys, haq, sim_cost.tx, sim_cost.hosp, sim_cost.mgmt, 
@@ -1525,6 +1578,10 @@ List sim_iviRA_C(arma::mat arm_inds, CharacterMatrix model_structures_mat,
       _["sim"] = sim_means_id["sim"],
       _["lys"] = sim_means_out["lys"],
       _["dlys"] = sim_means_out["dlys"],
+      _["lys_infusion"] = sim_means_out["lys_infusion"],
+      _["lys_injection"] = sim_means_out["lys_injection"],
+      _["lys_oral"] = sim_means_out["lys_oral"],                                
+      _["si"] = sim_means_out["si"],                        
       _["qalys"] = sim_means_out["qalys"],
       _["dqalys"] = sim_means_out["dqalys"], 
       _["tx_cost"] = sim_means_out["tx_cost"],
