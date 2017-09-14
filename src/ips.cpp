@@ -687,8 +687,10 @@ std::vector<double> sim_utility_mixtureC(std::vector<int> id, std::vector<int> s
 // Calculate means by individual for selected variables
 class SimMeans {         
 private:
-  int sim; 
   int mod;
+  int sim; 
+  int indiv;
+  int cycle;
   int index;
   int n_indivs;
   int n_sims;
@@ -696,25 +698,31 @@ private:
   double year;
   double discount_qalys;
   double discount_cost;
+  std::map<std::string, double > indivsums;
   std::map<std::string, std::vector<int> > id;
   std::map<std::string, std::vector<double> > varsums;
 public:  
   SimMeans(int n_mods, int n_sims_, int n_indivs_, double r_qalys = .03, double r_cost = .03);
   std::map<std::string, std::vector<double> > get_varsums();
   std::map<std::string, std::vector<int> > get_id();
-  void set_iterators(int m, int s, double y);
+  void set_iterators(int m, int s, int i, int c, double y);
   void set_id();
-  void increment_id(int m, int s, double y);
+  void increment_id(int m, int s, int i, int c, double y);
   double calc_lys_infusion(std::string route, double &lys);
   double calc_lys_injection(std::string route, double &lys);
   double calc_lys_oral(std::string route, double &lys);
+  double calc_dhaq(double haq0, double haq, bool final_cycle);
+  void increment_indivsums(double yrs_since_approval);
   void increment_varsums(double yrlen, double qalys, double tx_cost, double hosp_cost,
                          double mgmt_cost, double si_cost, double prod_loss, double si,
-                         std::string route); 
+                         std::string route, double haq0, double haq, bool final_cycle,
+                         double yrs_since_approval); 
   std::map<std::string, std::vector<double> > calc_means();
 };
 
 SimMeans::SimMeans(int n_mods_, int n_sims_, int n_indivs_, double r_qalys, double r_cost){
+  cycle = 0;
+  indiv = 0;
   sim = 0;
   mod = 0;
   year = 0.0;
@@ -725,8 +733,10 @@ SimMeans::SimMeans(int n_mods_, int n_sims_, int n_indivs_, double r_qalys, doub
   discount_qalys = r_qalys;
   discount_cost = r_cost;
   int N = n_sims * n_mods;
+  indivsums = std::map<std::string,double >();
   id = std::map<std::string, std::vector<int> > ();
   varsums = std::map<std::string, std::vector<double> >();
+  indivsums["yrs_since_approval"] = 0.0;
   id["sim"] = std::vector<int> (N);
   id["mod"] = std::vector<int> (N);
   varsums["lys"] = std::vector<double> (N);
@@ -734,6 +744,7 @@ SimMeans::SimMeans(int n_mods_, int n_sims_, int n_indivs_, double r_qalys, doub
   varsums["lys_infusion"] = std::vector<double> (N);
   varsums["lys_injection"] = std::vector<double> (N);
   varsums["lys_oral"] = std::vector<double> (N);
+  varsums["dhaq"] = std::vector<double> (N);
   varsums["si"] = std::vector<double> (N);
   varsums["qalys"] = std::vector<double> (N);
   varsums["dqalys"] = std::vector<double> (N);
@@ -747,6 +758,7 @@ SimMeans::SimMeans(int n_mods_, int n_sims_, int n_indivs_, double r_qalys, doub
   varsums["dsi_cost"] = std::vector<double> (N);
   varsums["prod_loss"] = std::vector<double> (N);
   varsums["dprod_loss"] = std::vector<double> (N);
+  varsums["yrs_since_approval"] = std::vector<double> (N);
 }
 
 std::map<std::string, std::vector<double> > SimMeans::get_varsums(){
@@ -757,9 +769,11 @@ std::map<std::string, std::vector<int> > SimMeans::get_id(){
   return id;
 }
 
-void SimMeans::set_iterators(int m, int s, double y){
+void SimMeans::set_iterators(int m, int s, int i, int c, double y){
   mod = m;
   sim = s;
+  indiv = i;
+  cycle = c;
   year = y;
   index = mod * n_sims + sim;
 }
@@ -769,8 +783,8 @@ void SimMeans::set_id(){
   id["sim"][index] = sim;
 }
 
-void SimMeans::increment_id(int m, int s, double y){
-  set_iterators(m, s, y);
+void SimMeans::increment_id(int m, int s, int i, int c, double y){
+  set_iterators(m, s, i, c, y);
   set_id();
 }
 
@@ -810,16 +824,38 @@ double SimMeans::calc_lys_oral(std::string route, double &lys){
   }
 }
 
+double SimMeans::calc_dhaq(double haq0, double haq, bool final_cycle){
+  if (final_cycle == false){
+    return 0;
+  }
+  else{
+    return haq - haq0;
+  }
+}
+
+void SimMeans::increment_indivsums(double yrs_since_approval){
+  if (cycle == 0){
+    indivsums["yrs_since_approval"] = 0.0;
+  }
+  else{
+    indivsums["yrs_since_approval"] = indivsums["yrs_since_approval"] + yrs_since_approval;
+  }
+  
+}
+
 void SimMeans::increment_varsums(double yrlen, double qalys, double tx_cost, double hosp_cost,
                                  double mgmt_cost, double si_cost, double prod_loss, double si,
-                                 std::string route){
+                                 std::string route, double haq0, double haq, bool final_cycle,
+                                 double yrs_since_approval){
   double dfq = discount_factor(year, discount_qalys);
   double dfc = discount_factor(year, discount_cost);
+  increment_indivsums(yrs_since_approval);
   varsums["lys"][index] = varsums["lys"][index] + yrlen;
   varsums["dlys"][index] = varsums["dlys"][index] + yrlen * dfq;
   varsums["lys_infusion"][index] = varsums["lys_infusion"][index] + calc_lys_infusion(route, yrlen);
   varsums["lys_injection"][index] = varsums["lys_injection"][index] + calc_lys_injection(route, yrlen);
   varsums["lys_oral"][index] = varsums["lys_oral"][index] + calc_lys_oral(route, yrlen);
+  varsums["dhaq"][index] = varsums["dhaq"][index] + calc_dhaq(haq0, haq, final_cycle);
   varsums["si"][index] = varsums["si"][index] + si;
   varsums["qalys"][index] = varsums["qalys"][index] + qalys;
   varsums["dqalys"][index] = varsums["dqalys"][index] + qalys * dfq;
@@ -833,6 +869,10 @@ void SimMeans::increment_varsums(double yrlen, double qalys, double tx_cost, dou
   varsums["dsi_cost"][index] = varsums["dsi_cost"][index] + si_cost * dfc;
   varsums["prod_loss"][index] = varsums["prod_loss"][index] + prod_loss;
   varsums["dprod_loss"][index] = varsums["dprod_loss"][index] + prod_loss * dfc;
+  if (final_cycle == true){
+    varsums["yrs_since_approval"][index] = varsums["yrs_since_approval"][index] +
+      indivsums["yrs_since_approval"]/cycle;
+  }
 }
 
 std::map<std::string, std::vector<double> > SimMeans::calc_means(){
@@ -1147,6 +1187,7 @@ List sim_iviRA_C(arma::mat arm_inds, Rcpp::DataFrame tx_data,
   // Type conversions
   //// Treatment data
   std::vector<std::string> route = as<std::vector<std::string> >(tx_data["route"]);
+  std::vector<double> yrs_since_approval = as<std::vector<double> >(tx_data["years_since_approval"]);
   
   //// Model structures
   std::vector<std::vector<std::string> > model_structures = charmat2stdvec(model_structures_mat);
@@ -1290,10 +1331,12 @@ List sim_iviRA_C(arma::mat arm_inds, Rcpp::DataFrame tx_data,
       // "INNER" LOOP
       // Loop over Individuals
       for (int i = 0; i < n_pat; ++i){
-        double month = 6;
+        double month = 6; // This is because RCTs are 6 months long!
         cage_i = age0[i];
         age_i = int(cage_i);
         double haq = haq0[i];
+        int cycle = 0;
+        bool final_cycle = false;
         if (arm_inds.n_rows > 1){
           arm_row = i;
           arm_ind_i = arm_inds.row(i);
@@ -1387,6 +1430,9 @@ List sim_iviRA_C(arma::mat arm_inds, Rcpp::DataFrame tx_data,
             int death = sample_deathC(age_i, male[i], lifetable_male, lifetable_female, 
                                          x_mort.row(i), logor_mort.row(s), haq0[i], haq,
                                         cycle_length, month, haqdelta_loghr.row(s));
+            if (death == 1 || max_months < month + cycle_length){
+              final_cycle = true;
+            }
             
             // Did serious infection occur?
             if (ttsi_j < ttd_j && t > ttd_j && t < ttd_j + 1 && arm_ind_ij != nbt) {
@@ -1464,10 +1510,11 @@ List sim_iviRA_C(arma::mat arm_inds, Rcpp::DataFrame tx_data,
             qalys = cycle_length/12 * utility;
             
             if (output == "summary"){
-              sim_means.increment_id(m, s, month/12);
+              sim_means.increment_id(m, s, i, cycle, month/12);
               sim_means.increment_varsums(cycle_length/12, qalys, sim_cost.tx, sim_cost.hosp,
                                           sim_cost.mgmt, sim_cost.si, sim_cost.prod, si,
-                                          route[arm_ind_ij]);
+                                          route[arm_ind_ij], haq0[i], haq, final_cycle, 
+                                          yrs_since_approval[arm_ind_ij]);
               time_means.increment_id(m, s, month); //note: requires assumption of constant model cycles!!!
               time_means.increment_alive();
               time_means.increment_varsums(qalys, haq, sim_cost.tx, sim_cost.hosp, sim_cost.mgmt, 
@@ -1526,9 +1573,10 @@ List sim_iviRA_C(arma::mat arm_inds, Rcpp::DataFrame tx_data,
             age_i = int(cage_i);
             t_cdmards = t_cdmards + 1;
             ++counter;
+            ++cycle;
             
-            // Stop i loop for death
-            if (death == 1 || max_months < month){
+            // Stop i loop for death or final model cycle
+            if (final_cycle == true){
               goto next_i;
             }
           }
@@ -1573,14 +1621,15 @@ List sim_iviRA_C(arma::mat arm_inds, Rcpp::DataFrame tx_data,
   else{
     std::map<std::string, std::vector<double> > sim_means_out = sim_means.calc_means();
     std::map<std::string, std::vector<int> > sim_means_id = sim_means.get_id();
-    Rcpp::DataFrame sim_means_df = Rcpp::DataFrame::create(
+    Rcpp::DataFrame sim_means_df1 = Rcpp::DataFrame::create(
       _["model"] = sim_means_id["mod"],
       _["sim"] = sim_means_id["sim"],
       _["lys"] = sim_means_out["lys"],
       _["dlys"] = sim_means_out["dlys"],
       _["lys_infusion"] = sim_means_out["lys_infusion"],
       _["lys_injection"] = sim_means_out["lys_injection"],
-      _["lys_oral"] = sim_means_out["lys_oral"],                                
+      _["lys_oral"] = sim_means_out["lys_oral"],
+      _["dhaq"] = sim_means_out["dhaq"],                             
       _["si"] = sim_means_out["si"],                        
       _["qalys"] = sim_means_out["qalys"],
       _["dqalys"] = sim_means_out["dqalys"], 
@@ -1592,8 +1641,11 @@ List sim_iviRA_C(arma::mat arm_inds, Rcpp::DataFrame tx_data,
       _["dmgmt_cost"] = sim_means_out["dmgmt_cost"],
       _["si_cost"] = sim_means_out["si_cost"],
       _["dsi_cost"] = sim_means_out["dsi_cost"],
-      _["prod_loss"] = sim_means_out["prod_loss"],
-      _["dprod_loss"] = sim_means_out["dprod_loss"]  
+      _["prod_loss"] = sim_means_out["prod_loss"]
+    );
+    Rcpp::DataFrame sim_means_df2 = Rcpp::DataFrame::create(
+      _["dprod_loss"] = sim_means_out["dprod_loss"],
+      _["yrs_since_approval"] = sim_means_out["yrs_since_approval"]                               
     );
     std::map<std::string, std::vector<double> > time_means_out = time_means.calc_means();
     std::map<std::string, std::vector<int> > time_means_id = time_means.get_id();
@@ -1621,7 +1673,8 @@ List sim_iviRA_C(arma::mat arm_inds, Rcpp::DataFrame tx_data,
       _["ttsi"] = out0.get_ttsi()
     );
     return Rcpp::List::create(
-      _["means"] = sim_means_df,
+      _["means1"] = sim_means_df1,
+      _["means2"] = sim_means_df2,
       _["time.means"] = time_means_df,
       _["out0"] = out0_df
       );

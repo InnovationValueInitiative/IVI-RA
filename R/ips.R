@@ -204,7 +204,9 @@ sim_iviRA <- function(arms, input_data, pars, model_structures,
       sim.out[, tx_cycle := tx_cycle + 1]
       sim.out[, tx := tx + 1]
   } else{
-      sim.out$means <- data.table(sim.out$means)
+      names(sim.out)[names(sim.out) == "means1"] <- "means"
+      sim.out$means <- data.table(cbind(sim.out$means, sim.out$means2))
+      sim.out$means2 <- NULL
       sim.out$time.means <- data.table(sim.out$time.means)
       sim.out$time.means <- sim.out$time.means[alive > 0]
       sim.out$out0 <- data.table(sim.out$out0)
