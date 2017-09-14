@@ -835,7 +835,7 @@ double SimMeans::calc_dhaq(double haq0, double haq, bool final_cycle){
 
 void SimMeans::increment_indivsums(double yrs_since_approval){
   if (cycle == 0){
-    indivsums["yrs_since_approval"] = 0.0;
+    indivsums["yrs_since_approval"] = 0.0 + yrs_since_approval;
   }
   else{
     indivsums["yrs_since_approval"] = indivsums["yrs_since_approval"] + yrs_since_approval;
@@ -871,7 +871,7 @@ void SimMeans::increment_varsums(double yrlen, double qalys, double tx_cost, dou
   varsums["dprod_loss"][index] = varsums["dprod_loss"][index] + prod_loss * dfc;
   if (final_cycle == true){
     varsums["yrs_since_approval"][index] = varsums["yrs_since_approval"][index] +
-      indivsums["yrs_since_approval"]/cycle;
+      indivsums["yrs_since_approval"]/(cycle + 1);
   }
 }
 
