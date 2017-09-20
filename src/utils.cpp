@@ -1,8 +1,9 @@
 #include <Rcpp.h>
 
 // Discount factor
-double discount_factor(double t, double discount){
-  return 1/pow((1 + discount), t);
+double discount_factor(double t, double discount, double period_length = 1){
+  double beta = 1/pow((1 + discount), period_length);
+  return pow(beta, t);
 }
 
 // Calculate annualized value
