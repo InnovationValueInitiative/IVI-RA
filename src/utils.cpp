@@ -5,6 +5,11 @@ double discount_factor(double t, double discount){
   return 1/pow((1 + discount), t);
 }
 
+// Calculate annualized value
+double annualized_value(double outcome, double df, int T){
+  return outcome * (1 - df)/(1 - pow(df, T));
+}
+
 // Convert std::vector to matrix (ie., 2-dimensional vector) filling rowwise
 std::vector<std::vector<std::string> > stdvec2matrix(std::vector<std::string> x, int nrow, int ncol){
   std::vector<std::vector<std::string> > vecs(nrow, std::vector<std::string>(ncol));
