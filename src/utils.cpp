@@ -6,9 +6,9 @@ double discount_factor(double t, double discount, double period_length = 1){
   return pow(beta, t);
 }
 
-// Calculate annualized value
-double annualized_value(double outcome, double df, int T){
-  return outcome * (1 - df)/(1 - pow(df, T));
+// Calculate constant from geometric series
+double const_geometric_series(double sum, double r, int T){
+  return sum * (1 - r)/(1 - pow(r, T));
 }
 
 // Convert std::vector to matrix (ie., 2-dimensional vector) filling rowwise
