@@ -679,10 +679,10 @@ std::vector<double> sim_utility_mixtureC(std::vector<int> id, std::vector<int> s
 }
 
 /**************************************************************
-* Calculate summary statistics during simulatin run
-* Note that this is to save RAM in cases where the user
-* does not want to save simulation results for each individual
-* and model cycle
+* Calculate summary statistics during simulation run
+* Note that this is particularly usefeul when the user wants 
+* to save RAM and would rather have summary results than
+* output for each individual and model cycle
 **************************************************************/
 // Calculate means by individual for selected variables
 class SimMeans {         
@@ -695,48 +695,60 @@ private:
   int n_indivs;
   int n_sims;
   int n_mods;
-  double year;
+  double cycle_length;
+  double yrlen;
   double discount_qalys;
   double discount_cost;
+  double beta_qalys;
+  double beta_cost;
   std::map<std::string, double > indivsums;
   std::map<std::string, std::vector<int> > id;
   std::map<std::string, std::vector<double> > varsums;
 public:  
-  SimMeans(int n_mods, int n_sims_, int n_indivs_, double r_qalys = .03, double r_cost = .03);
+  SimMeans(int n_mods, int n_sims_, int n_indivs_, double r_qalys = .03, double r_cost = .03,
+           double cycle_legth_ = 6);
   std::map<std::string, std::vector<double> > get_varsums();
   std::map<std::string, std::vector<int> > get_id();
-  void set_iterators(int m, int s, int i, int c, double y);
+  void set_iterators(int m, int s, int i, int c);
   void set_id();
-  void increment_id(int m, int s, int i, int c, double y);
+  void increment_id(int m, int s, int i, int c);
   double calc_lys_infusion(std::string route, double &lys);
   double calc_lys_injection(std::string route, double &lys);
   double calc_lys_oral(std::string route, double &lys);
   double calc_dhaq(double haq0, double haq, bool final_cycle);
-  void increment_indivsums(double yrs_since_approval);
-  void increment_varsums(double yrlen, double qalys, double tx_cost, double hosp_cost,
+  void increment_indivsums(double yrs_since_approval, double dqalys, double dhc_cost, 
+                           double dprod_loss);
+  void increment_varsums(double qalys, double tx_cost, double hosp_cost,
                          double mgmt_cost, double si_cost, double prod_loss, double si,
                          std::string route, double haq0, double haq, bool final_cycle,
-                         double yrs_since_approval); 
+                         double yrs_since_approval, double age0); 
   std::map<std::string, std::vector<double> > calc_means();
 };
 
-SimMeans::SimMeans(int n_mods_, int n_sims_, int n_indivs_, double r_qalys, double r_cost){
+SimMeans::SimMeans(int n_mods_, int n_sims_, int n_indivs_, double r_qalys, double r_cost,
+                   double cycle_length_){
   cycle = 0;
   indiv = 0;
   sim = 0;
   mod = 0;
-  year = 0.0;
+  cycle_length = cycle_length_;
+  yrlen = cycle_length/12;
   n_indivs = n_indivs_;
   n_sims = n_sims_;
   n_mods = n_mods_;
   index = 0;
   discount_qalys = r_qalys;
   discount_cost = r_cost;
+  beta_qalys = pow(1/(1 + discount_qalys), cycle_length/12); 
+  beta_cost = pow(1/(1 + discount_cost), cycle_length/12); 
   int N = n_sims * n_mods;
   indivsums = std::map<std::string,double >();
   id = std::map<std::string, std::vector<int> > ();
   varsums = std::map<std::string, std::vector<double> >();
   indivsums["yrs_since_approval"] = 0.0;
+  indivsums["dqalys"] = 0.0;
+  indivsums["dhc_cost"] = 0.0;
+  indivsums["dprod_loss"] = 0.0;
   id["sim"] = std::vector<int> (N);
   id["mod"] = std::vector<int> (N);
   varsums["lys"] = std::vector<double> (N);
@@ -758,7 +770,12 @@ SimMeans::SimMeans(int n_mods_, int n_sims_, int n_indivs_, double r_qalys, doub
   varsums["dsi_cost"] = std::vector<double> (N);
   varsums["prod_loss"] = std::vector<double> (N);
   varsums["dprod_loss"] = std::vector<double> (N);
+  varsums["dhc_cost"] = std::vector<double> (N);
+  varsums["dtot_cost"] = std::vector<double> (N);
   varsums["yrs_since_approval"] = std::vector<double> (N);
+  varsums["dqalys_ann"] = std::vector<double> (N);
+  varsums["dhc_cost_ann"] = std::vector<double> (N);
+  varsums["dprod_loss_ann"] = std::vector<double> (N);
 }
 
 std::map<std::string, std::vector<double> > SimMeans::get_varsums(){
@@ -769,12 +786,11 @@ std::map<std::string, std::vector<int> > SimMeans::get_id(){
   return id;
 }
 
-void SimMeans::set_iterators(int m, int s, int i, int c, double y){
+void SimMeans::set_iterators(int m, int s, int i, int c){
   mod = m;
   sim = s;
   indiv = i;
   cycle = c;
-  year = y;
   index = mod * n_sims + sim;
 }
 
@@ -783,8 +799,8 @@ void SimMeans::set_id(){
   id["sim"][index] = sim;
 }
 
-void SimMeans::increment_id(int m, int s, int i, int c, double y){
-  set_iterators(m, s, i, c, y);
+void SimMeans::increment_id(int m, int s, int i, int c){
+  set_iterators(m, s, i, c);
   set_id();
 }
 
@@ -833,23 +849,38 @@ double SimMeans::calc_dhaq(double haq0, double haq, bool final_cycle){
   }
 }
 
-void SimMeans::increment_indivsums(double yrs_since_approval){
+void SimMeans::increment_indivsums(double yrs_since_approval, double dqalys, double dhc_cost,
+                                   double dprod_loss){
   if (cycle == 0){
     indivsums["yrs_since_approval"] = 0.0 + yrs_since_approval;
+    indivsums["dqalys"] = 0.0 + dqalys;
+    indivsums["dhc_cost"] = 0.0 + dhc_cost;
+    indivsums["dprod_loss"] = 0.0 + dprod_loss;
   }
   else{
     indivsums["yrs_since_approval"] = indivsums["yrs_since_approval"] + yrs_since_approval;
+    indivsums["dqalys"] = indivsums["dqalys"] + dqalys;
+    indivsums["dhc_cost"] = indivsums["dhc_cost"] + dhc_cost;
+    indivsums["dprod_loss"] = indivsums["dprod_loss"] + dprod_loss;
   }
   
 }
 
-void SimMeans::increment_varsums(double yrlen, double qalys, double tx_cost, double hosp_cost,
+void SimMeans::increment_varsums(double qalys, double tx_cost, double hosp_cost,
                                  double mgmt_cost, double si_cost, double prod_loss, double si,
                                  std::string route, double haq0, double haq, bool final_cycle,
-                                 double yrs_since_approval){
-  double dfq = discount_factor(year, discount_qalys);
-  double dfc = discount_factor(year, discount_cost);
-  increment_indivsums(yrs_since_approval);
+                                 double yrs_since_approval, double age0){
+  double dfq = discount_factor(cycle + 1, discount_qalys, yrlen);
+  double dfc = discount_factor(cycle + 1, discount_cost, yrlen);
+  double dqalys = qalys * dfq;
+  double dtx_cost = tx_cost * dfc;
+  double dhosp_cost = hosp_cost * dfc;
+  double dmgmt_cost = mgmt_cost * dfc;
+  double dsi_cost = si_cost * dfc;
+  double dprod_loss = prod_loss * dfc;
+  double dhc_cost = dtx_cost + dhosp_cost + dmgmt_cost + dsi_cost;
+  double dtot_cost = dhc_cost + dprod_loss;
+  increment_indivsums(yrs_since_approval, dqalys, dhc_cost, dprod_loss);
   varsums["lys"][index] = varsums["lys"][index] + yrlen;
   varsums["dlys"][index] = varsums["dlys"][index] + yrlen * dfq;
   varsums["lys_infusion"][index] = varsums["lys_infusion"][index] + calc_lys_infusion(route, yrlen);
@@ -858,20 +889,29 @@ void SimMeans::increment_varsums(double yrlen, double qalys, double tx_cost, dou
   varsums["dhaq"][index] = varsums["dhaq"][index] + calc_dhaq(haq0, haq, final_cycle);
   varsums["si"][index] = varsums["si"][index] + si;
   varsums["qalys"][index] = varsums["qalys"][index] + qalys;
-  varsums["dqalys"][index] = varsums["dqalys"][index] + qalys * dfq;
+  varsums["dqalys"][index] = varsums["dqalys"][index] + dqalys;
   varsums["tx_cost"][index] = varsums["tx_cost"][index] + tx_cost;
-  varsums["dtx_cost"][index] = varsums["dtx_cost"][index] + tx_cost * dfc;
+  varsums["dtx_cost"][index] = varsums["dtx_cost"][index] + dtx_cost;
   varsums["hosp_cost"][index] = varsums["hosp_cost"][index] + hosp_cost;
-  varsums["dhosp_cost"][index] = varsums["dhosp_cost"][index] + hosp_cost * dfc;
+  varsums["dhosp_cost"][index] = varsums["dhosp_cost"][index] + dhosp_cost;
   varsums["mgmt_cost"][index] = varsums["mgmt_cost"][index] + mgmt_cost;
-  varsums["dmgmt_cost"][index] = varsums["dmgmt_cost"][index] + mgmt_cost * dfc;
+  varsums["dmgmt_cost"][index] = varsums["dmgmt_cost"][index] + dmgmt_cost;
   varsums["si_cost"][index] = varsums["si_cost"][index] + si_cost;
-  varsums["dsi_cost"][index] = varsums["dsi_cost"][index] + si_cost * dfc;
+  varsums["dsi_cost"][index] = varsums["dsi_cost"][index] + dsi_cost;
   varsums["prod_loss"][index] = varsums["prod_loss"][index] + prod_loss;
-  varsums["dprod_loss"][index] = varsums["dprod_loss"][index] + prod_loss * dfc;
+  varsums["dprod_loss"][index] = varsums["dprod_loss"][index] + dprod_loss;
+  varsums["dhc_cost"][index] = varsums["dhc_cost"][index] + dhc_cost;
+  varsums["dtot_cost"][index] = varsums["dtot_cost"][index] + dtot_cost;
   if (final_cycle == true){
+    //int maxt = (100 - int(age0)) * (12/cycle_length);
     varsums["yrs_since_approval"][index] = varsums["yrs_since_approval"][index] +
       indivsums["yrs_since_approval"]/(cycle + 1);
+    varsums["dqalys_ann"][index] = varsums["dqalys_ann"][index] +
+      const_geometric_series(indivsums["dqalys"], beta_qalys, cycle + 1, 1) * 12/cycle_length;
+    varsums["dhc_cost_ann"][index] = varsums["dhc_cost_ann"][index] +
+      const_geometric_series(indivsums["dhc_cost"], beta_cost, cycle + 1, 1) * 12/cycle_length;
+    varsums["dprod_loss_ann"][index] = varsums["dprod_loss_ann"][index] +
+      const_geometric_series(indivsums["dprod_loss"], beta_cost, cycle + 1, 1) * 12/cycle_length;
   }
 }
 
@@ -1288,7 +1328,7 @@ List sim_iviRA_C(arma::mat arm_inds, Rcpp::DataFrame tx_data,
   arma::rowvec utilmix_x(5);
   arma::rowvec utilmix_w(4);
   double qalys = 0.0;
-  SimMeans sim_means(n_mods, n_sims, n_pat, discount_qalys, discount_cost);
+  SimMeans sim_means(n_mods, n_sims, n_pat, discount_qalys, discount_cost, cycle_length);
   TimeMeans time_means(n_mods, n_sims, n_pat, std::min(maxt, max_cycles),
                        cycle_length);
   Out0 out0(n_mods, n_sims, n_pat, n_treatments);
@@ -1510,11 +1550,11 @@ List sim_iviRA_C(arma::mat arm_inds, Rcpp::DataFrame tx_data,
             qalys = cycle_length/12 * utility;
             
             if (output == "summary"){
-              sim_means.increment_id(m, s, i, cycle, month/12);
-              sim_means.increment_varsums(cycle_length/12, qalys, sim_cost.tx, sim_cost.hosp,
+              sim_means.increment_id(m, s, i, cycle);
+              sim_means.increment_varsums(qalys, sim_cost.tx, sim_cost.hosp,
                                           sim_cost.mgmt, sim_cost.si, sim_cost.prod, si,
                                           route[arm_ind_ij], haq0[i], haq, final_cycle, 
-                                          yrs_since_approval[arm_ind_ij]);
+                                          yrs_since_approval[arm_ind_ij], age0[i]);
               time_means.increment_id(m, s, month); //note: requires assumption of constant model cycles!!!
               time_means.increment_alive();
               time_means.increment_varsums(qalys, haq, sim_cost.tx, sim_cost.hosp, sim_cost.mgmt, 
@@ -1645,7 +1685,12 @@ List sim_iviRA_C(arma::mat arm_inds, Rcpp::DataFrame tx_data,
     );
     Rcpp::DataFrame sim_means_df2 = Rcpp::DataFrame::create(
       _["dprod_loss"] = sim_means_out["dprod_loss"],
-      _["yrs_since_approval"] = sim_means_out["yrs_since_approval"]                               
+      _["dhc_cost"] = sim_means_out["dhc_cost"],
+      _["dtot_cost"] = sim_means_out["dtot_cost"],
+      _["yrs_since_approval"] = sim_means_out["yrs_since_approval"],
+      _["dqalys_ann"] = sim_means_out["dqalys_ann"],
+      _["dhc_cost_ann"] = sim_means_out["dhc_cost_ann"],
+      _["dprod_loss_ann"] = sim_means_out["dprod_loss_ann"]
     );
     std::map<std::string, std::vector<double> > time_means_out = time_means.calc_means();
     std::map<std::string, std::vector<int> > time_means_id = time_means.get_id();
