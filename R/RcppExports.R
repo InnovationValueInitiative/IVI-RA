@@ -36,10 +36,6 @@ sim_mgmt_cost1C <- function(yrlen, cost) {
     .Call('_iviRA_sim_mgmt_cost1C', PACKAGE = 'iviRA', yrlen, cost)
 }
 
-sim_hosp_cost1C <- function(haq, yrlen, hosp_days, cost_pday) {
-    .Call('_iviRA_sim_hosp_cost1C', PACKAGE = 'iviRA', haq, yrlen, hosp_days, cost_pday)
-}
-
 sim_si_cost1C <- function(si, yrlen, cost) {
     .Call('_iviRA_sim_si_cost1C', PACKAGE = 'iviRA', si, yrlen, cost)
 }

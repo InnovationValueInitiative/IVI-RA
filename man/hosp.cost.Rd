@@ -7,7 +7,7 @@
 \format{A data table with 5 variables.
 \describe{
   \item{haq}{HAQ score range.}
-  \item{days_mean}{Mean number of days in the hospital for a given HAQ score range.}
+  \item{days_mean}{Mean number of days in the hospital per year for a given HAQ score range.}
   \item{days_se}{Standard error of number of days in the hospital for a given HAQ score range.}
   \item{cost_pday_mean}{Mean number of costs per day in the hospital for a given HAQ score range.}
   \item{cost_pday_se}{Standard error of costs per day in the hospital for a given HAQ score range.}

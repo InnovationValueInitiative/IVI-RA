@@ -503,30 +503,40 @@ double sim_mgmt_cost1C(double yrlen, double cost){
   return cost * yrlen;
 }
 
-//// Hospitalization costs
-// [[Rcpp::export]]
-double sim_hosp_cost1C(double &haq, double yrlen, arma::rowvec hosp_days, 
-                                   arma::rowvec cost_pday){
-  double hosp_cost = 0.0;
+//// Hospitalization costs and days
+struct Hosp {
+  double cost;
+  double days;
+};
+
+Hosp sim_hosp(double &haq, double yrlen, arma::rowvec hosp_days, 
+                       arma::rowvec cost_pday){
+  Hosp hosp;
   if (haq < 0.5){
-      hosp_cost = hosp_days(0) * cost_pday(0) * yrlen;
+    hosp.days = hosp_days(0) * yrlen;
+    hosp.cost = hosp.days * cost_pday(0);
   }
   else if (haq >= 0.5 && haq < 1){
-      hosp_cost = hosp_days(1) * cost_pday(1) * yrlen;
+    hosp.days = hosp_days(1) * yrlen;
+    hosp.cost = hosp.days * cost_pday(1);
   }
   else if (haq >= 1 && haq < 1.5){
-      hosp_cost = hosp_days(2) * cost_pday(2) * yrlen;
+    hosp.days = hosp_days(2) * yrlen;
+    hosp.cost = hosp.days * cost_pday(2);
   }
   else if (haq >= 1.5 & haq < 2){
-      hosp_cost = hosp_days(3) * cost_pday(3) * yrlen;
+    hosp.days = hosp_days(3) * yrlen;
+    hosp.cost = hosp.days * cost_pday(3);
   } 
   else if (haq >= 2 & haq < 2.5){
-      hosp_cost = hosp_days(4) * cost_pday(4) * yrlen;
+    hosp.days = hosp_days(4) * yrlen;
+    hosp.cost = hosp.days * cost_pday(4);
   }
   else if (haq >= 2.5){
-      hosp_cost = hosp_days(5) * cost_pday(5) * yrlen;
+    hosp.days = hosp_days(5) * yrlen;
+    hosp.cost = hosp.days * cost_pday(5);
   }
-  return hosp_cost;
+  return hosp;
 }
 
 //// Serious Infection Cost
@@ -718,7 +728,7 @@ public:
   double calc_dhaq(double haq0, double haq, bool final_cycle);
   void increment_indivsums(double yrs_since_approval, double dqalys, double dhc_cost, 
                            double dprod_loss);
-  void increment_varsums(double qalys, double tx_cost, double hosp_cost,
+  void increment_varsums(double qalys, double tx_cost, Hosp hosp,
                          double mgmt_cost, double si_cost, double prod_loss, double si,
                          std::string route, double haq0, double haq, bool final_cycle,
                          double yrs_since_approval, double age0); 
@@ -762,6 +772,7 @@ SimMeans::SimMeans(int n_mods_, int n_sims_, int n_indivs_, double r_qalys, doub
   varsums["dqalys"] = std::vector<double> (N);
   varsums["tx_cost"] = std::vector<double> (N);
   varsums["dtx_cost"] = std::vector<double> (N);
+  varsums["hosp_days"] = std::vector<double> (N);
   varsums["hosp_cost"] = std::vector<double> (N);
   varsums["dhosp_cost"] = std::vector<double> (N);
   varsums["mgmt_cost"] = std::vector<double> (N);
@@ -866,7 +877,7 @@ void SimMeans::increment_indivsums(double yrs_since_approval, double dqalys, dou
   
 }
 
-void SimMeans::increment_varsums(double qalys, double tx_cost, double hosp_cost,
+void SimMeans::increment_varsums(double qalys, double tx_cost, Hosp hosp,
                                  double mgmt_cost, double si_cost, double prod_loss, double si,
                                  std::string route, double haq0, double haq, bool final_cycle,
                                  double yrs_since_approval, double age0){
@@ -874,7 +885,7 @@ void SimMeans::increment_varsums(double qalys, double tx_cost, double hosp_cost,
   double dfc = discount_factor(cycle + 1, discount_cost, yrlen);
   double dqalys = qalys * dfq;
   double dtx_cost = tx_cost * dfc;
-  double dhosp_cost = hosp_cost * dfc;
+  double dhosp_cost = hosp.cost * dfc;
   double dmgmt_cost = mgmt_cost * dfc;
   double dsi_cost = si_cost * dfc;
   double dprod_loss = prod_loss * dfc;
@@ -892,7 +903,8 @@ void SimMeans::increment_varsums(double qalys, double tx_cost, double hosp_cost,
   varsums["dqalys"][index] = varsums["dqalys"][index] + dqalys;
   varsums["tx_cost"][index] = varsums["tx_cost"][index] + tx_cost;
   varsums["dtx_cost"][index] = varsums["dtx_cost"][index] + dtx_cost;
-  varsums["hosp_cost"][index] = varsums["hosp_cost"][index] + hosp_cost;
+  varsums["hosp_days"][index] = varsums["hosp_days"][index] + hosp.days;
+  varsums["hosp_cost"][index] = varsums["hosp_cost"][index] + hosp.cost;
   varsums["dhosp_cost"][index] = varsums["dhosp_cost"][index] + dhosp_cost;
   varsums["mgmt_cost"][index] = varsums["mgmt_cost"][index] + mgmt_cost;
   varsums["dmgmt_cost"][index] = varsums["dmgmt_cost"][index] + dmgmt_cost;
@@ -927,19 +939,6 @@ std::map<std::string, std::vector<double> > SimMeans::calc_means(){
   return varmeans;
 }
 
-RCPP_MODULE(mod_SimMeans) {
-    
-    class_<SimMeans>("SimMeans")
-    .constructor<int, int, int, double, double>()
-    .method("get_id", &SimMeans::get_id)
-    .method("get_varsums", &SimMeans::get_varsums)
-    .method("set_iterators", &SimMeans::set_iterators)
-    .method("set_id", &SimMeans::set_id)
-    .method("increment_id", &SimMeans::increment_id)
-    .method("increment_varsums", &SimMeans::increment_varsums)
-    .method("calc_means", &SimMeans::calc_means)
-    ;
-}
 
 // Calculate means by time period for selected variables
 class TimeMeans {         
@@ -1354,6 +1353,7 @@ List sim_iviRA_C(arma::mat arm_inds, Rcpp::DataFrame tx_data,
   std::vector<int> si_vec;
   std::vector<double> yrlen_vec;
   std::vector<double> tx_cost_vec;
+  std::vector<double> hosp_days_vec;
   std::vector<double> hosp_cost_vec;
   std::vector<double> mgmt_cost_vec;
   std::vector<double> si_cost_vec;
@@ -1521,7 +1521,8 @@ List sim_iviRA_C(arma::mat arm_inds, Rcpp::DataFrame tx_data,
                                         infusion_cost, loading_dose, 
                                         weight_based, weight[i], cycle_length, 
                                         tc_discount.row(s));
-            sim_cost.hosp = sim_hosp_cost1C(haq, cycle_length/12, hosp_days.row(s), cost_pday.row(s));
+            Hosp hosp = sim_hosp(haq, cycle_length/12, hosp_days.row(s), cost_pday.row(s));
+            sim_cost.hosp = hosp.cost;
             sim_cost.mgmt = sim_mgmt_cost1C(cycle_length/12, mgmt_cost[s]);
             sim_cost.prod = sim_prod_loss1C(haq, cycle_length/12, prod_loss[s]);
             sim_cost.si = sim_si_cost1C(si, cycle_length/12, si_cost[s]);
@@ -1551,7 +1552,7 @@ List sim_iviRA_C(arma::mat arm_inds, Rcpp::DataFrame tx_data,
             
             if (output == "summary"){
               sim_means.increment_id(m, s, i, cycle);
-              sim_means.increment_varsums(qalys, sim_cost.tx, sim_cost.hosp,
+              sim_means.increment_varsums(qalys, sim_cost.tx, hosp,
                                           sim_cost.mgmt, sim_cost.si, sim_cost.prod, si,
                                           route[arm_ind_ij], haq0[i], haq, final_cycle, 
                                           yrs_since_approval[arm_ind_ij], age0[i]);
@@ -1600,6 +1601,7 @@ List sim_iviRA_C(arma::mat arm_inds, Rcpp::DataFrame tx_data,
               yrlen_vec.push_back(cycle_length/12);
             }
             tx_cost_vec.push_back(sim_cost.tx);
+            hosp_days_vec.push_back(hosp.days);
             hosp_cost_vec.push_back(sim_cost.hosp);
             mgmt_cost_vec.push_back(sim_cost.mgmt);
             prod_loss_vec.push_back(sim_cost.prod);
@@ -1649,6 +1651,7 @@ List sim_iviRA_C(arma::mat arm_inds, Rcpp::DataFrame tx_data,
     Rcpp::DataFrame sim2 = Rcpp::DataFrame::create(
       _["yrlen"] = yrlen_vec,
       _["tx_cost"] = tx_cost_vec,
+      _["hosp_days"] = hosp_days_vec,
       _["hosp_cost"] = hosp_cost_vec,
       _["mgmt_cost"] = mgmt_cost_vec,
       _["si_cost"] = si_cost_vec,
@@ -1674,16 +1677,17 @@ List sim_iviRA_C(arma::mat arm_inds, Rcpp::DataFrame tx_data,
       _["qalys"] = sim_means_out["qalys"],
       _["dqalys"] = sim_means_out["dqalys"], 
       _["tx_cost"] = sim_means_out["tx_cost"],
-      _["dtx_cost"] = sim_means_out["dtx_cost"],                           
-      _["hosp_cost"] = sim_means_out["hosp_cost"], 
+      _["dtx_cost"] = sim_means_out["dtx_cost"], 
+      _["hosp_days"] = sim_means_out["hosp_days"],
+      _["hosp_cost"] = sim_means_out["hosp_cost"],                             
       _["dhosp_cost"] = sim_means_out["dhosp_cost"],
       _["mgmt_cost"] = sim_means_out["mgmt_cost"],
       _["dmgmt_cost"] = sim_means_out["dmgmt_cost"],
       _["si_cost"] = sim_means_out["si_cost"],
-      _["dsi_cost"] = sim_means_out["dsi_cost"],
-      _["prod_loss"] = sim_means_out["prod_loss"]
+      _["dsi_cost"] = sim_means_out["dsi_cost"]
     );
     Rcpp::DataFrame sim_means_df2 = Rcpp::DataFrame::create(
+      _["prod_loss"] = sim_means_out["prod_loss"],
       _["dprod_loss"] = sim_means_out["dprod_loss"],
       _["dhc_cost"] = sim_means_out["dhc_cost"],
       _["dtot_cost"] = sim_means_out["dtot_cost"],

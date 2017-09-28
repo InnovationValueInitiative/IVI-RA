@@ -136,20 +136,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// sim_hosp_cost1C
-double sim_hosp_cost1C(double& haq, double yrlen, arma::rowvec hosp_days, arma::rowvec cost_pday);
-RcppExport SEXP _iviRA_sim_hosp_cost1C(SEXP haqSEXP, SEXP yrlenSEXP, SEXP hosp_daysSEXP, SEXP cost_pdaySEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double& >::type haq(haqSEXP);
-    Rcpp::traits::input_parameter< double >::type yrlen(yrlenSEXP);
-    Rcpp::traits::input_parameter< arma::rowvec >::type hosp_days(hosp_daysSEXP);
-    Rcpp::traits::input_parameter< arma::rowvec >::type cost_pday(cost_pdaySEXP);
-    rcpp_result_gen = Rcpp::wrap(sim_hosp_cost1C(haq, yrlen, hosp_days, cost_pday));
-    return rcpp_result_gen;
-END_RCPP
-}
 // sim_si_cost1C
 double sim_si_cost1C(int si, double yrlen, double cost);
 RcppExport SEXP _iviRA_sim_si_cost1C(SEXP siSEXP, SEXP yrlenSEXP, SEXP costSEXP) {
@@ -555,7 +541,6 @@ BEGIN_RCPP
 END_RCPP
 }
 
-RcppExport SEXP _rcpp_module_boot_mod_SimMeans();
 RcppExport SEXP _rcpp_module_boot_mod_TimeMeans();
 RcppExport SEXP _rcpp_module_boot_mod_Out0();
 
@@ -568,7 +553,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_iviRA_sim_dhaq_lcgm1C", (DL_FUNC) &_iviRA_sim_dhaq_lcgm1C, 7},
     {"_iviRA_sim_tx_cost1C", (DL_FUNC) &_iviRA_sim_tx_cost1C, 15},
     {"_iviRA_sim_mgmt_cost1C", (DL_FUNC) &_iviRA_sim_mgmt_cost1C, 2},
-    {"_iviRA_sim_hosp_cost1C", (DL_FUNC) &_iviRA_sim_hosp_cost1C, 4},
     {"_iviRA_sim_si_cost1C", (DL_FUNC) &_iviRA_sim_si_cost1C, 3},
     {"_iviRA_sim_prod_loss1C", (DL_FUNC) &_iviRA_sim_prod_loss1C, 3},
     {"_iviRA_sim_utility_wailoo1C", (DL_FUNC) &_iviRA_sim_utility_wailoo1C, 7},
@@ -589,7 +573,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_iviRA_rbvcnormC", (DL_FUNC) &_iviRA_rbvcnormC, 6},
     {"_iviRA_sim_acr_test", (DL_FUNC) &_iviRA_sim_acr_test, 0},
     {"_iviRA_sim_lm_test", (DL_FUNC) &_iviRA_sim_lm_test, 0},
-    {"_rcpp_module_boot_mod_SimMeans", (DL_FUNC) &_rcpp_module_boot_mod_SimMeans, 0},
     {"_rcpp_module_boot_mod_TimeMeans", (DL_FUNC) &_rcpp_module_boot_mod_TimeMeans, 0},
     {"_rcpp_module_boot_mod_Out0", (DL_FUNC) &_rcpp_module_boot_mod_Out0, 0},
     {NULL, NULL, 0}
