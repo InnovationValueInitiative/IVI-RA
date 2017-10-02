@@ -297,6 +297,9 @@ for (i in 1:length(mods)){
   ttd.all[[mods[i]]] <- flexsurvreg_pars(fits.c[[mods[i]]])
   ttd.da[[mods[i]]] <- flexsurvreg_pars(fits.c.da[[mods[i]]])
 }
+names(ttd.all$exponential$est) <- "rate"
+names(ttd.eular.mod$exponential$est) <- "rate"
+names(ttd.eular.good$exponential$est) <- "rate"
 ttd.eular.uk <- list(moderate = ttd.eular.mod, good = ttd.eular.good)
 ttd.eular <- list(moderate = ttd.eular.mod.adj, good = ttd.eular.good.adj) # us version
 
