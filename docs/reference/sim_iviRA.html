@@ -116,7 +116,9 @@
     <li>
       <a href="../model-description/model-description.pdf">Model description</a>
     </li>
-    <li class="dropdown-header">Release history</li>
+    <li>
+      <a href="../news/index.html">Release history</a>
+    </li>
     <li>
       <a href="../articles/reproducibility.html">Reproducibility</a>
     </li>
@@ -125,8 +127,20 @@
     </li>
   </ul>
 </li>
-<li>
-  <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra/">Web app</a>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Web apps
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra-expert/">IVI-RA value tool expert</a>
+    </li>
+    <li>
+      <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra-simple/">IVI-RA value tool</a>
+    </li>
+  </ul>
 </li>
       </ul>
       
@@ -156,10 +170,9 @@
     
 
     <pre class="usage"><span class='fu'>sim_iviRA</span>(<span class='no'>arms</span>, <span class='no'>input_data</span>, <span class='no'>pars</span>, <span class='no'>model_structures</span>, <span class='kw'>max_months</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>treatment_lookup</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/treatments'>treatments</a></span>$<span class='no'>sname</span>, <span class='kw'>hist</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"naive"</span>,
-  <span class='st'>"experienced"</span>), <span class='kw'>output</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"data"</span>, <span class='st'>"summary"</span>), <span class='kw'>discount_qalys</span> <span class='kw'>=</span> <span class='fl'>0.03</span>,
-  <span class='kw'>discount_cost</span> <span class='kw'>=</span> <span class='fl'>0.03</span>, <span class='kw'>insurance_value</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>incidence</span> <span class='kw'>=</span> <span class='fl'>0.006</span>,
-  <span class='kw'>mrs</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>check</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+  <span class='kw'>tx_data</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/treatments'>treatments</a></span>, <span class='kw'>hist</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"naive"</span>, <span class='st'>"experienced"</span>),
+  <span class='kw'>output</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"data"</span>, <span class='st'>"summary"</span>), <span class='kw'>discount_qalys</span> <span class='kw'>=</span> <span class='fl'>0.03</span>,
+  <span class='kw'>discount_cost</span> <span class='kw'>=</span> <span class='fl'>0.03</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -183,6 +196,13 @@ a single treatment sequence or a matrix of unique sequences for each patient.</p
 the model is simulated over each patient's lifetime.</p></td>
     </tr>
     <tr>
+      <th>tx_data</th>
+      <td><p>Dataset of treatments with columns names equivalent to <code><a href='http://www.rdocumentation.org/packages/iviRA/topics/treatments'>iviRA::treatments</a></code>.
+Index of of treatments in <code>arms</code> are matched against treatments in
+<code>tx_data$sname</code> by name. Indices of treatment-specific parameter estimates must be 
+in the same order as treatments in <code>tx_data</code>.</p></td>
+    </tr>
+    <tr>
       <th>hist</th>
       <td><p>Is the patient biologic naive or biologic experienced?</p></td>
     </tr>
@@ -204,19 +224,8 @@ otherwise, discounts can be applied to the simulated output.</p></td>
 otherwise, discounts can be applied to the simulated output.</p></td>
     </tr>
     <tr>
-      <th>insurance_value</th>
-      <td><p>If TRUE, insurance value is simulated. Defeault is FALSE.</p></td>
-    </tr>
-    <tr>
       <th>model_structure</th>
       <td><p>Object of class model structure generated from select_model_structure.</p></td>
-    </tr>
-    <tr>
-      <th>treatments_lookup</th>
-      <td><p>Vector of names of all treatments included in the parameter
-estimates. Index of of treatments in <code>arms</code> are matched against treatments in
-<code>treatments_lookup</code> by name. Indices of treatment-specific parameter estimates must be 
-in the same order as treatments in <code>treatments_lookup</code>.</p></td>
     </tr>
     </table>
     

@@ -350,6 +350,7 @@ sample_pars <- function(n = 100, input_data,
                                  rate = incidence_female$person_years),
                         male = sample_gammas(n, shape = incidence_male$events, 
                                              rate = incidence_male$person_years))
+  class(sim) <- "par_sample"
   return(sim)
 }
 

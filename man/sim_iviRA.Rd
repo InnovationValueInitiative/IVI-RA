@@ -7,7 +7,7 @@
 sim_iviRA(arms, input_data, pars, model_structures, max_months = NULL,
   tx_data = iviRA::treatments, hist = c("naive", "experienced"),
   output = c("data", "summary"), discount_qalys = 0.03,
-  discount_cost = 0.03, check = TRUE)
+  discount_cost = 0.03)
 }
 \arguments{
 \item{arms}{Name of arms in the treatment treatment sequence. May be a vector consisting of 

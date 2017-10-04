@@ -42,7 +42,7 @@ To view the full list of arguments in `sample_pars` that can changed by the user
 
 Below we describe these parameter estimates and separate them into 8 main categories: treatment effects estimated from a network meta-analysis (NMA); mappings between various measured of treatment response, disease activity, and/or function; long-term progression of disease, treatment duration, serious infections, mortality, utility, and costs.  
 
-## NMA
+## Treatment effects during initial 6 month period
 The effect of treatment on ACR response at 6 months, change in DAS28 at 6 months, and the change in the HAQ score at 6 months are estimated using a NMA. Default NMA parameter estimates are based on results from an NMA conduced by IVI using a Bayesian random effects approach. Each object is a list containing the mean and variance-covariance matrix of the posterior distribution of the parameters.
 
 ```{r }
@@ -54,7 +54,7 @@ iviRA::nma.haq.naive$mean
 
 In the PSA, we use a multivariate normal distribution to sample the NMA parameters. The advantage of this approach is that we do not have to load the entire posterior distribution with the package. The justification is the Bayesian central limit theorem, which states that under large samples, the posterior distribution will approach a multivariate normal distribution.  
 
-## Mappings
+## Treatment response mappings
 There are various mapping between treatment response measures, disease activity, and functional status that can be used within the IVI-RA model. The exact mapping utilized for a given model run will depend on the model structure select.
 
 The first set of mappings relates ACR response to the three measure of disease activity. The ACR response to SDAI mapping can either be based on the Leflunomide dataset or the inception cohort (see [Aletaha and Smolen](http://www.clinexprheumatol.org/article.asp?a=2694)) while mapping for DAS28 and CDAI can only be based on the inception cohort. The mappings correspond to model structures where `itreat_switch =  "acr-das28-switch"`, `itreat_switch = "acr-sdai-switch"`, and `itreat_switch = "acr-cdai-switch"`. Here, we show parameters estimated from the inception cohort.  
@@ -106,7 +106,7 @@ iviRA::haq.lcgm$coef
 
 The coefficient vectors `beta1`, `beta2`, `beta3`, and `beta4`, contain coefficients from a third order polynomial regression predicting the growth of the HAQ score over time for members of class 1, 2, 3, and 4, respectively; `delta2`, `delta3`, and `delta4` are coefficient vectors containing predictors of membership in classes 2-4 with class 1 being the reference group. A variance-covariance matrix, `iviRA::haq.lcgm$vcov`, is used to sample parameters from a multivariate normal distribution. The indices of the parameters of the variance-covariance matrix correspond to the row numbers in `iviRA::haq.lcgm$coef`.
 
-## Treatment duration
+## Time to treatment discontinuation
 Time to treatment discontinuation depends on the pathway (**S1-S6**) used to model treatment switching. If **S1** is selected, a single treatment discontinuation curve is used for all patients. The parameters needed to simulate this curve are stored in. In **S2-S5**, time to treatment discontinuation is stratified by the level of disease activity, and in **S6** treatment duration depends on EULAR response (st. The parameters used to simulate treatment duration based on **S1**, **S2-S5**, and **S6** are stored in `iviRA::ttd.all`, `iviRA::ttd.da`, and `iviRA::ttd.eular`, respectively. 
 
 The treatment duration curves are estimated using parametric survival models with the `flexsurv` package. Parameters from the survival analyses used in the IVI-RA model are stored in two-level lists. The names in the first level correspond to the name of the parametric survival model.

@@ -11,27 +11,42 @@ library("iviRA")
 load("output.RData")
 ```
 
+We run the IPS using the function `sim_iviRA`. The main arguments are the selected treatment arms, the input data, the parameter samples, and the model structure. The simulation can either return all simulated output (i.e., a dataset of simulated outcomes for each model structure, sampled parameter set, individual, and time-period) or summaries of the simulated output.
 
-We run the IPS using the function `sim_iviRA`. The main arguments are the selected treatment arms, the input data, the parameter samples, and the model structure. Here, we simulate outcomes for Arm 1 and Arm 2.
+## Complete output
+Here, we return complete simulation output for Arm 1 and Arm 2.
 
 ```{r }
 sim.out1 <- sim_iviRA(arms = arm1, input_data = input.dat, pars = parsamp,
-                     model_structures = mod.structs)
+                     model_structures = mod.structs, output = "data")
 sim.out1[, arm := "Arm 1"]
 sim.out2 <- sim_iviRA(arms = arm2, input_data = input.dat, pars = parsamp,
-                     model_structures = mod.structs)
+                     model_structures = mod.structs, output = "data")
 sim.out2[, arm := "Arm 2"]
 sim.out <- rbind(sim.out1, sim.out2)
 head(sim.out)
 ```
 
-`sim_iviRA` returns a data.table which is an enhanced data.frame from the data.table package designed for fast data manipulation. For a given model structure (`model`) and sampled parameter set (`sim`), a sampled patient (`id`) remains on a given therapy until time to treatment discontinuation (`ttd`) becomes less than zero in a given month. Treatment discontinuation is caused by a serious infection (`si = 1`) if the sampled time to serious infection at treatment initiation is less than the sampled time to discontinuation. After discontinuation, a patient switches to the next therapy and `therapy_seq` increments by one. Patient age (`age`) increases in 6-month increments. 
+The output is data.table which is an enhanced data.frame from the data.table package designed for fast data manipulation. For a given model structure (`model`) and sampled parameter set (`sim`), a sampled patient (`id`) remains on a given treatment until time to treatment discontinuation (`ttd`) becomes less than zero in a given month. Treatment discontinuation is caused by a serious infection (`si = 1`) if the sampled time to serious infection at treatment initiation is less than the sampled time to discontinuation. After discontinuation, a patient switches to the next therapy and `tx_seq` increments by one. Patient age (`age`) increases in 6-month increments. 
 
 The HAQ score (`haq`) during the initial 6-month period (`therapy_cycle = 1`), disease activity measures (`das28`, `sdai`, and `cdai`), and `ttd` depend on the model structure chosen. For example, in the first model structure, HAQ and time to treatment discontinuation depend on ACR response (`acr`) and in turn, EULAR response (`eular`). The simulation returned NA values for the three disease activity measures because treatment switching is is not a function of disease activity (i.e., **S6** was chosen in the first model structure). The simulation ends when a patient dies (`death = 1`).
 
-Health care sector costs consist of treatment costs (`treat_cost`); hospital costs (`hosp_cost`), which increase with the HAQ score; general management costs (`mgmt_cost`); and the costs of caused by serious infections (`si_cost`). Non-health care sector costs are those due to lost wages. Analyses performed from a societal perspective should include these productivity losses (`prod_loss`). 
+Health care sector costs consist of treatment costs (`tx_cost`); hospital costs (`hosp_cost`), which increase with the HAQ score; general management costs (`mgmt_cost`); and the costs of caused by serious infections (`si_cost`). Non-health care sector costs are those due to lost wages. Analyses performed from a societal perspective should include these productivity losses (`prod_loss`). 
 
 Utility (`utility`) depends on whether the Hernandez-Alava mixture model or Wailoo logistic regression equation is used to simulate utility. In both cases, QALYs (`qalys`) are calculated as a function of utility and the estimated utility loss from a serious infection.  
+
+## Summary output
+One drawback of returning all simulation output is that it can place significant strains on computer memory. For example, if 200 model structures, 1,000 parameters sets, and 5,000 patients are simulated for 15 years (i.e., 30 model cycles), then the number of observations is 30 billion. The `sim_iviRA` function consequently has the option to only return summaries of simulation output. 
+
+In particular, by invoking the `output = summary` option, the data.table objects `means`, `time.means`, and `out0` are returned. `means` reports simulated outcomes averaged over individuals and time and `tmeans` reports simulated outcomes averaged across individuals but conditional on time. `out0` provides outcomes for the first model cycle including time to treatment discontinuation and time to a serious infection. Output is always conditional on the model structure and sampled parameter set. 
+
+```{r }
+sim.out1.summary <- sim_iviRA(arms = arm1, input_data = input.dat, pars = parsamp,
+                     model_structures = mod.structs, output = "summary")
+head(sim.out1.summary$means)
+head(sim.out1.summary$time.means)
+head(sim.out1.summary$out0)
+```
 
 <div>
 <ul class="pager">

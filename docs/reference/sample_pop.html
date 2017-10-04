@@ -116,7 +116,9 @@
     <li>
       <a href="../model-description/model-description.pdf">Model description</a>
     </li>
-    <li class="dropdown-header">Release history</li>
+    <li>
+      <a href="../news/index.html">Release history</a>
+    </li>
     <li>
       <a href="../articles/reproducibility.html">Reproducibility</a>
     </li>
@@ -125,8 +127,20 @@
     </li>
   </ul>
 </li>
-<li>
-  <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra/">Web app</a>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Web apps
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra-expert/">IVI-RA value tool expert</a>
+    </li>
+    <li>
+      <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra-simple/">IVI-RA value tool</a>
+    </li>
+  </ul>
 </li>
       </ul>
       
@@ -161,8 +175,7 @@
   <span class='kw'>prev_dmards_sd</span> <span class='kw'>=</span> <span class='fl'>1.72</span>, <span class='kw'>das28_mean</span> <span class='kw'>=</span> <span class='fl'>6</span>, <span class='kw'>das28_sd</span> <span class='kw'>=</span> <span class='fl'>1.2</span>, <span class='kw'>sdai_mean</span> <span class='kw'>=</span> <span class='fl'>43</span>,
   <span class='kw'>sdai_sd</span> <span class='kw'>=</span> <span class='fl'>13</span>, <span class='kw'>cdai_mean</span> <span class='kw'>=</span> <span class='fl'>41</span>, <span class='kw'>cdai_sd</span> <span class='kw'>=</span> <span class='fl'>13</span>, <span class='kw'>cor_das28_sdai</span> <span class='kw'>=</span> <span class='fl'>0.86</span>,
   <span class='kw'>cor_das28_cdai</span> <span class='kw'>=</span> <span class='fl'>0.86</span>, <span class='kw'>cor_das28_haq</span> <span class='kw'>=</span> <span class='fl'>0.38</span>, <span class='kw'>cor_sdai_cdai</span> <span class='kw'>=</span> <span class='fl'>0.94</span>,
-  <span class='kw'>cor_sdai_haq</span> <span class='kw'>=</span> <span class='fl'>0.34</span>, <span class='kw'>cor_cdai_haq</span> <span class='kw'>=</span> <span class='fl'>0.34</span>, <span class='kw'>mrs_lower</span> <span class='kw'>=</span> <span class='fl'>1.1</span>,
-  <span class='kw'>mrs_upper</span> <span class='kw'>=</span> <span class='fl'>1.5</span>)</pre>
+  <span class='kw'>cor_sdai_haq</span> <span class='kw'>=</span> <span class='fl'>0.34</span>, <span class='kw'>cor_cdai_haq</span> <span class='kw'>=</span> <span class='fl'>0.34</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -259,17 +272,6 @@
       <th>cor_cdai_haq</th>
       <td><p>Correlation between CDAI and HAQ.</p></td>
     </tr>
-    <tr>
-      <th>mrs_lower</th>
-      <td><p>Lower bound for the marginal rate of substitution between sick 
-(i.e., have rheumatoid arthritis) and healthy states. In other words, the amount of consumption that an individual is willing to 
-  give up while healthy for an additiional dollar of consumption when sick.</p></td>
-    </tr>
-    <tr>
-      <th>mrs_upper</th>
-      <td><p>Upper bound for the marginal rate of substitution between sick and 
-healthy states.</p></td>
-    </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -284,17 +286,8 @@ for each variable. Current variables are:</p><dl class='dl-horizontal'>
   <dt>sdai</dt><dd><p>SDAI score</p></dd>
   <dt>cdai</dt><dd><p>CDAI score</p></dd>
   <dt>haq0</dt><dd><p>Baseline HAQ score</p></dd>
-  <dt>mrs</dt><dd><p>THe marginal rate of substitution between sick and 
-  healthy states as described above.</p></dd>
 </dl>
 
-    
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>If a homogeneous population is chosen, the marginal rate of substitution is equal to
-<code>(mrs_lower + mrs_upper)/2</code>. The marginal rate of substitution is only relevant when 
-estimating the insurance value (i.e., value from the perspective of a healthy individual) of
-a technology.</p>
     
 
   </div>
@@ -304,8 +297,6 @@ a technology.</p>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
-
-      <li><a href="#details">Details</a></li>
           </ul>
 
   </div>

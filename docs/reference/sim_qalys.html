@@ -116,7 +116,9 @@
     <li>
       <a href="../model-description/model-description.pdf">Model description</a>
     </li>
-    <li class="dropdown-header">Release history</li>
+    <li>
+      <a href="../news/index.html">Release history</a>
+    </li>
     <li>
       <a href="../articles/reproducibility.html">Reproducibility</a>
     </li>
@@ -125,8 +127,20 @@
     </li>
   </ul>
 </li>
-<li>
-  <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra/">Web app</a>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Web apps
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra-expert/">IVI-RA value tool expert</a>
+    </li>
+    <li>
+      <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra-simple/">IVI-RA value tool</a>
+    </li>
+  </ul>
 </li>
       </ul>
       
@@ -155,7 +169,7 @@
     <p>Simulate QALYs using using output produced from <code>sim_haq</code>.</p>
     
 
-    <pre class="usage"><span class='fu'>sim_qalys</span>(<span class='no'>simhaq</span>, <span class='no'>utility</span>, <span class='no'>si_ul</span>, <span class='no'>x_attr</span>, <span class='no'>tx_attr_ug</span>, <span class='kw'>check</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>sim_qalys</span>(<span class='no'>simhaq</span>, <span class='no'>utility</span>, <span class='no'>si_ul</span>, <span class='no'>x_attr</span>, <span class='no'>tx_attr_coef</span>, <span class='kw'>check</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -180,9 +194,9 @@ infection occured during the model cycle.</p></td>
 <a href='get_input_data.html'>get_input_data</a>)</p></td>
     </tr>
     <tr>
-      <th>tx_attr_ug</th>
-      <td><p>Utility gain from treatment attributes (e.g., output
-<code>tx.attr.utility</code> from <a href='sample_pars.html'>sample_pars</a>.)</p></td>
+      <th>tx_attr_coef</th>
+      <td><p>Distribution of coefficient vector for treatment attributes (e.g., output
+<code>utility.tx.attr</code> from <a href='sample_pars.html'>sample_pars</a>.)</p></td>
     </tr>
     </table>
     

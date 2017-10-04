@@ -93,7 +93,9 @@
     <li>
       <a href="../model-description/model-description.pdf">Model description</a>
     </li>
-    <li class="dropdown-header">Release history</li>
+    <li>
+      <a href="../news/index.html">Release history</a>
+    </li>
     <li>
       <a href="../articles/reproducibility.html">Reproducibility</a>
     </li>
@@ -102,8 +104,20 @@
     </li>
   </ul>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Web apps
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
 <li>
-  <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra/">Web app</a>
+      <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra-expert/">IVI-RA value tool expert</a>
+    </li>
+    <li>
+      <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra-simple/">IVI-RA value tool</a>
+    </li>
+  </ul>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
@@ -146,7 +160,7 @@
 ## [19] "haq.lprog.tx"      "haq.lprog.age"     "haq.lcgm"         
 ## [22] "utility.mixture"   "utility.wailoo"    "hosp.cost"        
 ## [25] "mgmt.cost"         "prod.loss"         "ttsi"             
-## [28] "si.cost"           "si.ul"             "tx.attr.utility"  
+## [28] "si.cost"           "si.ul"             "utility.tx.attr"  
 ## [31] "incidence"</code></pre>
 <p>The number of samples is also returned for convenience.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">parsamp$n</code></pre></div>
@@ -155,12 +169,12 @@
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">parsamp2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pars.html">sample_pars</a></span>(<span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">input_data =</span> input.dat, <span class="dt">si_cost =</span> <span class="dv">7000</span>)
 <span class="kw">summary</span>(parsamp2$si.cost)</code></pre></div>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##    5606    6371    7102    7019    7653    8386</code></pre>
+##    5607    6020    6988    6896    7527    8372</code></pre>
 <p>To view the full list of arguments in <code>sample_pars</code> that can changed by the user view the documentation by typing <code><a href="../reference/sample_pars.html">?sample_pars</a></code>. All default arguments are loaded with the package and are based on IVI’s statistical estimates and synthesis of the literature. The parameter estimates can be viewed by typing the command <code>data(package = "iviRA")</code> into the R console.</p>
 <p>Below we describe these parameter estimates and separate them into 8 main categories: treatment effects estimated from a network meta-analysis (NMA); mappings between various measured of treatment response, disease activity, and/or function; long-term progression of disease, treatment duration, serious infections, mortality, utility, and costs.</p>
-<div id="nma" class="section level2">
+<div id="treatment-effects-during-initial-6-month-period" class="section level2">
 <h2 class="hasAnchor">
-<a href="#nma" class="anchor"></a>NMA</h2>
+<a href="#treatment-effects-during-initial-6-month-period" class="anchor"></a>Treatment effects during initial 6 month period</h2>
 <p>The effect of treatment on ACR response at 6 months, change in DAS28 at 6 months, and the change in the HAQ score at 6 months are estimated using a NMA. Default NMA parameter estimates are based on results from an NMA conduced by IVI using a Bayesian random effects approach. Each object is a list containing the mean and variance-covariance matrix of the posterior distribution of the parameters.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">names</span>(iviRA::nma.acr.naive)</code></pre></div>
 <pre><code>## [1] "mean" "vcov"</code></pre>
@@ -193,9 +207,9 @@
 ## -0.07234310 -0.25137107          NA</code></pre>
 <p>In the PSA, we use a multivariate normal distribution to sample the NMA parameters. The advantage of this approach is that we do not have to load the entire posterior distribution with the package. The justification is the Bayesian central limit theorem, which states that under large samples, the posterior distribution will approach a multivariate normal distribution.</p>
 </div>
-<div id="mappings" class="section level2">
+<div id="treatment-response-mappings" class="section level2">
 <h2 class="hasAnchor">
-<a href="#mappings" class="anchor"></a>Mappings</h2>
+<a href="#treatment-response-mappings" class="anchor"></a>Treatment response mappings</h2>
 <p>There are various mapping between treatment response measures, disease activity, and functional status that can be used within the IVI-RA model. The exact mapping utilized for a given model run will depend on the model structure select.</p>
 <p>The first set of mappings relates ACR response to the three measure of disease activity. The ACR response to SDAI mapping can either be based on the Leflunomide dataset or the inception cohort (see <a href="http://www.clinexprheumatol.org/article.asp?a=2694">Aletaha and Smolen</a>) while mapping for DAS28 and CDAI can only be based on the inception cohort. The mappings correspond to model structures where <code>itreat_switch =  "acr-das28-switch"</code>, <code>itreat_switch = "acr-sdai-switch"</code>, and <code>itreat_switch = "acr-cdai-switch"</code>. Here, we show parameters estimated from the inception cohort.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iviRA::acr2das28$inception</code></pre></div>
@@ -316,9 +330,9 @@
 ##                    var data parameter         est    se</code></pre>
 <p>The coefficient vectors <code>beta1</code>, <code>beta2</code>, <code>beta3</code>, and <code>beta4</code>, contain coefficients from a third order polynomial regression predicting the growth of the HAQ score over time for members of class 1, 2, 3, and 4, respectively; <code>delta2</code>, <code>delta3</code>, and <code>delta4</code> are coefficient vectors containing predictors of membership in classes 2-4 with class 1 being the reference group. A variance-covariance matrix, <code>iviRA::haq.lcgm$vcov</code>, is used to sample parameters from a multivariate normal distribution. The indices of the parameters of the variance-covariance matrix correspond to the row numbers in <code>iviRA::haq.lcgm$coef</code>.</p>
 </div>
-<div id="treatment-duration" class="section level2">
+<div id="time-to-treatment-discontinuation" class="section level2">
 <h2 class="hasAnchor">
-<a href="#treatment-duration" class="anchor"></a>Treatment duration</h2>
+<a href="#time-to-treatment-discontinuation" class="anchor"></a>Time to treatment discontinuation</h2>
 <p>Time to treatment discontinuation depends on the pathway (<strong>S1-S6</strong>) used to model treatment switching. If <strong>S1</strong> is selected, a single treatment discontinuation curve is used for all patients. The parameters needed to simulate this curve are stored in. In <strong>S2-S5</strong>, time to treatment discontinuation is stratified by the level of disease activity, and in <strong>S6</strong> treatment duration depends on EULAR response (st. The parameters used to simulate treatment duration based on <strong>S1</strong>, <strong>S2-S5</strong>, and <strong>S6</strong> are stored in <code><a href="http://www.rdocumentation.org/packages/iviRA/topics/ttd">iviRA::ttd.all</a></code>, <code><a href="http://www.rdocumentation.org/packages/iviRA/topics/ttd">iviRA::ttd.da</a></code>, and <code><a href="http://www.rdocumentation.org/packages/iviRA/topics/ttd">iviRA::ttd.eular</a></code>, respectively.</p>
 <p>The treatment duration curves are estimated using parametric survival models with the <code>flexsurv</code> package. Parameters from the survival analyses used in the IVI-RA model are stored in two-level lists. The names in the first level correspond to the name of the parametric survival model.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">names</span>(iviRA::ttd.all)</code></pre></div>
@@ -901,10 +915,10 @@
       <h2 class="hasAnchor">
 <a href="#tocnav" class="anchor"></a>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
-<li><a href="#nma">NMA</a></li>
-      <li><a href="#mappings">Mappings</a></li>
+<li><a href="#treatment-effects-during-initial-6-month-period">Treatment effects during initial 6 month period</a></li>
+      <li><a href="#treatment-response-mappings">Treatment response mappings</a></li>
       <li><a href="#long-term-haq-progression">Long-term HAQ progression</a></li>
-      <li><a href="#treatment-duration">Treatment duration</a></li>
+      <li><a href="#time-to-treatment-discontinuation">Time to treatment discontinuation</a></li>
       <li><a href="#serious-infections">Serious infections</a></li>
       <li><a href="#mortality">Mortality</a></li>
       <li><a href="#utility">Utility</a></li>

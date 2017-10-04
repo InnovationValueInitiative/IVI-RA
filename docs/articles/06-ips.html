@@ -93,7 +93,9 @@
     <li>
       <a href="../model-description/model-description.pdf">Model description</a>
     </li>
-    <li class="dropdown-header">Release history</li>
+    <li>
+      <a href="../news/index.html">Release history</a>
+    </li>
     <li>
       <a href="../articles/reproducibility.html">Reproducibility</a>
     </li>
@@ -102,8 +104,20 @@
     </li>
   </ul>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Web apps
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
 <li>
-  <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra/">Web app</a>
+      <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra-expert/">IVI-RA value tool expert</a>
+    </li>
+    <li>
+      <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra-simple/">IVI-RA value tool</a>
+    </li>
+  </ul>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
@@ -132,40 +146,118 @@
     
     
 <div class="contents">
-<p>We run the IPS using the function <code>sim_iviRA</code>. The main arguments are the selected treatment arms, the input data, the parameter samples, and the model structure. Here, we simulate outcomes for Arm 1 and Arm 2.</p>
+<p>We run the IPS using the function <code>sim_iviRA</code>. The main arguments are the selected treatment arms, the input data, the parameter samples, and the model structure. The simulation can either return all simulated output (i.e., a dataset of simulated outcomes for each model structure, sampled parameter set, individual, and time-period) or summaries of the simulated output.</p>
+<div id="complete-output" class="section level2">
+<h2 class="hasAnchor">
+<a href="#complete-output" class="anchor"></a>Complete output</h2>
+<p>Here, we return complete simulation output for Arm 1 and Arm 2.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sim.out1 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sim_iviRA.html">sim_iviRA</a></span>(<span class="dt">arms =</span> arm1, <span class="dt">input_data =</span> input.dat, <span class="dt">pars =</span> parsamp,
-                     <span class="dt">model_structures =</span> mod.structs)
+                     <span class="dt">model_structures =</span> mod.structs, <span class="dt">output =</span> <span class="st">"data"</span>)
 sim.out1[, arm :<span class="er">=</span><span class="st"> "Arm 1"</span>]
 sim.out2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sim_iviRA.html">sim_iviRA</a></span>(<span class="dt">arms =</span> arm2, <span class="dt">input_data =</span> input.dat, <span class="dt">pars =</span> parsamp,
-                     <span class="dt">model_structures =</span> mod.structs)
+                     <span class="dt">model_structures =</span> mod.structs, <span class="dt">output =</span> <span class="st">"data"</span>)
 sim.out2[, arm :<span class="er">=</span><span class="st"> "Arm 2"</span>]
 sim.out &lt;-<span class="st"> </span><span class="kw">rbind</span>(sim.out1, sim.out2)
 <span class="kw">head</span>(sim.out)</code></pre></div>
-<pre><code>##    model sim id month tx tx_seq tx_cycle death     age      ttd acr eular
-## 1:     1   1  1     6  3      1        1     0 46.6312 23.91484   3     2
-## 2:     1   1  1    12  3      1        2     0 47.1312 22.91484   3     2
-## 3:     1   1  1    18  3      1        3     0 47.6312 21.91484   3     2
-## 4:     1   1  1    24  3      1        4     0 48.1312 20.91484   3     2
-## 5:     1   1  1    30  3      1        5     0 48.6312 19.91484   3     2
-## 6:     1   1  1    36  3      1        6     0 49.1312 18.91484   3     2
-##       das28     sdai     cdai      haq     ttsi si yrlen  tx_cost
-## 1: 5.849673 39.60841 37.24733 1.310878 91.22183  0   0.5 22421.92
-## 2: 5.849673 39.60841 37.24733 1.302859 90.22183  0   0.5 22421.92
-## 3: 5.849673 39.60841 37.24733 1.294840 89.22183  0   0.5 22421.92
-## 4: 5.849673 39.60841 37.24733 1.286821 88.22183  0   0.5 22421.92
-## 5: 5.849673 39.60841 37.24733 1.278802 87.22183  0   0.5 22421.92
-## 6: 5.849673 39.60841 37.24733 1.270783 86.22183  0   0.5 22421.92
-##    hosp_cost mgmt_cost si_cost prod_loss    utility      qalys   arm
-## 1:  101.9901  185.2355       0  3377.191 0.60806933 0.30403466 Arm 1
-## 2:  101.9901  185.2355       0  3356.532 0.62495323 0.31247661 Arm 1
-## 3:  101.9901  185.2355       0  3335.873 0.06803728 0.03401864 Arm 1
-## 4:  101.9901  185.2355       0  3315.214 0.56458953 0.28229477 Arm 1
-## 5:  101.9901  185.2355       0  3294.554 0.57993325 0.28996663 Arm 1
-## 6:  101.9901  185.2355       0  3273.895 0.58390519 0.29195260 Arm 1</code></pre>
-<p><code>sim_iviRA</code> returns a data.table which is an enhanced data.frame from the data.table package designed for fast data manipulation. For a given model structure (<code>model</code>) and sampled parameter set (<code>sim</code>), a sampled patient (<code>id</code>) remains on a given therapy until time to treatment discontinuation (<code>ttd</code>) becomes less than zero in a given month. Treatment discontinuation is caused by a serious infection (<code>si = 1</code>) if the sampled time to serious infection at treatment initiation is less than the sampled time to discontinuation. After discontinuation, a patient switches to the next therapy and <code>therapy_seq</code> increments by one. Patient age (<code>age</code>) increases in 6-month increments.</p>
+<pre><code>##    model sim id month tx tx_seq tx_cycle death      age        ttd acr
+## 1:     1   1  1     6  3      1        1     0 74.46133  0.0000000   0
+## 2:     1   1  1    12  5      2        1     0 74.96133  0.0000000   0
+## 3:     1   1  1    18  8      3        1     0 75.46133  1.1827209   1
+## 4:     1   1  1    24  8      3        2     0 75.96133  0.1827209   1
+## 5:     1   1  1    30  8      3        3     0 76.46133 -0.8172791   1
+## 6:     1   1  1    36 14      4        1     0 76.96133         NA   0
+##    eular    das28     sdai     cdai        haq     ttsi si yrlen
+## 1:     0 4.877658 27.84061 31.44201 0.78222310 19.57675  0   0.5
+## 2:     0 4.877658 27.84061 31.44201 0.78222310 48.86380  0   0.5
+## 3:     2 4.877658 27.84061 31.44201 0.03730157 23.73347  0   0.5
+## 4:     2 4.877658 27.84061 31.44201 0.04356738 22.73347  0   0.5
+## 5:     2 4.877658 27.84061 31.44201 0.57041906 21.73347  0   0.5
+## 6:     0 4.877658 27.84061 31.44201 0.57041906       NA  0   0.5
+##       tx_cost hosp_days hosp_cost mgmt_cost si_cost prod_loss   utility
+## 1: 21002.3196 0.2479688  244.9782  188.6688       0 2544.4509 0.6605843
+## 2: 20887.1749 0.2479688  244.9782  188.6688       0 2544.4509 0.6849754
+## 3: 14035.7709 0.1156926  143.2256  188.6688       0  121.3363 0.6640237
+## 4: 23131.1508 0.1156926  143.2256  188.6688       0  141.7179 0.2107983
+## 5: 23131.1508 0.2479688  244.9782  188.6688       0 1855.4851 0.7296406
+## 6:   663.8893 0.2479688  244.9782  188.6688       0 1855.4851 0.7173398
+##        qalys   arm
+## 1: 0.3302921 Arm 1
+## 2: 0.3424877 Arm 1
+## 3: 0.3320119 Arm 1
+## 4: 0.1053992 Arm 1
+## 5: 0.3648203 Arm 1
+## 6: 0.3586699 Arm 1</code></pre>
+<p>The output is data.table which is an enhanced data.frame from the data.table package designed for fast data manipulation. For a given model structure (<code>model</code>) and sampled parameter set (<code>sim</code>), a sampled patient (<code>id</code>) remains on a given treatment until time to treatment discontinuation (<code>ttd</code>) becomes less than zero in a given month. Treatment discontinuation is caused by a serious infection (<code>si = 1</code>) if the sampled time to serious infection at treatment initiation is less than the sampled time to discontinuation. After discontinuation, a patient switches to the next therapy and <code>tx_seq</code> increments by one. Patient age (<code>age</code>) increases in 6-month increments.</p>
 <p>The HAQ score (<code>haq</code>) during the initial 6-month period (<code>therapy_cycle = 1</code>), disease activity measures (<code>das28</code>, <code>sdai</code>, and <code>cdai</code>), and <code>ttd</code> depend on the model structure chosen. For example, in the first model structure, HAQ and time to treatment discontinuation depend on ACR response (<code>acr</code>) and in turn, EULAR response (<code>eular</code>). The simulation returned NA values for the three disease activity measures because treatment switching is is not a function of disease activity (i.e., <strong>S6</strong> was chosen in the first model structure). The simulation ends when a patient dies (<code>death = 1</code>).</p>
-<p>Health care sector costs consist of treatment costs (<code>treat_cost</code>); hospital costs (<code>hosp_cost</code>), which increase with the HAQ score; general management costs (<code>mgmt_cost</code>); and the costs of caused by serious infections (<code>si_cost</code>). Non-health care sector costs are those due to lost wages. Analyses performed from a societal perspective should include these productivity losses (<code>prod_loss</code>).</p>
+<p>Health care sector costs consist of treatment costs (<code>tx_cost</code>); hospital costs (<code>hosp_cost</code>), which increase with the HAQ score; general management costs (<code>mgmt_cost</code>); and the costs of caused by serious infections (<code>si_cost</code>). Non-health care sector costs are those due to lost wages. Analyses performed from a societal perspective should include these productivity losses (<code>prod_loss</code>).</p>
 <p>Utility (<code>utility</code>) depends on whether the Hernandez-Alava mixture model or Wailoo logistic regression equation is used to simulate utility. In both cases, QALYs (<code>qalys</code>) are calculated as a function of utility and the estimated utility loss from a serious infection.</p>
+</div>
+<div id="summary-output" class="section level2">
+<h2 class="hasAnchor">
+<a href="#summary-output" class="anchor"></a>Summary output</h2>
+<p>One drawback of returning all simulation output is that it can place significant strains on computer memory. For example, if 200 model structures, 1,000 parameters sets, and 5,000 patients are simulated for 15 years (i.e., 30 model cycles), then the number of observations is 30 billion. The <code>sim_iviRA</code> function consequently has the option to only return summaries of simulation output.</p>
+<p>In particular, by invoking the <code>output = summary</code> option, the data.table objects <code>means</code>, <code>time.means</code>, and <code>out0</code> are returned. <code>means</code> reports simulated outcomes averaged over individuals and time and <code>tmeans</code> reports simulated outcomes averaged across individuals but conditional on time. <code>out0</code> provides outcomes for the first model cycle including time to treatment discontinuation and time to a serious infection. Output is always conditional on the model structure and sampled parameter set.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sim.out1.summary &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sim_iviRA.html">sim_iviRA</a></span>(<span class="dt">arms =</span> arm1, <span class="dt">input_data =</span> input.dat, <span class="dt">pars =</span> parsamp,
+                     <span class="dt">model_structures =</span> mod.structs, <span class="dt">output =</span> <span class="st">"summary"</span>)
+<span class="kw">head</span>(sim.out1.summary$means)</code></pre></div>
+<pre><code>##    model sim    lys     dlys lys_infusion lys_injection lys_oral
+## 1:     1   1 19.155 13.15674       1.3925       17.7625        0
+## 2:     1   2 17.840 12.70610       1.3700       16.4700        0
+## 3:     1   3 19.250 13.51370       1.2300       18.0200        0
+## 4:     1   4 18.615 13.16951       1.0300       17.5850        0
+## 5:     1   5 18.355 13.15171       1.4925       16.8625        0
+## 6:     1   6 17.980 12.84115       1.0775       16.9025        0
+##           dhaq   si     qalys   dqalys  tx_cost dtx_cost hosp_days
+## 1: -0.01568303 0.21 10.733167 7.525322 411965.6 316214.9 16.065489
+## 2:  0.18496966 0.20  9.144104 6.688285 391240.9 313594.5 13.351708
+## 3:  0.07840918 0.17 10.592317 7.596167 368345.4 297226.9  9.687523
+## 4:  0.14663414 0.13 10.064376 7.222482 372965.7 300545.1 15.673278
+## 5:  0.06145822 0.16 10.241827 7.418864 413710.9 325424.2  4.147676
+## 6:  0.10447491 0.20  9.360783 6.864320 431553.9 342067.5 18.663416
+##    hosp_cost dhosp_cost mgmt_cost dmgmt_cost   si_cost  dsi_cost prod_loss
+## 1: 18391.939  11948.090  7227.901   4964.532 1287.0117 1085.2410 141876.45
+## 2: 15489.558  10273.318  6843.871   4874.378 1029.9674  749.4134 144999.68
+## 3: 12186.115   7968.864  7626.966   5354.208 1047.2179  814.2980 124743.50
+## 4: 19980.675  13541.662  7502.874   5308.042  757.4379  634.2580 229452.93
+## 5:  5585.859   3688.076  7389.178   5294.486  799.2277  650.5571  80362.46
+## 6: 22474.744  15302.490  6709.427   4791.811  969.7694  754.2170 143331.61
+##    dprod_loss dhc_cost dtot_cost yrs_since_approval dqalys_ann
+## 1:   93932.97 334212.8  428145.7           21.54267  0.5786666
+## 2:   99550.86 329491.6  429042.5           21.44539  0.5172961
+## 3:   83591.00 311364.3  394955.3           22.28077  0.5558563
+## 4:  157566.54 320029.1  477595.6           22.03180  0.5447532
+## 5:   55974.85 335057.3  391032.1           21.89947  0.5469172
+## 6:   98434.10 362916.0  461350.1           21.03803  0.5432951
+##    dhc_cost_ann dprod_loss_ann
+## 1:     28351.67       7168.163
+## 2:     29226.63       7961.083
+## 3:     26805.84       6279.254
+## 4:     27213.17      11920.384
+## 5:     27499.50       4397.807
+## 6:     31674.47       7438.450</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(sim.out1.summary$time.means)</code></pre></div>
+<pre><code>##    model sim month alive     qalys       haq  tx_cost hosp_cost mgmt_cost
+## 1:     1   1     6   100 0.2778491 1.1182107 21002.32  421.7791  188.6688
+## 2:     1   1    12    97 0.2885004 0.9926698 20953.65  361.0990  188.6688
+## 3:     1   1    18    95 0.3047582 0.9629529 19792.64  380.9558  188.6688
+## 4:     1   1    24    95 0.3101983 0.9361336 18801.99  373.6696  188.6688
+## 5:     1   1    30    94 0.3106137 0.9524695 18343.20  392.8027  188.6688
+## 6:     1   1    36    93 0.3036254 0.9538030 16880.81  398.6507  188.6688
+##      si_cost prod_loss
+## 1: 245.14508  3637.367
+## 2: 126.36344  3229.002
+## 3:   0.00000  3132.337
+## 4:   0.00000  3045.098
+## 5:  65.19816  3098.236
+## 6:  65.89922  3102.574</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(sim.out1.summary$out0)</code></pre></div>
+<pre><code>##    model sim id tx acr eular        ttd      ttsi
+## 1:     1   1  1  3   1     1   9.473107 73.367734
+## 2:     1   1  1  5   1     2 136.864030  9.321206
+## 3:     1   1  2  3   1     2  86.135262 27.259798
+## 4:     1   1  3  3   0     0   0.000000 69.644528
+## 5:     1   1  3  5   1     2   1.186144 42.594579
+## 6:     1   1  3  8   0     0   0.000000 55.087616</code></pre>
 <div>
 <ul class="pager">
 <li class="previous">
@@ -177,9 +269,18 @@ sim.out &lt;-<span class="st"> </span><span class="kw">rbind</span>(sim.out1, si
 </ul>
 </div>
 </div>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+        <div id="tocnav">
+      <h2 class="hasAnchor">
+<a href="#tocnav" class="anchor"></a>Contents</h2>
+      <ul class="nav nav-pills nav-stacked">
+<li><a href="#complete-output">Complete output</a></li>
+      <li><a href="#summary-output">Summary output</a></li>
+      </ul>
+</div>
       </div>
 
 </div>

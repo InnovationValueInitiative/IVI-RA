@@ -93,7 +93,9 @@
     <li>
       <a href="../model-description/model-description.pdf">Model description</a>
     </li>
-    <li class="dropdown-header">Release history</li>
+    <li>
+      <a href="../news/index.html">Release history</a>
+    </li>
     <li>
       <a href="../articles/reproducibility.html">Reproducibility</a>
     </li>
@@ -102,8 +104,20 @@
     </li>
   </ul>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Web apps
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
 <li>
-  <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra/">Web app</a>
+      <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra-expert/">IVI-RA value tool expert</a>
+    </li>
+    <li>
+      <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra-simple/">IVI-RA value tool</a>
+    </li>
+  </ul>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
@@ -141,37 +155,30 @@
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pop &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pop.html">sample_pop</a></span>(<span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">type =</span> <span class="st">"heterog"</span>)
 <span class="kw">head</span>(pop)</code></pre></div>
 <pre><code>##           age male weight prev_dmards    das28     sdai     cdai      haq0
-## [1,] 55.04651    1     89           5 7.960893 66.02017 56.70743 1.5611236
-## [2,] 70.60764    0     75           2 4.329911 40.73155 31.86786 1.3818101
-## [3,] 62.94370    0     75           2 7.141089 49.99114 49.83168 1.4853716
-## [4,] 63.02703    0     75           4 6.590664 49.07356 41.15102 1.5798596
-## [5,] 57.09102    0     75           2 5.443321 29.72779 24.82152 0.9473823
-## [6,] 58.63250    0     75           2 7.520048 58.19570 54.65124 2.3341131
-##           mrs
-## [1,] 1.277797
-## [2,] 1.486688
-## [3,] 1.168714
-## [4,] 1.205429
-## [5,] 1.371634
-## [6,] 1.471801</code></pre>
+## [1,] 74.46133    1     89           4 4.877658 27.84061 31.44201 0.7822231
+## [2,] 77.57226    1     89           4 6.315570 50.35911 50.18337 1.4741638
+## [3,] 75.39511    0     75           4 5.097583 34.57770 38.39320 1.0347013
+## [4,] 72.56476    0     75           5 7.006601 55.03952 53.98034 1.7486956
+## [5,] 53.47782    0     75           5 6.665405 54.33587 51.57446 2.3180677
+## [6,] 50.88726    0     75           2 6.738168 46.00356 36.98188 1.8408113</code></pre>
 <p>We can also customize the distribution of patients. For example, suppose we want to study a younger and healthier population. We might then sample patients by customizing arguments in <code>sample_pats</code>,</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pop2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pop.html">sample_pop</a></span>(<span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">type =</span> <span class="st">"heterog"</span>, <span class="dt">age_mean =</span> <span class="dv">45</span>, <span class="dt">das28_mean =</span> <span class="dv">4</span>, <span class="dt">sdai_mean =</span> <span class="dv">20</span>, 
                     <span class="dt">cdai_mean =</span> <span class="dv">18</span>)
 <span class="kw">head</span>(pop2)</code></pre></div>
 <pre><code>##           age male weight prev_dmards    das28      sdai      cdai
-## [1,] 58.56941    0     75           5 2.435828  3.331253  1.279433
-## [2,] 41.19263    1     89           0 4.170867 22.397589 20.728488
-## [3,] 69.61793    0     75           3 3.733595 17.957857 16.207555
-## [4,] 44.93448    0     75           1 4.789677 27.573056 28.280181
-## [5,] 41.22757    0     75           1 5.796220 42.691186 34.770542
-## [6,] 57.31872    1     89           1 5.479837 32.770053 28.325205
-##          haq0      mrs
-## [1,] 2.066953 1.271113
-## [2,] 1.168625 1.237103
-## [3,] 1.614461 1.397184
-## [4,] 1.251266 1.159977
-## [5,] 2.188736 1.384017
-## [6,] 1.785453 1.396843</code></pre>
+## [1,] 49.10950    1     89           3 4.559454 24.303322 23.188181
+## [2,] 41.69823    1     89           4 5.691475 31.043100 29.303814
+## [3,] 45.68548    0     75           4 5.495324 39.434113 38.350679
+## [4,] 41.65057    0     75           5 3.439665 18.235434 11.931183
+## [5,] 42.58470    0     75           2 3.199511  9.375292 14.092599
+## [6,] 55.10958    0     75           5 2.528186  2.432271  3.007291
+##          haq0
+## [1,] 1.214520
+## [2,] 2.310069
+## [3,] 2.058720
+## [4,] 1.200797
+## [5,] 1.576505
+## [6,] 1.704622</code></pre>
 </div>
 <div id="using-your-own-patient-population" class="section level2">
 <h2 class="hasAnchor">
@@ -179,7 +186,7 @@
 <p>Users who have data on their own patient population may wish to run the simulation using their own data. To do this, users can simply load their own data and convert it to an R matrix. The matrix must have 1 row for each patient and the same columns as returned by <code>sample_pats</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">colnames</span>(pop)</code></pre></div>
 <pre><code>## [1] "age"         "male"        "weight"      "prev_dmards" "das28"      
-## [6] "sdai"        "cdai"        "haq0"        "mrs"</code></pre>
+## [6] "sdai"        "cdai"        "haq0"</code></pre>
 <div>
 <ul class="pager">
 <li class="previous">

@@ -26,6 +26,7 @@ articles:
 reference:
   - title: "Model inputs"
     contents:
+      - treatments
       - nma
       - acr2das28
       - acr2sdai
@@ -46,6 +47,7 @@ reference:
       - pain
       - utility.mixture
       - utility.wailoo
+      - utility.tx.attr
   - title: "Generate patient population"
     contents:
       - sample_pop
@@ -109,9 +111,15 @@ navbar:
       - text: "Model description"
         href: model-description/model-description.pdf
       - text: "Release history"
+        href:  news/index.html
       - text: "Reproducibility"
         href: articles/reproducibility.html
       - text: "hesim"
         href: articles/hesim.html
-  - text: "Web app"
-    href: https://innovationandvalueinitiative.shinyapps.io/ivi-ra/
+  - text: "Web apps"
+    menu:
+      - text: "IVI-RA value tool expert"
+        href: https://innovationandvalueinitiative.shinyapps.io/ivi-ra-expert/
+      - text: "IVI-RA value tool"
+        href: https://innovationandvalueinitiative.shinyapps.io/ivi-ra-simple/
+

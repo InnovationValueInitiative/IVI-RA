@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Treatment — treatments • iviRA</title>
+<title>Treatments — treatments • iviRA</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -116,7 +116,9 @@
     <li>
       <a href="../model-description/model-description.pdf">Model description</a>
     </li>
-    <li class="dropdown-header">Release history</li>
+    <li>
+      <a href="../news/index.html">Release history</a>
+    </li>
     <li>
       <a href="../articles/reproducibility.html">Reproducibility</a>
     </li>
@@ -125,8 +127,20 @@
     </li>
   </ul>
 </li>
-<li>
-  <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra/">Web app</a>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Web apps
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra-expert/">IVI-RA value tool expert</a>
+    </li>
+    <li>
+      <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra-simple/">IVI-RA value tool</a>
+    </li>
+  </ul>
 </li>
       </ul>
       
@@ -148,7 +162,7 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Treatment</h1>
+    <h1>Treatments</h1>
     </div>
 
     
@@ -159,11 +173,15 @@
         
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
-    <p>A data.table object with 1 row for each treatment and 4 columns:</p><dl class='dl-horizontal'>
+    <p>A data.table object with 1 row for each treatment and 7 columns:</p><dl class='dl-horizontal'>
   <dt>name</dt><dd><p>Long-form name of treatment.</p></dd>
   <dt>mname</dt><dd><p>Medium-form name of treatment.</p></dd>
   <dt>sname</dt><dd><p>Short-form name of treatment.</p></dd>
   <dt>biologic</dt><dd><p>Indicator equal to 1 if a treatment is a biologic and 0 otherwise.</p></dd>
+  <dt>route</dt><dd><p>Route of administration.</p></dd>
+  <dt>approval_date</dt><dd><p>Date that treatment was approved in the US by the FDA.</p></dd>
+  <dt>years_since_approval</dt><dd><p>Years (from last update of the model) since the 
+  treatment was approved.</p></dd>
 </dl>
     
 

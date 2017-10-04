@@ -73,8 +73,7 @@ sim_iviRA <- function(arms, input_data, pars, model_structures,
                       max_months = NULL, tx_data = iviRA::treatments,
                       hist = c("naive", "experienced"),
                       output = c("data", "summary"), 
-                      discount_qalys = .03, discount_cost = .03,
-                      check = TRUE){
+                      discount_qalys = .03, discount_cost = .03){
   hist <- match.arg(hist)
   output <- match.arg(output)
   
@@ -86,20 +85,14 @@ sim_iviRA <- function(arms, input_data, pars, model_structures,
   if (!inherits(model_structures, "model_structures")){
       stop("The argument 'model_structures' must be of class 'model_structures'")
   }
+  if (!inherits(pars, "par_sample")){
+    stop("The argument 'pars' must be of class 'par_sample'")
+  }
   
   ## treatment arm indices
   if (is.vector(arms)) arms <- matrix(arms, nrow = 1)
   arminds <- matrix(match(arms, tx_data$sname), nrow = nrow(arms),
                     ncol = ncol(arms))
-  
-  # check parameter samples are the right format
-  if (check == TRUE){
-    check_pars(pars, arminds, model_structures)
-  }
-  if(ncol(pars$utility.tx.attr) != ncol(input_data$x.attr)){
-    stop(paste0("The number of columns in 'utility.tx.attr' element of pars list must equal ",
-                " the number of columns in 'x.attr' elemnt of input_data list."))
-  }
   
   ## indexing
   cdmards.ind <- which(iviRA::treatments$sname == "cdmards") - 1

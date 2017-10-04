@@ -11,7 +11,7 @@ load("output.RData")
 
 The IVI-RA model simulates outcomes conditional on parameters and data. Given a patient population, we can generate the required data with the function `get_input_data`.
 
-```{r, cache = TRUE }
+```{r, cache = FALSE }
 input.dat <- get_input_data(pop = pop)
 names(input.dat)
 ```
@@ -40,7 +40,7 @@ kable(table)
 
 For example, the mortality matrix, `x.mort`, is a matrix with a single column consisting of the baseline HAQ score for each patient. 
 
-```{r, cache = TRUE }
+```{r, cache = FALSE }
 head(input.dat$x.mort)
 ```
 

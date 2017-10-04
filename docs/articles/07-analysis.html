@@ -93,7 +93,9 @@
     <li>
       <a href="../model-description/model-description.pdf">Model description</a>
     </li>
-    <li class="dropdown-header">Release history</li>
+    <li>
+      <a href="../news/index.html">Release history</a>
+    </li>
     <li>
       <a href="../articles/reproducibility.html">Reproducibility</a>
     </li>
@@ -102,8 +104,20 @@
     </li>
   </ul>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Web apps
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
 <li>
-  <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra/">Web app</a>
+      <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra-expert/">IVI-RA value tool expert</a>
+    </li>
+    <li>
+      <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra-simple/">IVI-RA value tool</a>
+    </li>
+  </ul>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
@@ -132,7 +146,11 @@
     
     
 <div class="contents">
-<p>The easiest way to analyze output from the <code>sim_iviRA</code> function is with the <a href="http://devinincerti.com/hesim/">hesim</a> package, also developed by IVI. <code>hesim</code> is designed for decision modeling modeling and the economic evaluation of health technologies. It contains functions for summarizing a PSA given general simulation output.</p>
+<p>The <code>iviRA</code> package is designed to simulate the costs, health outcomes, and risks associated with sequences of RA treatments. The simulation output can be used for value assessment using any framework preferred by the analyst.</p>
+<div id="cost-effectiveness-analysis" class="section level2">
+<h2 class="hasAnchor">
+<a href="#cost-effectiveness-analysis" class="anchor"></a>Cost-effectiveness analysis</h2>
+<p>Cost-effectiveness analysis (CEA) is a well-established technique for value assessment. The easiest way to conduct CEAs using output from the <code>sim_iviRA</code> function is with the <a href="https://innovationvalueinitiative.github.io/hesim/">hesim</a> package, also developed by IVI. <code>hesim</code> is designed for simulation modeling and the economic evaluation of health technologies. It contains functions for summarizing a PSA given general simulation output at the subgroup level. Summary measures of interest include cost-effectiveness planes, cost-effectiveness acceptability curves, and the expected value of perfect information.</p>
 <p>To prepare the data so that it can be analyzed with <code>hesim</code>, mean outcomes must be calculated for each simulation number and each treatment arm.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">n.inner &lt;-<span class="st"> </span><span class="kw">max</span>(sim.out$sim)
 sim.out[, hc_cost :<span class="er">=</span><span class="st"> </span>tx_cost +<span class="st"> </span>hosp_cost +<span class="st"> </span>mgmt_cost +<span class="st"> </span>si_cost]
@@ -142,7 +160,12 @@ sim.out.means &lt;-<span class="st"> </span>sim.out[, .(<span class="dt">grp =</
                        <span class="dt">hc_cost =</span> <span class="kw">sum</span>(hc_cost)/n.inner,
                        <span class="dt">dhc_cost =</span> <span class="kw">sum</span>(hc_cost *<span class="st"> </span>.<span class="dv">03</span>)/n.inner),
                    by =<span class="st"> </span><span class="kw">c</span>(<span class="st">"sim"</span>, <span class="st">"arm"</span>)]</code></pre></div>
-<p>The <code>sim.out.means</code> object can be analyzed in <code>hesim</code> using the <code>icea</code> and <code>icea_pw</code> functions, which are designed for indiviualized (i.e., subgroup) cost-effectiveness analysis. Since these functions are designed for subgroup analyses, a group variable must be specified. The current analysis does not specify subgroups so we assume a single large group. Analysis from a health care sector perspective would compare clinical effectiveness as measured by discounted QALYs (<code>dqalys</code>) to costs as measured by discounted health care sector costs (<code>dhc_cost</code>). An analysis from a societal perspective would add productivity losses to health care sector costs.</p>
+<p>The <code>sim.out.means</code> object can be analyzed in <code>hesim</code> using the <code>icea</code> and <code>icea_pw</code> functions, which are designed for individualized (i.e., subgroup) cost-effectiveness analysis. Since these functions are designed for subgroup analyses, a group variable must be specified. The current analysis does not specify subgroups so we assume a single large group. Analysis from a health care sector perspective would compare clinical effectiveness as measured by discounted QALYs (<code>dqalys</code>) to costs as measured by discounted health care sector costs (<code>dhc_cost</code>). An analysis from a societal perspective would add productivity losses to health care sector costs.</p>
+</div>
+<div id="multi-criteria-decision-analysis" class="section level2">
+<h2 class="hasAnchor">
+<a href="#multi-criteria-decision-analysis" class="anchor"></a>Multi-criteria decision analysis</h2>
+<p>Some researchers have suggested multi-criteria decision analysis (MCDA) as an alternative to CEA. MCDA can be performed by selecting criteria among the output simulated from the <code>sim_iviRA</code> function. We adopt this approach in our web applications, which provide examples of the use of MCDA. Further information, on our approach can be found in our <a href="../model-description/model-description.pdf">model description</a>. For an introduction to the use of MCDA in health economics, see the <a href="http://www.sciencedirect.com/science/article/pii/S1098301515051359">2016 ISPOR task force report</a>.</p>
 <div>
 <ul class="pager">
 <li class="previous">
@@ -151,9 +174,18 @@ sim.out.means &lt;-<span class="st"> </span>sim.out[, .(<span class="dt">grp =</
 </ul>
 </div>
 </div>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+        <div id="tocnav">
+      <h2 class="hasAnchor">
+<a href="#tocnav" class="anchor"></a>Contents</h2>
+      <ul class="nav nav-pills nav-stacked">
+<li><a href="#cost-effectiveness-analysis">Cost-effectiveness analysis</a></li>
+      <li><a href="#multi-criteria-decision-analysis">Multi-criteria decision analysis</a></li>
+      </ul>
+</div>
       </div>
 
 </div>

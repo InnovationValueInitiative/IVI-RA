@@ -116,7 +116,9 @@
     <li>
       <a href="../model-description/model-description.pdf">Model description</a>
     </li>
-    <li class="dropdown-header">Release history</li>
+    <li>
+      <a href="../news/index.html">Release history</a>
+    </li>
     <li>
       <a href="../articles/reproducibility.html">Reproducibility</a>
     </li>
@@ -125,8 +127,20 @@
     </li>
   </ul>
 </li>
-<li>
-  <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra/">Web app</a>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Web apps
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra-expert/">IVI-RA value tool expert</a>
+    </li>
+    <li>
+      <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra-simple/">IVI-RA value tool</a>
+    </li>
+  </ul>
 </li>
       </ul>
       
@@ -157,7 +171,7 @@
 
     <pre class="usage"><span class='fu'>get_input_data</span>(<span class='no'>pop</span>, <span class='kw'>x_mort</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>x_ttd_all</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>x_ttd_da</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>x_ttd_eular</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>x_acr</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>x_haq</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>x_das28</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>x_attr</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/tx.attr'>tx.attr</a></span>$<span class='no'>data</span>)</pre>
+  <span class='kw'>x_attr</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/utility.tx.attr'>utility.tx.attr</a></span>$<span class='no'>x</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -184,6 +198,14 @@ for number of previous DMARDs.</p></td>
     <tr>
       <th>x_ttd_eular</th>
       <td><p>The design matrix for time to treatment discontinuation for each EULAR response category (moderate, good).</p></td>
+    </tr>
+    <tr>
+      <th>x_acr</th>
+      <td></td>
+    </tr>
+    <tr>
+      <th>x_attr</th>
+      <td></td>
     </tr>
     </table>
     
@@ -214,6 +236,9 @@ for number of previous DMARDs.</p></td>
   treatment duration in models stratified by EULAR response. The impact of each variable
   is determined by the sampled values of the coefficients used to predict the location
    parameter in <code>ttd.eular</code> returned by <a href='sample_pars.html'>sample_pars</a>.</p></dd>
+  <dt>x.acr</dt><dd><p></p></dd>
+  <dt>x.haq</dt><dd><p></p></dd>
+  <dt>x.das28</dt><dd><p></p></dd>
   <dt>x.attr</dt><dd><p>Design matrix where each column is a variable related to treatment attributes
   related to the processes of care influencing utility. The impact 
   of each variable is determined by the parameter vector <code>tx.attr.utility</code> returned by

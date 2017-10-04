@@ -93,7 +93,9 @@
     <li>
       <a href="model-description/model-description.pdf">Model description</a>
     </li>
-    <li class="dropdown-header">Release history</li>
+    <li>
+      <a href="news/index.html">Release history</a>
+    </li>
     <li>
       <a href="articles/reproducibility.html">Reproducibility</a>
     </li>
@@ -102,8 +104,20 @@
     </li>
   </ul>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Web apps
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
 <li>
-  <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra/">Web app</a>
+      <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra-expert/">IVI-RA value tool expert</a>
+    </li>
+    <li>
+      <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra-simple/">IVI-RA value tool</a>
+    </li>
+  </ul>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
@@ -129,8 +143,8 @@
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#overview" class="anchor"></a>Overview</h1></div>
 <p><code>iviRA</code> is an R package that runs the <a href="http://www.thevalueinitiative.org/">Innovation and Value Initiative’s (IVIs)</a> individual patient simulation model for rheumatoid arthritis. The IVI-RA model is an iterative open-source model that is updated according to evidence-based suggestions for improvement. Information on the collaborative and consensus-based process can be found <a href="articles/ways-to-contribute.html">here</a>.</p>
-<p>The model can be run with multiple perspectives (e.g., health care sector, societal, healthy or sick population) and accounts for both structural and parameter uncertainty. Structural uncertainty can be quantified by simulating treatment value across our 336 possible model structures and parameter uncertainty is quantified using probabilistic sensitivity analysis (PSA). The simulation is mostly written in C++ so that it can be run in a reasonable amount of time.</p>
-<p>For a detailed explanation of the model see the <a href="model-description/model-description.pdf">model description</a>. To run the model with our interactive user-interface, use our <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra/">R Shiny web application</a>.</p>
+<p>The model simulates the costs, health outcomes, and risks associated with disease-modifying anti-rheumatic drugs (DMARDs) and biologic DMARDSs (bDMARDs) for patients with moderate to severe rheumatoid arthritis. The model contains 336 possible model structures, which can be used to quantify structural uncertainty or to evaluate the implications of different modeling assumptions. Parameter uncertainty is quantified using probabilistic sensitivity analysis (PSA). The simulation is mostly written in C++ so that it can be run in a reasonable amount of time.</p>
+<p>For a detailed explanation of the model see the <a href="model-description/model-description.pdf">model description</a>. To run the model with our interactive user-interface(s), use our R Shiny web applications (<a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra-expert/">expert</a>, <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra-simple/">standard</a>).</p>
 </div>
 <div id="installation" class="section level1">
 <h1 class="hasAnchor">

@@ -20,3 +20,4 @@ data-raw/figs*/
 data-raw/tables*/
 docs/articles/output.RData
 data-raw/nma-raw*/
+vignettes/output.RData
