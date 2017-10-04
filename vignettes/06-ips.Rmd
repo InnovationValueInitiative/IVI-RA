@@ -11,7 +11,7 @@ library("iviRA")
 load("output.RData")
 ```
 
-We run the IPS using the function `sim_iviRA`. The main arguments are the selected treatment arms, the input data, the parameter samples, and the model structure. The simulation can either return all simulated output (i.e., a dataset of simulated outcomes for each model structure, sampled parameter set, individual, and time-period) or summaries of the simulated output.
+We run the IPS using the function `sim_iviRA`. The main arguments are the selected treatment arms, the input data, the parameter samples, and the model structure. The simulation can either return all simulated output (i.e., a dataset of simulated outcomes for each model structure, sampled parameter set, individual, and time period) or summaries of the simulated output.
 
 ## Complete output
 Here, we return complete simulation output for Arm 1 and Arm 2.
