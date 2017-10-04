@@ -296,7 +296,7 @@ sample_pars <- function(n = 100, input_data,
   sim <- list()
   sim$n <- n
   sim$rebound <- runif(n, rebound_lower, rebound_upper)
-  sim$lt <- lt_data(ltmale, ltfemale)
+  sim$lt <- lt_data(ltfemale = ltfemale, ltmale = ltmale)
   sim$tx.cost <- c(tx_cost,
                       list(discount = sample_uniforms(n, lower = tx_cost$cost$discount_lower, 
                                       tx_cost$cost$discount_upper, 
