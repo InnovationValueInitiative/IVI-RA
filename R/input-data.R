@@ -25,16 +25,7 @@
 #' @param cor_sdai_cdai Correlation between SDAI and CDAI.
 #' @param cor_sdai_haq Correlation between SDAI and HAQ.
 #' @param cor_cdai_haq Correlation between CDAI and HAQ.
-#' @param mrs_lower Lower bound for the marginal rate of substitution between sick 
-#' (i.e., have rheumatoid arthritis) and healthy states. In other words, the amount of consumption that an individual is willing to 
-#'   give up while healthy for an additiional dollar of consumption when sick.
-#' @param mrs_upper Upper bound for the marginal rate of substitution between sick and 
-#' healthy states.
 #' 
-#' @details If a homogeneous population is chosen, the marginal rate of substitution is equal to
-#' \code{(mrs_lower + mrs_upper)/2}. The marginal rate of substitution is only relevant when 
-#' estimating the insurance value (i.e., value from the perspective of a healthy individual) of
-#' a technology.
 #' 
 #' @return Matrix of patient characteristics. One row for each patient and one column
 #' for each variable. Current variables are:
@@ -47,8 +38,6 @@
 #'   \item{sdai}{SDAI score}
 #'   \item{cdai}{CDAI score}
 #'   \item{haq0}{Baseline HAQ score}
-#'   \item{mrs}{THe marginal rate of substitution between sick and 
-#'   healthy states as described above.}
 #' }
 #' @export
 sample_pop <- function(n = 1, type = c("homog", "heterog"), age_mean = 55, age_sd = 13, male_prop = .21,
@@ -59,8 +48,7 @@ sample_pop <- function(n = 1, type = c("homog", "heterog"), age_mean = 55, age_s
                       cdai_mean = 41, cdai_sd = 13,
                       cor_das28_sdai = .86, cor_das28_cdai = .86, cor_das28_haq = .38,
                       cor_sdai_cdai = .94, cor_sdai_haq = .34,
-                      cor_cdai_haq = .34,
-                      mrs_lower = 1.1, mrs_upper = 1.5){
+                      cor_cdai_haq = .34){
   if (age_mean > 85 | age_mean < 18){
     stop("Patients age must be between 18 and 85")
   }
@@ -75,7 +63,6 @@ sample_pop <- function(n = 1, type = c("homog", "heterog"), age_mean = 55, age_s
       sdai <- rep(sdai_mean, n)
       cdai <- rep(cdai_mean, n)
       da <- matrix(c(das28, sdai, cdai, haq0), ncol = 4)
-      mrs <- rep((mrs_lower + mrs_upper)/2, n)
   } else if (type == "heterog"){
       age <- msm::rtnorm(n, age_mean, age_sd, lower = 18, upper = 85) 
       haq0 <- msm::rtnorm(n, haq0_mean, haq0_sd, lower = 0, upper = 3)
@@ -92,13 +79,12 @@ sample_pop <- function(n = 1, type = c("homog", "heterog"), age_mean = 55, age_s
       da <- tmvtnorm::rtmvnorm(n, mean = mu, sigma = covmat,
                                lower = rep(0, length(mu)),
                                upper = c(9.4, 86, 76, 3))
-      mrs <- runif(n, min = mrs_lower, max = mrs_upper)
   }
   x <- matrix(c(age, male, weight, prev_dmards, 
-                da[, 1], da[, 2], da[, 3], da[, 4], mrs),
-              nrow = n, ncol = 9, byrow = F)
+                da[, 1], da[, 2], da[, 3], da[, 4]),
+              nrow = n, ncol = 8, byrow = F)
   colnames(x) <- c("age", "male", "weight", "prev_dmards", 
-                   "das28", "sdai", "cdai", "haq0", "mrs")
+                   "das28", "sdai", "cdai", "haq0")
   return(x)
 }
 
