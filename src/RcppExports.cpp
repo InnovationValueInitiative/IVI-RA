@@ -6,46 +6,6 @@
 
 using namespace Rcpp;
 
-// sim_ttd_eular
-double sim_ttd_eular(arma::rowvec x, arma::rowvec loc_mod, double anc1_mod, arma::rowvec loc_good, double anc1_good, int eular, std::string dist, double cycle_length, double ttsi, double anc2_mod, double anc2_good);
-RcppExport SEXP _iviRA_sim_ttd_eular(SEXP xSEXP, SEXP loc_modSEXP, SEXP anc1_modSEXP, SEXP loc_goodSEXP, SEXP anc1_goodSEXP, SEXP eularSEXP, SEXP distSEXP, SEXP cycle_lengthSEXP, SEXP ttsiSEXP, SEXP anc2_modSEXP, SEXP anc2_goodSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::rowvec >::type x(xSEXP);
-    Rcpp::traits::input_parameter< arma::rowvec >::type loc_mod(loc_modSEXP);
-    Rcpp::traits::input_parameter< double >::type anc1_mod(anc1_modSEXP);
-    Rcpp::traits::input_parameter< arma::rowvec >::type loc_good(loc_goodSEXP);
-    Rcpp::traits::input_parameter< double >::type anc1_good(anc1_goodSEXP);
-    Rcpp::traits::input_parameter< int >::type eular(eularSEXP);
-    Rcpp::traits::input_parameter< std::string >::type dist(distSEXP);
-    Rcpp::traits::input_parameter< double >::type cycle_length(cycle_lengthSEXP);
-    Rcpp::traits::input_parameter< double >::type ttsi(ttsiSEXP);
-    Rcpp::traits::input_parameter< double >::type anc2_mod(anc2_modSEXP);
-    Rcpp::traits::input_parameter< double >::type anc2_good(anc2_goodSEXP);
-    rcpp_result_gen = Rcpp::wrap(sim_ttd_eular(x, loc_mod, anc1_mod, loc_good, anc1_good, eular, dist, cycle_length, ttsi, anc2_mod, anc2_good));
-    return rcpp_result_gen;
-END_RCPP
-}
-// sim_ttd
-double sim_ttd(arma::rowvec x, arma::rowvec loc, double anc1, int tswitch, std::string dist, double cycle_length, double ttsi, double anc2, int da_cat);
-RcppExport SEXP _iviRA_sim_ttd(SEXP xSEXP, SEXP locSEXP, SEXP anc1SEXP, SEXP tswitchSEXP, SEXP distSEXP, SEXP cycle_lengthSEXP, SEXP ttsiSEXP, SEXP anc2SEXP, SEXP da_catSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::rowvec >::type x(xSEXP);
-    Rcpp::traits::input_parameter< arma::rowvec >::type loc(locSEXP);
-    Rcpp::traits::input_parameter< double >::type anc1(anc1SEXP);
-    Rcpp::traits::input_parameter< int >::type tswitch(tswitchSEXP);
-    Rcpp::traits::input_parameter< std::string >::type dist(distSEXP);
-    Rcpp::traits::input_parameter< double >::type cycle_length(cycle_lengthSEXP);
-    Rcpp::traits::input_parameter< double >::type ttsi(ttsiSEXP);
-    Rcpp::traits::input_parameter< double >::type anc2(anc2SEXP);
-    Rcpp::traits::input_parameter< int >::type da_cat(da_catSEXP);
-    rcpp_result_gen = Rcpp::wrap(sim_ttd(x, loc, anc1, tswitch, dist, cycle_length, ttsi, anc2, da_cat));
-    return rcpp_result_gen;
-END_RCPP
-}
 // test_ttd
 Rcpp::List test_ttd(Rcpp::List x);
 RcppExport SEXP _iviRA_test_ttd(SEXP xSEXP) {
@@ -545,8 +505,6 @@ RcppExport SEXP _rcpp_module_boot_mod_TimeMeans();
 RcppExport SEXP _rcpp_module_boot_mod_Out0();
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_iviRA_sim_ttd_eular", (DL_FUNC) &_iviRA_sim_ttd_eular, 11},
-    {"_iviRA_sim_ttd", (DL_FUNC) &_iviRA_sim_ttd, 9},
     {"_iviRA_test_ttd", (DL_FUNC) &_iviRA_test_ttd, 1},
     {"_iviRA_sim_mlogit_classC", (DL_FUNC) &_iviRA_sim_mlogit_classC, 2},
     {"_iviRA_sim_dhaq_class_lcgm1C", (DL_FUNC) &_iviRA_sim_dhaq_class_lcgm1C, 3},

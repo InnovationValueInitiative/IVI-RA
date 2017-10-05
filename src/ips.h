@@ -58,5 +58,49 @@ public:
            nmaLM nma_das28, arma::rowvec p);
 };
 
+class ModelStructure {
+public:
+  std::string tx_ihaq;
+  std::string tx_iswitch;
+  std::string cdmards_haq_model;
+  std::string ttd_cause;
+  std::string ttd_dist;
+  std::string utility_model;
+  void set_model_structure(std::vector<std::string> x);
+};
+
+struct TTDPars1 {
+  arma::rowvec loc;
+  double anc1;
+  double anc2;
+};
+
+class TTD{
+private: 
+  arma::rowvec x_eular;
+  arma::rowvec x_all;
+  arma::rowvec x_da;
+  TTDPars1 eular_mod_pars;
+  TTDPars1 eular_good_pars;
+  TTDPars1 da_pars;
+  TTDPars1 all_pars;
+  int eular;
+  int da_cat;
+  int tswitch;
+  double cycle_length;
+  double ttsi;
+  ModelStructure model_structure;
+public:
+  void set_x_ttd_da();
+  double sim_ttd_eular();
+  double sim_ttd_all();
+  double sim_ttd_da();
+  double sim_ttd();
+  void set(arma::rowvec x_eular_, arma::rowvec x_all_, arma::rowvec x_da_,
+           TTDPars1 eular_mod_pars_, TTDPars1 eular_good_pars_, 
+           TTDPars1 da_pars_, TTDPars1 all_pars_, int eular_,
+           int da_cat_, int tswitch_, double cycle_length_, 
+           double ttsi_, ModelStructure model_structure_);
+};
 
 # endif

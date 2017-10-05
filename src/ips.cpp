@@ -13,23 +13,13 @@ using namespace Rcpp;
 /*****************
 * Model structure
 *****************/
-struct ModelStructure {
-  std::string tx_ihaq;
-  std::string tx_iswitch;
-  std::string cdmards_haq_model;
-  std::string ttd_cause;
-  std::string ttd_dist;
-  std::string utility_model;
-};
-
-ModelStructure update_model_structure(ModelStructure m, std::vector<std::string> x){
-  m.tx_ihaq = x[0];
-  m.tx_iswitch = x[1];
-  m.cdmards_haq_model = x[2];
-  m.ttd_cause = x[3];
-  m.ttd_dist = x[4];
-  m.utility_model = x[5];
-  return m;
+void ModelStructure::set_model_structure(std::vector<std::string> x){
+  tx_ihaq = x[0];
+  tx_iswitch = x[1];
+  cdmards_haq_model = x[2];
+  ttd_cause = x[3];
+  ttd_dist = x[4];
+  utility_model = x[5];
 }
 
 /************************************
@@ -285,12 +275,43 @@ void TxISwitch::sim(std::string model, int line, int therapy, int nbt,
 /***********************************
 * Time to treatment discontinuation
 ***********************************/
-// Time to treatment discontinuation by eular response 
-// [[Rcpp::export]]
-double sim_ttd_eular(arma::rowvec x, arma::rowvec loc_mod, double anc1_mod,
-                 arma::rowvec loc_good, double anc1_good, 
-                 int eular, std::string dist, double cycle_length, double ttsi,
-                 double anc2_mod = 0.0, double anc2_good = 0.0){
+// Class TTD
+void TTD::set(arma::rowvec x_eular_, arma::rowvec x_all_, arma::rowvec x_da_, 
+              TTDPars1 eular_mod_pars_, TTDPars1 eular_good_pars_, 
+              TTDPars1 da_pars_, TTDPars1 all_pars_, int eular_,
+              int da_cat_, int tswitch_, double cycle_length_, 
+              double ttsi_, ModelStructure model_structure_){
+  x_eular = x_eular_;
+  x_all = x_all_;
+  x_da = x_da_;
+  eular_mod_pars = eular_mod_pars_;
+  eular_good_pars = eular_good_pars_;
+  da_pars = da_pars_;
+  all_pars = all_pars_;
+  eular = eular_;
+  da_cat = da_cat_;
+  tswitch = tswitch_;
+  cycle_length = cycle_length_;
+  ttsi = ttsi_;
+  model_structure = model_structure_;
+}
+
+void TTD::set_x_ttd_da(){
+  if (da_cat == 3){
+    x_da(2) = 1;
+  }
+  else{
+    x_da(2) = 0;
+  }
+  if (da_cat == 2){
+    x_da(1) = 1;
+  }
+  else{
+    x_da(1) = 0;
+  }
+}
+
+double TTD::sim_ttd_eular(){
   double surv = 0.0;
   if (ttsi < 0){
     surv = 0.0;
@@ -300,45 +321,60 @@ double sim_ttd_eular(arma::rowvec x, arma::rowvec loc_mod, double anc1_mod,
       surv = 0.0;
     }
     else if (eular == 1){ //moderate eular responder
-      surv = rsurvC(dot(x, loc_mod), anc1_mod, dist, anc2_mod);
+      surv = rsurvC(dot(x_eular, eular_mod_pars.loc), eular_mod_pars.anc1, 
+                    model_structure.ttd_dist, eular_mod_pars.anc2);
     }
     else if (eular == 2){ //good eular responder
-      surv = rsurvC(dot(x, loc_good), anc1_good, dist, anc2_good);
+      surv = rsurvC(dot(x_eular, eular_good_pars.loc), eular_good_pars.anc1, 
+                    model_structure.ttd_dist, eular_good_pars.anc2);
     }
   }
   return surv/cycle_length; // surv is measured in years, so surv/cycle_length is measured in model cycles
 }
 
-// Time to treatment discontinuation single model
-// [[Rcpp::export]]
-double sim_ttd(arma::rowvec x, arma::rowvec loc, double anc1,
-                   int tswitch, std::string dist,
-                  double cycle_length, double ttsi,
-                  double anc2 = 0.0, int da_cat = 0){
+double TTD::sim_ttd_all(){
   double surv = 0.0;
   if (ttsi < 0 || tswitch == 1){
     surv = 0.0;
   }
-  else {
-      surv = rsurvC(dot(x, loc), anc1, dist, anc2);
-  }
+  surv = rsurvC(dot(x_all, all_pars.loc), all_pars.anc1, 
+                model_structure.ttd_dist, all_pars.anc2);
   return surv/cycle_length; // surv is measured in years, so surv/cycle_length is measured in model cycles
 }
 
-arma::rowvec update_x_ttd_da(arma::rowvec x, int da_cat){
-  if (da_cat == 3){
-    x(2) = 1;
+double TTD::sim_ttd_da(){
+  double surv = 0.0;
+  if (ttsi < 0 || tswitch == 1){
+    surv = 0.0;
   }
-  else{
-    x(2) = 0;
+  surv = rsurvC(dot(x_da, da_pars.loc), da_pars.anc1, 
+                model_structure.ttd_dist, da_pars.anc2);
+  return surv/cycle_length; // surv is measured in years, so surv/cycle_length is measured in model cycles
+}
+
+double TTD::sim_ttd(){
+  double ttd = 0;
+  if (model_structure.ttd_cause == "all"){
+    if (model_structure.tx_iswitch == "acr-eular-switch"){
+      ttd = sim_ttd_eular();
+    }
+    else if (model_structure.tx_iswitch == "acr-switch"){
+      ttd = sim_ttd_all();
+    }
+    else {
+      set_x_ttd_da();
+      ttd = sim_ttd_da();
+    }
   }
-  if (da_cat == 2){
-    x(1) = 1;
+  else if (model_structure.ttd_cause == "si"){
+    if (ttsi < 0){
+      ttd = 0;
+    } 
+    else{
+      ttd = ttsi;
+    }
   }
-  else{
-    x(1) = 0;
-  }
-  return x;
+  return ttd;
 }
 
 // Convert R TTD parameters to vectors of armadilo objects
@@ -347,6 +383,14 @@ struct TTDPars {
   std::map<std::string, arma::vec> anc1;
   std::map<std::string, arma::vec> anc2;
 };
+
+TTDPars1 subset_ttd_pars(TTDPars ttd_pars, int s, std::string dist){
+  TTDPars1 ttd_pars1;
+  ttd_pars1.loc = ttd_pars.loc[dist].row(s);
+  ttd_pars1.anc1 = ttd_pars.anc1[dist](s);
+  ttd_pars1.anc2 = ttd_pars.anc2[dist](s);
+  return ttd_pars1;
+}
 
 TTDPars get_ttd_pars(Rcpp::List x){
   TTDPars ttd;
@@ -1292,6 +1336,7 @@ List sim_iviRA_C(arma::mat arm_inds, Rcpp::DataFrame tx_data,
   TTDPars ttd_da = get_ttd_pars(ttd_da_list);
   TTDPars ttd_eular_mod = get_ttd_pars(ttd_eular_mod_list);
   TTDPars ttd_eular_good = get_ttd_pars(ttd_eular_good_list);
+  TTD ttd;
   
   //// Treatment attributes
   arma::mat x_attr = as<arma::mat> (utility_tx_attr["data"]);
@@ -1365,7 +1410,7 @@ List sim_iviRA_C(arma::mat arm_inds, Rcpp::DataFrame tx_data,
   
   // Loop over models
   for (int m = 0; m < n_mods; ++m){
-    mod_struct = update_model_structure(mod_struct, model_structures[m]);
+    mod_struct.set_model_structure(model_structures[m]);
     
     // "OUTER" LOOP
     for (int s = 0; s < n_sims; ++s){
@@ -1437,34 +1482,14 @@ List sim_iviRA_C(arma::mat arm_inds, Rcpp::DataFrame tx_data,
                                                 as_scalar(si_anc1.row(s).col(arm_ind_ij)),
                                                 si_dist,as_scalar(si_anc2.row(s).col(arm_ind_ij))
                                                 )) * (12/cycle_length);
-          double ttd_j = 0;
-          if (mod_struct.ttd_cause == "all"){
-            if (mod_struct.tx_iswitch == "acr-eular-switch"){
-              ttd_j = sim_ttd_eular(x_ttd_eular.row(i), 
-                                    ttd_eular_mod.loc[mod_struct.ttd_dist].row(s), ttd_eular_mod.anc1[mod_struct.ttd_dist](s), 
-                                    ttd_eular_good.loc[mod_struct.ttd_dist].row(s), ttd_eular_good.anc1[mod_struct.ttd_dist](s),
-                                    tx_ihaq.eular, mod_struct.ttd_dist, cycle_length, ttsi_j,
-                                    ttd_eular_mod.anc2[mod_struct.ttd_dist](s), ttd_eular_good.anc2[mod_struct.ttd_dist](s));
-            }
-            else if (mod_struct.tx_iswitch == "acr-switch"){
-              ttd_j = sim_ttd(x_ttd_all.row(i), ttd_all.loc[mod_struct.ttd_dist].row(s), ttd_all.anc1[mod_struct.ttd_dist](s),
-                              tx_iswitch.tswitch, mod_struct.ttd_dist, cycle_length, ttsi_j,
-                              ttd_all.anc2[mod_struct.ttd_dist](s));
-            }
-            else {
-              x_ttd_da_i = update_x_ttd_da(x_ttd_da.row(i), tx_iswitch.da_cat);
-              ttd_j = sim_ttd(x_ttd_da.row(i), ttd_da.loc[mod_struct.ttd_dist].row(s), ttd_da.anc1[mod_struct.ttd_dist](s),
-                              tx_iswitch.tswitch, mod_struct.ttd_dist, cycle_length, ttsi_j,
-                              ttd_da.anc2[mod_struct.ttd_dist](s));
-            }  
-          }
-          else if (mod_struct.ttd_cause == "si"){
-            if (ttsi_j < 0){
-                ttd_j = 0;
-            } else {
-                ttd_j = ttsi_j;
-            }
-          }
+          ttd.set(x_ttd_eular.row(i), x_ttd_all.row(i), x_ttd_da.row(i),
+                  subset_ttd_pars(ttd_eular_mod, s, mod_struct.ttd_dist),
+                  subset_ttd_pars(ttd_eular_good, s, mod_struct.ttd_dist),
+                  subset_ttd_pars(ttd_da, s, mod_struct.ttd_dist),
+                  subset_ttd_pars(ttd_all, s, mod_struct.ttd_dist),
+                  tx_ihaq.eular, tx_iswitch.da_cat, tx_iswitch.tswitch,
+                  cycle_length, ttsi_j, mod_struct);
+          double ttd_j = ttd.sim_ttd();
           
           // Loop over time
           for (int t = 0; t < maxt; ++t){
