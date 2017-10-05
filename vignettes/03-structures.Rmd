@@ -48,14 +48,14 @@ Finally, there are two ways to estimate utility. Our preferred method is mixture
 
 
 ## Select model structures
-Model structures are chosen with R using the `select_model_structures` function. The function returns an object of class `model_structures`, which is used as an input to functions needed to run the simulation. Here, we choose two model structures. In the first model structure, we model the effect of treatment on HAQ using **H2**, switching using **S6**, HAQ progression in the absence of bDMARDs with the LCGM, time to treatment discontinuation with the generalized gamma distribution, and utility using the mixture model. In the second model structure, we use the pathway **H3** so that treatment has a direct effect on HAQ, treatment switching is determined using the pathway **S1**, a linear model is used for HAQ progression in the absence of bDMARDs, a lognormal distribution is used for treatment duration, and HAQ is mapped to utility with the Wailoo algorithm. 
+Model structures are chosen with R using the `select_model_structures` function. The function returns an object of class `model_structures`, which is used as an input to functions needed to run the simulation. Here, we choose two model structures. In the first model structure, we model the effect of treatment on HAQ using **H2**, switching using **S6**, HAQ progression in the absence of bDMARDs with the LCGM, time to treatment discontinuation due to all causes with the generalized gamma distribution, and utility using the mixture model. In the second model structure, we use the pathway **H3** so that treatment has a direct effect on HAQ, treatment switching is determined using the pathway **S1**, a linear model is used for HAQ progression in the absence of bDMARDs, an exponential distributon is used to model treatment discontinuation due to serious infections, and HAQ is mapped to utility with the Wailoo algorithm. 
 
 ```{r }
 mod.structs <- select_model_structures(tx_ihaq = c("acr-eular-haq", "acr-haq"),
                                      tx_iswitch = c("acr-eular-switch", "acr-switch"),
                                      cdmards_haq_model = c("lcgm", "linear"),
                                      ttd_cause = c("all", "si"),
-                                     ttd_dist = c("gengamma", "lnorm"),
+                                     ttd_dist = c("gengamma", "exponential"),
                                      utility_model = c("mixture", "wailoo"))
 print(mod.structs)
 ```

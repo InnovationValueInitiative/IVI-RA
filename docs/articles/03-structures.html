@@ -222,20 +222,20 @@
 <div id="select-model-structures" class="section level2">
 <h2 class="hasAnchor">
 <a href="#select-model-structures" class="anchor"></a>Select model structures</h2>
-<p>Model structures are chosen with R using the <code>select_model_structures</code> function. The function returns an object of class <code>model_structures</code>, which is used as an input to functions needed to run the simulation. Here, we choose two model structures. In the first model structure, we model the effect of treatment on HAQ using <strong>H2</strong>, switching using <strong>S6</strong>, HAQ progression in the absence of bDMARDs with the LCGM, time to treatment discontinuation with the generalized gamma distribution, and utility using the mixture model. In the second model structure, we use the pathway <strong>H3</strong> so that treatment has a direct effect on HAQ, treatment switching is determined using the pathway <strong>S1</strong>, a linear model is used for HAQ progression in the absence of bDMARDs, a lognormal distribution is used for treatment duration, and HAQ is mapped to utility with the Wailoo algorithm.</p>
+<p>Model structures are chosen with R using the <code>select_model_structures</code> function. The function returns an object of class <code>model_structures</code>, which is used as an input to functions needed to run the simulation. Here, we choose two model structures. In the first model structure, we model the effect of treatment on HAQ using <strong>H2</strong>, switching using <strong>S6</strong>, HAQ progression in the absence of bDMARDs with the LCGM, time to treatment discontinuation due to all causes with the generalized gamma distribution, and utility using the mixture model. In the second model structure, we use the pathway <strong>H3</strong> so that treatment has a direct effect on HAQ, treatment switching is determined using the pathway <strong>S1</strong>, a linear model is used for HAQ progression in the absence of bDMARDs, an exponential distributon is used to model treatment discontinuation due to serious infections, and HAQ is mapped to utility with the Wailoo algorithm.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod.structs &lt;-<span class="st"> </span><span class="kw"><a href="../reference/select_model_structures.html">select_model_structures</a></span>(<span class="dt">tx_ihaq =</span> <span class="kw">c</span>(<span class="st">"acr-eular-haq"</span>, <span class="st">"acr-haq"</span>),
                                      <span class="dt">tx_iswitch =</span> <span class="kw">c</span>(<span class="st">"acr-eular-switch"</span>, <span class="st">"acr-switch"</span>),
                                      <span class="dt">cdmards_haq_model =</span> <span class="kw">c</span>(<span class="st">"lcgm"</span>, <span class="st">"linear"</span>),
                                      <span class="dt">ttd_cause =</span> <span class="kw">c</span>(<span class="st">"all"</span>, <span class="st">"si"</span>),
-                                     <span class="dt">ttd_dist =</span> <span class="kw">c</span>(<span class="st">"gengamma"</span>, <span class="st">"lnorm"</span>),
+                                     <span class="dt">ttd_dist =</span> <span class="kw">c</span>(<span class="st">"gengamma"</span>, <span class="st">"exponential"</span>),
                                      <span class="dt">utility_model =</span> <span class="kw">c</span>(<span class="st">"mixture"</span>, <span class="st">"wailoo"</span>))
 <span class="kw">print</span>(mod.structs)</code></pre></div>
 <pre><code>##      tx_ihaq         tx_iswitch         cdmards_haq_model ttd_cause
 ## [1,] "acr-eular-haq" "acr-eular-switch" "lcgm"            "all"    
 ## [2,] "acr-haq"       "acr-switch"       "linear"          "si"     
-##      ttd_dist   utility_model
-## [1,] "gengamma" "mixture"    
-## [2,] "lnorm"    "wailoo"     
+##      ttd_dist      utility_model
+## [1,] "gengamma"    "mixture"    
+## [2,] "exponential" "wailoo"     
 ## attr(,"class")
 ## [1] "model_structures"</code></pre>
 <div>
