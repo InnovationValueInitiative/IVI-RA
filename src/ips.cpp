@@ -17,6 +17,7 @@ struct ModelStructure {
   std::string tx_ihaq;
   std::string tx_iswitch;
   std::string cdmards_haq_model;
+  std::string ttd_cause;
   std::string ttd_dist;
   std::string utility_model;
 };
@@ -25,8 +26,9 @@ ModelStructure update_model_structure(ModelStructure m, std::vector<std::string>
   m.tx_ihaq = x[0];
   m.tx_iswitch = x[1];
   m.cdmards_haq_model = x[2];
-  m.ttd_dist = x[3];
-  m.utility_model = x[4];
+  m.ttd_cause = x[3];
+  m.ttd_dist = x[4];
+  m.utility_model = x[5];
   return m;
 }
 
@@ -1436,23 +1438,32 @@ List sim_iviRA_C(arma::mat arm_inds, Rcpp::DataFrame tx_data,
                                                 si_dist,as_scalar(si_anc2.row(s).col(arm_ind_ij))
                                                 )) * (12/cycle_length);
           double ttd_j = 0;
-          if (mod_struct.tx_iswitch == "acr-eular-switch"){
+          if (mod_struct.ttd_cause == "all"){
+            if (mod_struct.tx_iswitch == "acr-eular-switch"){
               ttd_j = sim_ttd_eular(x_ttd_eular.row(i), 
                                     ttd_eular_mod.loc[mod_struct.ttd_dist].row(s), ttd_eular_mod.anc1[mod_struct.ttd_dist](s), 
                                     ttd_eular_good.loc[mod_struct.ttd_dist].row(s), ttd_eular_good.anc1[mod_struct.ttd_dist](s),
                                     tx_ihaq.eular, mod_struct.ttd_dist, cycle_length, ttsi_j,
                                     ttd_eular_mod.anc2[mod_struct.ttd_dist](s), ttd_eular_good.anc2[mod_struct.ttd_dist](s));
+            }
+            else if (mod_struct.tx_iswitch == "acr-switch"){
+              ttd_j = sim_ttd(x_ttd_all.row(i), ttd_all.loc[mod_struct.ttd_dist].row(s), ttd_all.anc1[mod_struct.ttd_dist](s),
+                              tx_iswitch.tswitch, mod_struct.ttd_dist, cycle_length, ttsi_j,
+                              ttd_all.anc2[mod_struct.ttd_dist](s));
+            }
+            else {
+              x_ttd_da_i = update_x_ttd_da(x_ttd_da.row(i), tx_iswitch.da_cat);
+              ttd_j = sim_ttd(x_ttd_da.row(i), ttd_da.loc[mod_struct.ttd_dist].row(s), ttd_da.anc1[mod_struct.ttd_dist](s),
+                              tx_iswitch.tswitch, mod_struct.ttd_dist, cycle_length, ttsi_j,
+                              ttd_da.anc2[mod_struct.ttd_dist](s));
+            }  
           }
-          else if (mod_struct.tx_iswitch == "acr-switch"){
-            ttd_j = sim_ttd(x_ttd_all.row(i), ttd_all.loc[mod_struct.ttd_dist].row(s), ttd_all.anc1[mod_struct.ttd_dist](s),
-                                tx_iswitch.tswitch, mod_struct.ttd_dist, cycle_length, ttsi_j,
-                                ttd_all.anc2[mod_struct.ttd_dist](s));
-          }
-          else {
-            x_ttd_da_i = update_x_ttd_da(x_ttd_da.row(i), tx_iswitch.da_cat);
-            ttd_j = sim_ttd(x_ttd_da.row(i), ttd_da.loc[mod_struct.ttd_dist].row(s), ttd_da.anc1[mod_struct.ttd_dist](s),
-                            tx_iswitch.tswitch, mod_struct.ttd_dist, cycle_length, ttsi_j,
-                            ttd_da.anc2[mod_struct.ttd_dist](s));
+          else if (mod_struct.ttd_cause == "si"){
+            if (ttsi_j < 0){
+                ttd_j = 0;
+            } else {
+                ttd_j = ttsi_j;
+            }
           }
           
           // Loop over time
@@ -1475,12 +1486,12 @@ List sim_iviRA_C(arma::mat arm_inds, Rcpp::DataFrame tx_data,
             }
             
             // Did serious infection occur?
-            if (ttsi_j < ttd_j && t > ttd_j && t < ttd_j + 1 && arm_ind_ij != nbt) {
-              si = 1;
+            if ((ttsi_j < ttd_j && t > ttd_j && t < ttd_j + 1 && arm_ind_ij != nbt) ||
+                (ttsi_j < 0 && arm_ind_ij != nbt) ||
+                (mod_struct.ttd_cause == "si" && t > ttd_j && t < ttd_j + 1 &&
+                arm_ind_ij != nbt)) {
+                  si = 1;
             } 
-            else if (ttsi_j < 0 && arm_ind_ij != nbt) {
-             si = 1;
-            }
             
             // Update HAQ score
             if (t == 0){ // initial haq change

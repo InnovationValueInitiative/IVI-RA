@@ -221,7 +221,7 @@ sim_iviRA <- function(arms, input_data, pars, model_structures,
 
 #' Select model structures
 #'
-#' Select the model structures to be used in the IVI-RA individual patient simulation.
+#' Select the model structures to use in the IVI-RA individual patient simulation.
 #' 
 #' @param tx_ihaq Model structure relating treatment to HAQ during the first 6 months of 
 #' treatment. Options, which are equivalent to H1-H3 in the documentation are:
@@ -249,6 +249,11 @@ sim_iviRA <- function(arms, input_data, pars, model_structures,
 #' If \code{lgcm} is chosen, then a latent class growth model is used for cDMARDs
 #' and NBT but a constant annual rate is is assumed for all other therapies; otherwise 
 #' a constant linear HAQ progression is assumed for all therapies including cDMARDs and NBT.
+#' @param ttd_cause Cause of treatment discontinuation. Options are:
+#' \itemize{
+#' \item{all}{ Treatment discontinuation due to any cause.}
+#' \item{si}{ Treatment discontinuation due to serious infections}
+#' }
 #' @param ttd_dist Distribution used to model time to treatment discontinuaton. Options are:
 #' \itemize{
 #' \item{exponential}{ Exponential}
@@ -269,15 +274,17 @@ sim_iviRA <- function(arms, input_data, pars, model_structures,
 select_model_structures <- function(tx_ihaq = "acr-haq",
                                    tx_iswitch = "acr-switch",
                                    cdmards_haq_model = "lcgm", 
+                                   ttd_cause = "all",
                                    ttd_dist = "exponential",
                                    utility_model = "mixture"){
   # 
-  n <- vector(length = 5)
+  n <- vector(length = 6)
   n[1] <- length(tx_ihaq)
   n[2] <- length(tx_iswitch)
   n[3] <- length(cdmards_haq_model)
-  n[4] <- length(ttd_dist)
-  n[5] <- length(utility_model)
+  n[4] <- length(ttd_cause)
+  n[5] <- length(ttd_dist)
+  n[6] <- length(utility_model)
   if (max(n) > 1){
     n.g1 <- n[n > 1]
     max.n.g1 <- max(n.g1)
@@ -294,10 +301,13 @@ select_model_structures <- function(tx_ihaq = "acr-haq",
       if (n[3] == 1){
         cdmards_haq_model <- rep(cdmards_haq_model, max.n.g1)
       }
-      if (n[4] ==1){
+      if (n[4] == 1){
+        ttd_cause <- rep(ttd_cause, max.n.g1)
+      }
+      if (n[5] ==1){
         ttd_dist <- rep(ttd_dist, max.n.g1)
       } 
-      if (n[5] ==1){
+      if (n[6] ==1){
         utility_model <- rep(utility_model, max.n.g1)
       } 
     }
@@ -317,6 +327,10 @@ select_model_structures <- function(tx_ihaq = "acr-haq",
   
   if (any(!cdmards_haq_model %in% c("lcgm", "linear"))){
       stop("Values in 'cdmards_haq_model' must be 'lcgm' or 'linear'.")
+  } 
+  
+  if (any(!ttd_cause %in% c("all", "si"))){
+    stop(paste0("Values in 'ttd_cause' must be 'all', or 'si'."))
   } 
   
   if (any(!ttd_dist %in% c("exponential", "weibull", "gompertz", 
@@ -344,8 +358,10 @@ select_model_structures <- function(tx_ihaq = "acr-haq",
   }
 
   # return
-  model.structure <- matrix(c(tx_ihaq, tx_iswitch, cdmards_haq_model, ttd_dist, utility_model), ncol = 5)
-  colnames(model.structure) <- c("tx_ihaq", "tx_iswitch", "cdmards_haq_model", "ttd_dist", "utility_model")
+  model.structure <- matrix(c(tx_ihaq, tx_iswitch, cdmards_haq_model, 
+                              ttd_cause, ttd_dist, utility_model), ncol = 6)
+  colnames(model.structure) <- c("tx_ihaq", "tx_iswitch", "cdmards_haq_model", 
+                                 "ttd_cause", "ttd_dist", "utility_model")
   class(model.structure) <- "model_structures"
   return(model.structure)
 }

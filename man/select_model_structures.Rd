@@ -5,7 +5,7 @@
 \title{Select model structures}
 \usage{
 select_model_structures(tx_ihaq = "acr-haq", tx_iswitch = "acr-switch",
-  cdmards_haq_model = "lcgm", ttd_dist = "exponential",
+  cdmards_haq_model = "lcgm", ttd_cause = "all", ttd_dist = "exponential",
   utility_model = "mixture")
 }
 \arguments{
@@ -38,6 +38,12 @@ If \code{lgcm} is chosen, then a latent class growth model is used for cDMARDs
 and NBT but a constant annual rate is is assumed for all other therapies; otherwise 
 a constant linear HAQ progression is assumed for all therapies including cDMARDs and NBT.}
 
+\item{ttd_cause}{Cause of treatment discontinuation. Options are:
+\itemize{
+\item{all}{ Treatment discontinuation due to any cause.}
+\item{si}{ Treatment discontinuation due to serious infections}
+}}
+
 \item{ttd_dist}{Distribution used to model time to treatment discontinuaton. Options are:
 \itemize{
 \item{exponential}{ Exponential}
@@ -57,5 +63,5 @@ characteristics. Options are:
 }}
 }
 \description{
-Select the model structures to be used in the IVI-RA individual patient simulation.
+Select the model structures to use in the IVI-RA individual patient simulation.
 }
