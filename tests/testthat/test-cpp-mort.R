@@ -1,4 +1,4 @@
-context("Mortality functions")
+context("mort.cpp unit tests")
 
 # Test C++ function newprobC --------------------------------------------------
 inv_logit <- function(x){

@@ -1,4 +1,4 @@
-context("Random number generation")
+context("rand.cpp unit tests")
 library("flexsurv")
 
 # Test c++ function rsurvC ----------------------------------------------------
