@@ -155,30 +155,30 @@
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pop &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pop.html">sample_pop</a></span>(<span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">type =</span> <span class="st">"heterog"</span>)
 <span class="kw">head</span>(pop)</code></pre></div>
 <pre><code>##           age male weight prev_dmards    das28     sdai     cdai      haq0
-## [1,] 40.29937    1     89           2 5.723349 40.34791 39.24787 1.6422307
-## [2,] 41.18678    0     75           0 7.770645 61.17564 60.49859 2.9096463
-## [3,] 36.52960    0     75           5 5.905423 47.32061 45.41336 0.1812549
-## [4,] 53.19081    1     89           2 6.314073 41.99517 48.74934 1.1326947
-## [5,] 60.12456    0     75           2 5.446163 36.23884 34.94525 1.0538591
-## [6,] 45.86147    0     75           1 5.334428 32.23848 30.01130 1.4092840</code></pre>
+## [1,] 41.87294    0     75           3 5.140157 42.57635 35.02004 1.5514590
+## [2,] 57.77374    0     75           3 5.842057 42.12295 38.88704 1.6780735
+## [3,] 43.67918    0     75           4 4.496408 27.23182 22.63771 0.6192413
+## [4,] 50.85348    0     75           5 3.923364 28.96391 29.27199 0.9543243
+## [5,] 42.69364    0     75           6 3.860896 23.94540 23.06783 0.5883486
+## [6,] 54.85941    1     89           1 7.780254 65.88102 60.94352 2.6681789</code></pre>
 <p>We can also customize the distribution of patients. For example, suppose we want to study a younger and healthier population. We might then sample patients by customizing arguments in <code>sample_pats</code>,</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pop2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pop.html">sample_pop</a></span>(<span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">type =</span> <span class="st">"heterog"</span>, <span class="dt">age_mean =</span> <span class="dv">45</span>, <span class="dt">das28_mean =</span> <span class="dv">4</span>, <span class="dt">sdai_mean =</span> <span class="dv">20</span>, 
                     <span class="dt">cdai_mean =</span> <span class="dv">18</span>)
 <span class="kw">head</span>(pop2)</code></pre></div>
-<pre><code>##           age male weight prev_dmards    das28      sdai       cdai
-## [1,] 31.29242    0     75           5 4.068216 33.561765 17.3238159
-## [2,] 33.09650    0     75           2 2.781346  6.483376  5.4585647
-## [3,] 46.45071    1     89           4 4.263803 17.279801 12.8910450
-## [4,] 32.09641    0     75           5 4.000854 21.239937 22.3335467
-## [5,] 47.96332    0     75           4 3.290335 11.084575  0.7078027
-## [6,] 62.51503    1     89           4 4.552077 15.945277 13.7139120
+<pre><code>##           age male weight prev_dmards    das28     sdai      cdai
+## [1,] 48.56881    0     75           2 2.835827 16.72135 14.926577
+## [2,] 43.50179    1     89           0 3.773807 16.73626  8.338861
+## [3,] 18.70435    0     75           4 4.280895 22.51402 19.345129
+## [4,] 42.20960    0     75           2 4.586749 29.12881 20.061029
+## [5,] 51.69429    0     75           0 4.175773 21.80642 20.280087
+## [6,] 34.97201    1     89           2 5.112272 40.94258 36.772847
 ##            haq0
-## [1,] 1.39058597
-## [2,] 1.25089476
-## [3,] 1.31882793
-## [4,] 0.08508691
-## [5,] 1.54215076
-## [6,] 2.09751334</code></pre>
+## [1,] 0.94964316
+## [2,] 0.92863933
+## [3,] 0.08746739
+## [4,] 1.49205458
+## [5,] 1.83005097
+## [6,] 2.05920800</code></pre>
 </div>
 <div id="using-your-own-patient-population" class="section level2">
 <h2 class="hasAnchor">

@@ -13,7 +13,7 @@ load("output.RData")
 ```
 
 ## Available model structures
-The model allows for 336 possible model structures related to the effect of treatment on HAQ during the 1st 6 months, causes of treatment switching during the 1st 6 months, the model used to simulate the long-term progression of HAQ, the probability distribution used to measure time to treatment discontinuation, and the algorithm used to simulate utility. 
+The model allows for 384 possible model structures related to the effect of treatment on HAQ during the 1st 6 months, causes of treatment switching during the 1st 6 months, the model used to simulate the long-term progression of HAQ, the probability distribution used to measure time to treatment discontinuation, and the algorithm used to simulate utility. 
 
 There are 3 possible pathways linking treatment to HAQ.
 
@@ -42,7 +42,7 @@ kable(tab)
 
 HAQ progression for patients in the absence of bDMARDs can be modeled in one of two ways. First, progression can be modeled at a constant annual rate or second, progression can be modeled using a latent class growth model (LCGM). The advantage of the LCGM is that it allows for different classes of patients with different HAQ trajectories and that within each trajectory, the rate of HAQ progression decreases at a non-linear rate over time.
 
-The parametric distribution used to model time to treat discontinuation can also be varied. 7 possible distributions are possible: exponential, Weibull, Gompertz, gamma, log-logistic, lognormal, and generalized gamma. 
+There also multiple ways to model time to treatment discontinuation. Treatment discontinuation can be due to all causes or due to serious infections alone. If discontinuation is due to serious infections alone, then treatment duration is modeled using an exponential distribution based on serious infection rates from clinical trials; converseley, if discontinuation is due to all causes, the treatment duration is modeled based on observational data with any of 7 possible distributions: exponential, Weibull, Gompertz, gamma, log-logistic, lognormal, and generalized gamma. All told, there are thus 8 possible ways to model time to treatment discontinuation.
 
 Finally, there are two ways to estimate utility. Our preferred method is mixture model estimated by [Hernandez Alava et al. (2013)](https://academic.oup.com/rheumatology/article/52/5/944/1816557) that has been shown to significantly outperform existing models. The mixture model simulates utility as a function of age, pain, and HAQ for four separate classes that are, in turn, dependent on age, gender, pain, HAQ, and an unobserved random intercept term. The second algorithm is based on the logistic regression equation relating HAQ and other patient characteristics to utility by [Wailoo et al. (2006)](https://www.sheffield.ac.uk/polopoly_fs/1.43356!/file/AHRQ-final-report.pdf). 
 
@@ -54,6 +54,7 @@ Model structures are chosen with R using the `select_model_structures` function.
 mod.structs <- select_model_structures(tx_ihaq = c("acr-eular-haq", "acr-haq"),
                                      tx_iswitch = c("acr-eular-switch", "acr-switch"),
                                      cdmards_haq_model = c("lcgm", "linear"),
+                                     ttd_cause = c("all", "si"),
                                      ttd_dist = c("gengamma", "lnorm"),
                                      utility_model = c("mixture", "wailoo"))
 print(mod.structs)

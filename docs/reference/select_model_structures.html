@@ -166,11 +166,11 @@
     </div>
 
     
-    <p>Select the model structures to be used in the IVI-RA individual patient simulation.</p>
+    <p>Select the model structures to use in the IVI-RA individual patient simulation.</p>
     
 
     <pre class="usage"><span class='fu'>select_model_structures</span>(<span class='kw'>tx_ihaq</span> <span class='kw'>=</span> <span class='st'>"acr-haq"</span>, <span class='kw'>tx_iswitch</span> <span class='kw'>=</span> <span class='st'>"acr-switch"</span>,
-  <span class='kw'>cdmards_haq_model</span> <span class='kw'>=</span> <span class='st'>"lcgm"</span>, <span class='kw'>ttd_dist</span> <span class='kw'>=</span> <span class='st'>"exponential"</span>,
+  <span class='kw'>cdmards_haq_model</span> <span class='kw'>=</span> <span class='st'>"lcgm"</span>, <span class='kw'>ttd_cause</span> <span class='kw'>=</span> <span class='st'>"all"</span>, <span class='kw'>ttd_dist</span> <span class='kw'>=</span> <span class='st'>"exponential"</span>,
   <span class='kw'>utility_model</span> <span class='kw'>=</span> <span class='st'>"mixture"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
@@ -205,6 +205,13 @@ treatment. Options, which are equivalent to H1-H3 in the documentation are:</p><
 </ul><p>If <code>lgcm</code> is chosen, then a latent class growth model is used for cDMARDs
 and NBT but a constant annual rate is is assumed for all other therapies; otherwise 
 a constant linear HAQ progression is assumed for all therapies including cDMARDs and NBT.</p></td>
+    </tr>
+    <tr>
+      <th>ttd_cause</th>
+      <td><p>Cause of treatment discontinuation. Options are:</p><ul>
+<li><p>all Treatment discontinuation due to any cause.</p></li>
+<li><p>si Treatment discontinuation due to serious infections</p></li>
+</ul></td>
     </tr>
     <tr>
       <th>ttd_dist</th>
