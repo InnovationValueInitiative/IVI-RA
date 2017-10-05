@@ -356,6 +356,12 @@ select_model_structures <- function(tx_ihaq = "acr-haq",
   if (any(val == 1)){
     stop("When 'tx_ihaq' option 'haq' is selected, 'tx_iswitch' must equal 'das28-switch'.")
   }
+  
+  ## ttd_cause == si
+  val <- ifelse(ttd_cause == "si" & ttd_dist != "exponential", 1, 0)
+  if (any(val == 1)){
+    stop("When 'ttd_cause' option 'si' is selected, 'ttd_dist' must equal 'exponential'.")
+  }
 
   # return
   model.structure <- matrix(c(tx_ihaq, tx_iswitch, cdmards_haq_model, 
