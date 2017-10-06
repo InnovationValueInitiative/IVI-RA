@@ -807,131 +807,42 @@ The relationship between EULAR response and HAQ is based on analyses conducted b
 \end{center}
 \end{table}
 
-\autoref{tbl:sim-haq-change} compares the impact of treatment on HAQ using model structures \textbf{H1-H3}. There is considerable variation, which suggests that the choice of model structure has important consequences for cost-effectiveness. The effect of treatment on the change in HAQ is largest when modeled directly (\textbf{H2}) and smallest when modeled through both ACR and EULAR response (\textbf{H3}). 95\% credible intervals are also considerably larger when the change in HAQ is modeled indirectly (\textbf{H1} and \textbf{H3}), then when it is modeled directly (\textbf{H2}). 
+\autoref{tbl:sim-haq-change} compares the impact of treatment on HAQ when using \textbf{H1-H3}. Results were estimated by simulating $1,000$ patients for 6 months and randomly sampling $1,000$ parameter sets. For each randomly sampled parameter set, we calculated the average decrease in HAQ at 6 months across the $1,000$ patients. Estimates reported in the table are the mean and 95\% credible of the mean decrease in HAQ at 6 months. To maintain consistency across \textbf{H1-H3}, we did not allow HAQ scores for patients who might have otherwise switched treatments accoring to \textbf{S1-S6} to rebound back to their baseline levels (i.e., levels at the start of the simulation) at the end of the 6 month period.   
 
 <<sim6-haq, cache=CACHE, echo=FALSE, include=FALSE>>=
-# arms to include
-arm.snames <- c("cdmards", "abtivmtx", "adamtx", "etnmtx", "golmtx", "ifxmtx", "tczmtx", "czpmtx", "abtscmtx", "rtxmtx", "tofmtx")
-arm.names <- iviRA::treatments[sname %in% arm.snames, mname]
-
-# simulation function
-sim6_summary <- function(arms, arm_names, nouter = 1000, ninner = 1000,
-                         model_structure, das28_mean = 6){
-  acr.mean <- matrix(NA, nrow = length(arms), ncol = 4)
-  acr.o.mean <- matrix(NA, nrow = length(arms), ncol = 3)
-  acr.lower <- acr.upper <- acr.mean
-  acr.o.lower <- acr.o.upper <- acr.o.mean 
-  eular.mean <- matrix(NA, nrow = length(arms), ncol = 3)
-  eular.lower <- eular.upper <- eular.mean
-  dhaq.mean <- dhaq.lower <- dhaq.upper <- rep(NA, length(arms))
-  pat <- sample_pop(n = ninner, das28_mean = das28_mean)
-  input.dat <- get_input_data(pop = pat)
-  parsamp <- sample_pars(n = nouter, input_data = input.dat)
-  for (i in 1:length(arms)){
-    if (!(model_structure[1, "tx_iswitch"] == "das28-switch" & 
-          arms[i] %in% c("adamtx", "tofmtx", "tox"))){
-      sim6 <- sim_iviRA(arms[i], input_data = input.dat, pars = parsamp,
-                        model_structures = model_structure, max_months = 6)
-
-    ## acr
-    acr.full <- data.table(sim = rep(seq(1, ninner) , 4),
-                            acr = rep(seq(0, 3), each = ninner))
-    acr <- setkey(sim6, sim, acr)[acr.full, .(prop = .N/ninner), by=.EACHI]
-    acr <- dcast(acr, sim ~ acr, value.var = "prop")
-    acr[is.na(acr)] <- 0
-    acr <- as.matrix(acr)[, -1, drop = FALSE]
-    acr.o <- matrix(NA, nrow = ninner, ncol  = 3)
-    acr.o[, 1] <- 1 - acr[, 1] # ACR 20
-    acr.o[, 2] <- acr[, 3] + acr[, 4] # ACR 50
-    acr.o[, 3] <- acr[, 4] # ACR 70
-    
-    ## quantiles
-    acr.mean[i, ] <- apply(acr, 2, mean)
-    acr.lower[i, ] <- apply(acr, 2, quantile, .025)
-    acr.upper[i, ] <- apply(acr, 2, quantile, .975)
-    acr.o.mean[i, ] <- apply(acr.o, 2, mean)
-    acr.o.lower[i, ] <- apply(acr.o, 2, quantile, .025)
-    acr.o.upper[i, ] <- apply(acr.o, 2, quantile, .975)
-
-    ## eular
-    eular.full <- data.table(sim = rep(seq(1, ninner) - 1, 3),
-                           eular = rep(seq(0, 2), each = ninner))
-    eular <- setkey(sim6, sim, eular)[eular.full, .(prop = .N/ninner), by=.EACHI]
-    eular <- dcast(eular, sim ~ eular, value.var = "prop")
-    eular[is.na(eular)] <- 0
-    eular <- as.matrix(eular)[, -1]
-    eular.mean[i, ] <- apply(eular, 2, mean)
-    eular.lower[i, ] <- apply(eular, 2, quantile, .025)
-    eular.upper[i, ] <- apply(eular, 2, quantile, .975)
-
-    ## haq change mean
-    dhaq <- sim6$haq - input.dat$haq0[sim6$id]
-    dhaq.mean[i] <- mean(dhaq)
-    dhaq.lower[i] <- quantile(dhaq, .025)
-    dhaq.upper[i] <- quantile(dhaq, .975)
-    }
-    print(i)
-  }
-  return(list(arm.names = arm_names,
-              acr.lower = acr.lower, acr.mean = acr.mean, acr.upper = acr.upper,
-              acr.o.lower = acr.o.lower, acr.o.mean = acr.o.mean , acr.o.upper = acr.o.upper, 
-              eular.lower = eular.lower, eular.mean = eular.mean, eular.upper = eular.upper,
-              dhaq.lower = dhaq.lower, dhaq.mean = dhaq.mean, dhaq.upper = dhaq.upper))
-}
-
-# simulate
-## H1
-mod.struct <- select_model_structures(tx_ihaq = "acr-haq", tx_iswitch = "acr-switch",
-                                     utility_model = "wailoo")
-sim6.acr2haq.naive <- sim6_summary(arm.snames, arm.names, model_structure = mod.struct)
-
-## H2
-mod.struct <- select_model_structures(tx_ihaq = "haq", tx_iswitch = "das28-switch",
-                                     utility_model = "wailoo")
-sim6.haq.naive <- sim6_summary(arm.snames, arm.names,
-                                model_structure = mod.struct, das28_mean = 0)
-
-## H3
-mod.struct <- select_model_structures(tx_ihaq = "acr-eular-haq", 
-                                     tx_iswitch = "acr-eular-switch",
-                                     utility_model = "wailoo")
-sim6.acr2eular2haq.naive <- sim6_summary(arm.snames, arm.names, 
-                                         model_structure = mod.struct)
+treatments <- c("cdmards", "abtivmtx", "adamtx", "etnmtx", "golmtx", "ifxmtx", "tczmtx", "czpmtx", "abtscmtx", "rtxmtx", "tofmtx")
+pop <- sample_pop(n = 1000)
+input.dat <- get_input_data(pop = pop)
+parsamp <- sample_pars(n = 1000, input_data = input.dat)
+dhaq6.sim <- sim_dhaq6(treatments = treatments, input_data = input.dat,
+                       pars = parsamp, hist = "naive")
+dhaq6.means <- dhaq6.sim[, .(dhaq = mean(dhaq)),
+                           by = c("tx", "model", "sim")]
+dhaq6.means.summary <- dhaq6.means[, .(mean = mean(dhaq),
+                                       lower = quantile(dhaq, .025),
+                                        upper = quantile(dhaq, .975)),
+                                   by = c("tx", "model")]
 @
 
 <<sim6-haq-tables, cache=CACHE, echo=FALSE, include=FALSE>>=
-summary_table <- function(x, digits = 2){
-  # table output
-  table.mean <- cbind(x$acr.mean, x$acr.o.mean, x$eular.mean, x$dhaq.mean)
-  table.lower <- cbind(x$acr.lower, x$acr.o.lower, x$eular.lower, x$dhaq.lower)
-  table.upper <- cbind(x$acr.upper, x$acr.o.upper, x$eular.upper, x$dhaq.upper)
-  ftable.mean <- trimws(formatC(table.mean, format = "f", digits = digits))
-  ftable.lower <- trimws(formatC(table.lower, format = "f", digits = digits))
-  ftable.upper <- trimws(formatC(table.upper, format = "f", digits = digits))
-  ftable.mean[ftable.mean == "NA"] <- ""
-  ftable.lower[ftable.lower == "NA"] <- ""
-  ftable.upper[ftable.upper == "NA"] <- ""
-  ftable <- paste0(ftable.mean, " (", ftable.lower, ", ", ftable.upper, ")")
-  ftable[ftable == " (, )"] <- "-"
-  ftable <- matrix(ftable, nrow = nrow(ftable.mean), ncol = ncol(ftable.mean))
-  ftable <- trimws(ftable)
-  cn <- c("acrl20", "acr20-50", "acr50-70", "acr70+", "acr20", "acr50", "acr70",
-                           "eular_nr", "eular_mr", "eular_gr", "dhaq")
-  colnames(ftable) <- cn
-  rownames(ftable) <- x$arm.names
-  return(ftable)
-}
-
-# H1 - H3
-tab.acr2haq.naive <- summary_table(sim6.acr2haq.naive)
-tab.haq.naive <- summary_table(sim6.haq.naive)
-tab.acr2eular2haq.naive <- summary_table(sim6.acr2eular2haq.naive)
+# Format results
+dhaq6.means.summary[, tx_sname := iviRA::treatments[tx, sname]]
+dhaq.mat <- as.matrix(dhaq6.means.summary[, .(lower, mean, upper)])
+dhaq.fmat <- trimws(formatC(dhaq.mat, format = "f", digits = 2))
+dhaq.fest <- paste0(dhaq.fmat[, "mean"], " (", dhaq.fmat[, "lower"], ", ", 
+                    dhaq.fmat[, "upper"], ")")
+dhaq6.dt <- data.table(tx_name = dhaq6.means.summary$tx_sname,
+                     model = as.character(dhaq6.means.summary$model),
+                     est = dhaq.fest)
+dhaq6.dt[, model := factor(model, levels = c("acr-haq", "acr-eular-haq", "haq"))]
+dhaq6.table <- dcast(dhaq6.dt, tx_name ~ model, value.var = "est")
+dhaq6.table <- dhaq6.table[match(treatments, tx_name)]
+mname <- iviRA::treatments[match(dhaq6.table$tx_name, iviRA::treatments$sname), mname]
+dhaq6.table[, tx_name := mname]
 
 # TEX table
-tab.dhaq.naive <- cbind(tab.acr2haq.naive[, "dhaq"], tab.haq.naive[, "dhaq"], tab.acr2eular2haq.naive[, "dhaq"]) 
-rownames(tab.dhaq.naive) <- arm.names
-tex <- print(xtable(tab.dhaq.naive),
-      include.rownames = TRUE, include.colnames = FALSE,
+tex <- print(xtable(dhaq6.table),
+      include.rownames = FALSE, include.colnames = FALSE,
       only.contents = TRUE, sanitize.text.function = identity,
       file = "tables/sim-dhaq-6months.txt")
 @
@@ -939,7 +850,7 @@ tex <- print(xtable(tab.dhaq.naive),
 \begin{table}[!ht]
 \begin{center}
 \begin{threeparttable}
-\caption{Simulated change in HAQ at 6 months under different model structures} \label{tbl:sim-haq-change}
+\caption{Simulated mean change in HAQ at 6 months under different model structures} \label{tbl:sim-haq-change}
 \begin{tabularx}{\textwidth}{@{\extracolsep{\fill}}lccc}
 \hline
 \multicolumn{1}{l}{} & \multicolumn{1}{c}{\textbf{H1}} & \multicolumn{1}{c}{\textbf{H2}} & \multicolumn{1}{c}{\textbf{H3}} \\
@@ -948,10 +859,12 @@ tex <- print(xtable(tab.dhaq.naive),
 \hline
 \end{tabularx}
 \scriptsize
-Notes: \textbf{H1}, \textbf{H2}, and \textbf{H3} are the Treatment $\rightarrow$ ACR $\rightarrow$ HAQ, Treatment $\rightarrow$ HAQ, and Treatment $\rightarrow$ ACR $\rightarrow$ EULAR $\rightarrow$ HAQ pathways respectively. 95\% credible intervals are in parentheses. Estimates are based on 6-month simulations of 1,000 patients and 1,000 parameters sets for each therapy. $\Delta$HAQ denotes a change in the HAQ score at 6 months from baseline; a negative value indicates a reduction in the HAQ score. cDMARDs = conventional disease-modifying antirheumatic drugs; MTX = methotrexate; ABT IV = abatacept intravenous; ADA = adalimumab; ETN = etanercept; GOL = golimumab; IFX = infliximab; TCZ = tocilizumab; CZP = certolizumab pegol; ABT SC = abatacept subcutaneous; RTX = rituximab; TOF = tofacitinib. ACR = American College of Rheumatology. The 97.5\% quantiles in \textbf{H1} and \textbf{H3} are 0, 
+Notes: \textbf{H1}, \textbf{H2}, and \textbf{H3} are the Treatment $\rightarrow$ ACR $\rightarrow$ HAQ, Treatment $\rightarrow$ ACR $\rightarrow$ EULAR $\rightarrow$ HAQ, and Treatment $\rightarrow$ HAQ pathways respectively. 95\% credible intervals are in parentheses. Estimates are based on 6-month simulations of 1,000 patients and 1,000 parameters sets for each therapy. $\Delta$HAQ denotes a change in the HAQ score at 6 months from baseline; a negative value indicates a reduction in the HAQ score. Mean $\Delta$HAQ is calculated for each parameter set by averaging across the 1,000 patients. cDMARDs = conventional disease-modifying antirheumatic drugs; MTX = methotrexate; ABT IV = abatacept intravenous; ADA = adalimumab; ETN = etanercept; GOL = golimumab; IFX = infliximab; TCZ = tocilizumab; CZP = certolizumab pegol; ABT SC = abatacept subcutaneous; RTX = rituximab; TOF = tofacitinib. ACR = American College of Rheumatology. 
 \end{threeparttable}
 \end{center}
 \end{table}
+
+Estimates for \textbf{H1} and \textbf{H3} are generally similar but treatment response is considerably smaller when using \textbf{H2}. This suggests that the additional mapping between ACR response and EULAR response attenuates treatment response. Given these varying estimates of the change in HAQ during the initial treatment phase and the impact of HAQ on other important outcomes within the model including utility and health care costs, the choice of \textbf{H1-H3} (and in particular \textbf{H2} vs. \textbf{H1,H3}) appears to have important consequences for value assessment.  
 
 \subsection{HAQ progression in the absence of bDMARD treatment}\label{haq-progression-in-the-absence-of-bdmard-treatment}
 

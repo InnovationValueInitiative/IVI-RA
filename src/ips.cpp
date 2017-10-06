@@ -1218,6 +1218,9 @@ RCPP_MODULE(mod_Out0) {
   ;
 }
 
+/****************************************
+* Simulate QALYs given simulation output
+****************************************/
 // Calculate vector of QALYs given simulation output
 // [[Rcpp::export]]
 std::vector<double> sim_qalysC(std::vector<double> &utility, std::vector<double> &yrlen,
@@ -1233,6 +1236,79 @@ std::vector<double> sim_qalysC(std::vector<double> &utility, std::vector<double>
     qalys_vec.push_back(yrlen[i] * utility1);
   }
   return qalys_vec;
+}
+
+/*****************************************************
+* Simulate change in HAQ at 6 months with no switching
+******************************************************/
+// [[Rcpp::export]] 
+Rcpp::DataFrame sim_dhaq6C(int npats, int nsims, std::string hist, int line, 
+                              std::vector<int> tx_inds, int nbt_ind,
+                              arma::mat x_acr, Rcpp::List nma_acr_list, 
+                              arma::mat x_haq, Rcpp::List nma_haq_list,
+                              arma::cube acr2eular, arma::mat acr2haq, 
+                              arma::mat eular2haq, 
+                              std::vector<std::string> tx_ihaq_type){
+  
+  // NMA ACR response
+  std::vector<double> acr_rr = as<std::vector<double> > (nma_acr_list["rr"]);
+  std::vector<double> acr_A = as<std::vector<double> > (nma_acr_list["A"]);
+  std::vector<double> acr_z2 = as<std::vector<double> > (nma_acr_list["z2"]);
+  std::vector<double> acr_z3 = as<std::vector<double> > (nma_acr_list["z3"]);
+  arma::cube acr_d_beta = as<arma::cube>(nma_acr_list["d"]);
+  nmaACR nma_acr;
+  
+  // NMA HAQ
+  std::vector<double> nma_haq_rr = as<std::vector<double> > (nma_haq_list["rr"]);
+  std::vector<double> nma_haq_A = as<std::vector<double> > (nma_haq_list["A"]);
+  arma::cube nma_haq_d_beta = as<arma::cube>(nma_haq_list["d"]);
+  nmaLM nma_haq;
+  
+  // Store
+  int J = tx_inds.size();
+  int M = tx_ihaq_type.size();
+  int N = J * M * nsims * npats; 
+  std::vector<int> tx_vec; tx_vec.reserve(N);
+  std::vector<std::string> model_vec; model_vec.reserve(N);
+  std::vector<int> sim_vec; sim_vec.reserve(N);
+  std::vector<int> id_vec; id_vec.reserve(N);
+  std::vector<double> dhaq_vec; dhaq_vec.reserve(N);
+  
+  // Simulation
+  TxIHaq tx_ihaq;
+  for (int j = 0; j < J; ++j){
+    int tx_ind_j = tx_inds[j];
+    for (int m = 0; m < M; ++m){
+      for (int s = 0; s < nsims; ++s){
+        for (int i = 0; i < npats; ++i){
+          nma_acr.set(hist, acr_rr[s], acr_A[s], acr_z2[s], acr_z3[s],
+                      acr_d_beta.slice(tx_ind_j).row(s), x_acr.row(i),
+                      line);
+          nma_haq.set(hist, nma_haq_rr[s], nma_haq_A[s],
+                      nma_haq_d_beta.slice(tx_ind_j).row(s), x_haq.row(i),
+                      line);
+          tx_ihaq.sim(tx_ihaq_type[m], line, tx_ind_j, nbt_ind,
+                      nma_acr, nma_haq,
+                      acr2eular.slice(s), acr2haq.row(s), 
+                      eular2haq.row(s));
+          tx_vec.push_back(tx_ind_j);
+          model_vec.push_back(tx_ihaq_type[m]);
+          sim_vec.push_back(s);
+          id_vec.push_back(i);
+          dhaq_vec.push_back(tx_ihaq.dhaq);
+        }
+      }
+    }
+  }
+  
+  // Return results
+  Rcpp::DataFrame out = Rcpp::DataFrame::create(
+    _["tx"] = tx_vec,
+    _["model"] = model_vec,
+    _["sim"] = sim_vec,
+    _["id"] = id_vec,
+    _["dhaq"] = dhaq_vec);
+  return out; 
 }
 
 /*********************************

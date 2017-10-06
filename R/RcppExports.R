@@ -56,6 +56,10 @@ sim_qalysC <- function(utility, yrlen, sim, tx, si, si_ul, x_attr, tx_attr_coef)
     .Call('_iviRA_sim_qalysC', PACKAGE = 'iviRA', utility, yrlen, sim, tx, si, si_ul, x_attr, tx_attr_coef)
 }
 
+sim_dhaq6C <- function(npats, nsims, hist, line, tx_inds, nbt_ind, x_acr, nma_acr_list, x_haq, nma_haq_list, acr2eular, acr2haq, eular2haq, tx_ihaq_type) {
+    .Call('_iviRA_sim_dhaq6C', PACKAGE = 'iviRA', npats, nsims, hist, line, tx_inds, nbt_ind, x_acr, nma_acr_list, x_haq, nma_haq_list, acr2eular, acr2haq, eular2haq, tx_ihaq_type)
+}
+
 sim_iviRA_C <- function(arm_inds, tx_data, model_structures_mat, hist, haq0, das28_0, sdai0, cdai0, age0, male, prev_dmards, nma_acr_list, x_acr, nma_haq_list, x_haq, nma_das28_list, x_das28, acr2eular, acr2haq, eular2haq, acr2das28, acr2sdai, acr2cdai, tswitch_da, haq_lprog_therapy, haq_lprog_age, haq_lcgm_delta, haq_lcgm_beta, rebound_factor, lifetable_male, lifetable_female, x_mort, logor_mort, x_ttd_all, x_ttd_da, x_ttd_eular, ttd_all_list, ttd_da_list, ttd_eular_mod_list, ttd_eular_good_list, cdmards, nbt, si_loc, si_anc1, si_anc2, si_dist, haqdelta_loghr, max_months, hosp_days, cost_pday, mgmt_cost, si_cost, prod_loss, tc_list, weight, coefs_wailoo, pars_util_mix, si_ul, utility_tx_attr, discount_rate, output) {
     .Call('_iviRA_sim_iviRA_C', PACKAGE = 'iviRA', arm_inds, tx_data, model_structures_mat, hist, haq0, das28_0, sdai0, cdai0, age0, male, prev_dmards, nma_acr_list, x_acr, nma_haq_list, x_haq, nma_das28_list, x_das28, acr2eular, acr2haq, eular2haq, acr2das28, acr2sdai, acr2cdai, tswitch_da, haq_lprog_therapy, haq_lprog_age, haq_lcgm_delta, haq_lcgm_beta, rebound_factor, lifetable_male, lifetable_female, x_mort, logor_mort, x_ttd_all, x_ttd_da, x_ttd_eular, ttd_all_list, ttd_da_list, ttd_eular_mod_list, ttd_eular_good_list, cdmards, nbt, si_loc, si_anc1, si_anc2, si_dist, haqdelta_loghr, max_months, hosp_days, cost_pday, mgmt_cost, si_cost, prod_loss, tc_list, weight, coefs_wailoo, pars_util_mix, si_ul, utility_tx_attr, discount_rate, output)
 }

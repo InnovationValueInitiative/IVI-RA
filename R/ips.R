@@ -73,7 +73,8 @@ sim_iviRA <- function(arms, input_data, pars, model_structures,
                       max_months = NULL, tx_data = iviRA::treatments,
                       hist = c("naive", "experienced"),
                       output = c("data", "summary"), 
-                      discount_qalys = .03, discount_cost = .03){
+                      discount_qalys = .03, discount_cost = .03,
+                      tx_iswitch = TRUE){
   hist <- match.arg(hist)
   output <- match.arg(output)
   
@@ -804,4 +805,49 @@ check_sim_qalys <- function(simhaq, utility, si_ul, x_attr, tx_attr_ug){
   # tx_attr_ug
   if(is.null(tx_attr_ug)) stop("'tx_attr_ug' is missing")
   if(!is.matrix(tx_attr_ug)) stop("'tx_attr_ug' must be a matrix")
+}
+
+#' Simulate change in HAQ at 6 months
+#'
+#' Simulate change in HAQ at 6 months using different model structures relating treatment to HAQ.
+#' 
+#' @param treatments Vector of treatments arms to simulate. Should correpond to \code{sname} in 
+#' \link{iviRA::treatments}.
+#' @param input_data An object of class \code{input_data} returned from \link{get_input_data}. 
+#' The only elements required are \code{x_acr} and \code{x_haq}.
+#' @param pars List of sampled parameter values generated from \link{get_input_data}. The only 
+#' elements required are \code{acr}, \code{haq}, \code{acr2haq}, \code{acr2eular}, and
+#' \code{eular2haq}.
+#' @param tx_lookup Vector of treatments with names equivalent to \code{iviRA::treatments$sname}.
+#' Index of treatments in \code{treatments} are matched against treatments in \code{tx_lookup} by 
+#' name. Indices of parameter estimates from the network meta-analyses bust be in the same order as
+#' in \code{tx_data}.
+#' @param hist Is the patient biologic naive or biologic experienced? 
+#' @param line Line of therapy
+#' @param tx_ihaq Equivalent to argument \code{tx_haq} in \link{select_model_structures}.
+#' @return Change in HAQ for each selected model structure, randomly sampled parameter set,
+#' simulated patient, and treatment.
+#'
+#' @export
+sim_dhaq6 <- function(treatments, input_data, pars,
+                      tx_lookup = iviRA::treatments$sname,
+                      hist = c("naive", "experienced"), 
+                      line = 1, 
+                      tx_ihaq = c("acr-haq", "acr-eular-haq", "haq")){
+  hist <- match.arg(hist)
+  nbt.ind <- which(tx_lookup == "nbt") - 1
+  cdmards.ind <- which(tx_lookup == "cdmards") - 1
+  treatments.ind <- match(treatments, tx_lookup) - 1
+  sim <- sim_dhaq6C(npats = input_data$n, nsims = pars$n, 
+                    hist = hist, line = line - 1,
+                    tx_inds = treatments.ind, nbt_ind = nbt.ind,
+                    x_acr = input_data$x.acr, nma_acr_list = pars$acr,
+                    x_haq = input_data$x.haq, nma_haq_list = pars$haq,
+                    acr2eular = pars$acr2eular, acr2haq = pars$acr2haq,
+                    eular2haq = pars$eular2haq, tx_ihaq_type = tx_ihaq)
+  sim <- data.table(sim)
+  sim[, tx := tx + 1]
+  sim[, sim := sim + 1]
+  sim[, id := id + 1]
+  return(sim)
 }
