@@ -162,6 +162,7 @@ return(x)
 CACHE <- TRUE
 @
 
+\clearpage
 \phantomsection
 \section*{Executive summary}\label{sec:executive-summary}
 \addcontentsline{toc}{section}{Executive summary}  
@@ -179,7 +180,7 @@ To facilitate transparency, understanding, and debate, OSVP models are released 
 \item Web-based user interfaces
 \end{itemize}
 
-The IVI-RA model is released specifically as an \href{https://cran.r-project.org/}{\R{}} package with documentation available \href{https://innovationvalueinitiative.github.io/IVI-RA/index.html}{online}. Technical users can view the source code for the model, run the model using the R package, or even modify the original source code. This technical documentation provides detail on the model structure, statistical methods for parameter estimation, and source data.
+The IVI-RA model is released specifically as an \href{https://cran.r-project.org/}{\R{}} package with documentation available \href{https://innovationvalueinitiative.github.io/IVI-RA/index.html}{online}. Technical users can view the source code for the model, run the model using the \R{} package, or even modify the original source code. This technical documentation provides detail on the model structure, statistical methods for parameter estimation, and source data.
 
 Following version 1.0, each major release of an OSVP model (i.e., version 2.0) will occur following a three-step process:
 
@@ -241,6 +242,7 @@ We have found that model outcomes are especially sensitive to certain parameters
 \item The relationship between HAQ and quality of life
 \end{itemize}
 
+\clearpage
 \section{Open-source consensus-based models for value assessment}\label{sec:osvp}
 The continuing increase in US healthcare costs has stimulated the introduction of initiatives to promote the use of high-value care. Decision-analytic models can be used to inform efficient use of health care resources, but are only relevant when deemed credible by different stakeholders, are representative of the local context and patient population, and can be easily updated without duplication of effort.
 
@@ -304,7 +306,7 @@ The first and most obvious use of the model is for value assessment. Two approac
 
 Second, the model can be used to evaluate the consequences of clinical guidelines such as the current treat-to-target guidelines in the US \citep{singh20162015} or guidelines based on treatment response like in the UK \citep{deighton2010bsr}. Unlike most previous models, our flexible framework allows treatment switching decisions to depend on disease activity level or treatment response, so outcomes under different decision rules can be simulated.   
 
-Third, the model can be used to predict longterm health and economic consequences for patients. The predicted outcomes could, for example, be used to inform patient and providers decision making. For instance, \citet{ioannidis2011individualized} argue that cost-effectiveness has relevance to patients spending their own money on health care services, particularly as out-of-pocket costs grow. Likewise, providers have a growing interest in cost-effectiveness models to demonstrate the value of their care whether through participation in Accountable Care Organizations (ACOs), to ensure coverage of medical interventions for their patients, or to reduce unwanted variability in management. 
+Third, although the model is currently desnged for population level decision-making, it could, in principle, be used to predict longterm health and economic consequences for patients. The predicted outcomes could, for example, be used to inform patient and providers decision making. For instance, \citet{ioannidis2011individualized} argue that cost-effectiveness has relevance to patients spending their own money on health care services, particularly as out-of-pocket costs grow. Likewise, providers have a growing interest in cost-effectiveness models to demonstrate the value of their care whether through participation in Accountable Care Organizations (ACOs), to ensure coverage of medical interventions for their patients, or to reduce unwanted variability in management. 
 
  \section{Value assessment}\label{sec:value-assessment}
 The IVI-RA model simulates clinical and economic outcomes for each individual in a given population of interest. Outcomes can be simulated over a particular time horizon or over a lifetime. 
@@ -434,7 +436,7 @@ Since patients typically use multiple treatments over a lifetime, the model is c
 At the end of a sequence, patient switch to non-biologic therapy (NBT), which encompasses a range of therapies that clinicians may feel is appropriate for all patients such as methotrexate and sulfasalazine \citep{stevenson2016adalimumab, stevenson2017cost}.
 
 \section{Competing model structures}\label{sec:model-structures}
-The IVI-RA model is a discrete-time IPS with 6 month cycles that can be run using a number of different model structures. Like most decision-analytic models in RA, version 1 of the model measures changes in disease severity using the Health Assessment Questionnaire (HAQ) Disability Index score \citep{brennan2003modelling, wailoo2008biologic, tosh2011sheffield, carlson2015economic, stephens2015modelling, athanasakis2015cost, stevenson2016adalimumab, icer2017tim, stevenson2017cost}. At the start of the simulation, each patient is assigned a baseline HAQ score. Subsequently, the impact of the disease measured by the HAQ trajectory over time is modeled as a function of a sequence of treatments (\autoref{fig:haq-structure}). In the absence of treatment, HAQ deteriorates at a certain rate as depicted by the dashed line in the figure. Treatment is separated into two distinct phases: an initial phase of up to 6 months, consistent with data reported from randomized controlled trials (RCTs), and a maintenance phase thereafter until discontinuation. 
+The IVI-RA model is a discrete-time IPS with 6 month cycles that can be run using a number of different model structures. Like most decision-analytic models in RA, version 1 of the model measures changes in disease severity using the Health Assessment Questionnaire (HAQ) Disability Index score \citep{brennan2003modelling, wailoo2008biologic, tosh2011sheffield, carlson2015economic, stephens2015modelling, athanasakis2015cost, stevenson2016adalimumab, icer2017tim, stevenson2017cost}. At the start of the simulation, each patient is assigned a baseline HAQ score. Subsequently, the impact of the disease measured by the HAQ trajectory over time is modeled as a function of a sequence of treatments (\autoref{fig:haq-structure}). In the absence of treatment, HAQ deteriorates at a certain rate as depicted by the dashed line in the figure. For each treatment in a treatment sequence, treatment is separated into two distinct phases: an initial phase of up to 6 months, consistent with data reported from randomized controlled trials (RCTs), and a maintenance phase thereafter until discontinuation. 
 
 \begin{figure}
 \centering
@@ -455,7 +457,7 @@ During the initial treatment phase HAQ is modeled as a change from baseline.
 
 In \textbf{H1}, treatment influences HAQ through its effect on the American College of Rheumatology (ACR) response criteria, which is similar to the structure used in US based cost-effectiveness models \citep[e.g.][]{carlson2015economic, icer2017tim}. ACR 20/50/70 response is defined as at least a 20/50/70\% improvement. In the simulation, we convert these overlapping ACR categories to four mutually exclusive categories: no response (defined as less than 20\% improvement), ACR 20\% to <50\% improvement, ACR 50\% to <70\% improvement, and ACR 70\% improvement or greater. The rationale for using ACR response rather than HAQ directly is that the evidence base relating treatment to ACR response is larger than the evidence based relating treatment to HAQ. \textbf{H2} follows the National Institute for Health and Care Excellence (NICE) cost-effectiveness model \citep{stevenson2016adalimumab, stevenson2017cost} and models the effect of treatment on HAQ indirectly through its effect on ACR response and, in turn, the three categories of the European League Against Rheumatism (EULAR) response (no response, moderate response, or good response). Finally, since modeling the effect of treatment on HAQ through intermediary variables may mediate treatment response, in \textbf{H3}, treatment impacts HAQ directly.
 
-Treatment switching during the initial treatment phase is modeled using 6 possible structures labeled \textbf{S1-S6}.
+Treatment switching during the initial treatment phase is modeled using 6 different pathways \textbf{S1-S6}.
 
 \begin{itemize}
 \item \textbf{S1:} Treatment $\rightarrow$ ACR $\rightarrow$ Switch
@@ -470,7 +472,7 @@ Treatment switching during the initial treatment phase is modeled using 6 possib
 
 \textbf{S5} is similar to \textbf{S2-S4}, but models the effect of treatment on changes in DAS28 directly, rather than indirectly through ACR response. We also aimed to model the direct effect of treatment on SDAI and CDAI, but sufficient clinical trial data are not available. Finally, since in the UK, the British Society for Rheumatology and the British Health Professionals in Rheumatology recommends using the EULAR response \citep{deighton2010bsr}, treatment switching in \textbf{S6} depends on EULAR response. In particular, following the NICE model, we assume that EULAR non-responders discontinue treatment while moderate and good responders continue treatment \citep{stevenson2016adalimumab}. The reasoning is that rules stipulated by NICE require a DAS28 improvement of more than 1.2 to continue treatment which is associated with moderate or good EULAR response. 
 
-Not all model structures \textbf{S1-S6} can be used with each of \textbf{H1-H3}. If \textbf{H1} is used, then \textbf{S1-S5} are available, but \textbf{S6} is not because EULAR response is not simulated. In \textbf{H2}, \textbf{S1-S6} are all available while in \textbf{H3} only \textbf{S5} can be used since ACR response is not simulated. The 12 possible model structures and the number of each structure are outlined in \autoref{tbl:initial-model-structure}.  
+Not all pathways \textbf{S1-S6} can be used with each of \textbf{H1-H3}. If \textbf{H1} is used, then \textbf{S1-S5} are available, but \textbf{S6} is not because EULAR response is not simulated. In \textbf{H2}, \textbf{S1-S6} are all available while in \textbf{H3} only \textbf{S5} can be used since ACR response is not simulated. The 12 possible combinations are outlined in \autoref{tbl:initial-model-structure}.  
 
 \begin{table}[!ht] 
 \begin{center}
@@ -486,15 +488,15 @@ H3 & - & - & - & - & 12  & -\\
 \hline
 \end{tabularx}
 \scriptsize
-Notes: Rows denote the model structure used to relate treatment to HAQ and columns denote the model structure used to determine treatment switching. Each number denotes a unique model structure (i.e., 1 corresponds to H1 and S1, and 8 corresponds to H2 and S3) and the ``-'' denotes a model structure combination that is not possible. There are 12 possible model structures for the initial treatment phase. 
+Notes: Rows denote the pathway used to relate treatment to HAQ and columns denote the pathway used to determine treatment switching. Each number denotes a unique combination of pathways (i.e., 1 corresponds to H1 and S1, and 8 corresponds to H2 and S3) and the ``-'' denotes a combination of pathways that is not possible. There are 12 possible model structures for the initial treatment phase. 
 \end{threeparttable}
 \end{center}
 \end{table}
 
 \subsection{Maintenance phase}
-In the maintenance phase, two model structures can be used to simulate the long-term progression of HAQ. First, as is common in cost-effectiveness analyses (CEAs) of therapies for RA, HAQ is assumed to progress at a constant linear rate over time \citep[see][]{tosh2011sheffield, wailoo2008biologic}. However, since emerging evidence suggests that the rate of HAQ progression is non-linear and varies across patients \citep{gibson2016haq}, our second scenario simulates HAQ progression using a latent class growth model (LCGM) \citep{norton2014health} with 4 distinct HAQ trajectories and a rate of HAQ progression that decreases over time within each trajectory. Upon discontinuation of treatment, the HAQ score rebounds by a proportion of the improvement experienced at the end of the initial 6-month period with that treatment.
+In the maintenance phase, the long-term progression of HAQ can be modeled in two ways. First, as is common in cost-effectiveness analyses (CEAs) of therapies for RA, HAQ is assumed to progress at a constant linear rate over time \citep[see][]{tosh2011sheffield, wailoo2008biologic}. However, since emerging evidence suggests that the rate of HAQ progression is non-linear and varies across patients \citep{gibson2016haq}, our second scenario simulates HAQ progression using a latent class growth model (LCGM) \citep{norton2014health} with 4 distinct HAQ trajectories and a rate of HAQ progression that decreases over time within each trajectory. Upon discontinuation of treatment, the HAQ score rebounds by a proportion of the improvement experienced at the end of the initial 6-month period with that treatment.
 
-The duration of the maintenance phase (i.e., time to discontinuation of maintenance treatment) is simulated using parametric time-to-event distributions. When \textbf{S1} is used, time to treatment discontinuation is simulated using a single time-to-event curve because we have been unable to obtain curves stratified by ACR response categories. In contrast, when \textbf{S2-S5} are selected, the time-to-event curves are stratified by disease activity level so patients with lower disease activity at the end of the initial treatment phase stay on treatment longer, on average. Likewise, when structure \textbf{S6} is used, the time-to-event distributions are stratified by EULAR response category and patients with good response at the end of the initial treatment phase tend to stay on treatment longer than patients with a moderate response. In each case, time to discontinuation can be simulated using one of 7 possible distributions (exponential, Weibull, Gompertz, normal, gamma, log-logistic, generalized gamma).
+The duration of the maintenance phase (i.e., time to discontinuation of maintenance treatment) is simulated using parametric time-to-event distributions. When \textbf{S1} is used, time to treatment discontinuation is simulated using a single time-to-event curve because we have been unable to obtain curves stratified by ACR response categories. In contrast, when \textbf{S2-S5} are selected, the time-to-event curves are a function of disease activity level so patients with lower disease activity at the end of the initial treatment phase stay on treatment longer, on average. Likewise, when structure \textbf{S6} is used, the time-to-event distributions are stratified by EULAR response category and patients with good response at the end of the initial treatment phase tend to stay on treatment longer than patients with a moderate response. In each case, time to discontinuation can be simulated using one of 7 possible distributions (exponential, Weibull, Gompertz, normal, gamma, log-logistic, generalized gamma).
 
 \subsection{Adverse events}
 In line with \citet{stevenson2016adalimumab} the adverse events included in the model are limited to serious infections; we assume that only serious infections have a significant cost impact and increased risk over background rates to be meaningful to include \citep{ramiro2017safety}. During the initial treatment phase, a patient immediately stops treatment if a serious infection occurs; during the maintenance phase, time on treatment depends on the sampled time to treatment discontinuation and a patient experiences a serious infection if the individual's sampled time to the adverse event is shorter than the sampled time to treatment discontinuation. 
@@ -524,21 +526,16 @@ Notes: Rectangles represent ``processes'' determining the effect of treatment on
 
 The influence diagram in \autoref{fig:influence-diagram} summarizes the assumed relationships among different variables in the model. Each arrow represents the direct effect of one parameter on another. Dashed lines represent relationships that depend on the structural assumptions used. \autoref{subfig:treatment-effects} focuses on the effect of treatment on disease progression and adverse events while \autoref{subfig:model-outcomes} looks at the variables influencing the primary health and cost outcomes. 
 
-\subsection{Model outcomes}
-Model outcomes depend on patient characteristics, which have a direct effect on HAQ progression, mortality, and utility. Depending on the model structure, simulated clinical outcomes during the initial treatment phase can include ACR response, EULAR response, DAS28, SDAI, and/or CDAI. Longterm outcomes include HAQ over time, time to treatment discontinuation, and an indicator for whether a serious infection ocurred. Total costs consist of health care sector costs (drug acquisition and administration costs, general management and monitoring costs, adverse event costs, and hospitalization costs) and productivity losses.
-
-If a CEA approach is used for value assessment, then QALYs can be calculated as a function of simulated life expectancy and utility. CEA from a societal perspective would include productivity losses while analyses from a health care sector perspective would not. The value of treatment is estimated using the net-monetary benefit (NMB), as described in \autoref{sec:cea}.
-
-Any combination of simulated model outcomes can be used for MCDA. In IVIs user interface, the MCDA is currently based on the following criteria: (i) mean HAQ over time, (ii) total health costs, (iii) productivity losses, (iv) number of serious infections, (v) number of treatment switches, (vi) route of administration (oral/injection/infusion) and (vii) time the medication has been on the market.
-
 \begin{figure}
 \centering
 \begin{subfigure}{\textwidth}
+\centering
 \includegraphics[width=\textwidth]{influence-diagram-a.png}
 \caption{Treatment effects} \label{subfig:treatment-effects}
 \end{subfigure}
 \begin{subfigure}{\textwidth}
-\includegraphics[width=\textwidth]{influence-diagram-b.png}
+\centering
+\includegraphics[width=.8\textwidth]{influence-diagram-b.png}
 \caption{Model outcomes} \label{subfig:model-outcomes}
 \end{subfigure}
 \caption{Influence diagram outlining structural relationships}\label{fig:influence-diagram}
@@ -548,9 +545,18 @@ Notes: ACR: American College of Rheumatology; EULAR: European League Against Rhe
 \end{minipage}
 \end{figure}
 
+The model accounts for patient heterogeneity in two ways. First, baseline event rates vary across patients by both observable and unobservable factors. For example, longterm HAQ progression, mortality, and utility depend on patient specific variables including age, gender, and baseline disease level. Moreover, unobserved differences in longterm HAQ progression and utility across patients are modeled using mixture models. Second, relative treatment effects for ACR response, the change in HAQ at 6 months, and the change in DAS28 at 6 months, can be modeled as a function of explanatory variables in the \R{} package. 
+
+\subsection{Model outcomes}
+The model simulates the health outcomes, costs, and risks associated with treatment. Depending on the model structure, simulated clinical outcomes during the initial treatment phase can include ACR response, EULAR response, DAS28, SDAI, and/or CDAI. Longterm outcomes include HAQ over time, time to treatment discontinuation, and an indicator for whether a serious infection ocurred. Total costs consist of health care sector costs (drug acquisition and administration costs, general management and monitoring costs, adverse event costs, and hospitalization costs) and productivity losses.
+
+If a CEA approach is used for value assessment, then QALYs can be calculated as a function of simulated life expectancy and utility. CEA from a societal perspective would include productivity losses while analyses from a health care sector perspective would not. The value of treatment is estimated using the net-monetary benefit (NMB), as described in \autoref{sec:cea}.
+
+Any combination of simulated model outcomes can be used for MCDA. In IVIs user interfaces, the MCDA is currently based on the following criteria: (i) QALYs, (ii) total healthcare sector costs, (iii) productivity losses, (iv) number of serious infections, (v) number of treatment switches, (vi) route of administration (oral/injection/infusion) and (vii) time the medication has been on the market.
+
 \section{Source data and parameter estimation}\label{sec:data-parameters}
 
-\subsection{Comparative treatment efficacy from NMA}\label{nma-parameters}
+\subsection{Treatment effects at 6 months}\label{nma-parameters}
 The effect of treatment on ACR response, DAS28, and HAQ at 6 months for bDMARD naive patients are estimated using Bayesian network meta-analyses (NMA) of published randomized controlled trials (RCTs). Primary outcomes were ACR response, change in DAS28 from baseline at 6 months, and the change in HAQ from baseline at 6 months. Results from the NMA are shown in \autoref{tbl:nma-acr-das28-haq}. Details of the systematic literature review and the statistical methodology are provided in the Appendix (\autoref{app:nma-statistical-models}).
 
 <<nma_results, cache=CACHE, echo=FALSE, include=FALSE>>=
@@ -661,16 +667,19 @@ Notes: ACR20/50/70 categories are the probability of at least a 20/50/70\% impro
 \end{center}
 \end{sidewaystable}
 
+Its important to note that treatment effects for each bDMARD were estimated relative to cDMARDs and then applied to the average response for patients using cDMARDs. A limitation of our current approach is that that the average response for patients using cDMARDs is estimated using data from the clinical trials include in the NMA, and may not reflect outcomes seen in routine practice. Future versions of the model could consider using real-world data instead of clinicial tial evidence to estimate this average response.
 
-Treatment effects for bDMARD experienced patients were reduced by applying the relative risk ratio reported in \citet{carlson2015economic}. More specifically, reductions in DAS28 and HAQ scores for bDMARD experienced patients are assumed to be, on average, 84\% of the reduction in DAS28 and HAQ scores for bDMARD naive patients. Likewise, we assume that the mean reduction in overlapping ACR response categories (ACR 20/50/70) is 84\% after failing the first bDMARD, implying that an ACR response of 60/40/20 would, on average, be reduced to 50/33/16. To capture uncertainty, the reduction in treatment effects is assumed to be distributed uniformly with lower and upper bounds of 74\% and 94\% respectively. 
+Given that there is limited evidence that treatment effects vary across patients in the published literature, treatment response at 6 months for a given treatment does not vary according to patient characteristics. Nonetheless, in our \R{} package, treatment effects for each simulated patient can be modeled as a function of any variables chosen by the user. Our approach to modeling treatment effect heterogeneity is described in \autoref{app:nma-statistical-models}  
 
-In the simulation, treatment efficacy depends on the line of therapy and whether a patient is bDMARD naive or bDMARD experienced at baseline. For bDMARD naive patients, first line treatment response is based on the NMA results for bDMARD naive patients while efficacy for all other treatments in a treatment sequence are reduced using the relative risk ratio. For bDMARD experienced patients, treatment response is reduced using the relative risk ratio at each line of therapy including the first line. 
+Treatment effects for bDMARD experienced patients are reduced by multiplying treatment effects for bDMARD naive patients by a constant $k$. Based on evidence reported in \citet{carlson2015economic}, we assume that $k$ is uniformly distributed and ranges between .75 and .92, implying that (rounding up) the average value of $k$ is .84. In other words, reductions in DAS28 and HAQ scores for bDMARD experienced patients are, on average, 84\% of the reduction in DAS28 and HAQ scores for bDMARD naive patients, and an ACR response of 60/40/20 for bDMARD naive patients would, on average, be reduced to 50/33/16 for bDMARD experienced patients. 
+
+In the simulation, treatment response depends on the line of therapy and whether a patient is bDMARD naive or bDMARD experienced at baseline. For bDMARD naive patients, first line treatment response is based on the NMA results for bDMARD naive patients while response for all other treatments in a treatment sequence is reduced using the constant $k$. For bDMARD experienced patients, treatment response is reduced using $k$ at each line of therapy including the first line. One limitation of this approach is that we are unable to model the relationship between line of therapy and $k$; that is, treatment response for a patient who has failed at least one biologic is assumed to be reduced by, on average, .84, regardless of line of therapy. 
 
 \subsection{Treatment switching at 6 months}
 The data required to determine treatment switching at 6 months depends on the selected model structure. If \textbf{S1} is selected, then treatment switching depends on the simulated ACR response; likewise, if \textbf{S5} is selected, then treatment switching depends on the simulated level of DAS28 at 6 months. When \textbf{S2-S4} are used, treatment switching is determined by the relationship between ACR response and the change in disease activity, and in \textbf{S6}, switching is based on the relationship between ACR response and EULAR response. Details of the mapping between ACR response and change in disease activity and between ACR response and EULAR response are provided below.  
 
 \subsubsection{ACR response and change in disease activity}
-There are currently no established mappings between mutually exclusive ACR response categories and DAS28, SDAI, or CDAI \citep{madan2015consensus}. However, \citet{aletaha2005simplified} provides evidence on the relationship between overlapping ACR response categories (ACR 20/50/70) and mean changes in each of the three disease activity measures. Results are reported for three cohorts---the Leflunomide datasets, the inception cohort, and the routine cohort---with 1,839, 91, and 279 patients, respectively. We transformed mean changes by overlapping ACR response categories to mean changes by mutually exclusive ACR response categories by using the number of patients in each mutually exclusive ACR response category as described in \autoref{app-acr-da}. \citet{smolen2003simplified} provided the number of patients in each ACR response category in the Leflunomide dataset and \citet{aletaha2005acute} provided the number of patients in the inception cohort. Mean changes in disease activity in each mutually exclusive ACR response category are shown in \autoref{tbl:acr2da}.
+There are currently no established mappings between mutually exclusive ACR response categories and DAS28, SDAI, or CDAI \citep{madan2015consensus}. However, \citet{aletaha2005simplified} provides evidence on the relationship between overlapping ACR response categories (ACR 20/50/70) and mean changes in each of the three disease activity measures. Results are reported for three cohorts---the Leflunomide datasets, the inception cohort, and the routine cohort---with 1,839, 91, and 279 patients, respectively. We transformed mean changes by overlapping ACR response categories to mean changes by mutually exclusive ACR response categories by using the number of patients in each mutually exclusive ACR response category as described in \autoref{app-acr-da}. \citet{smolen2003simplified} provided the number of patients in each ACR response category in the Leflunomide dataset and \citet{aletaha2005acute} provided the number of patients in the inception cohort. Mean changes in disease activity in each mutually exclusive ACR response category are shown in \autoref{tbl:acr2da}. However, note that the referenced publications did not report mean outcomes, so we were unable to generate standard errors for the estimates. We consequently assume allow the estimates to vary by 20\% in either direction.  
 
 <<acr2da, echo = FALSE, include = FALSE>>=
 tab <- cbind(iviRA::acr2sdai$leflunomide$mean, iviRA::acr2sdai$inception$mean,
@@ -740,7 +749,7 @@ database in a given category.
 \end{table}
 
 \subsection{Change in HAQ at 6 months}
-As in \citet{icer2017tim}, ACR responses from the NMA were translated into HAQ scores based on evidence from the adalimumab monotherapy for treatment of rheumatoid arthritis (ADACTA) trial reported in \citet{carlson2015economic} (\autoref{tbl:acr2haq}).
+In model structures including \textbf{H1}, the impact of treatment on changes in HAQ at 6 months is modeled by first estimating the effect of treatment on ACR response and then mapping ACR response to a change in HAQ. As in \citet{icer2017tim}, ACR responses from the NMA were translated into HAQ scores based on evidence from the adalimumab monotherapy for treatment of rheumatoid arthritis (ADACTA) trial reported in \citet{carlson2015economic} (\autoref{tbl:acr2haq}).
 
 <<acr2haq, echo = FALSE, include = FALSE>>=
 tab <- formatC(as.matrix(iviRA::acr2haq[, .(mean, se)]))
@@ -939,7 +948,7 @@ tex <- print(xtable(tab.dhaq.naive),
 \hline
 \end{tabularx}
 \scriptsize
-Notes: \textbf{H1}, \textbf{H2}, and \textbf{H3} are the Treatment $\rightarrow$ ACR $\rightarrow$ HAQ, Treatment $\rightarrow$ HAQ, and Treatment $\rightarrow$ ACR $\rightarrow$ EULAR $\rightarrow$ HAQ pathways respectively. 95\% credible intervals are in parentheses. Estimates are based on 6-month simulations of 1,000 patients and 1,000 parameters sets for each therapy. $\Delta$HAQ denotes a change in the HAQ score at 6 months from baseline; a negative value indicates a reduction in the HAQ score. cDMARDs = conventional disease-modifying antirheumatic drugs; MTX = methotrexate; ABT IV = abatacept intravenous; ADA = adalimumab; ETN = etanercept; GOL = golimumab; IFX = infliximab; TCZ = tocilizumab; CZP = certolizumab pegol; ABT SC = abatacept subcutaneous; RTX = rituximab; TOF = tofacitinib. ACR = American College of Rheumatology.
+Notes: \textbf{H1}, \textbf{H2}, and \textbf{H3} are the Treatment $\rightarrow$ ACR $\rightarrow$ HAQ, Treatment $\rightarrow$ HAQ, and Treatment $\rightarrow$ ACR $\rightarrow$ EULAR $\rightarrow$ HAQ pathways respectively. 95\% credible intervals are in parentheses. Estimates are based on 6-month simulations of 1,000 patients and 1,000 parameters sets for each therapy. $\Delta$HAQ denotes a change in the HAQ score at 6 months from baseline; a negative value indicates a reduction in the HAQ score. cDMARDs = conventional disease-modifying antirheumatic drugs; MTX = methotrexate; ABT IV = abatacept intravenous; ADA = adalimumab; ETN = etanercept; GOL = golimumab; IFX = infliximab; TCZ = tocilizumab; CZP = certolizumab pegol; ABT SC = abatacept subcutaneous; RTX = rituximab; TOF = tofacitinib. ACR = American College of Rheumatology. The 97.5\% quantiles in \textbf{H1} and \textbf{H3} are 0, 
 \end{threeparttable}
 \end{center}
 \end{table}
@@ -1111,16 +1120,16 @@ tex <- print(xtable(tab),
 \caption{Generalized gamma and Kaplan-Meier time to treatment discontinuation curves using reconstructed individual patient data from the CORRONA database}\label{fig:corrona-gg}
 \end{figure}
 
-We considered estimating separate time to discontinuation curves for each therapy, but did not for a number of the reasons cited in \citet{stevenson2016adalimumab}. The majority of the literature focuses on anti-TNFs (e.g., infliximab, etanercept, and adalimumab) \citep[e.g.][]{gomez2006switching, yazici2009changing, pan2009comparison}, which makes it difficult to estimate discontinuation curves for the other therapies. Furthermore, studies comparing rates of discontinuation across therapies tend to be observational because clinical trials are of short duration and do not reflect real-world patient populations. However, although observational studies provide accurate predictions on time to discontinuation, it is difficult to avoid bias from confounding when estimating differences across treatments because patients are not randomized into treatment and control groups \citep{souto2015rate} .   
+We considered estimating separate time to discontinuation curves for each treatment, but did not for a number of the reasons cited in \citet{stevenson2016adalimumab}. The majority of the literature focuses on anti-TNFs (e.g., infliximab, etanercept, and adalimumab) \citep[e.g.][]{gomez2006switching, yazici2009changing, pan2009comparison}, which makes it difficult to estimate discontinuation curves for the other treatments. Furthermore, studies comparing rates of discontinuation across treatments tend to be observational because clinical trials are of short duration and do not reflect real-world patient populations. However, although observational studies provide accurate predictions on time to discontinuation, it is difficult to avoid bias from confounding when estimating differences across treatments because patients are not randomized into treatment and control groups \citep{souto2015rate} .   
 
-We also lack data on treatment duration for patients on cDMARDs. Following \citet{stevenson2016adalimumab}, we assume that, conditional on continuing treatment at 6 months, treatment duration for bDMARDs is applicable to treatment duration for cDMARDs. This is, in turn, based on the assumption that cDMARDs are not likely to be more toxic than biologics used in combination with cDMARDs. 
+We also lack data on treatment duration for patients on cDMARDs. Following \citet{stevenson2016adalimumab}, we assume that, conditional on continuing treatment at 6 months, treatment duration for bDMARDs is applicable to treatment duration for cDMARDs. This is, in turn, based on the assumption that cDMARDs are not likely to be more toxic than biologics used in combination with cDMARDs.
 
 \subsubsection{Treatment duration by disease activity level}\label{ttd-da}
-When \textbf{S2-S5} are selected, treatment duration is stratified by the level of disease activity. Since patients in the CORRONA database tended to have moderate disease activity (mean CDAI = 16), we use the CORRONA survival curve to model treatment duration for patients with moderate disease activity. We adjust this curve for patients in remission or low disease activity using the odds ratios reported in \citet{zhang2011thresholds}, which imply that patients in remission or with low disease activity have .52 times the odds of stopping treatment as patients with moderate disease activity. In particular, we adjust the probability of treatment failure at each point in time using the methodology described in \autoref{app:odds-ratio-prob}. As with the analysis described in \autoref{sec:ttd-overall}, we then fit 7 parametric survival models to individual patient data reconstructed from the adjusted survival curve using the \citet{guyot2012enhanced} algorithm. Generalized gamma time to treatment discontinuation curves stratified by disease activity level are shown in \autoref{fig:ttd-gg-da}.
+When \textbf{S2-S5} are selected, treatment duration is stratified by the level of disease activity. Since patients in the CORRONA database tended to have moderate disease activity (mean CDAI = 16), we use the CORRONA survival curve to model treatment duration for patients with moderate disease activity. We adjust this curve for patients in remission or low disease activity using the odds ratios reported in \citet{zhang2011thresholds}, which imply that patients in remission or with low disease activity have .52 times the odds of stopping treatment as patients with moderate disease activity. In particular, we adjust the probability of treatment failure at each point in time using the methodology described in \autoref{app:odds-ratio-prob}. As with the analysis described in \autoref{sec:ttd-overall}, we then fit 7 parametric survival models to individual patient data reconstructed from the adjusted survival curve using the \citet{guyot2012enhanced} algorithm. Generalized gamma time to treatment discontinuation curves stratified by disease activity level are shown in \autoref{fig:ttd-gg-da}. Survival curves for patients with severe disease activity are not displayed because patients with severe disease activity are assumed to switch treatments after the first 6 months of treatment.
 
 \begin{figure}[H]
 \centering
-\includegraphics[max size={.7\textwidth}{.7\textheight}]{../../data-raw/figs/ttd-corrona-ipdsurv-gengamma-by-da.pdf}
+\includegraphics[max size={.6\textwidth}{.6\textheight}]{../../data-raw/figs/ttd-corrona-ipdsurv-gengamma-by-da.pdf}
 \caption{Generalized gamma time to treatment discontinuation curves by disease activity level}\label{fig:ttd-gg-da}
 \end{figure}
 
@@ -1312,7 +1321,7 @@ Notes: Probabilities are estimated by simulating 1,000 patients and 1,000 parame
 \end{center}
 \end{table}
 
-An important question related to the sensitivity of cost-effectiveness to the model specification is whether the probability of serious infections depends on the distribution used to model time to treatment discontinuation. \autoref{tbl:si-prop-bydist} consequently compares serious infection probabilities by the time to treatment discontinuation distribution. There are very small differences across distributions, suggesting that the treatment duration distribution has almost no impact on the probability of serious infections.  
+An important question related to the sensitivity of cost-effectiveness to the model specification is whether the probability of serious infections depends on the distribution used to model time to treatment discontinuation. We consequently simulated time to treatment discontinuation using each of the 7 possible probability distributions. We used the pathway \textbf{S1} to model treatment switching, so survival is based on the discussion in \autoref{sec:ttd-overall}. Results from the simulation are reported in \autoref{tbl:si-prop-bydist}. There are very small differences across distributions, suggesting that the treatment duration distribution has almost no impact on the probability of serious infections.  
 
 \begin{table}[!ht]
 \begin{center}
@@ -1334,36 +1343,7 @@ Notes: Probabilities are estimated by simulating 1,000 patients and 1,000 parame
 \FloatBarrier
 
 \subsection{Utility}\label{utility}
-Two algorithms can be used to map HAQ to an EQ-5D utility score. Each is used to simulate utility for every patient in the model to obtain a distribution of utility over time. Our preferred algorithm is the mixture model developed by \citet{alava2013relationship}, which is described in detail in \autoref{app:sim-utility-mixture}. The second algorithm uses the logistic regression equation reported in \citet{wailoo2006modeling}. The regression coefficients from \citet{wailoo2006modeling} are shown in \autoref{tbl:util-wailoo-coef} and are used to predict utility with the inverse logit function.
-
-<<util-wailoo-pars, echo = FALSE, include = FALSE>>=
-tab <- data.frame(coef = iviRA::utility.wailoo$est,
-                  se = iviRA::utility.wailoo$se)
-tab <- formatC(as.matrix(tab), format = "f")
-rownames(tab) <- c("Intercept", "Age", "Disease duration", "Baseline HAQ",
-                   "Male", "Number of previous DMARDs", "Current HAQ")
-tex <- print(xtable(tab), 
-      include.rownames = TRUE, include.colnames = FALSE,
-      only.contents = TRUE, sanitize.text.function = identity,
-      file = "tables/util-wailoo-pars.txt")
-@
-
-\begin{table}[!ht]
-\begin{center}
-\begin{threeparttable}
-\caption{Logistic regression coefficient from Wailoo utility algorithm} \label{tbl:util-wailoo-coef}
-\begin{tabularx}{\textwidth}{@{\extracolsep{\fill}}lcc}
-\hline
-\multicolumn{1}{c}{} & \multicolumn{1}{c}{Estimate} & \multicolumn{1}{c}{Standard error}  \\
-\hline
-\ExpandableInput{tables/util-wailoo-pars.txt}
-\hline
-\end{tabularx}
-\scriptsize
-Notes: Coefficients are from the logistic regression reported in \citet{wailoo2006modeling}. 
-\end{threeparttable}
-\end{center}
-\end{table}
+Two algorithms can be used to map HAQ to an EQ-5D utility score. Each is used to simulate utility for every patient in the model to obtain a distribution of utility over time. Our preferred algorithm is the mixture model developed by \citet{alava2013relationship}, which is described in detail in \autoref{app:sim-utility-mixture}. The second algorithm uses the logistic regression equation reported in \citet{wailoo2006modeling}. Regression coefficients are reported in \autoref{app:sim-utility-logistic}. 
 
 \autoref{fig:util-comparison} compares results from the two algorithms. Mean utility scores from the \citet{alava2013relationship} mixture model lie above those from the \citet{wailoo2006modeling} equation for all values of HAQ. Moreover, the slope of utility curve produced from the mixture model is steeper (although less so for the commonly observed HAQ scores between 1 and 1.5), implying that changes in HAQ from the mixture model predict larger changes in utility. Given that the mixture models have been shown to predict utility more accurately \citep{alava2012tails, alava2013relationship, hernandez2014comparison}, this suggests that standard models underestimate the quality-adjusted life-year benefits, and hence, the cost-effectiveness of treatments. 
 
@@ -1394,7 +1374,9 @@ ggsave("figs/util-byhaq-comparison.png", p, height = 5, width = 7)
 HAQ}\label{fig:util-comparison}
 \end{figure}
 
-The utility score depends on serious infections in addition to HAQ. In particular, disutility due to serious infections is assumed to be 0.156 for the duration of the month of infection based on prior studies \citep{stevenson2016adalimumab, oppong2013impact}. However, given the weak evidence for this estimate, the disutility of an infection is allowed to vary by 20\% in either direction. 
+The utility score depends on serious infections in addition to HAQ. In particular, disutility due to serious infections is assumed to be 0.156 for the duration of the month of infection based on prior studies \citep{stevenson2016adalimumab, oppong2013impact}. However, given the weak evidence for this estimate, the disutility of an infection is allowed to vary by 20\% in either direction.
+
+Finally, in the \R{} package, we also allow users to incorporate treatment attributes unrelated to safety or efficacy that might impact utility. In particular, users can specify a vector of variables and a vector of corresponding coefficients. Each coefficient is the impact of the corresponding variable on utility in a given 6 month period. By default, we include variables related to mode of administration (infusion, injection, oral) and years since FDA approval; however, since we have no evidence on the impact of each variable on utility, the coefficients are set to 0 in our default settings.  
 
 \subsection{Mortality}
 The probability of death is simulated as a function of age/sex specific mortality from U.S. lifetables \citep{arias2015united}, baseline HAQ, and changes in HAQ from baseline. \citet{wolfe2003predicting} estimate an odds ratio for the effect of HAQ on mortality of 2.22, which is applied to the absolute mortality rates of the general population (HAQ score of 0). To capture the effect of treatment on mortality, we assume that, for every 0.25-unit increase in HAQ score, subsequent 6-month mortality increases according to the hazard ratios reported in \citet{michaud2012mortality}. Parameter estimates are shown in \autoref{tbl:mortpars}.
@@ -1670,7 +1652,7 @@ The IPS is a discrete-time simulation that simulates individual patients one at 
 \end{algorithm}
 
 \subsection{Parameter uncertainty}\label{parameter-uncertainty}
-Parameter uncertainty is quantified using PSA, which propagates uncertainty in the model input parameters throughout the model by randomly sampling the input parameters from their joint probability distribution \citep{baio2015probabilistic, claxton2005probabilistic}. Probability distributions are determined according to the distributional properties of the statistical estimates, which, in turn, depend on the statistical techniques used and the distributions of the underlying data. We, for the most part, use normal distributions for sample means, gamma distributions for right-skewed data (e.g., hospital costs), and Dirichlet distributions for multinomial data. The multivariate normal distribution is used for regression parameters estimated using frequentist techniques, provided that the variance-covariance from the statistical analysis is available. For parameters estimated using a Bayesian NMA, we fit multivariate normal distributions to the posterior distribution of the parameters generated from the Markov-Chain Monte-Carlo (MCMC) algorithm using sample means and the sample covariance matrix. When we lack evidence on a parameter, we typically assume a uniform distribution with lower and upper limits that reflect the degree of uncertainty in the parameter. The PSA parameter distributions are summarized in \autoref{tbl:psa-dists}. 
+Parameter uncertainty is quantified using PSA, which propagates uncertainty in the model input parameters throughout the model by randomly sampling the input parameters from their joint probability distribution \citep{baio2015probabilistic, claxton2005probabilistic}. Probability distributions are determined according to the distributional properties of the statistical estimates, which, in turn, depend on the statistical techniques used and the distributions of the underlying data. We use normal distributions for sample means, gamma distributions for right-skewed data (e.g., hospital costs), and Dirichlet distributions for multinomial data. The multivariate normal distribution is used for regression parameters estimated using frequentist techniques, provided that the variance-covariance from the statistical analysis is available. For parameters estimated using a Bayesian NMA, we fit multivariate normal distributions to the posterior distribution of the parameters generated from the Markov-Chain Monte-Carlo (MCMC) algorithm using sample means and the sample covariance matrix. When we lack evidence on a parameter, we typically assume a uniform distribution with lower and upper limits that reflect the degree of uncertainty in the parameter. The PSA parameter distributions are summarized in \autoref{tbl:psa-dists}. 
 
 \begin{table}[!ht] 
 \begin{center}
@@ -1875,11 +1857,10 @@ We used the correlations from the routine cohort (during visit 1) rather than co
 
 <<pop-app, echo = FALSE, include = FALSE>>=
 npats <- 1000
-pats <- sample_pop(n = npats, type = "heterog")
-pats <- pats[, -c(which(colnames(pats) %in% c("mrs")))]
-tab <- cbind(apply(pats, 2, mean, na.rm = TRUE), 
-            apply(pats, 2, quantile, .025, na.rm = TRUE),
-            apply(pats, 2, quantile, .975, na.rm = TRUE))
+pop <- sample_pop(n = npats, type = "heterog")
+tab <- cbind(apply(pop, 2, mean, na.rm = TRUE), 
+            apply(pop, 2, quantile, .025, na.rm = TRUE),
+            apply(pop, 2, quantile, .975, na.rm = TRUE))
 rownames(tab) <- c("Age", "Male", "Weight (kg)", "Previous DMARDs",
                    "DAS28", "SDAI", "CDAI", "HAQ")
 tab <- formatC(tab, format = "f", digits = 2)
@@ -2112,7 +2093,7 @@ In the simulation model, we simulate the HAQ score at 6 months as a function of 
 
 Since \autoref{eqn:lcgm-haq} was estimated on aggregated data, we did not have reliable estimates of $\epsilon_{it}$. We consequently set $\epsilon_{i,t} - \epsilon_{i,t-1}$ equal to 0, which implies that we are generating a mean response rather than a predicted response. In other words, we are not simulating the random variation associated with each individual, but are still accurately simulating mean outcomes across populations or subpopulations. 
 
-\section{Simulating death}\label{ssec:simulating-death}
+\section{Simulating mortality}\label{ssec:simulating-death}
 Death is simulated for each patient during each model cycle based on age, gender, baseline HAQ, and change in HAQ from baseline. A 0/1 death indicator is randomly drawn using the following procedure: 
 \begin{enumerate}
 \item Find $q_{xg}$, the probability that a patient of gender $g$ and age $x$ will die before age $x+1$, from lifetables.
@@ -2138,10 +2119,11 @@ d \sim \text{Bin}(1, p_m).
 \end{align}
 \end{enumerate}
 
-\section{Simulating utility with a mixture model}\label{app:sim-utility-mixture}
+\section{Simulate utility}\label{app:utility}
+\subsection{Mixture model}\label{app:sim-utility-mixture}
 The mixture model estimated by \citet{alava2013relationship} simulates utility in two stages. In the first stage, we sampled pain for a given individual in a particular model cycle based on the HAQ score. In the second stage, we simulated utility as a function of HAQ, pain and age/sex.
 
-\subsection{Simulating pain}
+\subsubsection{Simulating pain}
 To simulate pain from HAQ, we used the summary statistics for pain and HAQ reported in \citet{sarzi2002correlation}. Pain was measured with the visual analog scale (VAS) with mean  $\mu_{pain} =$ \Sexpr{pain$pain.mean} and standard deviation $\sigma_{pain} =$ \Sexpr{formatC(sqrt(pain$pain.var), format = "f", digits = 2)}, while HAQ was reported to have mean $\mu_{haq} =$ \Sexpr{pain$haq.mean} and standard deviation $\sigma_{haq} =$ \Sexpr{formatC(sqrt(pain$haq.var), format = "f", digits = 2)}. 
 
 We then estimated the correlation between pain and HAQ by digitally scanning the curve depicting the (linear) relationship between pain and HAQ (Figure 114) shown in \citet{stevenson2016adalimumab}. Using the scanned data, we regressed pain on HAQ using simple ordinary least squares (OLS). The correlation between pain and HAQ, estimated as $\rho =$ \Sexpr{formatC(pain$painhaq.cor, digits = 2)}, was calculated by rearranging the OLS estimate for the slope, $\beta$, of the regression model,
@@ -2158,8 +2140,7 @@ pain | haq = h \sim N\left (\mu_{pain} + \rho \frac{\sigma_{pain}}{\sigma_{haq}}
 
 However, since the VAS is constrained to lie between 0 and 100, pain was drawn from a truncated normal distribution with a lower limit of 0 and an upper limit of 100. 
 
-
-\subsection{Simulating utility}
+\subsubsection{Simulating utility}
 After simulating pain, we simulated utility with a mixture model. Within each class $c$, the HAQ score for patient $i$ in period $t$ was modeled as,
 
 \begin{align}
@@ -2194,6 +2175,38 @@ We sampled from the mixture model as follows.
 \item Predict the HAQ score, $y_{it}$. 
 \end{enumerate}
 \end{enumerate}
+
+\subsection{Logistic regression model}\label{app:sim-utility-logistic}
+\citet{wailoo2006modeling} use a logistic regression equation to predict utility as a function of patient demographics, disease history, and current disease status. The regression coefficients from the model are shown in \autoref{tbl:util-wailoo-coef} and used to predict utility with the inverse logit function. Specifically, if the vector of coefficients is denoted by $\beta$ and the corresponding vector of explanatory variables is denoted by the vector $x$, then predicted utility is given by $1/(1 + \exp(-x^T\beta))$.
+
+<<util-wailoo-pars, echo = FALSE, include = FALSE>>=
+tab <- data.frame(coef = iviRA::utility.wailoo$est,
+                  se = iviRA::utility.wailoo$se)
+tab <- formatC(as.matrix(tab), format = "f")
+rownames(tab) <- c("Intercept", "Age", "Disease duration", "Baseline HAQ",
+                   "Male", "Number of previous DMARDs", "Current HAQ")
+tex <- print(xtable(tab), 
+      include.rownames = TRUE, include.colnames = FALSE,
+      only.contents = TRUE, sanitize.text.function = identity,
+      file = "tables/util-wailoo-pars.txt")
+@
+
+\begin{table}[!ht]
+\begin{center}
+\begin{threeparttable}
+\caption{Logistic regression coefficient from Wailoo utility algorithm} \label{tbl:util-wailoo-coef}
+\begin{tabularx}{\textwidth}{@{\extracolsep{\fill}}lcc}
+\hline
+\multicolumn{1}{c}{} & \multicolumn{1}{c}{Estimate} & \multicolumn{1}{c}{Standard error}  \\
+\hline
+\ExpandableInput{tables/util-wailoo-pars.txt}
+\hline
+\end{tabularx}
+\scriptsize
+Notes: Coefficients are from the logistic regression reported in \citet{wailoo2006modeling}. 
+\end{threeparttable}
+\end{center}
+\end{table}
 
 \section{Drug acquisition and administration costs}\label{app:treat-cost}
 <<ada_cost, echo = FALSE, include = FALSE>>=
