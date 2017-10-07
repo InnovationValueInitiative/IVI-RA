@@ -167,9 +167,9 @@ CACHE <- TRUE
 \section*{Executive summary}\label{sec:executive-summary}
 \addcontentsline{toc}{section}{Executive summary}  
 \subsection*{The Open-Source Value Project}
-This document describes version 1.0 of the \href{http://www.thevalueinitiative.org/}{Innovation and Value Initiative's (IVIs)} individual patient simulation model for rheumatoid arthritis (RA) (the IVI-RA model). The IVI-RA model is part of IVIs Open Source Value Project (OSVP), which is building an open, collaborative, and consensus-based process for the development of tools for value assessment. Models developed by the OSVP process are iterative, evolving as the science of value assessment advances and as new evidence becomes available.
+This document describes version 1.0 of the \href{http://www.thevalueinitiative.org/}{Innovation and Value Initiative's (IVI's)} individual patient simulation model for rheumatoid arthritis (RA) (the IVI-RA model). The IVI-RA model is part of IVI's Open Source Value Project (OSVP), which is building an open, collaborative, and consensus-based process for the development of tools for value assessment. Models developed by the OSVP process are iterative, evolving as the science of value assessment advances and as new evidence becomes available.
 
-Version 1.0 is IVIs first release of the IVI-RA model, and is designed to provide a starting point for open debate. As such, the model is very flexible and allows users to choose from a large number of the plausible model structures supported by clinical practice and prior decision-analytic modeling research in RA. General users may run the model online with our web-based user interfaces. 
+Version 1.0 is IVI's first release of the IVI-RA model, and is designed to provide a starting point for open debate. As such, the model is very flexible and allows users to choose from a large number of the plausible model structures supported by clinical practice and prior decision-analytic modeling research in RA. General users may run the model online with our web-based user interfaces. 
 
 To facilitate transparency, understanding, and debate, OSVP models are released along with the following:
 
@@ -295,9 +295,9 @@ To ensure that simulated clinical and economic outcomes reflect outcomes in rout
 
 The IPS approach allows us to take an ``individualized'' modeling approach that captures both observable and unobservable patient heterogeneity. Disease progression, mortality, and preferences all vary across patients. In addition, although the evidence base is limited, users of the \R{} package can model treatment effects as a function of any combination of patient characteristics (e.g., demographics, prognostic factors). Finally, the model incorporates preferences for treatment attributes unrelated to safety and efficacy. 
 
-As recommended by the Second Panel on Cost-Effectiveness in Health and Medicine \citep{sanders2016recommendations}, costs are simulated from both a health care sector perspective and a societal perspective. Productivity losses from lost earnings are included in the societal perspective but not the health care sector perspective. As discussed below (\autoref{sec:use-model}), our individualized approach implies that the model could also be tailored to fit the perspective of a patient or provider.     
+As recommended by the Second Panel on Cost-Effectiveness in Health and Medicine \citep{sanders2016recommendations}, costs are simulated from both a health care sector perspective and a societal perspective. Productivity losses from lost earnings are included in the societal perspective but not the health care sector perspective. As discussed below (\autoref{sec:model-analyses}), our individualized approach implies that the model could also be tailored to fit the perspective of a patient or provider.     
 
-\subsection{Using the model}\label{sec:use-model}
+\subsection{Intended use of the model}\label{sec:model-analyses}
 The model simulates clinical and economic outcomes for each individual in the population (see \autoref{sec:populations}), conditional on the intervention specified. As described in \autoref{sec:treatments} users can model any sequence of biologic treatments and conventional disease-modifying antirheumatic drugs (cDMARDs). 
 
 The model can therefore be used for a number of purposes, conditional on the population of interest and the perspective of the decision maker. Here we describe a few possibilities. 
@@ -308,10 +308,10 @@ Second, the model can be used to evaluate the consequences of clinical guideline
 
 Third, although the model is currently desnged for population level decision-making, it could, in principle, be used to predict longterm health and economic consequences for patients. The predicted outcomes could, for example, be used to inform patient and providers decision making. For instance, \citet{ioannidis2011individualized} argue that cost-effectiveness has relevance to patients spending their own money on health care services, particularly as out-of-pocket costs grow. Likewise, providers have a growing interest in cost-effectiveness models to demonstrate the value of their care whether through participation in Accountable Care Organizations (ACOs), to ensure coverage of medical interventions for their patients, or to reduce unwanted variability in management. 
 
- \section{Value assessment}\label{sec:value-assessment}
+\section{Value assessment}\label{sec:value-assessment}
 The IVI-RA model simulates clinical and economic outcomes for each individual in a given population of interest. Outcomes can be simulated over a particular time horizon or over a lifetime. 
 
-Although simulation output can be used with any value assessment framework, IVI tools currently support two methodologies for decision analysis: CEA and MCDA. Cost-effectiveness results and MCDA value scores are automatically generated when users run IVIs web-based user interfaces. In addition, IVI has developed an R package, \code{\href{https://innovationvalueinitiative.github.io/hesim/}{hesim}}, for health-economic simulation modeling and decision analysis that can be used to perform individualized CEA \citep{basu2007value, ioannidis2011individualized, espinoza2014value}. 
+Although simulation output can be used with any value assessment framework, IVI tools currently support two methodologies for decision analysis: CEA and MCDA. Cost-effectiveness results and MCDA value scores are automatically generated when users run IVI's web-based user interfaces. In addition, IVI has developed an R package, \code{\href{https://innovationvalueinitiative.github.io/hesim/}{hesim}}, for health-economic simulation modeling and decision analysis that can be used to perform individualized CEA \citep{basu2007value, ioannidis2011individualized, espinoza2014value}. 
 
 \subsection{Cost-effectiveness analysis}\label{sec:cea}
 CEA is a well-established technique for health technology assessment grounded in economic theory \citep{meltzer2011theoretical}. In general, CEA can be thought of as a methodology for maximizing health or well being subject to a resource constraint \citep{garber1997economic}. The total value of a new health technology relative to a comparator is typically assessed using the incremental net monetary benefit (INMB), 
@@ -319,26 +319,70 @@ CEA is a well-established technique for health technology assessment grounded in
 \begin{align}
 INMB = k \cdot \Delta e - \Delta p, 
 \end{align}
-where $e = e_1 - e_0$ is a measure of the incremental benefits or effects from the new technology relative to the comparator, $p = p_1 - p_0$ is a measure of the incremental cost of the new technology, and $k$ is the willingness to pay for a one-unit health gain. The new technology can be deemed cost-effective if the $INMB > 0$, or equivalently, in terms of the incremental cost-effectiveness ratio (ICER), if,
+where $e = e_1 - e_0$ is a measure of the incremental health benefits from the new technology relative to the comparator, $p = p_1 - p_0$ is a measure of the incremental cost of the new technology, and $k$ is the willingness to pay for a one-unit health gain. The new technology can be deemed cost-effective if the $INMB > 0$, or equivalently, in terms of the incremental cost-effectiveness ratio (ICER), if,
 
 \begin{align}
 \frac{\Delta p}{\Delta e} < k.
 \end{align}
 
-"Effects" are measured in terms of health gains or patient well-being. Since treatments can affect both morbidity and mortality, CEAs typically use the quality-adjusted life-year (QALY). Since costs and effects vary across patients, some researchers have argued for individualized CEA \citep{basu2007value, ioannidis2011individualized, espinoza2014value} so that INMBs and ICERs are calculated separately for different subpopulations. It can be shown that if treatment response varies across the population, then making separate decisions in different populations will increase social welfare \citep{basu2007value}.
+Incremental health benefits are typially measured in terms of health gains or patient well-being. Since treatments can affect both morbidity and mortality, CEAs typically use the quality-adjusted life-year (QALY). Since costs and benefits vary across patients, some researchers have argued for individualized CEA \citep{basu2007value, ioannidis2011individualized, espinoza2014value} so that INMBs and ICERs are calculated separately for different subpopulations. It can be shown that if treatment response varies across the population, then making separate decisions in different populations will increase social welfare \citep{basu2007value}.
 
-In practice, costs and effects are subject to statistical uncertainty. We quantify this uncertainty using probabilistic sensitivity analysis (PSA) and structural uncertainty analysis, which is described in more detail in \autoref{sec:sim-uncertainty}. This approach allows us to generate standard measures of uncertainty in CEA including cost-effectiveness planes, cost-effectiveness acceptability curves (CEACs), and estimates of the expected value of perfect information (EVPI).
+In practice, costs and health benefits are subject to statistical uncertainty. We quantify this uncertainty using probabilistic sensitivity analysis (PSA) and structural uncertainty analysis, which is described in more detail in \autoref{sec:sim-uncertainty}. This approach allows us to generate standard measures of uncertainty in CEA including cost-effectiveness planes \citep{black1990plane}, cost-effectiveness acceptability curves (CEACs) \citep{van1994costs, briggs1999bayesian, fenwick2001representing}, and estimates of the expected value of perfect information (EVPI) \citep{fenwick2001representing}.
 
 \subsection{Multiple-decision criteria-analysis}
 An alternative approach to CEA is MCDA. \citet{keeney1993decisions} define MCDA as ``an extension of decision theory that covers any decision with multiple objectives. A methodology for appraising alternatives on individual, often conflicting criteria, and combining them into one overall appraisal...'' We use a similar approach, which implies that separate criteria are aggregated into a single measure of value.
 
-MCDA is a complex topic and there are a number of different methodologies. Here, we discuss the approach used by IVI in the web-based user interface.
+There are many approaches to MCDA; here, we discuss the approach used by IVI in the web-based user interface, which is based on the discussion in \citet{thokala2016multiple}. First, decision-makers must select the relevent criteria for the analysis. These criteria are based on the costs, health outcomes, and risks simulated from the underlying health-economic model. We discuss the criteria relevant to the IVI-RA model in \autoref{model-outcomes}.
 
-In this context, decision makers (e.g., users of the user interface) must select the relevant criteria, which, in our context, refers to clinical or economic outcomes from the simulation. 
+Since different criteria may be measured using different units, performance on each criterion is converted into a common scale, for instance, ranging from 0 to 100. There are a number of techniques for creating a common scale; we use a simple linear partial value function to translate scores, which assumes a linear relationship between performance on the original scale of a given criterion and the common scale. To illustrate, \autoref{fig:lpvf} demonstrates two mappings between the original scale and the common scale.
 
-Since different criteria may be measured using different units, performance on each criterion is converted into a common scale, for instance, ranging from 0 to 100. There are a number of techniques for creating a common scale; we use a simple linear partial value function to translate scores, which assumes a linear relationship between performance on a given criterion and the standardized score.
+<<haq_lpvf, echo = FALSE, include = FALSE>>=
+linear_pvf <- function(x, x_min, x_max, scale_min = 0, scale_max = 100){
+  score <- (x - x_min) * (scale_max - scale_min) / (x_max - x_min) + scale_min
+  if (x_min == x_max){
+    score <- rep(0, length(score))
+  }
+  return(score)
+}
 
-Each criterion is assigned points ranging from 0 to 100 by the decision maker, and weighted by dividing each criterion's points by the sum of points across all criteria. For example, if there were 3 criteria and each criterion was given a score of 50, then each criterion would receive a weight of 1/3. If, on the other hand, the three criteria were given scores of 25, 50, and 75, then they would be given weights of .167, .33, and .5, respectively. 
+# linear partial value function positive
+x.min <- 0
+x.max <- 12
+x <- seq(x.min, x.max, length.out = 100)
+y <- linear_pvf(x, x.min, x.max)
+dat.pos <- data.table(x = x, y = y)
+p.lpfv.pos <- ggplot(dat.pos, aes(x = x, y = y)) + geom_line() +
+  xlab("Performance on original scale") + ylab("Score on common scale") +
+  scale_x_continuous(breaks = seq(0, 12, 3))
+ggsave("figs/mcda-lpvf-pos.png", p.lpfv.pos, height = 3, width = 5)
+
+# linear partial value function positive
+x.min <- 90
+x.max <- 0
+x <- seq(x.max, x.min, length.out = 100)
+y <- linear_pvf(x, x.min, x.max)
+dat.neg <- data.table(x = x, y = y)
+p.lpfv.neg <- ggplot(dat.neg, aes(x = x, y = y)) + geom_line() +
+  xlab("Performance on original scale") + ylab("Score on common scale") +
+  scale_x_continuous(breaks = seq(0, 90, 15))
+ggsave("figs/mcda-lpvf-neg.png", p.lpfv.neg, height = 3, width = 5)
+@
+
+\begin{figure}[h]
+\begin{subfigure}{.5\textwidth}
+\includegraphics[width=\textwidth]{figs/mcda-lpvf-pos.png}
+\caption{Criterion where high performance is better} \label{subfig:lpvf-pos}
+\end{subfigure}
+\begin{subfigure}{.5\textwidth}
+\includegraphics[width=\textwidth]{figs/mcda-lpvf-neg.png}
+\caption{Criteria where low performance is better} \label{subfig:lpvf-neg}
+\end{subfigure}
+\caption{Linear partial value functions}\label{fig:lpvf}
+\end{figure}
+
+Performance on the first criterion, shown in \autoref{subfig:lpvf-pos}, ranges from 0 to 12 on the original scale, with higher scores denoting better performance. In contrast, performance on the second criterion, shown in \autoref{subfig:lpvf-pos}, ranges from 0 to 90, with lower scores denoting better performance. The relationship between performance on the original scale and the score on the common scale is therefore positive for the first criterion and negative for the second criterion. In both cases, the relationship follows a straight line because we assume a linear relationship.
+
+Each criterion is assigned points, say ranging from 0 to 10, by the decision maker, and weighted by dividing each criterion's points by the sum of points across all criteria. For example, if there were 3 criteria and each criterion was given a score of 5, then each criterion would receive a weight of 1/3. If, on the other hand, the three criteria were given scores of 2.5, 5, and 7.5, then they would be given weights of .167, .33, and .5, respectively. 
 
 To aggregate results, we assume an additive model. In other words, the total score for a given treatment sequence is calculated by multiplying each criterion by the simulated standardized score and summing across criteria.
 
@@ -349,7 +393,9 @@ As with CEA, MCDA results are subject to statistical uncertainty. In the user in
 
 The concept that is arguably most salient to RA is insurance value, which focuses on valuing morbidity-reducing innovations and has the largest effects relative to conventional CEA on treatments for severe diseases where the burden of illness is the greatest. The IVI-RA model allows users to incorporate insurance value into their analyses, while noting that the approach is less well-established than conventional CEA. 
 
-\citet{lakdawalla2017insurance} provide a general mathematical framework for incorporating the effects of medical innovation on physical and financial risk. The general idea is that innovation can lower physical risk to healthy patients who might get sick in the future. New medical technologies act like ``insurance policies'' that protect a healthy person from all or part of the costs of falling ill. And while innovation certainly increases financial risk, this increase in financial risk can be mitigated by healthcare insurance.  
+Other concepts of value may be incorporated in the future, but likely in future disease areas. For example, real option value is most relevant for innovations that increase longevity and might be particularly well suited to analyses of treatments in oncology. Likewise, survey evidence for the value of hope is based on technologies that increase survival \citet{lakdawalla2012cancer} rather than those that affect morbidity. Reductions in uncertainty from diagnostic tests are clearly most relevant to diagnostics and scientific spillovers are most relevant to diseases with large externalities such infectious diseases. 
+
+\citet{lakdawalla2017insurance} provide a general mathematical framework for incorporating the effects of medical innovation on physical and financial risk. Conceptually, innovation can lower physical risk to healthy patients who might get sick in the future. New medical technologies act like ``insurance policies'' that protect a healthy person from all or part of the costs of falling ill. And while innovation certainly increases financial risk, this increase in financial risk can be mitigated by healthcare insurance.  
 
 The insurance value framework is an extension of the conventional CEA approach from the perspective of a healthy individual deriving utility from non-health consumption, $c$ and health, $h$, according to $u(c,h)$. The individual is sick with probability $\pi$ and well with probability $1-\pi$.  Health when well is $h^w$ and health when sick is $h^s < h^w$. Income is $y^w$ when well and $y^s <y^w$ when sick. The marginal utility of good $j \in {c,h}$ in state $i \in {s,w}$ is denoted by $u_j^i$. 
 
@@ -505,7 +551,7 @@ In line with \citet{stevenson2016adalimumab} the adverse events included in the 
 Baseline HAQ scores (and changes in HAQ scores from baseline) are used to determine mortality relative to age/sex specific rates for the US general population (assumed to have a HAQ score of 0). Treatment, therefore, has an indirect effect on mortality through its effect on HAQ. 
 
 \subsection{Utility}
-Individual HAQ scores at a particular point in time were also used to simulate EuroQol five dimensions questionnaire (EQ-5D) utility scores (0-1 range), which, in turn, were used to simulate quality-adjusted life-years (QALYs). However, since a number of different methods have been used to convert HAQ into utility, our model contains two different possible mapping algorithms. Our preferred algorithm is the \citet{alava2013relationship} mixture model, which uses a much larger sample size than other statistical models and has been shown to have better predictive accuracy. Other algorithms are typically estimated using clinical trial data \citep[e.g.][]{carlson2015economic, stephens2015modelling} and consequently have limited generalizability. The second utility algorithm available within our model is based on a linear regression analysis of real-world data by \citet{wailoo2006modeling} that has been used in a few previous CEAs \citep[e.g.][]{wailoo2008biologic, icer2017tim}. 
+Individual HAQ scores at a particular point in time were also used to simulate EuroQol five dimensions questionnaire (EQ-5D) utility scores (0-1 range), which, in turn, are used to simulate quality-adjusted life-years (QALYs). However, since a number of different methods have been used to convert HAQ into utility, our model contains two different possible mapping algorithms. Our preferred algorithm is the \citet{alava2013relationship} mixture model, which uses a much larger sample size than other statistical models and has been shown to have better predictive accuracy. Other algorithms are typically estimated using clinical trial data \citep[e.g.][]{carlson2015economic, stephens2015modelling} and consequently have limited generalizability. The second utility algorithm available within our model is based on a linear regression analysis of real-world data by \citet{wailoo2006modeling} that has been used in a few previous CEAs \citep[e.g.][]{wailoo2008biologic, icer2017tim}.
 
 \subsection{Costs}
 Annual hospitalization days and productivity losses are simulated as a function of HAQ. Health sector costs considered in the models are related to drug acquisition and administration, adverse events, general management of RA, and hospitalization. Non-health sector costs are limited to work-related productivity loss.
@@ -547,12 +593,19 @@ Notes: ACR: American College of Rheumatology; EULAR: European League Against Rhe
 
 The model accounts for patient heterogeneity in two ways. First, baseline event rates vary across patients by both observable and unobservable factors. For example, longterm HAQ progression, mortality, and utility depend on patient specific variables including age, gender, and baseline disease level. Moreover, unobserved differences in longterm HAQ progression and utility across patients are modeled using mixture models. Second, relative treatment effects for ACR response, the change in HAQ at 6 months, and the change in DAS28 at 6 months, can be modeled as a function of explanatory variables in the \R{} package. 
 
-\subsection{Model outcomes}
-The model simulates the health outcomes, costs, and risks associated with treatment. Depending on the model structure, simulated clinical outcomes during the initial treatment phase can include ACR response, EULAR response, DAS28, SDAI, and/or CDAI. Longterm outcomes include HAQ over time, time to treatment discontinuation, and an indicator for whether a serious infection ocurred. Total costs consist of health care sector costs (drug acquisition and administration costs, general management and monitoring costs, adverse event costs, and hospitalization costs) and productivity losses.
+\subsection{Model outcomes}\label{model-outcomes}
+The model simulates the health outcomes, costs, and risks associated with treatment. Depending on the model structure, model outcomes include the following:
+\begin{itemize}
+\item \textbf{Clinical outcomes during initial treatment phase}: ACR response, EULAR response, DAS28, SDAI, CDAI
+\item \textbf{Longterm clinical outcomes}: HAQ, QALYs
+\item \textbf{Adverse events}: Number of serious infections
+\item \textbf{Health care sector costs}: drug acquisition and administration costs, general management and monitoring costs, adverse event costs, hospitalization costs
+\item \textbf{Non-health care sector costs}: productivity losses
+\end{itemize}
 
-If a CEA approach is used for value assessment, then QALYs can be calculated as a function of simulated life expectancy and utility. CEA from a societal perspective would include productivity losses while analyses from a health care sector perspective would not. The value of treatment is estimated using the net-monetary benefit (NMB), as described in \autoref{sec:cea}.
+If a CEA approach is used for value assessment, then the value of treatment is estimated using the net-monetary benefit (NMB), as described in \autoref{sec:cea}. CEA from a societal perspective would include productivity losses while analyses from a health care sector perspective would not.
 
-Any combination of simulated model outcomes can be used for MCDA. In IVIs user interfaces, the MCDA is currently based on the following criteria: (i) QALYs, (ii) total healthcare sector costs, (iii) productivity losses, (iv) number of serious infections, (v) number of treatment switches, (vi) route of administration (oral/injection/infusion) and (vii) time the medication has been on the market.
+Any combination of simulated model outcomes can be used for MCDA. In IVI's user interfaces, the MCDA is currently based on the following criteria: (i) QALYs, (ii) total healthcare sector costs, (iii) productivity losses, (iv) number of serious infections, (v) number of treatment switches, (vi) route of administration (oral/injection/infusion) and (vii) time the medication has been on the market.
 
 \section{Source data and parameter estimation}\label{sec:data-parameters}
 
@@ -796,7 +849,7 @@ The relationship between EULAR response and HAQ is based on analyses conducted b
 \caption{Relationship between EULAR response and change in HAQ at 6 months} \label{tbl:eular2haq}
 \begin{tabularx}{\textwidth}{@{\extracolsep{\fill}}lcc}
 \hline
-\multicolumn{1}{c}{EULAR response} & \multicolumn{1}{c}{Mean} & \multicolumn{1}{c}{SE} \\
+\multicolumn{1}{c}{EULAR response} & \multicolumn{1}{c}{Mean} & \multicolumn{1}{c}{Standard error} \\
 \hline
 \ExpandableInput{tables/eular2haq.txt}
 \hline
@@ -807,7 +860,7 @@ The relationship between EULAR response and HAQ is based on analyses conducted b
 \end{center}
 \end{table}
 
-\autoref{tbl:sim-haq-change} compares the impact of treatment on HAQ when using \textbf{H1-H3}. Results were estimated by simulating $1,000$ patients for 6 months and randomly sampling $1,000$ parameter sets. For each randomly sampled parameter set, we calculated the average decrease in HAQ at 6 months across the $1,000$ patients. Estimates reported in the table are the mean and 95\% credible of the mean decrease in HAQ at 6 months. To maintain consistency across \textbf{H1-H3}, we did not allow HAQ scores for patients who might have otherwise switched treatments accoring to \textbf{S1-S6} to rebound back to their baseline levels (i.e., levels at the start of the simulation) at the end of the 6 month period.   
+\autoref{tbl:sim-haq-change} compares the impact of treatment on HAQ when using \textbf{H1-H3}. Results were estimated by simulating $1,000$ patients for 6 months and randomly sampling $1,000$ parameter sets. For each randomly sampled parameter set, we calculated the average decrease in HAQ at 6 months across the $1,000$ patients. Estimates reported in the table are the mean and 95\% credible interval of the mean decrease in HAQ at 6 months. To maintain consistency across \textbf{H1-H3}, we did not allow HAQ scores for patients who might have otherwise switched treatments accoring to \textbf{S1-S6} to rebound back to their baseline levels (i.e., levels at the start of the simulation) at the end of the 6 month period.   
 
 <<sim6-haq, cache=CACHE, echo=FALSE, include=FALSE>>=
 treatments <- c("cdmards", "abtivmtx", "adamtx", "etnmtx", "golmtx", "ifxmtx", "tczmtx", "czpmtx", "abtscmtx", "rtxmtx", "tofmtx")
@@ -864,7 +917,7 @@ Notes: \textbf{H1}, \textbf{H2}, and \textbf{H3} are the Treatment $\rightarrow$
 \end{center}
 \end{table}
 
-Estimates for \textbf{H1} and \textbf{H3} are generally similar but treatment response is considerably smaller when using \textbf{H2}. This suggests that the additional mapping between ACR response and EULAR response attenuates treatment response. Given these varying estimates of the change in HAQ during the initial treatment phase and the impact of HAQ on other important outcomes within the model including utility and health care costs, the choice of \textbf{H1-H3} (and in particular \textbf{H2} vs. \textbf{H1,H3}) appears to have important consequences for value assessment.  
+Estimates for \textbf{H1} and \textbf{H3} are generally similar but treatment response is considerably smaller when using \textbf{H2}. This suggests that the additional mapping between ACR response and EULAR response attenuates treatment response. Given these varying estimates of the change in HAQ during the initial treatment phase and the impact of HAQ on other important outcomes within the model including utility and health care costs, the choice of \textbf{H1-H3} (and in particular \textbf{H2} vs. \textbf{H1/H3}) appears to have important consequences for value assessment.  
 
 \subsection{HAQ progression in the absence of bDMARD treatment}\label{haq-progression-in-the-absence-of-bdmard-treatment}
 
@@ -1044,6 +1097,10 @@ When \textbf{S2-S5} are selected, treatment duration is stratified by the level 
 \centering
 \includegraphics[max size={.6\textwidth}{.6\textheight}]{../../data-raw/figs/ttd-corrona-ipdsurv-gengamma-by-da.pdf}
 \caption{Generalized gamma time to treatment discontinuation curves by disease activity level}\label{fig:ttd-gg-da}
+\begin{minipage}{\linewidth}
+\footnotesize
+Notes: The shaded region denotes the simulation based 95\% confidence interval \citep{mandel2013simulation}.
+\end{minipage}
 \end{figure}
 
 \subsubsection{Treatment duration by EULAR response} \label{ttd-eular}
@@ -1112,6 +1169,10 @@ Both adjusted and unadjusted survival curves by EULAR response fit using a gener
 \centering
 \includegraphics[max size={.7\textwidth}{.7\textheight}]{../../data-raw/figs/ttd-bsrbr-ipdsurv-comp-gengamma-by-eular.pdf}
 \caption{Generalized gamma survival curve of treatment duration using reconstructed individual patient data based on analyses from Stevenson et al. (2016) by EULAR response category}\label{fig:bsrbr-gg}
+\begin{minipage}{\linewidth}
+\footnotesize
+Notes: The shaded region denotes the simulation based 95\% confidence interval \citep{mandel2013simulation}.
+\end{minipage}
 \end{figure}
 
 
@@ -1646,11 +1707,11 @@ We begin by describing the simulation procedure conditional on model structure, 
 
 Analysts who wish to expand the analysis to capture uncertainty between models can follow the approach described in \citet{bojke2009characterizing}. In particular, for each randomly sampled parameter set, each model structure (or a subset of plausible model structures) can be simulated. The distribution of simulated outcomes across parameters and models will then reflect uncertainty both within and between models. 
 
-It's important to note that simulation output for an individual patient captures differences in outcomes across patients due to random variation (often referred to as first order uncertainty). This information might be useful to patients since it is needed to predict the distribution of their future outcomes conditional on their characteristics, but less useful to a decision maker concerned with making treatment decisions for a population or subset of a population. Analysts wishing to use the model for CEA should therefore estimate mean outcomes by averaging over the simulated patients for each parameter set and model structure. The number of simulated patients should be sufficiently large so that mean outcomes are stable across model runs (i.e., so that first order uncertainty is eliminated). 
+It's important to note that simulation output for an individual patient captures differences in outcomes across patients due to random variation (often referred to as first order uncertainty). This information might be useful to patients since it is needed to predict the distribution of their future outcomes conditional on their characteristics, but less useful to a decision maker concerned with making treatment decisions for a population or subset of a population. Analysts wishing to use the model for CEA or MCDA should therefore estimate mean outcomes by averaging over the simulated patients for each parameter set and model structure. The number of simulated patients should be sufficiently large so that mean outcomes are stable across model runs (i.e., so that first order uncertainty is eliminated). 
 
-Although CEA is concerned with mean outcomes, that does not imply that it does not account for heterogeneity. Instead, since outcomes depend on the characteristics of each patient, model averages are a function of the population analyzed. Subgroup analyses can be used to examine differences in cost-effectiveness across subgroups by simulating patients with certain shared characteristics. 
+Although CEA and MCDA is concerned with mean outcomes, that does not imply that it does not account for heterogeneity. Instead, since outcomes depend on the characteristics of each patient, model averages are a function of the population analyzed. Subgroup analyses can be used to examine differences in cost-effectiveness across subgroups by simulating patients with certain shared characteristics. 
 
-Parameter and structural uncertainty imply decision uncertainty, or the degree to which decisions are made based on imperfect knowledge. Indeed, with the aim to maximize health outcomes for a given budget, the optimal decision with current information is to choose the policy that maximizes the expected NMB; however, due to uncertainty, the incorrect policy may be considered the most cost-effective. To characterize this uncertainty, standard summary measures including 95\% credible intervals for NMBs and other model outcomes, cost-effectiveness planes, and cost-effectiveness acceptability curves, and the expected value of perfect information can be calculated from the simulated output. Since the expected value of partial perfect information is computationally costly, it can be approximated using meta-modeling techniques \citep{jalal2013linear, jalal2015computing, heath2016estimating}.
+Parameter and structural uncertainty imply decision uncertainty, or the degree to which decisions are made based on imperfect knowledge. Indeed, in CEA, with the aim to maximize health outcomes for a given budget, the optimal decision with current information is to choose the policy that maximizes the expected NMB; however, due to uncertainty, the incorrect policy may be considered the most cost-effective. To characterize uncertainty within a CEA framework, standard summary measures including 95\% credible intervals for NMBs and other model outcomes, cost-effectiveness planes, and cost-effectiveness acceptability curves, and the expected value of perfect information can be calculated from the simulated output. Since the expected value of partial perfect information is computationally costly, it can be approximated using meta-modeling techniques \citep{jalal2013linear, jalal2015computing, heath2016estimating}.
 
 \section{Validation}\label{sec:validation}
 We aim to validate the model using the five types of validation described by \citet{eddy2012model}. Currently, we are able to use the first three validation types. First, we have checked the model for face validity by ensuring that simulated outcomes are consistent with current science and evidence. Second, we performed unit tests to verify that the individual units of code that are used to simulate the model return expected results. Third, we compared simulated results for key outcomes such as mortality, HAQ over time, and time to treatment discontinuation with real-world data and our underlying parameter values. In particular, we ran the model online under various scenarios using our R Shiny web application and checked the simulated outcomes. 
