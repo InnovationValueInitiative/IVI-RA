@@ -337,8 +337,10 @@ double TTD::sim_ttd_all(){
   if (ttsi < 0 || tswitch == 1){
     surv = 0.0;
   }
-  surv = rsurvC(dot(x_all, all_pars.loc), all_pars.anc1, 
-                model_structure.ttd_dist, all_pars.anc2);
+  else{
+    surv = rsurvC(dot(x_all, all_pars.loc), all_pars.anc1, 
+                  model_structure.ttd_dist, all_pars.anc2);
+  }
   return surv/cycle_length; // surv is measured in years, so surv/cycle_length is measured in model cycles
 }
 
@@ -347,13 +349,15 @@ double TTD::sim_ttd_da(){
   if (ttsi < 0 || tswitch == 1){
     surv = 0.0;
   }
-  surv = rsurvC(dot(x_da, da_pars.loc), da_pars.anc1, 
-                model_structure.ttd_dist, da_pars.anc2);
+  else{
+    surv = rsurvC(dot(x_da, da_pars.loc), da_pars.anc1, 
+                  model_structure.ttd_dist, da_pars.anc2);
+  }
   return surv/cycle_length; // surv is measured in years, so surv/cycle_length is measured in model cycles
 }
 
 double TTD::sim_ttd(){
-  double ttd = 0;
+  double ttd = 0.0;
   if (model_structure.ttd_cause == "all"){
     if (model_structure.tx_iswitch == "acr-eular-switch"){
       ttd = sim_ttd_eular();
@@ -368,7 +372,7 @@ double TTD::sim_ttd(){
   }
   else if (model_structure.ttd_cause == "si"){
     if (ttsi < 0){
-      ttd = 0;
+      ttd = 0.0;
     } 
     else{
       ttd = ttsi;
