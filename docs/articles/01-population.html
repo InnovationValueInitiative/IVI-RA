@@ -112,10 +112,10 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra-expert/">IVI-RA value tool expert</a>
+      <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra-expert/">IVI-RA model web interface</a>
     </li>
     <li>
-      <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra-simple/">IVI-RA value tool</a>
+      <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra/">IVI-RA Value Tool</a>
     </li>
   </ul>
 </li>
@@ -154,24 +154,31 @@
 <p>We can randomly sample a heterogeneous population with default setting. To examine these settings type <code>?sample_pats</code> into the console.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pop &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pop.html">sample_pop</a></span>(<span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">type =</span> <span class="st">"heterog"</span>)
 <span class="kw">head</span>(pop)</code></pre></div>
-<pre><code>##           age male weight prev_dmards    das28     sdai     cdai     haq0
-## [1,] 51.87410    0     75           3 3.580200 18.02777 20.55967 1.256943
-## [2,] 61.30920    0     75           3 4.570760 22.45276 18.60394 1.391794
-## [3,] 38.04497    0     75           4 8.344904 69.27733 68.33858 2.186687
-## [4,] 65.75241    0     75           2 6.874655 50.23981 52.65981 2.760185
-## [5,] 57.95293    0     75           1 5.600129 27.12668 29.10013 1.856378
-## [6,] 66.39319    0     75           2 6.280759 45.41667 42.45402 1.435023</code></pre>
+<pre><code>##           age male weight prev_dmards    das28     sdai     cdai      haq0
+## [1,] 43.93874    1     89           4 6.927035 50.39708 44.50042 1.8746326
+## [2,] 60.51481    0     75           5 5.146404 17.55234 25.71614 0.6798185
+## [3,] 51.83906    0     75           6 6.323628 47.26741 42.87616 2.9881729
+## [4,] 39.92793    0     75           7 5.091602 36.73088 35.91811 1.2116585
+## [5,] 46.79263    0     75           4 4.006201 29.67003 23.70766 1.3901905
+## [6,] 51.17689    0     75           3 7.285142 53.53268 46.79795 2.2391010</code></pre>
 <p>We can also customize the distribution of patients. For example, suppose we want to study a younger and healthier population. We might then sample patients by customizing arguments in <code>sample_pats</code>,</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pop2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pop.html">sample_pop</a></span>(<span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">type =</span> <span class="st">"heterog"</span>, <span class="dt">age_mean =</span> <span class="dv">45</span>, <span class="dt">das28_mean =</span> <span class="dv">4</span>, <span class="dt">sdai_mean =</span> <span class="dv">20</span>, 
                     <span class="dt">cdai_mean =</span> <span class="dv">18</span>)
 <span class="kw">head</span>(pop2)</code></pre></div>
-<pre><code>##           age male weight prev_dmards    das28     sdai     cdai      haq0
-## [1,] 56.03258    0     75           4 3.910181 10.99668 11.78279 2.3128159
-## [2,] 54.78049    0     75           5 4.986337 23.98762 20.48216 1.2090057
-## [3,] 57.02606    0     75           4 3.402237 17.65152 15.44013 0.5110088
-## [4,] 31.17585    1     89           2 4.642258 31.41906 32.39316 2.3879399
-## [5,] 71.53496    0     75           3 2.920350 13.24992 14.09928 0.6822565
-## [6,] 55.05651    0     75           0 3.674455 12.79845 19.78699 1.0219735</code></pre>
+<pre><code>##           age male weight prev_dmards    das28      sdai      cdai
+## [1,] 59.40882    0     75           4 5.539700 25.308664 27.898394
+## [2,] 44.49555    0     75           1 3.250943 18.893776 17.745843
+## [3,] 63.48716    0     75           1 5.705870 38.930969 34.403389
+## [4,] 33.04690    1     89           3 3.568073 15.416873 15.173322
+## [5,] 53.83665    0     75           3 3.635756 14.350795 10.022843
+## [6,] 47.12514    0     75           1 2.602467  5.472432  3.300773
+##           haq0
+## [1,] 0.7048109
+## [2,] 1.8152836
+## [3,] 1.4734412
+## [4,] 0.7952290
+## [5,] 1.5492823
+## [6,] 0.3737375</code></pre>
 </div>
 <div id="using-your-own-patient-population" class="section level2">
 <h2 class="hasAnchor">

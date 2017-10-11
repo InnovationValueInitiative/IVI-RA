@@ -118,8 +118,8 @@ navbar:
         href: articles/hesim.html
   - text: "Web apps"
     menu:
-      - text: "IVI-RA value tool expert"
+      - text: "IVI-RA model web interface"
         href: https://innovationandvalueinitiative.shinyapps.io/ivi-ra-expert/
-      - text: "IVI-RA value tool"
-        href: https://innovationandvalueinitiative.shinyapps.io/ivi-ra-simple/
+      - text: "IVI-RA Value Tool"
+        href: https://innovationandvalueinitiative.shinyapps.io/ivi-ra/
 
