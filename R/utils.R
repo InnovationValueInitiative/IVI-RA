@@ -112,3 +112,192 @@ sim_survtime <- function(n = 1000, age = 55, haq0 = 1, male = 0,
                    cycle_length, loghr)
   return(le)
 }
+
+#' Check scalar
+#'
+#' Check argument that must be a scalar is correct. 
+#' 
+#' 
+#' @return Error message if incorrect arguments are passed.
+#'  
+#' @keywords internal
+check_scalar <- function(s, pos = FALSE){
+  s.name <- deparse(substitute(s))
+  if(!is.atomic(s) & length(s) == 1L){
+    stop(paste0(s.name, " must be a scalar of length 1."))
+  }
+  if (pos == TRUE){
+    if(s < 0){
+      stop(paste0(s.name, " must be greater than or equal to 0."))
+    }
+  }
+}
+
+#' Check vector
+#'
+#' Check argument that must be a vector is correct. 
+#' 
+#' 
+#' @return Error message if incorrect arguments are passed.
+#'  
+#' @keywords internal
+check_vector <- function(v, len = NULL, pos = FALSE){
+  v.name <- deparse(substitute(v))
+  if(!is.vector(v)){
+    stop(paste0(v.name, " must be a vector."))
+  }
+  if(!is.null(len)){
+    if(length(v) != len){
+      stop(paste0(v.name, "  must be length ", len, "."))
+    }
+  }
+  if (pos == TRUE){
+    if(any(v < 0)){
+      stop(paste0("Each element of ", v.name, " must be greater than or equal to 0."))
+    }
+  }
+}
+
+#' Check matrix
+#'
+#' Check argument that must be a matrix is correct. 
+#' 
+#' 
+#' @return Error message if incorrect arguments are passed.
+#'  
+#' @keywords internal
+check_matrix <- function(m, nrow, ncol, pos = FALSE){
+  m.name <- deparse(substitute(m))
+  if(!is.matrix(m)){
+    stop(paste0(m.name, " must be a matrix"))
+  }
+  if(nrow(m) != nrow){
+    stop(paste0(m.name, "  must be have ", nrow, " rows."))
+  }
+  if(ncol(m) != ncol){
+    stop(paste0(m.name, "  must be have ", ncol, " columns"))
+  }
+  if (pos == TRUE){
+    if(any(m < 0)){
+      stop(paste0("Each element of ", m.name, " must be greater than or equal to 0."))
+    }
+  }
+}
+
+#' Check lifetable
+#'
+#' Check argument that passes a lifetable is correct. 
+#' 
+#' 
+#' @return Error message if incorrect arguments are passed.
+#'  
+#' @keywords internal
+check_lifetable <- function(lt){
+  lt.name <- deparse(substitute(lt))
+  if(is.null(lt$age)){
+    stop(paste0("The age column in ", lt.name, " is missing."))
+  }
+  if(is.null(lt$qx)){
+    stop(paste0("The qx column in ", lt.name, " is missing."))
+  }
+  if(lt$age[1] != 0){
+    stop(paste0("Age in ", lt.name, " must start at 0."))
+  }
+  if(any(diff(lt$age) !=1) | !is.integer(lt$age)){
+    stop(paste0(lt.name, " must report mortality rates by single-year of age."))
+  }
+  if(nrow(lt) != lt$age[length(lt$age)] + 1){
+    stop("Each row in ", lt.name, " must represent a single year of age.")
+  }
+}
+
+#' Check time to discontinuation
+#'
+#' Check that time to discontinuation argument in \link{sample_pars} is correct. 
+#' 
+#' 
+#' @return Error message if incorrect arguments are passed.
+#'  
+#' @keywords internal
+check_ttd <- function(pars, x_ttd){
+  ttd.name <- deparse(substitute(pars))
+  x.ttd.name <- deparse(substitute(x_ttd))
+  names.dist <- c("exponential", "exp", "weibull", "gompertz", "gamma", "llogis",
+                  "lnorm", "gengamma")
+  if (!is.list(pars)){
+      stop(paste0(ttd.name, " must be a list"))
+  } 
+  if (!all(sapply(pars, is.list))){
+      stop(paste0("Some distributions in ", ttd.name, " are not lists"))
+  }
+  if (any(!names(pars) %in% names.dist)){
+      stop(paste0("Distributions allowed in ", ttd.name, " are exponential, exp, ",
+                "weibull, gompertz, gamma, llogis, lnorm, and gengamma."))
+  }
+  for (i in 1:length(names(pars))){ # loop over distributions
+    dist <- names(pars)[i]
+    pars.dist <- pars[[dist]]
+    if (is.null(pars.dist$est)){
+        stop(paste0("Element est is missing from the distribution ", dist, " in ", ttd.name))
+    }
+    if (is.null(pars.dist$vcov)){
+        stop(paste0("Element vcov is missing from the distribution ", dist, " in ", 
+                    ttd.name))
+    }
+    if (is.null(pars.dist$loc.index)){
+       stop(paste0("Element loc.index is missing from the distribution ", dist, " in ",
+                   ttd.name))
+    } 
+    if (is.null(pars.dist$anc1.index)){
+      stop(paste0("Element anc1.index is missing from the distribution ", dist, " in ",
+                  ttd.name))
+    }
+    if (is.null(pars.dist$anc2.index)){
+        stop(paste0("Element anc2.index is missing from the distribution ", dist, " in ",
+                    ttd.name))
+    }
+      
+    if (dist %in% c("exponential", "exp")){
+        if(!is.na(pars.dist$anc1.index)){
+          stop(paste0("Element anc1.index from the distribution ", dist, " in ", ttd.name,
+                     " must be NA."))
+        }
+        if(!is.na(pars.dist$anc2.index)){
+          stop(paste0("Element anc2.index from the distribution ", dist, " in ", ttd.name,
+                      " must be NA."))
+        }
+    }
+    if (dist != "gengamma"){
+      if(!is.na(pars.dist$anc2.index)){
+        stop(paste0("Element anc2.index from the distribution ", dist, " in ", ttd.name,
+                    " must be NA."))
+      }
+    } 
+   check_vector(pars.dist$est)
+   check_matrix(pars.dist$vcov, nrow = length(pars.dist$est), ncol = length(pars.dist$est))
+   if (ncol(x_ttd) != length(pars.dist$loc.index)){
+      stop(paste0("Number of columns in ", x.ttd.name, " is not equal to the length of ", 
+                 "loc.index in ", ttd.name, " when using the ", dist, " distribution."))
+   }
+  } # end loop over distributions
+}
+
+#' Check NMA effect reduction
+#'
+#' Check argument that are passed to \link{sample_pars} related to the reduction
+#' in treatment effects for bDMARD experienced patients.
+#' 
+#' 
+#' @return Error message if incorrect arguments are passed.
+#'  
+#' @keywords internal
+check_nma_k <- function(lower, upper){
+  lower.name <- deparse(substitute(lower))
+  upper.name <- deparse(substitute(upper))
+  check_scalar(lower)
+  check_scalar(upper)
+  if (lower > upper){
+    stop(paste0(upper.name, " must be greater than or equal to ", lower.name))
+  }
+}
+

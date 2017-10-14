@@ -281,11 +281,135 @@ sample_pars <- function(n = 100, input_data,
                        incidence_male = iviRA::incidence.male,
                        utility_mixture_pain = iviRA::pain){
   
-  # input data and model structures
+  # check arguments
   if (!inherits(input_data, "input_data")){
     stop("The argument 'input_data' must be of class 'input_data'")
   }
+  
+  ## treatment effects at 6 months
+  ### ACR response
+  check_vector(nma_acr_mean, len = length(tx_names) + 4)
+  check_matrix(nma_acr_vcov, nrow = length(nma_acr_mean), ncol = length(nma_acr_mean))
+  check_nma_k(lower = nma_acr_rr_lower, upper = nma_acr_rr_upper)
+  
+  ### DAS28
+  check_vector(nma_das28_mean, len = length(tx_names) + 1)
+  check_matrix(nma_das28_vcov, nrow = length(nma_das28_mean), ncol = length(nma_das28_mean))
+  check_nma_k(lower = nma_das28_rr_lower, upper = nma_das28_rr_upper)
 
+  ### HAQ
+  check_vector(nma_haq_mean, len = length(tx_names) + 1)
+  check_matrix(nma_haq_vcov, nrow = length(nma_haq_mean), ncol = length(nma_haq_mean))
+  check_nma_k(lower = nma_haq_rr_lower, upper = nma_haq_rr_upper)
+  
+  ## treatment response mappings
+  check_vector(acr2haq_mean, len = 4)
+  check_vector(acr2haq_se, len = 4, pos = TRUE)
+  check_matrix(acr2eular_mat, nrow = 4, ncol = 3)
+  check_vector(eular2haq_mean, len = 3)
+  check_vector(eular2haq_se, len = 3, pos = TRUE)
+  check_vector(acr2das28_lower, len = 4)
+  check_vector(acr2das28_upper, len = 4)
+  check_vector(acr2sdai_lower, len = 4)
+  check_vector(acr2sdai_upper, len = 4)
+  check_vector(acr2cdai_upper, len = 4)
+  check_vector(acr2cdai_lower, len = 4)
+  
+  ## longterm HAQ progression
+  ### rebound factor
+  check_scalar(rebound_lower, pos = TRUE)
+  check_scalar(rebound_upper, pos = TRUE)
+  if (rebound_lower > rebound_upper){
+    stop("rebound_upper must be greater than or equal to rebound_lower.")
+  }
+  
+  ### HAQ linear progression
+  check_vector(haq_lprog_tx_mean, len = length(tx_names))
+  check_vector(haq_lprog_tx_se, len = length(haq_lprog_tx_mean), pos = TRUE)
+  check_vector(haq_lprog_age_mean, len = 3)
+  check_vector(haq_lprog_age_se, len = 3, pos = TRUE)
+  
+  ### HAQ LCGM
+  if(is.null(haq_lcgm_pars$coef$est)){
+    stop("coef$est element of haq_lcgm_pars is not specified.")
+  }
+  check_vector(haq_lcgm_pars$coef$est, len = nrow(iviRA::haq.lcgm$coef))
+  if(is.null(haq_lcgm_pars$coef$parameter)){
+    stop("coef$parameter element of haq_lcgm_pars is not specified.")
+  }
+  if(any(haq_lcgm_pars$coef$parameter != iviRA::haq.lcgm$coef$parameter)){
+    stop("haq_lcgm_pars$coef$parameter must be equal to iviRA::haq.lcgm$coef$parameter.")
+  }
+  if(is.null(haq_lcgm_pars$vcov)){
+    stop("vcov element of haq_lcgm_pars is not specified.")
+  }
+  if(any(haq_lcgm_pars$vcov < 0)){
+    stop("Elements of vcov element of haq_lcgm_pars must be greater than or equal to 0.")
+  }
+  
+  ## mortality
+  check_lifetable(ltmale)
+  check_lifetable(ltfemale)
+  check_vector(mort_logor)
+  if (length(mort_logor) != ncol(input_data$x.mort)){
+    stop(paste0("The number of columns in input_data$x.mort must be equal to",
+         " the length of mort_logor."))
+  }
+  check_vector(mort_logor_se, pos = TRUE)
+  if (length(mort_logor_se) != ncol(input_data$x.mort)){
+    stop(paste0("The number of columns in input_data$x.mort must be equal to",
+                " the length of mort_logor_se."))
+  }
+  check_vector(mort_loghr_haqdif, len = 5)
+  check_vector(mort_loghr_se_haqdif, len = 5, pos = TRUE)
+  
+  ## time to treatment discontinuation
+  check_ttd(pars = ttd_all, x_ttd = input_data$x.ttd.all)
+  check_ttd(pars = ttd_da, x_ttd = input_data$x.ttd.da)
+  check_ttd(pars = ttd_eular$moderate, x_ttd = input_data$x.ttd.eular)
+  check_ttd(pars = ttd_eular$good, x_ttd = input_data$x.ttd.eular)
+  
+  ## adverse events
+  if(is.null(ttsi$lograte)){
+    stop("lograte column of ttsi is missing.")
+  }
+  if(is.null(ttsi$lograte_se)){
+    stop("lograte_se column of ttsi is missing.")
+  }
+  check_vector(ttsi$lograte, len = length(tx_names))
+  check_vector(ttsi$lograte_se, len = length(tx_names), pos = TRUE)
+  
+  ## formal healthcare sector costs
+  ### hospital costs
+  check_vector(hosp_days_mean, len = 6, pos = TRUE)
+  check_vector(hosp_days_se, len = 6, pos = TRUE)
+  check_vector(hosp_cost_mean, len = 6, pos = TRUE)
+  check_vector(hosp_cost_se, len = 6, pos = TRUE)
+  
+  ### general management costs
+  check_vector(mgmt_cost_mean, pos = TRUE)
+  check_vector(mgmt_cost_se, pos = TRUE)
+  
+  ### serious infection costs
+  check_scalar(si_cost, pos = TRUE)
+  check_scalar(si_cost_range, pos = TRUE)
+  
+  ## utility
+  check_scalar(si_ul, pos = TRUE)
+  check_scalar(si_ul_range, pos = TRUE)
+  check_vector(tx_attr_utilcoef_lower, len = ncol(input_data$x.attr))
+  check_vector(tx_attr_utilcoef_upper, len = ncol(input_data$x.attr))
+  if (any(tx_attr_utilcoef_lower > tx_attr_utilcoef_upper)){
+    stop(paste0("tx_attr_utilcoef_upper must be greater than or equal to ",
+                "tx_attr_utilcoef_lower."))
+  }
+  check_vector(tx_attr_utilcoef_names, len = length(tx_attr_utilcoef_lower))
+  
+  ## productivity loss
+  check_scalar(pl_mean, pos = TRUE)
+  check_scalar(pl_se, pos = TRUE)
+  
+  
   # number of covariates in NMA treatment by covariate interactions
   nma.acr.ncovs <- ncol(input_data$x.acr)
   nma.haq.ncovs <- ncol(input_data$x.haq)
@@ -296,7 +420,7 @@ sample_pars <- function(n = 100, input_data,
   sim <- list()
   sim$n <- n
   sim$rebound <- runif(n, rebound_lower, rebound_upper)
-  sim$lt <- lt_data(ltfemale = ltfemale, ltmale = ltmale)
+  sim$lt <- lt_data(ltfemale = data.table(ltfemale), ltmale = data.table(ltmale))
   sim$tx.cost <- c(tx_cost,
                       list(discount = sample_uniforms(n, lower = tx_cost$cost$discount_lower, 
                                       tx_cost$cost$discount_upper, 
@@ -723,4 +847,6 @@ sample_gammas <- function(n, mean = NULL, se = NULL, shape = NULL, rate = NULL,
   colnames(samp) <- col_names
   return(samp)
 }
+
+
 
