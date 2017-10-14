@@ -6,12 +6,12 @@
 \usage{
 sample_pars(n = 100, input_data, tx_names = iviRA::treatments$sname,
   nma_acr_mean = iviRA::nma.acr.naive$mean,
-  nma_acr_vcov = iviRA::nma.acr.naive$vcov, nma_acr_rr_lower = 0.75,
-  nma_acr_rr_upper = 0.92, nma_das28_mean = iviRA::nma.das28.naive$mean,
-  nma_das28_vcov = iviRA::nma.das28.naive$vcov, nma_das28_rr_lower = 0.75,
-  nma_das28_rr_upper = 0.92, nma_haq_mean = iviRA::nma.haq.naive$mean,
-  nma_haq_vcov = iviRA::nma.haq.naive$vcov, nma_haq_rr_lower = 0.75,
-  nma_haq_rr_upper = 0.92, acr2haq_mean = iviRA::acr2haq$mean,
+  nma_acr_vcov = iviRA::nma.acr.naive$vcov, nma_acr_k_lower = 0.75,
+  nma_acr_k_upper = 0.92, nma_das28_mean = iviRA::nma.das28.naive$mean,
+  nma_das28_vcov = iviRA::nma.das28.naive$vcov, nma_das28_k_lower = 0.75,
+  nma_das28_k_upper = 0.92, nma_haq_mean = iviRA::nma.haq.naive$mean,
+  nma_haq_vcov = iviRA::nma.haq.naive$vcov, nma_haq_k_lower = 0.75,
+  nma_haq_k_upper = 0.92, acr2haq_mean = iviRA::acr2haq$mean,
   acr2haq_se = iviRA::acr2haq$se,
   acr2das28_lower = iviRA::acr2das28$inception$lower,
   acr2das28_upper = iviRA::acr2das28$inception$upper,
@@ -63,13 +63,11 @@ biologic naive patients (i.e., 1st line). ACR response is modeled using an order
 \item{nma_acr_vcov}{Variance-covariance matrix for ACR response NMA parameters on probit scale for 
 biologic naive patients (i.e., 1st line). ACR response is modeled using an ordered probit model.}
 
-\item{nma_acr_rr_lower}{Lower bound for proportion reduction (i.e., relative risk) in 
-overlapping ACR response probabilities (ACR20/50/70) for biologic experienced patients 
-(i.e., lines 2 and later).}
+\item{nma_acr_k_lower}{Treatment effects for bDMARD experienced patients are reduced by 
+multiplying the parameters of the statistical model of ACR response for bDMARD naive patients 
+by a constant \eqn{k}. This is the lower bound for that constant \eqn{k}.}
 
-\item{nma_acr_rr_upper}{Upper bound for proportion reduction (i.e., relative risk) in
-overlapping ACR response probabilities (ACR20/50/70) for biologic experienced patients 
-(i.e., lines 2 and later).}
+\item{nma_acr_k_upper}{Upper bound for the constant \eqn{k}.}
 
 \item{nma_das28_mean}{Posterior means for DAS28 NMA parameters for biologic naive 
 patients (i.e., 1st line). Change in DAS28 from baseline is modeled using a linear model.}
@@ -77,11 +75,12 @@ patients (i.e., 1st line). Change in DAS28 from baseline is modeled using a line
 \item{nma_das28_vcov}{Variance-covariance matrix for DAS28 NMA paramters for biologic naive
 patients (i.e., 1st line). Change in DAS28 from baseline is modeled using a linear model.}
 
-\item{nma_das28_rr_lower}{Lower bound for proportion reduction (i.e., relative risk) in DAS28
-for biologic experienced patients (i.e., lines 2 and later).}
+\item{nma_das28_k_lower}{Treatment effects for bDMARD experienced patients are reduced by 
+multiplying the parameters of the statistical model of the change in DAS28 at 6 months for 
+bDMARD naive patients by a constant \eqn{k}. This is the lower bound for that constant 
+\code{k}.}
 
-\item{nma_das28_rr_upper}{Upper bound for proportion reduction (i.e., relative risk) in DAS28
-for biologic experienced patients (i.e., lines 2 and later).}
+\item{nma_das28_k_upper}{Upper bound for constant \eqn{k}.}
 
 \item{nma_haq_mean}{Posterior means for HAQ NMA parameters for biologic naive 
 patients (i.e., 1st line). Change in HAQ from baseline is modeled using a linear model.}
@@ -89,11 +88,12 @@ patients (i.e., 1st line). Change in HAQ from baseline is modeled using a linear
 \item{nma_haq_vcov}{Variance-covariance matrix for HAQ NMA paramters for biologic naive
 patients (i.e., 1st line). Change in HAQ from baseline is modeled using a linear model.}
 
-\item{nma_haq_rr_lower}{Lower bound for proportion reduction (i.e., relative risk) in HAQ
-for biologic experienced patients (i.e., lines 2 and later).}
+\item{nma_haq_k_lower}{Treatment effects for bDMARD experienced patients are reduced by 
+multiplying the parameters of the statistical model of the change in HAQ at 6 months for
+ bDMARD naive patients by a constant \eqn{k}. This is the lower bound for that constant 
+ \code{k}.}
 
-\item{nma_haq_rr_upper}{Upper bound for proportion reduction (i.e., relative risk) in HAQ
-for biologic experienced patients (i.e., lines 2 and later).}
+\item{nma_haq_k_upper}{Upper bound for constant \eqn{k}.}
 
 \item{acr2haq_mean}{Mean HAQ change by ACR response category.}
 
@@ -119,12 +119,12 @@ for biologic experienced patients (i.e., lines 2 and later).}
 \item{eular2haq_se}{Standard error of mean HAQ change by Eular response category.}
 
 \item{rebound_lower}{The rebound is the increase in HAQ following treatment discontinuation.
- It is defined as a proportion \emph{f} times the size of the inititial treatment response.
- \code{rebound_lower} defines the lower bound for \emph{f}. Default is 0.7, which implies
+ It is defined as a proportion \eqn{f} times the size of the inititial treatment response.
+ \code{rebound_lower} defines the lower bound for \eqn{f}. Default is 0.7, which implies
 that the rebound post treatment is 0.7 times the initial treatment effect.}
 
 \item{rebound_upper}{\code{rebound_upper} defines the
-upper bound for \emph{f}. Default is 1, which implies
+upper bound for \eqn{f}. Default is 1, which implies
 that the rebound post treatment is the same as the initial treatment effect.}
 
 \item{haq_lprog_tx_mean}{Point estimate of linear yearly HAQ progression rate by treatment.}

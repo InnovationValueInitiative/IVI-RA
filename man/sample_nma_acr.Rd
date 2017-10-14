@@ -4,7 +4,7 @@
 \alias{sample_nma_acr}
 \title{Sample ACR response from ordered probit NMA}
 \usage{
-sample_nma_acr(nsims, m, vcov, rr_lower = 1, rr_upper = 1, ncovs = 1,
+sample_nma_acr(nsims, m, vcov, k_lower = 1, k_upper = 1, ncovs = 1,
   tx_names = NULL)
 }
 \arguments{
@@ -14,9 +14,9 @@ sample_nma_acr(nsims, m, vcov, rr_lower = 1, rr_upper = 1, ncovs = 1,
 
 \item{vcov}{Variance-covariance matrix of coefficients.}
 
-\item{rr_lower}{Lower bound for relative risk.}
+\item{k_lower}{Lower bound for constant \eqn{k}.}
 
-\item{rr_upper}{Upper bound for relative risk.}
+\item{k_upper}{Upper bound for constant \eqn{k}.}
 
 \item{ncovs}{Number of treatment by covariate interactions.}
 }

@@ -48,14 +48,14 @@ void update_haq_t(double &haq, double haq_change_therapy,
 /**************
 * NMA ACR class
 **************/
-void nmaACR::set(std::string hist_, double rr_, double A_, double z2_, double z3_,
+void nmaACR::set(std::string hist_, double k_, double A_, double z2_, double z3_,
                  arma::rowvec d_beta_, arma::rowvec x_, int line){
   hist = hist_;
   if (line == 0 && hist == "naive"){
-    rr = 1;
+    k = 1;
   } 
   else{
-    rr = rr_;
+    k = k_;
   }
   A = A_;
   z2 = z2_;
@@ -73,9 +73,9 @@ arma::rowvec nmaACR::nma_acrprob(){
   double pl_20 = R::pnorm5(A + d, 0, 1, 1, 0); // less than ACR 20
   
   // probability in overlapping categories
-  double po_g70 =  rr * (1 - pl_70); // greater than ACR 70
-  double po_g50 = rr * (1 - pl_50); // greater than ACR 50
-  double po_g20 = rr * (1 - pl_20); // greater than ACR 20
+  double po_g70 =  k * (1 - pl_70); // greater than ACR 70
+  double po_g50 = k * (1 - pl_50); // greater than ACR 50
+  double po_g20 = k * (1 - pl_20); // greater than ACR 20
   double po_l20 = 1 - po_g20; // less than ACR 20
   
   // probability in mutually exclusive categories
@@ -98,14 +98,14 @@ double nmaACR::sim_acr(){
 /****************************
 * NMA class for linear model
 ****************************/
-void nmaLM::set(std::string hist_, double rr_, double A_,
+void nmaLM::set(std::string hist_, double k_, double A_,
                  arma::rowvec d_beta_, arma::rowvec x_, int line){
   hist = hist_;
   if (line == 0 && hist == "naive"){
-    rr = 1;
+    k = 1;
   } 
   else{
-    rr = rr_;
+    k = k_;
   }
   A = A_;
   d_beta = d_beta_;
@@ -115,10 +115,10 @@ void nmaLM::set(std::string hist_, double rr_, double A_,
 double nmaLM::sim_dy(){
   double dy = A + arma::dot(d_beta, x);
   if (dy <= 0){
-    return rr * dy;
+    return k * dy;
   } 
   else{
-    return (1 + 1 - rr) * dy;
+    return (1 + 1 - k) * dy;
   }
 }
 
@@ -1255,7 +1255,7 @@ Rcpp::DataFrame sim_dhaq6C(int npats, int nsims, std::string hist, int line,
                               std::vector<std::string> tx_ihaq_type){
   
   // NMA ACR response
-  std::vector<double> acr_rr = as<std::vector<double> > (nma_acr_list["rr"]);
+  std::vector<double> acr_k = as<std::vector<double> > (nma_acr_list["k"]);
   std::vector<double> acr_A = as<std::vector<double> > (nma_acr_list["A"]);
   std::vector<double> acr_z2 = as<std::vector<double> > (nma_acr_list["z2"]);
   std::vector<double> acr_z3 = as<std::vector<double> > (nma_acr_list["z3"]);
@@ -1263,7 +1263,7 @@ Rcpp::DataFrame sim_dhaq6C(int npats, int nsims, std::string hist, int line,
   nmaACR nma_acr;
   
   // NMA HAQ
-  std::vector<double> nma_haq_rr = as<std::vector<double> > (nma_haq_list["rr"]);
+  std::vector<double> nma_haq_k = as<std::vector<double> > (nma_haq_list["k"]);
   std::vector<double> nma_haq_A = as<std::vector<double> > (nma_haq_list["A"]);
   arma::cube nma_haq_d_beta = as<arma::cube>(nma_haq_list["d"]);
   nmaLM nma_haq;
@@ -1285,10 +1285,10 @@ Rcpp::DataFrame sim_dhaq6C(int npats, int nsims, std::string hist, int line,
     for (int m = 0; m < M; ++m){
       for (int s = 0; s < nsims; ++s){
         for (int i = 0; i < npats; ++i){
-          nma_acr.set(hist, acr_rr[s], acr_A[s], acr_z2[s], acr_z3[s],
+          nma_acr.set(hist, acr_k[s], acr_A[s], acr_z2[s], acr_z3[s],
                       acr_d_beta.slice(tx_ind_j).row(s), x_acr.row(i),
                       line);
-          nma_haq.set(hist, nma_haq_rr[s], nma_haq_A[s],
+          nma_haq.set(hist, nma_haq_k[s], nma_haq_A[s],
                       nma_haq_d_beta.slice(tx_ind_j).row(s), x_haq.row(i),
                       line);
           tx_ihaq.sim(tx_ihaq_type[m], line, tx_ind_j, nbt_ind,
@@ -1373,19 +1373,19 @@ List sim_iviRA_C(arma::mat arm_inds, Rcpp::DataFrame tx_data,
   std::vector<int> weight_based = as<std::vector<int> >(tc["weight_based"]);
   
   // NMA ACR response
-  std::vector<double> acr_rr = as<std::vector<double> > (nma_acr_list["rr"]);
+  std::vector<double> acr_k = as<std::vector<double> > (nma_acr_list["k"]);
   std::vector<double> acr_A = as<std::vector<double> > (nma_acr_list["A"]);
   std::vector<double> acr_z2 = as<std::vector<double> > (nma_acr_list["z2"]);
   std::vector<double> acr_z3 = as<std::vector<double> > (nma_acr_list["z3"]);
   arma::cube acr_d_beta = as<arma::cube>(nma_acr_list["d"]);
   
   // NMA HAQ
-  std::vector<double> nma_haq_rr = as<std::vector<double> > (nma_haq_list["rr"]);
+  std::vector<double> nma_haq_k = as<std::vector<double> > (nma_haq_list["k"]);
   std::vector<double> nma_haq_A = as<std::vector<double> > (nma_haq_list["A"]);
   arma::cube nma_haq_d_beta = as<arma::cube>(nma_haq_list["d"]);
   
   // NMA DAS28
-  std::vector<double> nma_das28_rr = as<std::vector<double> > (nma_das28_list["rr"]);
+  std::vector<double> nma_das28_k = as<std::vector<double> > (nma_das28_list["k"]);
   std::vector<double> nma_das28_A = as<std::vector<double> > (nma_das28_list["A"]);
   arma::cube nma_das28_d_beta = as<arma::cube>(nma_das28_list["d"]);
   
@@ -1537,13 +1537,13 @@ List sim_iviRA_C(arma::mat arm_inds, Rcpp::DataFrame tx_data,
           arma::rowvec x_attr_ij = x_attr.row(arm_ind_ij);
           
           // H1-H3: simulate change in HAQ during initial treatment phase
-          nma_acr.set(hist, acr_rr[s], acr_A[s], acr_z2[s], acr_z3[s],
+          nma_acr.set(hist, acr_k[s], acr_A[s], acr_z2[s], acr_z3[s],
                       acr_d_beta.slice(arm_ind_ij).row(s), x_acr.row(i),
                       j);
-          nma_haq.set(hist, nma_haq_rr[s], nma_haq_A[s],
+          nma_haq.set(hist, nma_haq_k[s], nma_haq_A[s],
                       nma_haq_d_beta.slice(arm_ind_ij).row(s), x_haq.row(i),
                       j);
-          nma_das28.set(hist, nma_das28_rr[s], nma_das28_A[s],
+          nma_das28.set(hist, nma_das28_k[s], nma_das28_A[s],
                       nma_das28_d_beta.slice(arm_ind_ij).row(s), x_das28.row(i),
                       j);
           tx_ihaq.sim(mod_struct.tx_ihaq, j, arm_ind_ij, nbt,

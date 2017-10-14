@@ -5,13 +5,13 @@
 class nmaACR {
 public:
   std::string hist;
-  double rr;
+  double k;
   double A;
   double z2;
   double z3;
   arma::rowvec d_beta;
   arma::rowvec x;
-  void set(std::string hist_, double rr_, double A_, double z2_, double z3_, 
+  void set(std::string hist_, double k_, double A_, double z2_, double z3_, 
            arma::rowvec d_beta_, arma::rowvec x_, int line);
   arma::rowvec nma_acrprob();
   double sim_acr();
@@ -20,7 +20,7 @@ public:
 class nmaLM {
 public:
   std::string hist;
-  double rr;
+  double k;
   double A;
   arma::rowvec d_beta;
   arma::rowvec x;

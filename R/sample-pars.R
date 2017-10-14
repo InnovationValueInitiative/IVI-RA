@@ -15,28 +15,28 @@
 #' biologic naive patients (i.e., 1st line). ACR response is modeled using an ordered probit model.
 #' @param nma_acr_vcov Variance-covariance matrix for ACR response NMA parameters on probit scale for 
 #' biologic naive patients (i.e., 1st line). ACR response is modeled using an ordered probit model.
-#' @param nma_acr_rr_lower Lower bound for proportion reduction (i.e., relative risk) in 
-#' overlapping ACR response probabilities (ACR20/50/70) for biologic experienced patients 
-#' (i.e., lines 2 and later).
-#' @param nma_acr_rr_upper Upper bound for proportion reduction (i.e., relative risk) in
-#'  overlapping ACR response probabilities (ACR20/50/70) for biologic experienced patients 
-#'  (i.e., lines 2 and later).
+#' @param nma_acr_k_lower Treatment effects for bDMARD experienced patients are reduced by 
+#' multiplying the parameters of the statistical model of ACR response for bDMARD naive patients 
+#' by a constant \eqn{k}. This is the lower bound for that constant \eqn{k}. 
+#' @param nma_acr_k_upper Upper bound for the constant \eqn{k}.
 #' @param nma_das28_mean Posterior means for DAS28 NMA parameters for biologic naive 
 #' patients (i.e., 1st line). Change in DAS28 from baseline is modeled using a linear model.
 #' @param nma_das28_vcov Variance-covariance matrix for DAS28 NMA paramters for biologic naive
 #' patients (i.e., 1st line). Change in DAS28 from baseline is modeled using a linear model.
-#' @param nma_das28_rr_lower Lower bound for proportion reduction (i.e., relative risk) in DAS28
-#' for biologic experienced patients (i.e., lines 2 and later).
-#' @param nma_das28_rr_upper Upper bound for proportion reduction (i.e., relative risk) in DAS28
-#' for biologic experienced patients (i.e., lines 2 and later).
+#' @param nma_das28_k_lower Treatment effects for bDMARD experienced patients are reduced by 
+#' multiplying the parameters of the statistical model of the change in DAS28 at 6 months for 
+#' bDMARD naive patients by a constant \eqn{k}. This is the lower bound for that constant 
+#' \code{k}. 
+#' @param nma_das28_k_upper Upper bound for constant \eqn{k}.
 #' @param nma_haq_mean Posterior means for HAQ NMA parameters for biologic naive 
 #' patients (i.e., 1st line). Change in HAQ from baseline is modeled using a linear model.
 #' @param nma_haq_vcov Variance-covariance matrix for HAQ NMA paramters for biologic naive
 #' patients (i.e., 1st line). Change in HAQ from baseline is modeled using a linear model.
-#' @param nma_haq_rr_lower Lower bound for proportion reduction (i.e., relative risk) in HAQ
-#' for biologic experienced patients (i.e., lines 2 and later).
-#' @param nma_haq_rr_upper Upper bound for proportion reduction (i.e., relative risk) in HAQ
-#' for biologic experienced patients (i.e., lines 2 and later).
+#' @param nma_haq_k_lower Treatment effects for bDMARD experienced patients are reduced by 
+#' multiplying the parameters of the statistical model of the change in HAQ at 6 months for
+#'  bDMARD naive patients by a constant \eqn{k}. This is the lower bound for that constant 
+#'  \code{k}. 
+#' @param nma_haq_k_upper Upper bound for constant \eqn{k}.
 #' @param acr2haq_mean Mean HAQ change by ACR response category.
 #' @param acr2haq_se Standard error of mean HAQ change by ACR response category.
 #' @param acr2das28_lower Lower bound for change in DAS28 by ACR response category.
@@ -50,11 +50,11 @@
 #' @param eular2haq_mean Mean HAQ change by Eular response category.
 #' @param eular2haq_se Standard error of mean HAQ change by Eular response category.
 #' @param rebound_lower The rebound is the increase in HAQ following treatment discontinuation.
-#'  It is defined as a proportion \emph{f} times the size of the inititial treatment response.
-#'  \code{rebound_lower} defines the lower bound for \emph{f}. Default is 0.7, which implies
+#'  It is defined as a proportion \eqn{f} times the size of the inititial treatment response.
+#'  \code{rebound_lower} defines the lower bound for \eqn{f}. Default is 0.7, which implies
 #' that the rebound post treatment is 0.7 times the initial treatment effect.
 #' @param rebound_upper \code{rebound_upper} defines the
-#' upper bound for \emph{f}. Default is 1, which implies
+#' upper bound for \eqn{f}. Default is 1, which implies
 #' that the rebound post treatment is the same as the initial treatment effect.
 #' @param haq_lprog_tx_mean Point estimate of linear yearly HAQ progression rate by treatment.
 #' @param haq_lprog_tx_se Standard error of linear yearly HAQ progression rate by treatment.
@@ -232,13 +232,13 @@
 sample_pars <- function(n = 100, input_data, tx_names = iviRA::treatments$sname,
                         nma_acr_mean = iviRA::nma.acr.naive$mean,
                         nma_acr_vcov = iviRA::nma.acr.naive$vcov,
-                        nma_acr_rr_lower = .75, nma_acr_rr_upper = .92,
+                        nma_acr_k_lower = .75, nma_acr_k_upper = .92,
                         nma_das28_mean = iviRA::nma.das28.naive$mean,
                         nma_das28_vcov = iviRA::nma.das28.naive$vcov,
-                        nma_das28_rr_lower = .75, nma_das28_rr_upper = .92,
+                        nma_das28_k_lower = .75, nma_das28_k_upper = .92,
                         nma_haq_mean = iviRA::nma.haq.naive$mean,
                         nma_haq_vcov = iviRA::nma.haq.naive$vcov,
-                        nma_haq_rr_lower = .75, nma_haq_rr_upper = .92,
+                        nma_haq_k_lower = .75, nma_haq_k_upper = .92,
                         acr2haq_mean = iviRA::acr2haq$mean,
                         acr2haq_se = iviRA::acr2haq$se,
                         acr2das28_lower = iviRA::acr2das28$inception$lower,
@@ -287,17 +287,17 @@ sample_pars <- function(n = 100, input_data, tx_names = iviRA::treatments$sname,
   ### ACR response
   check_vector(nma_acr_mean, len = length(tx_names) + 4)
   check_matrix(nma_acr_vcov, nrow = length(nma_acr_mean), ncol = length(nma_acr_mean))
-  check_nma_k(lower = nma_acr_rr_lower, upper = nma_acr_rr_upper)
+  check_nma_k(lower = nma_acr_k_lower, upper = nma_acr_k_upper)
   
   ### DAS28
   check_vector(nma_das28_mean, len = length(tx_names) + 1)
   check_matrix(nma_das28_vcov, nrow = length(nma_das28_mean), ncol = length(nma_das28_mean))
-  check_nma_k(lower = nma_das28_rr_lower, upper = nma_das28_rr_upper)
+  check_nma_k(lower = nma_das28_k_lower, upper = nma_das28_k_upper)
 
   ### HAQ
   check_vector(nma_haq_mean, len = length(tx_names) + 1)
   check_matrix(nma_haq_vcov, nrow = length(nma_haq_mean), ncol = length(nma_haq_mean))
-  check_nma_k(lower = nma_haq_rr_lower, upper = nma_haq_rr_upper)
+  check_nma_k(lower = nma_haq_k_lower, upper = nma_haq_k_upper)
   
   ## treatment response mappings
   check_vector(acr2haq_mean, len = 4)
@@ -418,14 +418,14 @@ sample_pars <- function(n = 100, input_data, tx_names = iviRA::treatments$sname,
   sim$n <- n
   
   ## treatment effects at 6 months
-  sim$acr <- sample_nma_acr(n, nma_acr_mean, nma_acr_vcov, rr_lower = nma_acr_rr_lower,
-                            rr_upper = nma_acr_rr_upper, ncovs = nma.acr.ncovs,
+  sim$acr <- sample_nma_acr(n, nma_acr_mean, nma_acr_vcov, k_lower = nma_acr_k_lower,
+                            k_upper = nma_acr_k_upper, ncovs = nma.acr.ncovs,
                             tx_names = tx_names) 
-  sim$das28 <- sample_nma_lm(n, nma_das28_mean, nma_das28_vcov, rr_lower = nma_das28_rr_lower,
-                             rr_upper = nma_das28_rr_upper, ncovs = nma.das28.ncovs,
+  sim$das28 <- sample_nma_lm(n, nma_das28_mean, nma_das28_vcov, k_lower = nma_das28_k_lower,
+                             k_upper = nma_das28_k_upper, ncovs = nma.das28.ncovs,
                              tx_names = tx_names) 
-  sim$haq <- sample_nma_lm(n, nma_haq_mean, nma_haq_vcov, rr_lower = nma_haq_rr_lower,
-                           rr_upper = nma_haq_rr_upper, ncovs = nma.haq.ncovs,
+  sim$haq <- sample_nma_lm(n, nma_haq_mean, nma_haq_vcov, k_lower = nma_haq_k_lower,
+                           k_upper = nma_haq_k_upper, ncovs = nma.haq.ncovs,
                            tx_names = tx_names) 
   
   ## treatment response mappings
@@ -616,17 +616,18 @@ sample_uniforms <- function(n, lower, upper, col_names = NULL){
 #' @param nsims Number of observations.
 #' @param m Mean for each coefficient.
 #' @param vcov Variance-covariance matrix of coefficients.
-#' @param rr_lower Lower bound for relative risk.
-#' @param rr_upper Upper bound for relative risk.
+#' @param k_lower Lower bound for constant \eqn{k}.
+#' @param k_upper Upper bound for constant \eqn{k}.
 #' @return List containing posterior samples of changes in outcomes.
 #' 
 #' @export
-sample_nma_lm <- function(nsims, m, vcov, rr_lower = 1, rr_upper = 1, ncovs = 1, tx_names = NULL){
-  rr.sim <- runif(nsims, rr_lower, rr_upper)
+sample_nma_lm <- function(nsims, m, vcov, k_lower = 1, k_upper = 1, ncovs = 1, 
+                          tx_names = NULL){
+  k.sim <- runif(nsims, k_lower, k_upper)
   sim <- sample_mvnorm(nsims, m, vcov)
   d <- array(sim[, -c(1)], dim = c(nrow(sim), ncovs, ncol(sim[, -c(1)])))
   dimnames(d)[[3]] <- colnames(sim[, -c(1)])
-  return(list(rr = rr.sim, A = sim[, 1], d = d))
+  return(list(k = k.sim, A = sim[, 1], d = d))
 }
 
 #' Sample ACR response from ordered probit NMA
@@ -639,19 +640,19 @@ sample_nma_lm <- function(nsims, m, vcov, rr_lower = 1, rr_upper = 1, ncovs = 1,
 #' @param nsims Number of observations.
 #' @param m Mean for each coefficient.
 #' @param vcov Variance-covariance matrix of coefficients.
-#' @param rr_lower Lower bound for relative risk.
-#' @param rr_upper Upper bound for relative risk.
+#' @param k_lower Lower bound for constant \eqn{k}.
+#' @param k_upper Upper bound for constant \eqn{k}.
 #' @param ncovs Number of treatment by covariate interactions.
 #' @return List containing posterior sample of ACR response for each therapy
 #' 
 #' @export
-sample_nma_acr <- function(nsims, m, vcov, rr_lower = 1, rr_upper = 1, 
+sample_nma_acr <- function(nsims, m, vcov, k_lower = 1, k_upper = 1, 
                            ncovs = 1, tx_names = NULL){
-  rr.sim <- runif(nsims, rr_lower, rr_upper)
+  k.sim <- runif(nsims, k_lower, k_upper)
   sim <- sample_mvnorm(nsims, m, vcov)
   d <- array(sim[, -c(1:4)], dim = c(nrow(sim), ncovs, ncol(sim[, -c(1:4)])))
   dimnames(d)[[3]] <- colnames(sim[, -c(1:4)])
-  return(list(rr = rr.sim, A = sim[, 1], z2 = sim[, 3], z3 = sim[, 4], d = d))
+  return(list(k = k.sim, A = sim[, 1], z2 = sim[, 3], z3 = sim[, 4], d = d))
 }
 
 #' Sample survival parameters
