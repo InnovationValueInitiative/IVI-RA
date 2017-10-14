@@ -1,13 +1,16 @@
 Package: iviRA
 Type: Package
-Title: Rheumatoid arthritis microsimulation
+Title: The IVI-RA model
 Version: 1.0.0
 Authors@R: c(
-    person("Devin", "Incerti", , "devin.incerti@pheconomics.com", c("aut", "cre")),
-    person("Jeroen P.", "Jansen", , "jeroen.jansen@pheconomics.com", role = "aut")
+    person("Devin", "Incerti", , "devin.incerti@thevalueinitiative.org", c("aut", "cre")),
+    person("Jeroen P.", "Jansen", , "jeroen.jansen@thevalueinitiative.org", role = "aut")
     )
-Maintainer: <devin.incerti@pheconomics.com>
-Description: Rheumatoid arthritis individual patient simulation.
+Maintainer: <devin.incerti@thevalueinitiative.org>
+Description: An R package for running the IVI-RA model, an individual patient simulation that
+    simulates the costs, health outcomes, and risks associated with disease-modifying anti-rheumatic 
+    drugs (DMARDs) and biologic DMARDSs (bDMARDs) for patients with moderate to severe 
+    rheumatoid arthritis.
 URL: https://github.com/InnovationValueInitiative/IVI-RA
 BugReports: https://github.com/InnovationValueInitiative/IVI-RA/issues
 License: GPL-3
