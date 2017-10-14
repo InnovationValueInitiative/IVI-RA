@@ -9,7 +9,8 @@ sample_stratified_survpars(nsims, x)
 \arguments{
 \item{nsims}{Size of the posterior sample.}
 
-\item{x}{A list of survival parameters. For example, see 'Treatment duration' in \link{sample_pars}.}
+\item{x}{A list of survival parameters. For example, see 
+'Time to treatment discontinuation' in \link{sample_pars}.}
 }
 \value{
 A list of lists. The top level list is the value of the variable used for 

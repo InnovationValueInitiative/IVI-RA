@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Sample survival parameters — sample_survpars • iviRA</title>
+<title>Check vector — check_vector • iviRA</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -162,41 +162,24 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Sample survival parameters</h1>
+    <h1>Check vector</h1>
     </div>
 
     
-    <p>Generate a random sample of parameters for each survival distribution. Parameters are
-sampled using a multivariate normal distribution.</p>
+    <p>Check argument that must be a vector is correct.</p>
     
 
-    <pre class="usage"><span class='fu'>sample_survpars</span>(<span class='no'>nsims</span>, <span class='no'>x</span>)</pre>
-    
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>nsims</th>
-      <td><p>Size of the posterior sample.</p></td>
-    </tr>
-    <tr>
-      <th>x</th>
-      <td><p>A list of survival parameters. For example, see 'Time to treatment discontinuation' 
-in <a href='sample_pars.html'>sample_pars</a>.</p></td>
-    </tr>
-    </table>
-    
+    <pre class="usage"><span class='fu'>check_vector</span>(<span class='no'>v</span>, <span class='kw'>len</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>pos</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+        
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A list of matrices containing random draws of the parameters of the survival distribution. One matrix
-for the location parameter and one matrix for each of the ancillary parameters.</p>
+    <p>Error message if incorrect arguments are passed.</p>
     
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
           </ul>
