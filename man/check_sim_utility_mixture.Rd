@@ -7,8 +7,6 @@
 check_sim_utility_mixture(simhaq, male, pars)
 }
 \arguments{
-\item{simhaq}{Simulation output from \link{sim_haq}}
-
 \item{male}{Vector indiciating patient gender (1 = male, 0 = female)}
 
 \item{pars}{\code{pars} as passed to \link{sim_utility_mixture}}

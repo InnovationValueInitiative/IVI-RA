@@ -6,11 +6,12 @@
 \title{Treatment attributes}
 \format{A list with two elements. 
 \describe{
-  \item{data}{A matrix where each column is a treatment attribute and each row corresponds
+  \item{x}{A matrix where each column is a treatment attribute and each row corresponds
   to a treatment.}
-  \item{utility.gain}{A matrix with two columns, lower and upper, corresponing to the lower
-  and upper bounds of the utility gain associated with each treatment attribute in the 'data' 
-  matrix.}
+  \item{coef}{A matrix with three columns, \code{var}, \code{lower} and \code{upper}.  
+  \code{var} is the name of the variable; \code{lower} and \code{upper} are
+   the lower and upper bounds of the utility \emph{gain} associated with each treatment 
+   attribute in the \code{x} matrix respectively.}
 }}
 \source{
 None. Currently determined by the user.
@@ -20,5 +21,13 @@ utility.tx.attr
 }
 \description{
 Impact of treatment attributes other than safety and efficacy on utility.
+}
+\details{
+In \link{sample_pars}, the value of the coefficient is randomly sampled from a 
+uniform distribution with lower bound equal to \code{lower} and upper bound equal to 
+\code{upper}. The impact of treatment attributes for a given treatment on utility in 
+\link{sim_iviRA} is given by multiplying the sampled coefficient vectors from 
+\link{sample_pars} by the row of the matrix \code{x} corresponding to the treatment being
+simulated by the model.
 }
 \keyword{datasets}

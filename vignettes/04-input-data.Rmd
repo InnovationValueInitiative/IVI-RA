@@ -20,8 +20,8 @@ The function returns all patient characteristics needed to run the simulation (H
 
 ```{r , echo = FALSE}
 library(knitr)
-mat <- c("x.mort", "x.acr", "x.haq", "x.das28", "x.ttd.all", "x.ttd.eular", 
-         "x.ttd.da", "x.attr")
+mat <- c("x.acr", "x.haq", "x.das28", "x.ttd.all", "x.ttd.eular", 
+         "x.ttd.da", "x.mort", "x.attr")
 desc.mort <- c("Variables known at baseline that are used to adjust mortality with a log odds ratio. By default, only the baseline HAQ score is contained in the matrix.")
 desc.acr <- c("Variables known at baseline that are used to predict the relative treatment effects for ACR response. By default, only includes an intercept, which implies that there are no treatment-by-covariate interactions.")
 desc.haq <- c("Variables known at baseline that are used to predict the relative treatment effects for change in HAQ from baseline. By default, only includes an intercept, which implies that there are no treatment-by-covariate interactions.")
@@ -30,9 +30,9 @@ desc.x.ttd.all <- c("Variables known at baseline influencing treatment duration 
 desc.x.ttd.eular <- c("Variables known at baseline influencing treatment duration when separate models are estimated by EULAR response category. Explanatory variables correspond to the vector of coefficients using to predict the location parameter for each distribution.")
 desc.x.ttd.da <- c("Variables known at baseline influencing treatment duration in models where treatment duration is a function of disease activity. The first column is the intercept, the second column is a dummy variable used to indicate whether a patient has moderate disease activity, and the third column is a dummy variable used to indicate wethe a patient has high disease activity (note, however, that the second and third columns are updated during the simulation according to the simulated disease activity level). All remaining columns after the 3rd column are variables known at baseline that influence tretmnet duration. Explanatory variables correspond to the vector of coefficients using to predict the location parameter for each distribution.")
 desc.x.attr <- c("Treatment attributes related to the processes of care influencing utility.")
-desc <- c(desc.mort, desc.acr, desc.haq, desc.das28, desc.x.ttd.all, desc.x.ttd.eular, desc.x.ttd.da, desc.x.attr)
-parvec <- c("mort.logor", "acr$d", "haq$d", "das28$d", "ttd.all", "ttd.eular",
-            "ttd.da", "tx.attr.utility")
+desc <- c(desc.acr, desc.haq, desc.das28, desc.x.ttd.all, desc.x.ttd.eular, desc.x.ttd.da, desc.mort, desc.x.attr)
+parvec <- c("acr$d", "haq$d", "das28$d", "ttd.all", "ttd.eular",
+            "ttd.da", "mort.logor", "tx.attr.utility")
 table <- cbind(mat, desc, parvec)
 colnames(table) <- c("Design matrix", "Description", "Parameters")
 kable(table)

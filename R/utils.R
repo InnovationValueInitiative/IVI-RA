@@ -39,9 +39,10 @@ nma_lm_dy <- function(A, d){
   return(dy)
 } 
 
-#' NMA parameters to ACR response probabilities
+#' ACR response probabilities
 #'
-#' Calculate ACR response probabilities from NMA ordered probit parameters. 
+#' Calculate ACR response probabilities from an ordered probit model of ACR response used for a
+#' network meta-analysis. 
 #' 
 #' @param A A vector from the posterior distribution of the probability that ACR response < 20 
 #' from cDMARDS.
@@ -49,7 +50,7 @@ nma_lm_dy <- function(A, d){
 #' @param z3 A vector from the posterior distribution for the ACR 70 cutpoint.
 #' @param d A matrix from the posterior distribution of the "d's" 
 #' for each treatment in the NMA.
-#' @param rr Sampled value of elative risk.
+#' @param k Sampled value of constant \eqn{k}.
 #' 
 #' @return List containing an array \code{non.overlap} (the probability of ACR < 20, ACR 20-50,
 #' ACR 50-70, and ACR 70+) and \code{overlap} (the probability of ACR20/50/70).
@@ -69,9 +70,9 @@ nma_acrprob <- function(A, z2, z3, d, rr = 1){
     pl[, 1] <- pnorm(A + d[, i]) # less than ACR 20
     
     # probability in overlapping categories
-    po[, 4, i] <- rr * (1 - pl[, 3]) # greater than ACR 70
-    po[, 3, i] <- rr * (1 - pl[, 2])  # greater than ACR 50
-    po[, 2, i] <- rr * (1 - pl[, 1]) # greater than ACR 20
+    po[, 4, i] <- k * (1 - pl[, 3]) # greater than ACR 70
+    po[, 3, i] <- k * (1 - pl[, 2])  # greater than ACR 50
+    po[, 2, i] <- k * (1 - pl[, 1]) # greater than ACR 20
     po[, 1, i] <- 1 - po[, 2, i] # less than ACR 20
     
     # probability in mutually exclusive categories
@@ -99,14 +100,23 @@ nma_acrprob <- function(A, z2, z3, d, rr = 1){
 #' @param logor Vector of log odds ratio mortality adjusters. Length equal to number of columns in x.
 #' @param cycle_length Length of model cycles in months. Default is 1 month cycles.
 #' @param loghr Log hazard ratio of impact of change in HAQ from baseline on mortality rate. A vector with
-#' each element denoting (in order) hazard ratio for months 0-6, >6 - 12, >12 - 24, >24 -36, >36.
+#' each element denoting (in order) hazard ratio for \eqn{month \le 6}, \eqn{6 > month \le 12}, 
+#'   \eqn{12 < month \le 24}, \eqn{24 < month \le 36}, \eqn{month > 36}.
+#'   
+#' @examples 
+#' set.seed(101)
+#' t <- seq(0, 45 * 2, .5) # 90 model cycles, or 45 years.
+#' haq.seq <-  pmin(1.5 + .03 * t, 3)
+#' surv <- sim_survtime(n = 1000, age = 55, haq = haq.seq, male = 0)
+#' summary(surv)
+#'       
 #' @export
 sim_survtime <- function(n = 1000, age = 55, haq0 = 1, male = 0, 
                       haq = rep(haq0, 12/cycle_length * (100 - age + 1)), 
                       ltfemale = lifetable.female, ltmale = lifetable.male, 
                       x_mort = haq0, logor = mort.or$logor, 
                       cycle_length = 6, loghr = mort.hr.haqdif$loghr){
-  lt.data <- lt_data(ltfemale, ltmale)
+  lt.data <- lt_pars(ltfemale, ltmale)
   le <- sample_survC(n, age, male, lt.data$male, lt.data$female,
                    x_mort, logor, haq0, haq,
                    cycle_length, loghr)

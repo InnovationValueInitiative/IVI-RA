@@ -2,7 +2,7 @@
 % Please edit documentation in R/sample-pars.R
 \name{mom_gamma}
 \alias{mom_gamma}
-\title{Method of moments for Gamma Distribution}
+\title{Method of moments for gamma Distribution}
 \usage{
 mom_gamma(mean, sd, quant = NULL)
 }
@@ -11,5 +11,5 @@ parameters of gamma distribution. Optionally return quantiles of
 distribution as well.
 }
 \description{
-Method of moments for Gamma Distribution
+Method of moments for gamma Distribution
 }

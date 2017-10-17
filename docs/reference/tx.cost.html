@@ -166,7 +166,7 @@
     </div>
 
     
-    <p>Drug acquisition and administration costs for medications used to treat rheumatoid
+    <p>Acquisition and administration costs for medications used to treat rheumatoid
 arthritis.</p>
     
 
@@ -174,7 +174,9 @@ arthritis.</p>
         
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
-    <p>A data table with 5 variables.</p><dl class='dl-horizontal'>
+    <p>A list with two elements: <code>cost</code> and <code>lookup</code>. The element
+<code>cost</code> is a data table of variables needed to calculate acquisition and
+ administration costs. Each row denotes a unique treatment. There are 17 variables:</p><dl class='dl-horizontal'>
   <dt>name</dt><dd><p>Long-form name of treatment.</p></dd>
   <dt>sname</dt><dd><p>Short-form name of treatment.</p></dd>
   <dt>dosage</dt><dd><p>FDA approved dosage.</p></dd>
@@ -187,9 +189,24 @@ arthritis.</p>
   <dt>ann_num_doses</dt><dd><p>Annual number of doses based on FDA beyond the first 6 months.</p></dd>
   <dt>strength_val</dt><dd><p>Numeric value of strength of treatment.</p></dd>
   <dt>strength_unit</dt><dd><p>Unit of treatment.</p></dd>
-  <dt>wac_per_unit</dt><dd><p>Wholesale acquisition cost per unit of treatment.</p></dd>
+  <dt>price_per_unit</dt><dd><p>Price per unit of treatment. By default, wholesale acquisition costs 
+  (WACs) are used.</p></dd>
+  <dt>discount_lower</dt><dd><p>Discounts and rebates negotiated with manufacturers typically decrease
+  prices paid by patients. Specificy a lower bound for this discount as a proportion of
+  <code>price_per_unit</code>.</p></dd>
+  <dt>discount_upper</dt><dd><p>An upper bound for the discount as a proportion of 
+  <code>price_per_unit</code>.</p></dd>
   <dt>infusion_cost</dt><dd><p>Cost per infusion.</p></dd>
+  <dt>loading_dose</dt><dd><p>Equal to 1 if a loading dose is used and 0 otherwise. If a loading 
+  dose is used, then the infusion cost is only applied to the first dose.</p></dd>
+  <dt>weight_based</dt><dd><p>If <code>weight_based</code> is equal to 1, then dosing is based on each 
+  patient's weight (i.e., as sampled by <a href='sample_pop.html'>sample_pop</a>).</p></dd>
 </dl>
+    <p>The element <code>lookup</code> is a data table with 3 variables. The first variable, <code>sname</code>,
+is the short-form name of a treatment (e.g., corresponding to <code>sname</code> in 
+<code><a href='http://www.rdocumentation.org/packages/iviRA/topics/treatments'>iviRA::treatments</a></code>). All remaining columns are the unique agents making up a given
+treatment. For example, abatecept IV + methotrexate consists of abatecept IV and 
+methotrexate.</p>
     
 
   </div>

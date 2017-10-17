@@ -7,10 +7,7 @@
 \alias{ttd.da}
 \alias{ttd.all}
 \title{Time to treatment discontinuation parameters}
-\format{A list of lists of lists. The top level list is the level of EULAR response or
- disease activity. The second level list is the parametric distribution used. 
- The third level list contains the parameters of a given parametetric fit as described in
- \link{sample_pars}.}
+\format{A list as described in \link{sample_pars}}
 \source{
 Stevenson, Matt, et al. "Adalimumab, etanercept, infliximab, certolizumab pegol, 
 golimumab, tocilizumab and abatacept for the treatment of rheumatoid arthritis not previously
@@ -21,6 +18,10 @@ Health Technology Assessment 20.35 (2016): 1-610.
 Zhang, Jie, et al. "Thresholds in disease activity for switching biologics in rheumatoid 
 arthritis patients: experience from a large US cohort." 
 Arthritis care & research 63.12 (2011): 1672-1679.
+
+Guyot, Patricia, et al. "Enhanced secondary analysis of survival data: reconstructing the data
+ from published Kaplan-Meier survival curves." BMC medical research 
+ methodology 12.1 (2012): 9.
 }
 \usage{
 ttd.eular
@@ -30,14 +31,14 @@ ttd.da
 ttd.all
 }
 \description{
-\code{ttd.eular} and \code{ttd.da} are lists of lists containing treatment discontinuation
-parameters stratified by EULAR response (moderate, high) and disease activity 
-(remission, low, moderate, high) respectively; \code{ttd.all} is a list of lists containing
-unstratified (i.e., all patients) treatment discontinuation parameters.
+\code{ttd.all}, \code{ttd.da}, and \code{ttd.eular} are lists of lists containing parameters 
+from statistical models of time to treatment discontinuation. \code{ttd.all} contains 
+parameters representative of all patients, \code{ttd.da} contains covariates for disease 
+activity level (moderate, high), and \code{ttd.eular} is stratified by EULAR response 
+(moderate, good).
 }
 \details{
-Time to treatment discontinuation paramters for each level of EULAR response or disease activity
-are represented with a list as described in \link{sample_pars}. Models were fit using \emph{flexsurv}.
+Models were fit using \emph{flexsurv}.
 Survival curves are based on analyses of reconstructed individual patient data.
 }
 \keyword{datasets}

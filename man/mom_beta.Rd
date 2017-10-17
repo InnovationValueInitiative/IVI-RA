@@ -2,7 +2,7 @@
 % Please edit documentation in R/sample-pars.R
 \name{mom_beta}
 \alias{mom_beta}
-\title{Method of moments for Beta Distribution}
+\title{Method of moments for beta Distribution}
 \usage{
 mom_beta(mean, sd, quant = NULL)
 }
@@ -10,6 +10,6 @@ mom_beta(mean, sd, quant = NULL)
 parameters of beta distribution
 }
 \description{
-Estimate parameters of Beta distribution from mean
+Estimate parameters of beta distribution from mean
 and variance.
 }

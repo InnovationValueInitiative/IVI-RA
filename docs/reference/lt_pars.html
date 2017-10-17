@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Simulate survival time for RA patients — sim_survtime • iviRA</title>
+<title>Lifetable for simulation — lt_pars • iviRA</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -162,87 +162,43 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Simulate survival time for RA patients</h1>
+    <h1>Lifetable for simulation</h1>
     </div>
 
     
-    <p>Simulate survival time given age and a vector of HAQ scores</p>
+    <p>Generate lifetable matrix for use in simulation</p>
     
 
-    <pre class="usage"><span class='fu'>sim_survtime</span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>age</span> <span class='kw'>=</span> <span class='fl'>55</span>, <span class='kw'>haq0</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>male</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>haq</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='no'>haq0</span>,
-  <span class='fl'>12</span>/<span class='no'>cycle_length</span> * (<span class='fl'>100</span> - <span class='no'>age</span> + <span class='fl'>1</span>)), <span class='kw'>ltfemale</span> <span class='kw'>=</span> <span class='no'>lifetable.female</span>,
-  <span class='kw'>ltmale</span> <span class='kw'>=</span> <span class='no'>lifetable.male</span>, <span class='kw'>x_mort</span> <span class='kw'>=</span> <span class='no'>haq0</span>, <span class='kw'>logor</span> <span class='kw'>=</span> <span class='no'>mort.or</span>$<span class='no'>logor</span>,
-  <span class='kw'>cycle_length</span> <span class='kw'>=</span> <span class='fl'>6</span>, <span class='kw'>loghr</span> <span class='kw'>=</span> <span class='no'>mort.hr.haqdif</span>$<span class='no'>loghr</span>)</pre>
+    <pre class="usage"><span class='fu'>lt_pars</span>(<span class='no'>ltfemale</span>, <span class='no'>ltmale</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>n</th>
-      <td><p>Number of observations</p></td>
-    </tr>
-    <tr>
-      <th>age</th>
-      <td><p>Age of patients. Length must be 1.</p></td>
-    </tr>
-    <tr>
-      <th>haq0</th>
-      <td><p>Baseline HAQ. Length must be 1.</p></td>
-    </tr>
-    <tr>
-      <th>male</th>
-      <td><p>Vector indicating patient gender (1 = male, 0 = female)</p></td>
-    </tr>
-    <tr>
-      <th>haq</th>
-      <td><p>Vector of HAQ scores (e.g. HAQ trajectory)</p></td>
-    </tr>
-    <tr>
       <th>ltfemale</th>
       <td><p>Lifetable for women. Must contain column 'age' for single-year of age and 'qx' for
-the probability of death at a given age.</p></td>
+the probability of death at a given age. Age must range from 0 to 100.</p></td>
     </tr>
     <tr>
       <th>ltmale</th>
       <td><p>Identical to <code>ltfemale</code> but for men.</p></td>
     </tr>
-    <tr>
-      <th>x_mort</th>
-      <td><p>Design matrix for mortality adjustment with odds ratios. Number of rows equal to n.</p></td>
-    </tr>
-    <tr>
-      <th>logor</th>
-      <td><p>Vector of log odds ratio mortality adjusters. Length equal to number of columns in x.</p></td>
-    </tr>
-    <tr>
-      <th>cycle_length</th>
-      <td><p>Length of model cycles in months. Default is 1 month cycles.</p></td>
-    </tr>
-    <tr>
-      <th>loghr</th>
-      <td><p>Log hazard ratio of impact of change in HAQ from baseline on mortality rate. A vector with
-each element denoting (in order) hazard ratio for \(month \le 6\), \(6 &gt; month \le 12\), 
-  \(12 &lt; month \le 24\), \(24 &lt; month \le 36\), \(month &gt; 36\).</p></td>
-    </tr>
     </table>
     
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>set.seed</span>(<span class='fl'>101</span>)
-<span class='no'>t</span> <span class='kw'>&lt;-</span> <span class='fu'>seq</span>(<span class='fl'>0</span>, <span class='fl'>45</span> * <span class='fl'>2</span>, <span class='fl'>.5</span>) <span class='co'># 90 model cycles, or 45 years.</span>
-<span class='no'>haq.seq</span> <span class='kw'>&lt;-</span>  <span class='fu'>pmin</span>(<span class='fl'>1.5</span> + <span class='fl'>.03</span> * <span class='no'>t</span>, <span class='fl'>3</span>)
-<span class='no'>surv</span> <span class='kw'>&lt;-</span> <span class='fu'>sim_survtime</span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>age</span> <span class='kw'>=</span> <span class='fl'>55</span>, <span class='kw'>haq</span> <span class='kw'>=</span> <span class='no'>haq.seq</span>, <span class='kw'>male</span> <span class='kw'>=</span> <span class='fl'>0</span>)
-<span class='fu'>summary</span>(<span class='no'>surv</span>)</div><div class='output co'>#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-#&gt;   55.00   66.50   73.00   72.39   78.50   93.00 </div><div class='input'>      
-</div></pre>
+    <p>A list containing lifetables for females and males with qx transformed using the logit function. 
+The lifetable has three columns: age, qx, and logit_qx.</p>
+    
+
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-            
-      <li><a href="#examples">Examples</a></li>
-    </ul>
+      
+      <li><a href="#value">Value</a></li>
+          </ul>
 
   </div>
 </div>

@@ -9,7 +9,7 @@ sample_dirichlets(n, mat)
 \arguments{
 \item{n}{Number of samples to draw.}
 
-\item{mat}{A matrix where each row is a separte vector of shape parameters.}
+\item{mat}{A matrix where each row is a separate vector of shape parameters.}
 }
 \value{
 An array of matrices representing a sample from the dirichlet distribution for each row.

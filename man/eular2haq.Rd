@@ -3,8 +3,8 @@
 \docType{data}
 \name{eular2haq}
 \alias{eular2haq}
-\title{HAQ change by 6-month Eular Response}
-\format{A matrix with rows as Eular response categories. First column is mean and second 
+\title{HAQ change by 6-month EULAR Response}
+\format{A matrix with rows as EULAR response categories. First column is mean and second 
 column is standard deviation.}
 \source{
 Stevenson, Matt, et al. "Adalimumab, etanercept, infliximab, certolizumab pegol, 
@@ -17,7 +17,7 @@ Health Technology Assessment 20.35 (2016): 1-610.
 eular2haq
 }
 \description{
-Mean and standard deviation of HAQ change by 6-month Eular response category 
+Mean and standard deviation of HAQ change by 6-month EULAR response category 
 (none, moderate, good).
 }
 \keyword{datasets}

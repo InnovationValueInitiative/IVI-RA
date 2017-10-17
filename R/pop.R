@@ -3,11 +3,12 @@
 #' Sample a patient population for use in the individual patient simulation (\link{sim_iviRA}).
 #' 
 #' @param n Number of samples.
-#' @param type Should male and female patients be heterogeneous or homogeneous. Default is homogeneous.
+#' @param type Should male and female patients be heterogeneous or homogeneous.
+#' Default is homogeneous.
 #' @param age_mean Mean age.
 #' @param age_sd Standard deviation of age.
 #' @param male_prop Proportion male.
-#' @param haq0_mean Mean baseline HAQ score.
+#' @param haq0_mean Mean baseline HAQ (i.e., HAQ at the start of the model) score.
 #' @param haq0_sd Standard deviation of baseline HAQ score.
 #' @param wtmale Male weight.
 #' @param wtfemale Female weight.
@@ -30,15 +31,19 @@
 #' @return Matrix of patient characteristics. One row for each patient and one column
 #' for each variable. Current variables are:
 #' \describe{
-#'   \item{age}{age in years}
-#'   \item{male}{1 = male, 0 = female}
-#'   \item{weight}{Patient weight}
-#'   \item{prev_dmards}{Number of previous DMARDs}
-#'   \item{das28}{DAS28 score}
-#'   \item{sdai}{SDAI score}
-#'   \item{cdai}{CDAI score}
-#'   \item{haq0}{Baseline HAQ score}
+#'   \item{age}{Age in years.}
+#'   \item{male}{1 = male, 0 = female.}
+#'   \item{weight}{Patient weight in KG.}
+#'   \item{prev_dmards}{Number of previous DMARDs.}
+#'   \item{das28}{DAS28 score.}
+#'   \item{sdai}{SDAI score.}
+#'   \item{cdai}{CDAI score.}
+#'   \item{haq0}{Baseline HAQ score.}
 #' }
+#' 
+#' @examples
+#' sample_pop(n = 10, type = "heterog", age_mean = 50)
+#' 
 #' @export
 sample_pop <- function(n = 1, type = c("homog", "heterog"), age_mean = 55, age_sd = 13, male_prop = .21,
                       haq0_mean = 1.5, haq0_sd = 0.7, wtmale = 89, wtfemale = 75,
@@ -105,41 +110,54 @@ sample_rtmvnorm_da <- function(n, mean, sigma, lower, upper){
                            algorithm = "rejection")
 }
 
-#' Lifetable for simulation
-#' 
-#' Generate lifetable matrix for use in simulation
-#' 
-#' @param ltmale
-#' @param ltfemale
-#' 
-#' @return A list containing lifetables for females and males with qx transformed using the logit function. 
-#' The lifetable has three columns: age, qx, and logit_qx.
-#' 
-#' @export
-lt_data <- function(ltfemale, ltmale){
-  ltmale <- ltmale[, .(age, qx)]
-  ltfemale <- ltfemale[, .(age, qx)]
-  ltmale[, logit_qx := ifelse(qx %in% c(0, 1), NA, log(qx/(1-qx)))]
-  ltfemale[, logit_qx := ifelse(qx %in% c(0, 1), NA, log(qx/(1-qx)))]
-  return(list(female = as.matrix(ltfemale), male = as.matrix(ltmale)))
-}
-
 #' Input data for simulation
 #' 
-#' Generate data inputs for the IPS.
+#' Generate data inputs for the the individual patient simulation (\link{sim_iviRA}).
 #' 
-#' @param pop Matrix of patient population. Must contain variables generated from \link{sample_pop}:
-#'  'age' for age, 'haq0' for baseline HAQ, 'male' as a indicator equal to
-#' 1 if the patient is male and 0 if female, 'weight' for patient weight, and 'prev_dmards' 
-#' for number of previous DMARDs. 
-#' @param x_mort A matrix with each column a variable used to adjust mortality.
-#' @param x_ttd_all The design matrix for time to treatment discontinuation representative of all patients (i.e., unstratified).
-#' @param x_ttd_da The design matrix for time to treatment discontinuation stratified by disease activity level.
-#' @param x_ttd_eular The design matrix for time to treatment discontinuation for each EULAR response category (moderate, good).
-#' @param x_acr 
-#' @param x_haq
-#' @param x_das28
-#' @param x_attr
+#' @param pop The patient population. A matrix that must contain variables generated from 
+#' \link{sample_pop}: age' for age, 'haq0' for baseline HAQ, 'male' as a indicator equal to
+#' 1 if the patient is male and 0 if female, 'weight' for patient weight, 'prev_dmards' 
+#' for number of previous DMARDs, 'das28' for the patient's DAS28 score, 'sdai' for the 
+#' patient's SDAI score, and 'cdai' for the patient's CDAI score. 
+#' @param x_acr Design matrix where each column is a variable known at baseline that is 
+#'   used to predict the relative treatment effects for ACR response. By default, 
+#'   only includes an intercept, which implies  that there are no treatment-by-covariate 
+#'   interactions. 
+#' @param x_haq Design matrix where each column is a variable known at baseline that is
+#'    used to predict the relative treatment effects for change in HAQ at 6 months from baseline. 
+#'    By default, only includes an intercept, which implies that there are no 
+#'    treatment-by-covariate interactions.
+#' @param x_das28 Design matrix where each column is a variables known at baseline that 
+#'   is used to predict the relative treatment effects for change in DAS28 at 6 months from 
+#'   baseline. By default, only includes an intercept, which implies that there are no
+#'    treatment-by-covariate interactions.
+#' @param x_ttd_all Design matrix where each column is a variable influencing treatment duration
+#'    in a model representative of all patients. The impact of each variable is determined
+#'    by the sampled values of the coefficients used to predict the location parameter in 
+#'    \code{ttd.all} returned by \link{sample_pars}.
+#' @param x_ttd_da Design matrix where the first column is the intercept, the second column
+#'   is a dummy variable used to indicate whether a patient has moderate disease activity, and
+#'   the third column is dummy variable used to indicate whether a patient has high disease 
+#'   activity (note, however, that the second and third columns are updated during the simulation
+#'   according to the simulated disease activity level). All remaining columns after the 3rd column
+#'   are variables influencing treatment duration. The impact of each variable is determined 
+#'   by the sampled values of the coefficients used to predict the location parameter in 
+#'    \code{ttd.da} returned by \link{sample_pars}.
+#' @param x_ttd_eular Design matrix where each column is a variable influencing
+#'   treatment duration in models stratified by EULAR response. The impact of each variable
+#'   is determined by the sampled values of the coefficients used to predict the location
+#'    parameter in \code{ttd.eular} returned by \link{sample_pars}.
+#' @param x_mort Design matrix where each column is a variable influencing mortality. The impact 
+#'   of each variable is determined by the parameter vector \code{mort.logor} returned by
+#'   \link{sample_pars}.
+#' @param x_attr Design matrix where each column is a variable related to treatment attributes
+#'   related to the processes of care influencing utility. The impact 
+#'   of each variable is determined by the parameter vector \code{tx.attr.utility} returned by
+#'   \link{sample_pars}
+#' 
+#' @details If a design matrix is set to NULL, then a single column of ones is returned. 
+#' In other words, if a design matrix is not specified, then it is assumed that an intercept
+#'  only model will be used. 
 #' 
 #' @return A list containing the following data inputs:
 #' \describe{
@@ -148,40 +166,58 @@ lt_data <- function(ltfemale, ltmale){
 #'   \item{age}{A vector of patient age at baseline.}
 #'   \item{male}{A vector of patient gender (1 = male, 0 = female).}
 #'   \item{prev.dmards}{A vector of the number of previous DMARDs.}
-#'   \item{x.mort}{Design matrix where each column is a variable influencing mortality. The impact 
-#'   of each variable is determined by the parameter vector \code{mort.logor} returned by
-#'   \link{sample_pars}.}
-#'   \item{x.ttd.all}{Design matrix where each column is a variable influencing treatment duration
-#'    in a model representative of all patients. The impact of each variable is determined
-#'    by the sampled values of the coefficients used to predict the location parameter in 
-#'    \code{ttd.all} returned by \link{sample_pars}.}
-#'   \item{x.ttd.da}{Design matrix where the first column is the intercept, the second column
-#'   is a dummy variable used to indicate whether a patient has moderate disease activity, and
-#'   the third column is dummy variable used to indicate whether a patient has high disease 
-#'   activity (note, however, that the second and third columns are updated during the simulation
-#'   according to the simulated disease activity level). All remaining columns after the 3rd column
-#'   are variables influencing treatment duration. The impact of each variable is determined 
-#'   by the sampled values of the coefficients used to predict the location parameter in 
-#'    \code{ttd.da} returned by \link{sample_pars}.}
-#'  \item{x.ttd.eular}{Design matrix where each column is a variable influencing
-#'   treatment duration in models stratified by EULAR response. The impact of each variable
-#'   is determined by the sampled values of the coefficients used to predict the location
-#'    parameter in \code{ttd.eular} returned by \link{sample_pars}.}
-#'   \item{x.acr}{}
-#'   \item{x.haq}{}
-#'   \item{x.das28}{}
-#'   \item{x.attr}{Design matrix where each column is a variable related to treatment attributes
-#'   related to the processes of care influencing utility. The impact 
-#'   of each variable is determined by the parameter vector \code{tx.attr.utility} returned by
-#'   \link{sample_pars} }
+#'   \item{x.acr}{Equivalent to \code{x.acr} passed as an argument to the function.}
+#'   \item{x.haq}{Equivalent to \code{x.haq} passed as an argument to the function.}
+#'   \item{x.das28}{Equivalent to \code{x.das28} passed as an argument to the function.}
+#'   \item{x.ttd.all}{Equivalent to \code{x.ttd.all} passed as an argument to the function.}
+#'   \item{x.ttd.da}{Equivalent to \code{x.ttd.da} passed as an argument to the function.}
+#'  \item{x.ttd.eular}{Equivalent to \code{x.ttd.eular} passed as an argument to the function.}
+#'   \item{x.mort}{Equivalent to \code{x.mort} passed as an argument to the function.}
+#'   \item{x.attr}{Equivalent to \code{x.attr} passed as an argument to the function.}
 #' }
 #' 
+#' @examples 
+#' pop <- sample_pop(n = 100)
+#' input.dat <- get_input_data(pop)
+#' names(input.dat)
+#' head(input.dat$haq0)
+#' head(input.dat$x.haq)
 #' @export
-get_input_data <- function(pop, x_mort = NULL, 
-                           x_ttd_all = NULL, x_ttd_da = NULL, x_ttd_eular = NULL, 
+get_input_data <- function(pop, 
                            x_acr = NULL, x_haq = NULL, x_das28 = NULL,
+                           x_ttd_all = NULL, x_ttd_da = NULL, x_ttd_eular = NULL, 
+                           x_mort = NULL, 
                            x_attr = iviRA::utility.tx.attr$x){
   npats <- nrow(pop)
+  
+  # check pop
+  if (!is.matrix(pop)){
+    stop("pop must be a matrix.")
+  }
+  if (is.null(pop[, "age"])){
+    stop("The variable age is missing from pop.")
+  }
+  if (is.null(pop[, "haq0"])){
+    stop("The variable haq0 is missing from pop.")
+  }
+  if (is.null(pop[, "male"])){
+    stop("The variable male is missing from pop.")
+  }
+  if (is.null(pop[, "weight"])){
+    stop("The variable weight is missing from pop.")
+  }
+  if (is.null(pop[, "prev_dmards"])){
+    stop("The variable prev_dmards is missing from pop.")
+  }
+  if (is.null(pop[, "das28"])){
+    stop("The variable das28 is missing from pop.")
+  }
+  if (is.null(pop[, "sdai"])){
+    stop("The variable sdai is missing from pop.")
+  }
+  if (is.null(pop[, "cdai"])){
+    stop("The variable cdai is missing from pop.")
+  }
   
   # mortality
   if (is.null(x_mort)){

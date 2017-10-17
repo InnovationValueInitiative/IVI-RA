@@ -4,7 +4,9 @@
 \name{tx.cost}
 \alias{tx.cost}
 \title{Treatment costs}
-\format{A data table with 5 variables.
+\format{A list with two elements: \code{cost} and \code{lookup}. The element
+\code{cost} is a data table of variables needed to calculate acquisition and
+ administration costs. Each row denotes a unique treatment. There are 17 variables:
 \describe{
   \item{name}{Long-form name of treatment.}
   \item{sname}{Short-form name of treatment.}
@@ -18,14 +20,30 @@
   \item{ann_num_doses}{Annual number of doses based on FDA beyond the first 6 months.}
   \item{strength_val}{Numeric value of strength of treatment.}
   \item{strength_unit}{Unit of treatment.}
-  \item{wac_per_unit}{Wholesale acquisition cost per unit of treatment.}
+  \item{price_per_unit}{Price per unit of treatment. By default, wholesale acquisition costs 
+  (WACs) are used.}
+  \item{discount_lower}{Discounts and rebates negotiated with manufacturers typically decrease
+  prices paid by patients. Specificy a lower bound for this discount as a proportion of
+  \code{price_per_unit}.}
+  \item{discount_upper}{An upper bound for the discount as a proportion of 
+  \code{price_per_unit}.}
   \item{infusion_cost}{Cost per infusion.}
-}}
+  \item{loading_dose}{Equal to 1 if a loading dose is used and 0 otherwise. If a loading 
+  dose is used, then the infusion cost is only applied to the first dose.}
+  \item{weight_based}{If \code{weight_based} is equal to 1, then dosing is based on each 
+  patient's weight (i.e., as sampled by \link{sample_pop}).}
+}
+
+The element \code{lookup} is a data table with 3 variables. The first variable, \code{sname},
+is the short-form name of a treatment (e.g., corresponding to \code{sname} in 
+\code{iviRA::treatments}). All remaining columns are the unique agents making up a given
+treatment. For example, abatecept IV + methotrexate consists of abatecept IV and 
+methotrexate.}
 \usage{
 tx.cost
 }
 \description{
-Drug acquisition and administration costs for medications used to treat rheumatoid
+Acquisition and administration costs for medications used to treat rheumatoid
 arthritis.
 }
 \keyword{datasets}

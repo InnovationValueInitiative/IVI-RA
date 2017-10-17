@@ -162,39 +162,39 @@
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="left">x.mort</td>
-<td align="left">Variables known at baseline that are used to adjust mortality with a log odds ratio. By default, only the baseline HAQ score is contained in the matrix.</td>
-<td align="left">mort.logor</td>
-</tr>
-<tr class="even">
 <td align="left">x.acr</td>
 <td align="left">Variables known at baseline that are used to predict the relative treatment effects for ACR response. By default, only includes an intercept, which implies that there are no treatment-by-covariate interactions.</td>
 <td align="left">acr$d</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">x.haq</td>
 <td align="left">Variables known at baseline that are used to predict the relative treatment effects for change in HAQ from baseline. By default, only includes an intercept, which implies that there are no treatment-by-covariate interactions.</td>
 <td align="left">haq$d</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">x.das28</td>
 <td align="left">Variables known at baseline that are used to predict the relative treatment effects for change in DAS28 from baseline. By default, only includes an intercept, which implies that there are no treatment-by-covariate interactions.</td>
 <td align="left">das28$d</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">x.ttd.all</td>
 <td align="left">Variables known at baseline influencing treatment duration in a model representative of all patients. Explanatory variables correspond to the vector of coefficients using to predict the location parameter for each distribution.</td>
 <td align="left">ttd.all</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">x.ttd.eular</td>
 <td align="left">Variables known at baseline influencing treatment duration when separate models are estimated by EULAR response category. Explanatory variables correspond to the vector of coefficients using to predict the location parameter for each distribution.</td>
 <td align="left">ttd.eular</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">x.ttd.da</td>
 <td align="left">Variables known at baseline influencing treatment duration in models where treatment duration is a function of disease activity. The first column is the intercept, the second column is a dummy variable used to indicate whether a patient has moderate disease activity, and the third column is a dummy variable used to indicate wethe a patient has high disease activity (note, however, that the second and third columns are updated during the simulation according to the simulated disease activity level). All remaining columns after the 3rd column are variables known at baseline that influence tretmnet duration. Explanatory variables correspond to the vector of coefficients using to predict the location parameter for each distribution.</td>
 <td align="left">ttd.da</td>
+</tr>
+<tr class="odd">
+<td align="left">x.mort</td>
+<td align="left">Variables known at baseline that are used to adjust mortality with a log odds ratio. By default, only the baseline HAQ score is contained in the matrix.</td>
+<td align="left">mort.logor</td>
 </tr>
 <tr class="even">
 <td align="left">x.attr</td>
@@ -206,12 +206,12 @@
 <p>For example, the mortality matrix, <code>x.mort</code>, is a matrix with a single column consisting of the baseline HAQ score for each patient.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(input.dat$x.mort)</code></pre></div>
 <pre><code>##           haq0
-## [1,] 1.2243905
-## [2,] 1.3162192
-## [3,] 0.2340486
-## [4,] 2.7709151
-## [5,] 1.1128472
-## [6,] 2.2894650</code></pre>
+## [1,] 1.6321454
+## [2,] 1.9340420
+## [3,] 0.9264655
+## [4,] 1.4859109
+## [5,] 1.5519270
+## [6,] 1.0590077</code></pre>
 <div>
 <ul class="pager">
 <li class="previous">

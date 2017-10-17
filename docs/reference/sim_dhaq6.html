@@ -215,10 +215,37 @@ in <code>tx_data</code>.</p></td>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Change in HAQ for each selected model structure, randomly sampled parameter set,
-simulated patient, and treatment.</p>
+    <p>A <code>data.table</code> with the following columns:</p><dl class='dl-horizontal'>
+<dt>tx</dt><dd><p>Treatment index based on <code>tx_lookup</code>.</p></dd>
+<dt>model</dt><dd><p>The model structure component relating treatment to change in HAQ 
+(i.e., <code>tx_ihaq</code>).</p></dd>
+<dt>sim</dt><dd><p>Simulation number denoting a randomly sampled parameter set from <a href='sample_pars.html'>sample_pars</a>.</p></dd>
+<dt>id</dt><dd><p>ID number denoting a simulated patients (e.g., from <a href='sample_pop.html'>sample_pop</a>).</p></dd>
+<dt>dhaq</dt><dd><p>Change in HAQ score from baseline at 6 months.</p></dd>
+</dl>
+
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='no'>pop</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='sample_pop.html'>sample_pop</a></span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>10</span>)
+<span class='no'>input.dat</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='get_input_data.html'>get_input_data</a></span>(<span class='kw'>pop</span> <span class='kw'>=</span> <span class='no'>pop</span>)
+<span class='no'>parsamp</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='sample_pars.html'>sample_pars</a></span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>input_data</span> <span class='kw'>=</span> <span class='no'>input.dat</span>)
+<span class='no'>sim</span> <span class='kw'>&lt;-</span> <span class='fu'>sim_dhaq6</span>(<span class='kw'>treatments</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"cdmards"</span>, <span class='st'>"adamtx"</span>), <span class='kw'>input_data</span> <span class='kw'>=</span> <span class='no'>input.dat</span>,
+                 <span class='kw'>pars</span> <span class='kw'>=</span> <span class='no'>parsamp</span>, <span class='kw'>tx_ihaq</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"acr-haq"</span>, <span class='st'>"acr-eular-haq"</span>))
+<span class='fu'>head</span>(<span class='no'>sim</span>)</div><div class='output co'>#&gt;    tx   model sim id       dhaq
+#&gt; 1:  1 acr-haq   1  1 -0.1926988
+#&gt; 2:  1 acr-haq   1  2 -0.1926988
+#&gt; 3:  1 acr-haq   1  3 -0.5788028
+#&gt; 4:  1 acr-haq   1  4 -0.1926988
+#&gt; 5:  1 acr-haq   1  5 -0.1926988
+#&gt; 6:  1 acr-haq   1  6 -0.1926988</div><div class='input'><span class='fu'>tail</span>(<span class='no'>sim</span>)</div><div class='output co'>#&gt;    tx         model sim id       dhaq
+#&gt; 1:  3 acr-eular-haq  10  5 -0.2825182
+#&gt; 2:  3 acr-eular-haq  10  6 -0.6115798
+#&gt; 3:  3 acr-eular-haq  10  7  0.0000000
+#&gt; 4:  3 acr-eular-haq  10  8 -0.6115798
+#&gt; 5:  3 acr-eular-haq  10  9 -0.2825182
+#&gt; 6:  3 acr-eular-haq  10 10 -0.2825182</div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -226,7 +253,9 @@ simulated patient, and treatment.</p>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
-          </ul>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>

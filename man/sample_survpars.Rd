@@ -9,8 +9,9 @@ sample_survpars(nsims, x)
 \arguments{
 \item{nsims}{Size of the posterior sample.}
 
-\item{x}{A list of survival parameters. For example, see 'Time to treatment discontinuation' 
-in \link{sample_pars}.}
+\item{x}{A list of survival parameters in the same format as \link{ttd.all}, 
+\link{ttd.da}, or \link{ttd.eular}. See the description
+ 'Time to treatment discontinuation' in \link{sample_pars}.}
 }
 \value{
 A list of matrices containing random draws of the parameters of the survival distribution. One matrix

@@ -20,8 +20,9 @@ nma.das28.naive
 nma.haq.naive
 }
 \description{
-Estimates of ACR response, change in DAS28, and change in HAQ at 6 months for 
-bDMARD naive patients from Bayesian random effects NMAs.
+Estimates of mutually exclusive ACR response (ACR < 20, ACR 20 - <50, ACR 50 - <70, and ACR 70+), 
+change in DAS28, and change in HAQ at 6 months for bDMARD naive patients from Bayesian
+random effects NMAs.
 }
 \details{
 ACR response parameters were estimated using an ordered probit model. Parameters for

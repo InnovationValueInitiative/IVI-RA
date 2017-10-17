@@ -7,7 +7,8 @@
 \format{A data frame with 5 rows and 8 variables. Key variables are month, log of hazard ratio, 
 and standard error of log of hazard ratio.
 \describe{
-  \item{month}{Month or reported hazard ratio}
+  \item{month}{Month of reported hazard ratio (\eqn{month \le 6}, \eqn{6 > month \le 12}, 
+  \eqn{12 < month \le 24}, \eqn{24 < month \le 36}, \eqn{month > 36}).}
   \item{loghr}{Log of hazard ratio for impact of .25 unit HAQ increase on mortality}
   \item{loghr_se}{Standard error of log of hazard ratio for impact of .25 unit HAQ increase on mortality}
 }}
@@ -19,6 +20,6 @@ The Journal of rheumatology 39.1 (2012): 54-59.}
 mort.hr.haqdif
 }
 \description{
-Impact of change in HAQ on for mortality from table 3 in Michaud et al (2012).
+Impact of change in HAQ on for mortality from Table 3 in Michaud et al (2012).
 }
 \keyword{datasets}

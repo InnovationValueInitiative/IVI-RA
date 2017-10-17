@@ -174,16 +174,26 @@
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
     <p>A list with two elements.</p><dl class='dl-horizontal'>
-  <dt>data</dt><dd><p>A matrix where each column is a treatment attribute and each row corresponds
+  <dt>x</dt><dd><p>A matrix where each column is a treatment attribute and each row corresponds
   to a treatment.</p></dd>
-  <dt>utility.gain</dt><dd><p>A matrix with two columns, lower and upper, corresponing to the lower
-  and upper bounds of the utility gain associated with each treatment attribute in the 'data' 
-  matrix.</p></dd>
+  <dt>coef</dt><dd><p>A matrix with three columns, <code>var</code>, <code>lower</code> and <code>upper</code>.  
+  <code>var</code> is the name of the variable; <code>lower</code> and <code>upper</code> are
+   the lower and upper bounds of the utility <em>gain</em> associated with each treatment 
+   attribute in the <code>x</code> matrix respectively.</p></dd>
 </dl>
     
     <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
 
     <p>None. Currently determined by the user.</p>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>In <a href='sample_pars.html'>sample_pars</a>, the value of the coefficient is randomly sampled from a 
+uniform distribution with lower bound equal to <code>lower</code> and upper bound equal to 
+<code>upper</code>. The impact of treatment attributes for a given treatment on utility in 
+<a href='sim_iviRA.html'>sim_iviRA</a> is given by multiplying the sampled coefficient vectors from 
+<a href='sample_pars.html'>sample_pars</a> by the row of the matrix <code>x</code> corresponding to the treatment being
+simulated by the model.</p>
     
 
   </div>
@@ -194,6 +204,8 @@
       <li><a href="#format">Format</a></li>
 
       <li><a href="#source">Source</a></li>
+
+      <li><a href="#details">Details</a></li>
           </ul>
 
   </div>

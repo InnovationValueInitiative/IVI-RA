@@ -2,11 +2,12 @@
 #'
 #' Run the IVI-RA individual patient simulation model.
 #' 
-#' @param arms Name of arms in the treatment treatment sequence. May be a vector consisting of 
+#' @param arms Name of arms in the treatment sequence. May be a vector consisting of 
 #' a single treatment sequence or a matrix of unique sequences for each patient.
 #' @param input_data An object of class 'input_data' returned from \link{get_input_data}.
-#' @param pars List of sampled parameter values generated from \link{sample_pars}.
-#' @param model_structure Object of class model structure generated from \link{select_model_structure}.
+#' @param pars An object of class 'par_sample' returned from \link{sample_pars}.
+#' @param model_structures An object of class "model_structures" 
+#' returned from \link{select_model_structure}.
 #' @param max_months Maximum number of months to run the model for. Default is NULL which implies that
 #' the model is simulated over each patient's lifetime.
 #' @param tx_data Dataset of treatments with columns names equivalent to \code{iviRA::treatments}.
@@ -16,7 +17,7 @@
 #' @param hist Is the patient biologic naive or biologic experienced?
 #' @param output Specifies the format of output returned from the simulation. Options are \code{data} 
 #' and \code{summary}. When \code{data} is specified, each simulated value (i.e, by model,
-#' sampled parameter set, individual, and time-period) is returned in a \code{data.table}. If 
+#' sampled parameter set, patient, and time-period) is returned in a \code{data.table}. If 
 #' \code{summary} is selected, then only summary measures are returned.
 #' @param discount_qalys Discount rate for QALYs. Only used when \code{output = "summary"}; 
 #' otherwise, discounts can be applied to the simulated output.
@@ -24,20 +25,37 @@
 #' otherwise, discounts can be applied to the simulated output.
 #' 
 #' @return 
-#' The \code{output = "data"} options returns all simulated output. However, since output is 
-#' returned for each model, sampled parameter set, individual, and model cycle, 
-#' the size of the output can be very large and can cause memory management issues. The 
-#' \code{output = "summary"}, which only provides summaries of the simulation output, can be 
-#' useful in the cases. 
+#' When \code{output = "data"} is selected, the simulation returns a \code{data.table} with 
+#' simulated output for every model structure (\code{model}), sampled parameter set 
+#' (\code{sim}), patient (\code{id}), treatment within a treatment sequence (\code{tx}),
+#' and time-period (\code{month}) is returned. For more details on the output, 
+#' see the 'data' section below. 
 #' 
-#' When \code{output = "data"} is selected, the simulation returns a \code{data.table} with the 
-#' following columns:
+#' However, since all simulated output is returned, the size of the output can be very 
+#' large and can cause memory management issues. The \code{output = "summary"}, which only
+#'  provides summaries of the simulation output, can be useful in the cases. In particular, 
+#'  when \code{output = "summary"}, the simulation returns three \code{data.tables}:
+#' \describe{
+#' \item{means}{A \code{data.table} of mean model outcomes by model structure (\code{model})
+#'  and sampled parameter set (\code{sim}). For details on the variables returned see the 
+#'  'means' section below.}
+#' \item{time.means}{A \code{data.table} of mean model outcomes by model structure (\code{model}),
+#' sampled parameter set (\code{sim}), and month (\code{month}). For details on the variables
+#' returned see the 'time.means' section below.}
+#' \item{out0}{Simulated model outcomes during model cycle 0 for each model structure 
+#' (\code{model}), sampled parameter set (\code{sim}), patient (\code{id}), and 
+#' treatment within a treatment sequence (\code{tx}). For details on the variables returned, see
+#' the 'out0' section below. }
+#' }
+#' @section data:
 #'\describe{
-#' \item{sim}{Simulation number. Indexed from 1 to S where S is the number of randomly sampled parameter sets (e.g. n from \link{sample_pars}).}
-#' \item{id}{ID number. Indexed from 1 to N where N is the number of simulated patients (e.g. n from \link{sample_pats}).}
+#' \item{model}{Integer denoting a unique model structure corresponding to the row number in
+#' \code{model_structures}.}
+#' \item{sim}{Simulation number denoting a randomly sampled parameter set from \link{sample_pars}.}
+#' \item{id}{ID number denoting a simulated patients (e.g., from \link{sample_pop}).}
 #' \item{month}{Month since a simulated patient began the first treatment in a treatment sequence.}
-#' \item{tx}{Treatment used. Given J total therapies, the first J - 1 therapies match the indices from \code{arminds}. The final \code{tx}
-#'  is always the non-biologic treatment (\code{nbt_ind}).}
+#' \item{tx}{Treatment used. Given J total therapies, the first J - 1 therapies match the indices from
+#'  \code{arminds}. The final \code{tx} is always the non-biologic treatment (\code{nbt_ind}).}
 #' \item{tx_seq}{Number of treatment in a treatment sequence. First treatment equal to 1, 
 #' second treatment equal to 2, \ldots}
 #' \item{tx_cycle}{Number of model cycles since a patient began taking a given treatment in a treatment sequence. \code{tx_cycle} = 1
@@ -62,23 +80,113 @@
 #' \item{tx_cost}{Treatment costs after discounts and rebates.}
 #' \item{hosp_cost}{Hospitalization costs.}
 #' \item{mgmt_cost}{General management costs.}
-#' \item{si_cost}{Cost due to serious infections.}
+#' \item{si_cost}{Costs due to serious infections.}
 #' \item{prod_loss}{Productivity loss (i.e., lost earnings).}
 #' \item{utility}{Simulated utility score.}
 #' \item{qalys}{Quality-adjusted life-years (QALYs).}
 #'}
 #'
+#' @section means:
+#' \describe{
+#' \item{model}{Integer denoting a unique model structure corresponding to the row number in
+#' \code{model_structures}.}
+#' \item{sim}{Simulation number denoting a randomly sampled parameter set from \link{sample_pars}.}
+#' \item{lys}{Life-years.}
+#' \item{dlys}{Discounted life-years.}
+#' \item{lys_infusion}{Total life-years with a treatment administered by infusion.}
+#' \item{lys_injection}{Total life-years with a treatment administered by injection.}
+#' \item{lys_oral}{Total life-years with a treatment administered orally.}
+#' \item{dhaq}{Change in HAQ from baseline (i.e., month 0) to final model cycle.}
+#' \item{si}{Number of serious infections.}
+#' \item{qalys}{Quality-adjusted life-years (QALYs).}
+#' \item{dqalys}{Discounted QALYs.}
+#' \item{tx_cost}{Treatment costs.}
+#' \item{dtx_cost}{Discounted treatment costs.}
+#' \item{hosp_days}{Hospital days.}
+#' \item{hosp_cost}{Hospital costs.}
+#' \item{dhosp_cost}{Discounted hospital costs.}
+#' \item{mgmt_cost}{General management costs.}
+#' \item{dmgmt_cost}{Discounted general management costs.}
+#' \item{si_cost}{Costs due to serious infections.}
+#' \item{dsi_cost}{Discounted costs due to serious infections.}
+#' \item{prod_loss}{Productivity loss (i.e., lost earnings).}
+#' \item{dprod_loss}{Discounted productivity loss.}
+#' \item{dhc_cost}{Discounted formal healthcare sector costs.}
+#' \item{dtot_cost}{Discounted total (formal healthcare sector + productivity losses) 
+#' costs.}
+#' \item{yrs_since_approval}{Weighted mean of the number of years since approval of all treatments 
+#' in a treatment sequence, with weights for a given treatment equal to the number of months a
+#'  simulated patient used that treatment.}
+#' \item{dqalys_ann}{Annualized discounted QALYs. Assumes that QALYs accrue at a constant 
+#' annual rate and are calculated over the maximum number of years that each simulated patient
+#' could survive during the model.}
+#' \item{dhc_cost_ann}{Annualized discounted formal healthcare sector costs. Calculated in the same
+#' way as \code{dqalys_ann}.}
+#' \item{dprod_loss_ann}{Annualized discounted productivity losses. Calculated in the same
+#' way as \code{dqalys_ann}.}
+#' }
+#' 
+#' 
+#' @section time.means:
+#' \describe{
+#' \item{model}{Integer denoting a unique model structure corresponding to the row number in
+#' \code{model_structures}.}
+#' \item{sim}{Simulation number denoting a randomly sampled parameter set from \link{sample_pars}.}
+#' \item{month}{Month since a simulated patient began the first treatment in a treatment sequence.}
+#' \item{alive}{Number of simulated patients alive.}
+#' \item{qalys}{Quality-adjusted life-years.}
+#' \item{haq}{HAQ score. Restricted to range between 0 and 3.}
+#' \item{tx_cost}{Treatment costs.}
+#' \item{hosp_cost}{Hospital costs.}
+#' \item{mgmt_cost}{General management costs.}
+#' \item{si_cost}{Costs due to serious infections.}
+#' \item{prod_loss}{Productivity loss (i.e., lost earnings).}
+#' }
+#' 
+#' @section out0:
+#' \describe{
+#' \item{model}{Integer denoting a unique model structure corresponding to the row number in
+#' \code{model_structures}.}
+#' \item{sim}{Simulation number denoting a randomly sampled parameter set from \link{sample_pars}.}
+#' \item{id}{ID number denoting a simulated patients (e.g., from \link{sample_pop}).}
+#' \item{tx}{Treatment used. Given J total therapies, the first J - 1 therapies match the indices from
+#' }
+#' \item{acr}{Simulated ACR response during the initial 6-month period for a new treatment Constant within \code{tx}.
+#' Categories are 0 (ACR < 20), 1 (ACR 20-50), 2 (ACR 50-70), and 3 (ACR 70+).}
+#' \item{eular}{Simulated EULAR response during the initial 6-month period for a new treatment Constant within \code{tx}. 
+#' Categories are 0 (no EULAR response), 1 (moderate EULAR response), and 2 (good EULAR response).}
+#' \item{ttd}{Time to treatment discontinuation. Measured in terms of model cycles (e.g. ttd = 2 if treatment will discontinue in 
+#' 1 year given 6-months cycles). \code{ttd} is measured at the end of each cycle. Patients switch treatments during the cycle in which \code{ttd} 
+#' becomes negative and HAQ rebounds during the cycle.}
+#' \item{ttsi}{Time to serious infection. Like \code{ttd}, measured in terms of model cycles. \code{ttsi} is measured at the end of each 
+#' cycle.}
+#' }
+#'
+#' @examples 
+#' pop <- sample_pop(n = 10, type = "homog")
+#' arm.names <- c("adamtx", "cdmards")
+#' mod.structs <- select_model_structures(tx_ihaq = c("acr-haq", "acr-eular-haq"),
+#'                                       tx_iswitch = c("acr-switch", "acr-eular-switch"),
+#'                                       cdmards_haq_model = c("lcgm", "linear"),
+#'                                       ttd_cause = c("all", "si"),
+#'                                       ttd_dist = c("gengamma", "exponential"),
+#'                                       utility_model = c("mixture", "wailoo"))
+#' input.dat <- get_input_data(pop = pop)
+#' parsamp <- sample_pars(n = 10, input_dat = input.dat)
+#' sim.out <- sim_iviRA(arms = arm.names, input_data = input.dat, pars = parsamp,
+#'                     model_structures = mod.structs, output = "data")
+#' head(sim.out)
+#' 
 #' @export 
 sim_iviRA <- function(arms, input_data, pars, model_structures, 
                       max_months = NULL, tx_data = iviRA::treatments,
                       hist = c("naive", "experienced"),
                       output = c("data", "summary"), 
-                      discount_qalys = .03, discount_cost = .03,
-                      tx_iswitch = TRUE){
+                      discount_qalys = .03, discount_cost = .03){
   hist <- match.arg(hist)
   output <- match.arg(output)
   
-  # PREPPING FOR THE SIMULATION
+  # Prepping for the simulation
   ## check correct object types used as arguments
   if (!inherits(input_data, "input_data")){
     stop("The argument 'input_data' must be of class 'input_data'")
@@ -142,7 +250,7 @@ sim_iviRA <- function(arms, input_data, pars, model_structures,
   }
   parsamp.utility.wailoo <- pars$utility.wailoo[, wailoo.colindx, drop = FALSE]
 
-  # RUNNING THE SIMULATION
+  # Running the simulation
   sim.out <- sim_iviRA_C(arm_inds = arminds, tx_data = tx_data,
                          model_structures_mat = model_structures, hist = hist,
                          haq0 = input_data$haq0, das28_0 = input_data$das28,
@@ -212,181 +320,58 @@ sim_iviRA <- function(arms, input_data, pars, model_structures,
       sim.out$out0[, tx := tx + 1]
   }
   
-  # RETURN
+  # Return
   return(sim.out)
 }
 
-#' Select model structures
+#' Simulate utility after IPS
 #'
-#' Select the model structures to use in the IVI-RA individual patient simulation.
+#' Simulate utility after running \link{sim_iviRA} with \code{output = "data"}. This can be useful 
+#' in cases where you want to use a different algorithm to estimate utility, but do not want to rerun 
+#' the entire simulation.
+#' @param simhaq Simulation output from \link{sim_haq}. Must include columns \code{yrlen} for
+#' year length of model cycle, \code{sim} for simulation number, and \code{si} for whether a serious
+#' infection occured during the model cycle. 
+#' @param male Indicator = 1 for males and 0 for females.
 #' 
-#' @param tx_ihaq Model structure relating treatment to HAQ during the first 6 months of 
-#' treatment. Options, which are equivalent to H1-H3 in the documentation are:
-#' \itemize{
-#' \item{\code{acr-haq}}{ H1: Treatment -> ACR -> HAQ }
-#' \item{\code{acr-eular-haq}}{ H2: Treatment -> ACR -> EULAR -> HAQ}
-#' \item{\code{haq}}{ H3:Treatment -> HAQ}
-#' }
-#' @param tx_iswitch Model structure relating treatment to switching during the first
-#' 6 months of treatment. Options, which are equivalent to S1-S6 in the documentation are:
-#' \itemize{
-#' \item{\code{acr-switch}}{ S1: Treatment -> ACR -> Switch}
-#' \item{\code{acr-das28-switch}}{ S2: Treatment -> ACR -> DAS28 -> Switch}
-#' \item{\code{acr-sdai-switch}}{ S3: Treatment -> ACR -> SDAI -> Switch}
-#' \item{\code{acr-cdai-switch}}{ S4: Treatment -> ACR -> CDAI -> Switch}
-#' \item{\code{das28-switch}}{ S5: Treatment -> DAS28 -> Switch}
-#'  \item{\code{acr-eular-switch}}{ S6: Treatment -> ACR -> EULAR -> Switch}
+#' @details Note that disease duration is set to 18.65 years in \code{sim_utility_wailoo}, which
+#' is the mean value from the Wailoo (2006) paper used for the parameter estimates. Age and 
+#' the HAQ score are taken from the simulation output.
 #' 
-#' }
-#' @param cdmards_haq_model Model used for long-term HAQ progression. Options are:
-#' \itemize{
-#' \item{lcgm}{ Latent class growth model}
-#' \item{linear}{ Constant linear HAQ progression}
-#' }
-#' If \code{lgcm} is chosen, then a latent class growth model is used for cDMARDs
-#' and NBT but a constant annual rate is is assumed for all other therapies; otherwise 
-#' a constant linear HAQ progression is assumed for all therapies including cDMARDs and NBT.
-#' @param ttd_cause Cause of treatment discontinuation. Options are:
-#' \itemize{
-#' \item{all}{ Treatment discontinuation due to any cause.}
-#' \item{si}{ Treatment discontinuation due to serious infections}
-#' }
-#' @param ttd_dist Distribution used to model time to treatment discontinuaton. Options are:
-#' \itemize{
-#' \item{exponential}{ Exponential}
-#' \item{weibull}{ Weibull}
-#' \item{gompertz}{ Gompertz}
-#' \item{gamma}{ Gamma}
-#' \item{llogis}{ Log-logistic}
-#' \item{lnorm}{ Lognormal}
-#' \item{gengamma}{ Generalized gamma}
-#' }
-#' @param utility_model Model used to estimate patient utility as a function of HAQ and patient
-#' characteristics. Options are:
-#' \itemize{
-#' \item{mixture}{ Hernandez Alava (2013) mixutre model}
-#' \item{wailoo}{ Wailoo 2006 logistc regression}
-#' }
-#' @export
-select_model_structures <- function(tx_ihaq = "acr-haq",
-                                   tx_iswitch = "acr-switch",
-                                   cdmards_haq_model = "lcgm", 
-                                   ttd_cause = "all",
-                                   ttd_dist = "exponential",
-                                   utility_model = "mixture"){
-  # 
-  n <- vector(length = 6)
-  n[1] <- length(tx_ihaq)
-  n[2] <- length(tx_iswitch)
-  n[3] <- length(cdmards_haq_model)
-  n[4] <- length(ttd_cause)
-  n[5] <- length(ttd_dist)
-  n[6] <- length(utility_model)
-  if (max(n) > 1){
-    n.g1 <- n[n > 1]
-    max.n.g1 <- max(n.g1)
-    if (any(max.n.g1 - n.g1 > 0)){
-      stop("Length of all vectors must be the same")
-    }
-    if (any(max.n.g1 - n > 0)){
-      if (n[1] == 1){
-        tx_ihaq <- rep(tx_ihaq, max.n.g1)
-      }
-      if (n[2] == 1){
-        tx_iswitch <- rep(tx_iswitch, max.n.g1)
-      }
-      if (n[3] == 1){
-        cdmards_haq_model <- rep(cdmards_haq_model, max.n.g1)
-      }
-      if (n[4] == 1){
-        ttd_cause <- rep(ttd_cause, max.n.g1)
-      }
-      if (n[5] ==1){
-        ttd_dist <- rep(ttd_dist, max.n.g1)
-      } 
-      if (n[6] ==1){
-        utility_model <- rep(utility_model, max.n.g1)
-      } 
-    }
-  }
-  
-  # are valid options selected?
-  if (any(!tx_ihaq %in% c("acr-haq", "acr-eular-haq", "haq"))){
-      stop("Values in 'tx_ihaq' must be 'acr-haq', 'acr-eular-haq' or 'haq'.")
-  }
-  
-  if (any(!tx_iswitch %in% c("acr-switch", "acr-das28-switch",
-                             "acr-sdai-switch", "acr-cdai-switch", 
-                             "das28-switch", "acr-eular-switch"))){
-      stop(paste0("Values in 'tx_iswitch' must be 'acr-switch', 'acr-das28-switch', 'acr-sdai-switch',",
-                  " 'cr-cdai-switch', 'das28-switch', or 'acr-eular-switch'."))
-  }
-  
-  if (any(!cdmards_haq_model %in% c("lcgm", "linear"))){
-      stop("Values in 'cdmards_haq_model' must be 'lcgm' or 'linear'.")
-  } 
-  
-  if (any(!ttd_cause %in% c("all", "si"))){
-    stop(paste0("Values in 'ttd_cause' must be 'all', or 'si'."))
-  } 
-  
-  if (any(!ttd_dist %in% c("exponential", "weibull", "gompertz", 
-                           "gamma", "llogis", "lnorm", "gengamma"))){
-    stop(paste0("Values in 'ttd_dist' must be 'exponential', 'weibull', 'gompertz', 'gamma',", 
-         " 'llogis', 'lnorm', or 'gengamma'."))
-  } 
-
-  if (any(!utility_model %in% c("mixture", "wailoo"))){
-      stop("Values in 'utility_model' must be 'mixture' or 'wailoo'.")
-  } 
-  
-  # are valid combinations of options selected?
-  ## tx_ihaq = acr-haq
-  val <- ifelse(tx_ihaq == "acr-haq" & tx_iswitch == "acr-eular-switch", 1, 0)
-  if (any(val > 0)){
-    stop("'tx_iswitch' option 'acr-eular-switch' cannot be used with 'tx_ihaq' option
-         'acr-haq'.")
-  }
-  
-  ## tx_ihaq = haq
-  val <- ifelse(tx_ihaq == "haq" & tx_iswitch != "das28-switch", 1, 0)
-  if (any(val == 1)){
-    stop("When 'tx_ihaq' option 'haq' is selected, 'tx_iswitch' must equal 'das28-switch'.")
-  }
-  
-  ## ttd_cause == si
-  val <- ifelse(ttd_cause == "si" & ttd_dist != "exponential", 1, 0)
-  if (any(val == 1)){
-    stop("When 'ttd_cause' option 'si' is selected, 'ttd_dist' must equal 'exponential'.")
-  }
-
-  # return
-  model.structure <- matrix(c(tx_ihaq, tx_iswitch, cdmards_haq_model, 
-                              ttd_cause, ttd_dist, utility_model), ncol = 6)
-  colnames(model.structure) <- c("tx_ihaq", "tx_iswitch", "cdmards_haq_model", 
-                                 "ttd_cause", "ttd_dist", "utility_model")
-  class(model.structure) <- "model_structures"
-  return(model.structure)
-}
-
-#' Simulate utility using Hernandez-Alava mixture model
-#'
-#' Simulate utility from HAQ score simulated using using mixture model from
-#' Hernandez-Alva (2013). Can be used to simulate utility after running \code{ivi_RA}.
+#' @return For \code{sim_utility_mixture} and \code{sim_utility_wailoo}, a vector of 
+#' simulated utility for each row returned in \code{simhaq}. For \code{sim_qalys}, a vector
+#' of QALYs for each row in \code{simhaq}.
 #' 
-#' @param simhaq Simulation output from \link{sim_haq}.
-#' @param male Vector indiciating patient gender (1 = male, 0 = female).
-#' @param pars List of parameters needed to simulate utility using the Hernandez (2013) mixture 
-#' model. These are the parameters 'utility.mixture' described in the documentation 
+#' @examples
+#' pop <- sample_pop(n = 10)
+#' arm.names <- c("adamtx", "cdmards")
+#' mod.structs <- select_model_structures(utility_model = "wailoo")
+#' input.dat <- get_input_data(pop = pop)
+#' parsamp <- sample_pars(n = 10, input_dat = input.dat)
+#' sim.out <- sim_iviRA(arms = arm.names, input_data = input.dat, pars = parsamp,
+#'                     model_structures = mod.structs, output = "data")
+#' utility.mix <- sim_utility_mixture(simhaq = sim.out, male = pop[, "male"], pars = parsamp$utility.mixture)
+#' utility.wailoo <- sim_utility_wailoo(simhaq = sim.out, haq0 = pop[, "haq0"], male = pop[, "male"],
+#'                                 prev_dmards = pop[, "prev_dmards"], 
+#'                                 coefs = parsamp$utility.wailoo)
+#' qalys.mix <- sim_qalys(simhaq = sim.out, utility = utility.mix, si_ul = parsamp$si.ul,
+#'                        x_attr = input.dat$x.attr, tx_attr_coef = parsamp$utility.tx.attr)
+#' head(utility.mix)
+#' head(utility.wailoo)   
+#' head(qalys.mix)
+#' 
+#' @name sim_utility
+NULL
+#> NULL
+
+#' @param pars List of sampled parameters needed to simulate utility using the Hernandez Alava (2013) mixture 
+#' model (i.e., the element \code{utility.mixture} returned by \link{sample_pars}).
 #' to \link{sample_pars}.
-#' @param check Should the function check parameters and input data passed to the model? Default is TRUE.
 #' 
-#' @return Matrix. First column is simulated pain score and second column is simulated utility. 
-#' Each row corresponds to a unique patient and time-period (i.e. month) from \link{sim_haq}.
-#'
+#' @rdname sim_utility
 #' @export
-sim_utility_mixture <- function(simhaq, male, pars, check = TRUE){
-  if (check) check_sim_utility_mixture(simhaq, male, pars)
+sim_utility_mixture <- function(simhaq, male, pars){
+  check_sim_utility_mixture(simhaq, male, pars)
   util <- iviRA:::sim_utility_mixtureC(id = simhaq$id - 1, sim = simhaq$sim - 1, haq = simhaq$haq, 
                                pain_mean = pars$pain$pain.mean, haq_mean = pars$pain$haq.mean, 
                                pain_var = pars$pain$pain.var, haq_var = pars$pain$haq.var, 
@@ -407,7 +392,6 @@ sim_utility_mixture <- function(simhaq, male, pars, check = TRUE){
 #'
 #' Error messages when incorrect inputs are passed to sim_utility_mixture.
 #' 
-#' @param simhaq Simulation output from \link{sim_haq}
 #' @param male Vector indiciating patient gender (1 = male, 0 = female)
 #' @param pars \code{pars} as passed to \link{sim_utility_mixture}
 #' @keywords internal
@@ -468,30 +452,19 @@ check_sim_utility_mixture <- function(simhaq, male, pars){
   }
 }
 
-#' Simulate utility using Wailoo (2006) model
-#'
-#' Simulate utility from simulated HAQ score simulated using using model from
-#' Wailoo (2006). Can be used to simulate utility after running \code{sim_iviRA}.
-#' 
 #' @param simhaq Simulation output from \link{sim_iviRA}. Variables needed are \code{sim}, \code{id},
 #'  \code{age}, and \code{haq}.
 #' @param haq0 HAQ score at baseline.
-#' @param male Indicator = 1 for males and 0 for females.
 #' @param prev_dmards Number of previous DMARDs.
-#' @param coefs Matrix of coefficients needed to simulate utility using the Wailoo (2006) model. 
-#' See the documentation in \link{sample_pars} for details. Note that the matrix columns must contain the
-#' same variables as generated by \link{sample_pars}. 
-#' @param check Should the function check parameters and input data passed to the model? Default is TRUE.
+#' @param coefs Matrix of sampled coefficients needed to simulate utility using the Wailoo (2006) model 
+#' (i.e., the element \code{utility.wailoo} returned by \link{sample_pars}). Note that the matrix 
+#' columns must contain the exact same variables as generated by \link{sample_pars}. 
 #' 
-#' @details Note that disease duration is set to 18.65 years, which
-#' is the mean value from the Wailoo (2006) paper used for the parameter estimates. Age and 
-#' the HAQ score are taken from the simulation output.
-#' @return Vector of utility scores. 
-#'
+#' @rdname sim_utility
 #' @export
 sim_utility_wailoo <- function(simhaq, haq0, male, prev_dmards,
-                               coefs, check = TRUE){
-  if (check) check_sim_utility_wailoo(simhaq, haq0, male, prev_dmards, coefs)
+                               coefs){
+  check_sim_utility_wailoo(simhaq, haq0, male, prev_dmards, coefs)
   dis.dur <- 18.65 # based on mean disease duration in Wailoo (2006)
   util <- iviRA:::sim_utility_wailooC(sim = simhaq$sim - 1, id = simhaq$id - 1, age = simhaq$age,
                               disease_duration = dis.dur, haq0 = haq0, male = male, 
@@ -530,33 +503,26 @@ check_sim_utility_wailoo <- function(simhaq, haq0, male, prev_dmards, coefs){
   
   # pars
   n <- max(simhaq$sim)
-  if(ncol(coefs) != 7) stop("Number of columns in 'pars' must be 7")
-  if(nrow(coefs) != n) stop(paste0("Number of rows in 'pars' must be equal to the number of ",
+  if(ncol(coefs) != 7) stop("Number of columns in 'coefs' must be 7")
+  if(nrow(coefs) != n) stop(paste0("Number of rows in 'coefs' must be equal to the number of ",
                            "sampled parameter sets which equals ", n))
   if(any(!colnames(coefs) %in% c("int", "age", "dis_dur", "haq0", "male", "prev_dmards", "haq"))){
-    stop(paste0("Column names of 'pars' must be (in order) 'int', 'age', 'dis_dur'",
+    stop(paste0("Column names of 'coefs' must be (in order) 'int', 'age', 'dis_dur'",
                 "'haq0', 'male', 'prev_dmards', and 'haq'."))
   }
 }
 
-#' Simulate QALYs
-#'
-#' Simulate QALYs using using output produced from \code{sim_haq}.
-#' 
-#' @param simhaq Simulation output from \link{sim_haq}. Must include columns \code{yrlen} for
-#' year length of model cycle, \code{sim} for simulation number, and \code{si} for whether a serious
-#' infection occured during the model cycle. 
-#' @param utility Simulated utility from \link{sim_utility_mixture} or \link{sim_utility_wailoo}.
+#' @param utility Simulated utility from \code{sim_utility_mixture} or \code{sim_utility_wailoo}.
 #' @param si_ul Sampled utility loss. Equivalent to output \code{si.ul} from \link{sample_pars}.
 #' @param x_attr Treatment attribute data (e.g., ouptut \code{x.attr} from
 #' \link{get_input_data})
 #' @param tx_attr_coef Distribution of coefficient vector for treatment attributes (e.g., output
 #' \code{utility.tx.attr} from \link{sample_pars}.)
-#' @return Vector of QALYs for each simulated patient and time-period.
-#'
+#' 
+#' @rdname sim_utility
 #' @export
-sim_qalys <- function(simhaq, utility, si_ul, x_attr, tx_attr_coef, check = TRUE){
-  if (check) check_sim_qalys(simhaq, utility, si_ul, x_attr, tx_attr_coef)
+sim_qalys <- function(simhaq, utility, si_ul, x_attr, tx_attr_coef){
+  check_sim_qalys(simhaq, utility, si_ul, x_attr, tx_attr_coef)
   qalys <- sim_qalysC(utility = utility, yrlen = simhaq$yrlen, 
                       sim = simhaq$sim - 1, tx = simhaq$tx - 1,
                       si = simhaq$si, si_ul = si_ul,
@@ -616,9 +582,26 @@ check_sim_qalys <- function(simhaq, utility, si_ul, x_attr, tx_attr_ug){
 #' @param hist Is the patient biologic naive or biologic experienced? 
 #' @param line Line of therapy
 #' @param tx_ihaq Equivalent to argument \code{tx_haq} in \link{select_model_structures}.
-#' @return Change in HAQ for each selected model structure, randomly sampled parameter set,
-#' simulated patient, and treatment.
+#' 
+#' @return A \code{data.table} with the following columns: 
+#' \describe{
+#' \item{tx}{Treatment index based on \code{tx_lookup}.}
+#' \item{model}{The model structure component relating treatment to change in HAQ 
+#' (i.e., \code{tx_ihaq}).}
+#' \item{sim}{Simulation number denoting a randomly sampled parameter set from \link{sample_pars}.}
+#' \item{id}{ID number denoting a simulated patients (e.g., from \link{sample_pop}).}
+#' \item{dhaq}{Change in HAQ score from baseline at 6 months.}
+#' }
 #'
+#' @examples 
+#' pop <- sample_pop(n = 10)
+#' input.dat <- get_input_data(pop = pop)
+#' parsamp <- sample_pars(n = 10, input_data = input.dat)
+#' sim <- sim_dhaq6(treatments = c("cdmards", "adamtx"), input_data = input.dat,
+#'                  pars = parsamp, tx_ihaq = c("acr-haq", "acr-eular-haq"))
+#' head(sim)                 
+#' tail(sim)
+#' 
 #' @export
 sim_dhaq6 <- function(treatments, input_data, pars,
                       tx_lookup = iviRA::treatments$sname,

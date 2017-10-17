@@ -12,7 +12,6 @@ double newprobC(arma::rowvec x, arma::rowvec logor, double logit_baseprob){
 }
 
 // Update mortality probability given change in baseline haq
-// [[Rcpp::export]]
 void update_qxC(double baseline_haq, double current_haq, double &qx, 
                        double cycle_length, double month, arma::rowvec loghr_vec){
   double change_haq = (current_haq - baseline_haq)/0.25;

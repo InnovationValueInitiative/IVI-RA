@@ -17,8 +17,9 @@
 
 #' NMA estimates
 #'
-#' Estimates of ACR response, change in DAS28, and change in HAQ at 6 months for 
-#' bDMARD naive patients from Bayesian random effects NMAs.
+#' Estimates of mutually exclusive ACR response (ACR < 20, ACR 20 - <50, ACR 50 - <70, and ACR 70+), 
+#' change in DAS28, and change in HAQ at 6 months for bDMARD naive patients from Bayesian
+#' random effects NMAs.
 #'
 #' @details ACR response parameters were estimated using an ordered probit model. Parameters for
 #' DAS28 and HAQ were estimated using models for continuous data with a normal likelihood and 
@@ -37,12 +38,13 @@
 #' @rdname nma
 "nma.haq.naive"
 
-#' ACR to Eular Conversion
+#' ACR to EULAR Conversion
 #'
-#' Convert ACR response (ACR < 20, ACR20, ACR50, ACR70) to Eular response (none, moderate, good).
+#' Probability of EULAR response categories  (none, moderate, good) given
+#'  mutually exclusive ACR response categories (ACR < 20, ACR 20 - <50, ACR 50 - <70, and ACR 70+).
 #'
-#' @format A matrix where each row shows the probability that a particualar responder in an 
-#' ACR category will have a given Eular response. Probabilities are based on observed 
+#' @format A matrix where each row shows the probability that a particular responder in an 
+#' ACR category will have a given EULAR response. Probabilities are based on observed 
 #' relationships in the VARA database.
 
 #' @source Stevenson, Matt, et al. "Adalimumab, etanercept, infliximab, certolizumab pegol, 
@@ -52,10 +54,10 @@
 #' Health Technology Assessment 20.35 (2016): 1-610.
 "acr2eular"
 
-#' HAQ change by 6-month ACR Response
+#' HAQ change by 6-month ACR response
 #'
-#' Mean and standard deviation of HAQ change by 6-month ACR response category 
-#' (ACR < 20, ACR20, ACR50, ACR70).
+#' Mean and standard deviation of HAQ change by mutually exclusive 6-month ACR response category 
+#' (ACR < 20, ACR 20 - <50, ACR 50 - <70, and ACR 70+).
 #'
 #' @format A data.table with three columns. First column is ACR response category,
 #' second column is mean change in HAQ at 6 months, and  third column is the standard error
@@ -64,9 +66,10 @@
 #' in the treatment of severe active rheumatoid arthritis." Value in Health 18.2 (2015): 173-179.
 "acr2haq"
 
-#' Change in SDAI by 6-month ACR Response
+#' Change in SDAI by 6-month ACR response
 #'
-#' Mean of change in SDAI by 6-month ACR response category (ACR < 20, ACR20, ACR50, ACR70).
+#' Mean of change in SDAI by 6-month mutually exclusive ACR response category 
+#' (ACR < 20, ACR 20 - <50, ACR 50 - <70, and ACR 70+).
 #'
 #' @format A list of two data.tables each with four columns. Column 1 is ACR response category,
 #'  column 2 is the point estimate for the mean change in SDAI at 6 months, and columns 3/4 are 
@@ -85,9 +88,10 @@
 #' therapy 7.4 (2005): R796.
 "acr2sdai"
 
-#' Change in CDAI by 6-month ACR Response
+#' Change in CDAI by 6-month ACR response
 #'
-#' Mean of change in CDAI by 6-month ACR response category (ACR < 20, ACR20, ACR50, ACR70).
+#' Mean of change in CDAI by 6-month mutually exclusive ACR response category 
+#' (ACR < 20, ACR 20 - <50, ACR 50 - <70, and ACR 70+).
 #'
 #' @format A list of one data.tables with four columns. Column 1 is ACR response category,
 #'  column 2 is the point estimate for the mean change in CDAI at 6 months, and columns 3/4 are 
@@ -103,9 +107,10 @@
 #' therapy 7.4 (2005): R796.
 "acr2cdai"
 
-#' Change in DAS28 by 6-month ACR Response
+#' Change in DAS28 by 6-month ACR response
 #'
-#' Mean of change in DAS28 by 6-month ACR response category (ACR < 20, ACR20, ACR50, ACR70).
+#' Mean of change in DAS28 by 6-month mutually exclusive ACR response category 
+#' (ACR < 20, ACR 20 - <50, ACR 50 - <70, and ACR 70+).
 #'
 #' @format A list of one data.table with four columns. Column 1 is ACR response category,
 #'  column 2 is the point estimate for the mean change in DAS28 at 6 months, and columns 3/4 are 
@@ -120,12 +125,12 @@
 #' therapy 7.4 (2005): R796.
 "acr2das28"
 
-#' HAQ change by 6-month Eular Response
+#' HAQ change by 6-month EULAR Response
 #'
-#' Mean and standard deviation of HAQ change by 6-month Eular response category 
+#' Mean and standard deviation of HAQ change by 6-month EULAR response category 
 #' (none, moderate, good).
 #'
-#' @format A matrix with rows as Eular response categories. First column is mean and second 
+#' @format A matrix with rows as EULAR response categories. First column is mean and second 
 #' column is standard deviation.
 #' @source Stevenson, Matt, et al. "Adalimumab, etanercept, infliximab, certolizumab pegol, 
 #' golimumab, tocilizumab and abatacept for the treatment of rheumatoid arthritis not previously
@@ -175,20 +180,18 @@
 
 #' Time to treatment discontinuation parameters
 #'
-#' \code{ttd.eular} and \code{ttd.da} are lists of lists containing treatment discontinuation
-#' parameters stratified by EULAR response (moderate, high) and disease activity 
-#' (remission, low, moderate, high) respectively; \code{ttd.all} is a list of lists containing
-#' unstratified (i.e., all patients) treatment discontinuation parameters.
+#' \code{ttd.all}, \code{ttd.da}, and \code{ttd.eular} are lists of lists containing parameters 
+#' from statistical models of time to treatment discontinuation. \code{ttd.all} contains 
+#' parameters representative of all patients, \code{ttd.da} contains covariates for disease 
+#' activity level (moderate, high), and \code{ttd.eular} is stratified by EULAR response 
+#' (moderate, good).
+#' 
 #' @details 
-#' Time to treatment discontinuation paramters for each level of EULAR response or disease activity
-#' are represented with a list as described in \link{sample_pars}. Models were fit using \emph{flexsurv}.
+#' Models were fit using \emph{flexsurv}.
 #' Survival curves are based on analyses of reconstructed individual patient data. 
 #'
-#' @format A list of lists of lists. The top level list is the level of EULAR response or
-#'  disease activity. The second level list is the parametric distribution used. 
-#'  The third level list contains the parameters of a given parametetric fit as described in
-#'  \link{sample_pars}.
-
+#' @format A list as described in \link{sample_pars}
+#'
 #' @source Stevenson, Matt, et al. "Adalimumab, etanercept, infliximab, certolizumab pegol, 
 #' golimumab, tocilizumab and abatacept for the treatment of rheumatoid arthritis not previously
 #'  treated with disease-modifying antirheumatic drugs and after the failure of conventional 
@@ -198,6 +201,10 @@
 #' Zhang, Jie, et al. "Thresholds in disease activity for switching biologics in rheumatoid 
 #' arthritis patients: experience from a large US cohort." 
 #' Arthritis care & research 63.12 (2011): 1672-1679.
+#' 
+#' Guyot, Patricia, et al. "Enhanced secondary analysis of survival data: reconstructing the data
+#'  from published Kaplan-Meier survival curves." BMC medical research 
+#'  methodology 12.1 (2012): 9.
 #' @name ttd
 "ttd.eular"
 #' @rdname ttd
@@ -241,27 +248,6 @@
 #' @rdname lifetable
 "lifetable.male"
 
-#' Incidence
-#'
-#' Annual incidence rate of rheumatoid arthritis in the United States.
-#'
-#' @name incidence
-#' @format A data frame with 101 rows and 4 variables:
-#' \describe{
-#'   \item{age}{Age in years.}
-#'   \item{events}{Number of events (i.e., number of patients with RA).}
-#'   \item{person_years}{Person years, or, time at risk of event.}
-#'   \item{incidence_rate}{Annual incidence rate.}
-#'
-#' }
-#' @source Myasoedova, Elena, et al. "Is the incidence of rheumatoid arthritis rising?: 
-#'results from Olmsted County, Minnesota, 1955–2007." 
-#' Arthritis & Rheumatology 62.6 (2010): 1576-1582.
-#' @name incidence
-"incidence.female"
-#' @rdname incidence
-"incidence.male"
-
 #' Mortality odds ratios by patient characteristics
 #'
 #' Impact of HAQ on odds ratio for mortality from table 4 in Wolfe et al (2003).
@@ -289,12 +275,13 @@
 
 #' Mortality hazard ratio for change in HAQ score
 #'
-#' Impact of change in HAQ on for mortality from table 3 in Michaud et al (2012).
+#' Impact of change in HAQ on for mortality from Table 3 in Michaud et al (2012).
 #'
 #' @format A data frame with 5 rows and 8 variables. Key variables are month, log of hazard ratio, 
 #' and standard error of log of hazard ratio.
 #' \describe{
-#'   \item{month}{Month or reported hazard ratio}
+#'   \item{month}{Month of reported hazard ratio (\eqn{month \le 6}, \eqn{6 > month \le 12}, 
+#'   \eqn{12 < month \le 24}, \eqn{24 < month \le 36}, \eqn{month > 36}).}
 #'   \item{loghr}{Log of hazard ratio for impact of .25 unit HAQ increase on mortality}
 #'   \item{loghr_se}{Standard error of log of hazard ratio for impact of .25 unit HAQ increase on mortality}
 #' }
@@ -304,10 +291,12 @@
 
 #' Treatment costs
 #'
-#' Drug acquisition and administration costs for medications used to treat rheumatoid
+#' Acquisition and administration costs for medications used to treat rheumatoid
 #' arthritis. 
 #'
-#' @format A data table with 5 variables.
+#' @format A list with two elements: \code{cost} and \code{lookup}. The element
+#' \code{cost} is a data table of variables needed to calculate acquisition and
+#'  administration costs. Each row denotes a unique treatment. There are 17 variables:
 #' \describe{
 #'   \item{name}{Long-form name of treatment.}
 #'   \item{sname}{Short-form name of treatment.}
@@ -321,9 +310,25 @@
 #'   \item{ann_num_doses}{Annual number of doses based on FDA beyond the first 6 months.}
 #'   \item{strength_val}{Numeric value of strength of treatment.}
 #'   \item{strength_unit}{Unit of treatment.}
-#'   \item{wac_per_unit}{Wholesale acquisition cost per unit of treatment.}
+#'   \item{price_per_unit}{Price per unit of treatment. By default, wholesale acquisition costs 
+#'   (WACs) are used.}
+#'   \item{discount_lower}{Discounts and rebates negotiated with manufacturers typically decrease
+#'   prices paid by patients. Specificy a lower bound for this discount as a proportion of
+#'   \code{price_per_unit}.}
+#'   \item{discount_upper}{An upper bound for the discount as a proportion of 
+#'   \code{price_per_unit}.}
 #'   \item{infusion_cost}{Cost per infusion.}
+#'   \item{loading_dose}{Equal to 1 if a loading dose is used and 0 otherwise. If a loading 
+#'   dose is used, then the infusion cost is only applied to the first dose.}
+#'   \item{weight_based}{If \code{weight_based} is equal to 1, then dosing is based on each 
+#'   patient's weight (i.e., as sampled by \link{sample_pop}).}
 #' }
+#' 
+#' The element \code{lookup} is a data table with 3 variables. The first variable, \code{sname},
+#' is the short-form name of a treatment (e.g., corresponding to \code{sname} in 
+#' \code{iviRA::treatments}). All remaining columns are the unique agents making up a given
+#' treatment. For example, abatecept IV + methotrexate consists of abatecept IV and 
+#' methotrexate.
 "tx.cost"
 
 #' Hospitalization costs
@@ -392,7 +397,7 @@
 #' \describe{
 #'   \item{var}{Name of the variable.}
 #'   \item{est}{Point estimate on the log odds scale.}
-#'   \item{loghr_se}{Standard error of the point estimate.}
+#'   \item{se}{Standard error of the point estimate.}
 #' } 
 #'
 #' @source Wailoo, A., et al. "Modeling the cost effectiveness of etanercept, adalimumab and 
@@ -418,12 +423,20 @@
 #'
 #' @format A list with two elements. 
 #' \describe{
-#'   \item{data}{A matrix where each column is a treatment attribute and each row corresponds
+#'   \item{x}{A matrix where each column is a treatment attribute and each row corresponds
 #'   to a treatment.}
-#'   \item{utility.gain}{A matrix with two columns, lower and upper, corresponing to the lower
-#'   and upper bounds of the utility gain associated with each treatment attribute in the 'data' 
-#'   matrix.}
+#'   \item{coef}{A matrix with three columns, \code{var}, \code{lower} and \code{upper}.  
+#'   \code{var} is the name of the variable; \code{lower} and \code{upper} are
+#'    the lower and upper bounds of the utility \emph{gain} associated with each treatment 
+#'    attribute in the \code{x} matrix respectively.}
 #' } 
 #'
+#' @details In \link{sample_pars}, the value of the coefficient is randomly sampled from a 
+#' uniform distribution with lower bound equal to \code{lower} and upper bound equal to 
+#' \code{upper}. The impact of treatment attributes for a given treatment on utility in 
+#' \link{sim_iviRA} is given by multiplying the sampled coefficient vectors from 
+#' \link{sample_pars} by the row of the matrix \code{x} corresponding to the treatment being
+#' simulated by the model. 
+#' 
 #' @source None. Currently determined by the user. 
 "utility.tx.attr"

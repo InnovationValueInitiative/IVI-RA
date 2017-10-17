@@ -64,7 +64,7 @@ void nmaACR::set(std::string hist_, double k_, double A_, double z2_, double z3_
   x = x_;
 }
 
-arma::rowvec nmaACR::nma_acrprob(){
+arma::rowvec nmaACR::acrprobs(){
   double d = arma::dot(d_beta, x);
   
   // probability less than category
@@ -90,7 +90,7 @@ arma::rowvec nmaACR::nma_acrprob(){
 }
 
 double nmaACR::sim_acr(){
-  arma::rowvec p = nma_acrprob();
+  arma::rowvec p = acrprobs();
   double acr = hesim::rcat1C(p);
   return acr;
 }
@@ -435,7 +435,6 @@ Rcpp::List test_ttd(Rcpp::List x){
 * Latent class growth model (LCGM)
 **********************************/
 // Simulate latent class from multinomial logistic regression
-//' @export
 // [[Rcpp::export]]
 int sim_mlogit_classC(arma::rowvec w, arma::mat delta){
   arma::rowvec latclass_prob = mlogit_probC(w, delta);
@@ -444,7 +443,6 @@ int sim_mlogit_classC(arma::rowvec w, arma::mat delta){
 }
 
 // Simulate change in HAQ from Norton mixture model conditional on class
-//' @export
 // [[Rcpp::export]]
 double sim_dhaq_class_lcgm1C(double year, double cycle_length, arma::rowvec beta){
   double xt = 1 - (1/(1 + year));
@@ -456,7 +454,6 @@ double sim_dhaq_class_lcgm1C(double year, double cycle_length, arma::rowvec beta
 }
 
 // Simulate change in HAQ from Norton mixture model 
-//' @export
 // [[Rcpp::export]]
 double sim_dhaq_lcgm1C(double year, double cycle_length, double age, double female,
                        double das28, arma::mat delta, arma::mat beta){
@@ -548,7 +545,6 @@ double sim_tx_cost1C(int t, arma::rowvec agents_ind, std::vector<std::string> tx
 }
 
 //// General management cost
-// [[Rcpp::export]]
 double sim_mgmt_cost1C(double yrlen, double cost){
   return cost * yrlen;
 }
@@ -590,7 +586,6 @@ Hosp sim_hosp(double &haq, double yrlen, arma::rowvec hosp_days,
 }
 
 //// Serious Infection Cost
-// [[Rcpp::export]]
 double sim_si_cost1C(int si, double yrlen, double cost){
   double si_cost = 0.0;
   if (si == 1){
@@ -600,7 +595,6 @@ double sim_si_cost1C(int si, double yrlen, double cost){
 }
 
 // Productivity Loss
-// [[Rcpp::export]]
 double sim_prod_loss1C(double &haq, double yrlen, double beta){
   return haq * beta * yrlen;
 }
@@ -645,7 +639,6 @@ std::vector<double> sim_utility_wailooC(std::vector<int> sim, std::vector<int> i
 
 // Sample from Hernandez Alva (2013) Mixture Model
 // Note the class 4 is the reference category in the paper 
-// [[Rcpp::export]]
 double sim_utility_mixture1C(double haq,
                              double pain_mean, double haq_mean,
                              double pain_var, double haq_var, double painhaq_cor,

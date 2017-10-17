@@ -3,7 +3,7 @@
 \docType{data}
 \name{acr2haq}
 \alias{acr2haq}
-\title{HAQ change by 6-month ACR Response}
+\title{HAQ change by 6-month ACR response}
 \format{A data.table with three columns. First column is ACR response category,
 second column is mean change in HAQ at 6 months, and  third column is the standard error
 of the mean change in HAQ.}
@@ -15,7 +15,7 @@ in the treatment of severe active rheumatoid arthritis." Value in Health 18.2 (2
 acr2haq
 }
 \description{
-Mean and standard deviation of HAQ change by 6-month ACR response category 
-(ACR < 20, ACR20, ACR50, ACR70).
+Mean and standard deviation of HAQ change by mutually exclusive 6-month ACR response category 
+(ACR < 20, ACR 20 - <50, ACR 50 - <70, and ACR 70+).
 }
 \keyword{datasets}

@@ -7,7 +7,6 @@
 using namespace Rcpp;
 
 // Random Survival Times
-//' @export
 // [[Rcpp::export]]
 double rsurvC(double location, double anc1, std::string dist, double anc2 = 0.0) {
   double surv = 0.0;
@@ -50,7 +49,6 @@ double rsurvC(double location, double anc1, std::string dist, double anc2 = 0.0)
 }
 
 // Sample Conditional Distribution of y given x
-// [[Rcpp::export]]
 double rbvcnormC(double &x, double &y_mean, double &x_mean, 
                     double &y_var, double &x_var, double &cor){
   double mean = y_mean + cor * sqrt(y_var/x_var) * (x - x_mean);

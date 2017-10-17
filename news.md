@@ -1,2 +1,2 @@
-## iviRA 1.0.0
-Initital release
+## iviRA 0.1.0
+Current development version.

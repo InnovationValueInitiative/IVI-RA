@@ -31,9 +31,26 @@ in \code{tx_data}.}
 \item{tx_ihaq}{Equivalent to argument \code{tx_haq} in \link{select_model_structures}.}
 }
 \value{
-Change in HAQ for each selected model structure, randomly sampled parameter set,
-simulated patient, and treatment.
+A \code{data.table} with the following columns: 
+\describe{
+\item{tx}{Treatment index based on \code{tx_lookup}.}
+\item{model}{The model structure component relating treatment to change in HAQ 
+(i.e., \code{tx_ihaq}).}
+\item{sim}{Simulation number denoting a randomly sampled parameter set from \link{sample_pars}.}
+\item{id}{ID number denoting a simulated patients (e.g., from \link{sample_pop}).}
+\item{dhaq}{Change in HAQ score from baseline at 6 months.}
+}
 }
 \description{
 Simulate change in HAQ at 6 months using different model structures relating treatment to HAQ.
+}
+\examples{
+pop <- sample_pop(n = 10)
+input.dat <- get_input_data(pop = pop)
+parsamp <- sample_pars(n = 10, input_data = input.dat)
+sim <- sim_dhaq6(treatments = c("cdmards", "adamtx"), input_data = input.dat,
+                 pars = parsamp, tx_ihaq = c("acr-haq", "acr-eular-haq"))
+head(sim)                 
+tail(sim)
+
 }

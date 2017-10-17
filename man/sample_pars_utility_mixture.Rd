@@ -2,14 +2,15 @@
 % Please edit documentation in R/sample-pars.R
 \name{sample_pars_utility_mixture}
 \alias{sample_pars_utility_mixture}
-\title{Sample parameters for mixture model utility mapping}
+\title{Utility mixture model parameters}
 \usage{
 sample_pars_utility_mixture(nsims, pain)
 }
 \value{
 List containing posterior sample of paramaters from Hernandez Alva (2013) 
-mixture model
+mixture model.
 }
 \description{
-Sample parameters for mixture model utility mapping.
+Sample parameters from the Hernandez Alava (2013) mixture model used to map HAQ and other
+patient characteristics to utility.
 }

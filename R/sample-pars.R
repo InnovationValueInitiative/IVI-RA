@@ -447,7 +447,7 @@ sample_pars <- function(n = 100, input_data, tx_names = iviRA::treatments$sname,
   sim$haq.lcgm <- sample_pars_haq_lcgm(n, pars = haq_lcgm_pars) 
   
   ## mortality
-  sim$lt <- lt_data(ltfemale = data.table(ltfemale), ltmale = data.table(ltmale))
+  sim$lt <- lt_pars(ltfemale = data.table(ltfemale), ltmale = data.table(ltmale))
   sim$mort.logor <- sample_mvnorm(n, mort_logor, mort_logor_se^2)
   sim$mort.loghr.haqdif <- sample_normals(n, mort_loghr_haqdif, mort_loghr_se_haqdif,
                                           col_names = paste0("month_", c("less6", "6to12", "12to24", "24to36", "36to48")))
@@ -515,7 +515,7 @@ sample_betas <- function(n, shape1, shape2, col_names = NULL){
 #'
 #' A wrapper using the function \code{hesim::rdiricihlet_mat}. Maintains the row and column names of \code{mat}.
 #' @param n Number of samples to draw.
-#' @param mat A matrix where each row is a separte vector of shape parameters.
+#' @param mat A matrix where each row is a separate vector of shape parameters.
 #' 
 #' @return An array of matrices representing a sample from the dirichlet distribution for each row.
 #' 
@@ -609,6 +609,26 @@ sample_uniforms <- function(n, lower, upper, col_names = NULL){
   return(s)
 }
 
+#' Lifetable for simulation
+#' 
+#' Generate lifetable matrix for use in simulation
+#' 
+#' @param ltfemale Lifetable for women. Must contain column 'age' for single-year of age and 'qx' for
+#' the probability of death at a given age. Age must range from 0 to 100. 
+#' @param ltmale Identical to \code{ltfemale} but for men.
+#' 
+#' @return A list containing lifetables for females and males with qx transformed using the logit function. 
+#' The lifetable has three columns: age, qx, and logit_qx.
+#' 
+#' @export
+lt_pars <- function(ltfemale, ltmale){
+  ltmale <- ltmale[, .(age, qx)]
+  ltfemale <- ltfemale[, .(age, qx)]
+  ltmale[, logit_qx := ifelse(qx %in% c(0, 1), NA, log(qx/(1-qx)))]
+  ltfemale[, logit_qx := ifelse(qx %in% c(0, 1), NA, log(qx/(1-qx)))]
+  return(list(female = as.matrix(ltfemale), male = as.matrix(ltmale)))
+}
+
 #' Sample from Bayesian linear model
 #'
 #' Sample change in outcomes from Bayesian linear model for NMA.
@@ -661,8 +681,9 @@ sample_nma_acr <- function(nsims, m, vcov, k_lower = 1, k_upper = 1,
 #' sampled using a multivariate normal distribution.
 #' 
 #' @param nsims Size of the posterior sample.
-#' @param x A list of survival parameters. For example, see 'Time to treatment discontinuation' 
-#' in \link{sample_pars}.
+#' @param x A list of survival parameters in the same format as \link{ttd.all}, 
+#' \link{ttd.da}, or \link{ttd.eular}. See the description
+#'  'Time to treatment discontinuation' in \link{sample_pars}.
 #' 
 #' @return A list of matrices containing random draws of the parameters of the survival distribution. One matrix
 #' for the location parameter and one matrix for each of the ancillary parameters. 
@@ -729,12 +750,13 @@ sample_pars_haq_lcgm <- function(nsims, pars){
   return(lsamp)
 }
 
-#' Sample parameters for mixture model utility mapping
+#'  Utility mixture model parameters
 #'
-#' Sample parameters for mixture model utility mapping. 
+#' Sample parameters from the Hernandez Alava (2013) mixture model used to map HAQ and other
+#' patient characteristics to utility. 
 #' 
 #' @return List containing posterior sample of paramaters from Hernandez Alva (2013) 
-#' mixture model
+#' mixture model.
 #' 
 #' @export
 sample_pars_utility_mixture <- function(nsims, pain){
@@ -778,9 +800,9 @@ sample_pars_utility_mixture <- function(nsims, pain){
   return(lsamp)
 }
 
-#' Method of moments for Gamma Distribution
+#' Method of moments for gamma Distribution
 #'
-#' Method of moments for Gamma Distribution
+#' Method of moments for gamma Distribution
 #' 
 #' @return parameters of gamma distribution. Optionally return quantiles of
 #' distribution as well.
@@ -801,9 +823,9 @@ mom_gamma <- function(mean, sd, quant = NULL){
   return(l)
 }
 
-#' Method of moments for Beta Distribution
+#' Method of moments for beta Distribution
 #'
-#' Estimate parameters of Beta distribution from mean
+#' Estimate parameters of beta distribution from mean
 #' and variance.
 #' 
 #' @return parameters of beta distribution

@@ -13,7 +13,7 @@ public:
   arma::rowvec x;
   void set(std::string hist_, double k_, double A_, double z2_, double z3_, 
            arma::rowvec d_beta_, arma::rowvec x_, int line);
-  arma::rowvec nma_acrprob();
+  arma::rowvec acrprobs();
   double sim_acr();
 };
 
@@ -24,7 +24,7 @@ public:
   double A;
   arma::rowvec d_beta;
   arma::rowvec x;
-  void set(std::string hist_, double rr_, double A_, 
+  void set(std::string hist_, double k_, double A_, 
            arma::rowvec d_beta_, arma::rowvec x_, int line);
   double sim_dy();
 };

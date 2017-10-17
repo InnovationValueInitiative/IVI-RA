@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>NMA parameters to ACR response probabilities — nma_acrprob • iviRA</title>
+<title>ACR response probabilities — nma_acrprob • iviRA</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -162,11 +162,12 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>NMA parameters to ACR response probabilities</h1>
+    <h1>ACR response probabilities</h1>
     </div>
 
     
-    <p>Calculate ACR response probabilities from NMA ordered probit parameters.</p>
+    <p>Calculate ACR response probabilities from an ordered probit model of ACR response used for a
+network meta-analysis.</p>
     
 
     <pre class="usage"><span class='fu'>nma_acrprob</span>(<span class='no'>A</span>, <span class='no'>z2</span>, <span class='no'>z3</span>, <span class='no'>d</span>, <span class='kw'>rr</span> <span class='kw'>=</span> <span class='fl'>1</span>)</pre>
@@ -193,8 +194,8 @@ from cDMARDS.</p></td>
 for each treatment in the NMA.</p></td>
     </tr>
     <tr>
-      <th>rr</th>
-      <td><p>Sampled value of elative risk.</p></td>
+      <th>k</th>
+      <td><p>Sampled value of constant \(k\).</p></td>
     </tr>
     </table>
     

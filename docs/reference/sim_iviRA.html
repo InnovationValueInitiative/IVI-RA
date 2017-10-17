@@ -172,14 +172,14 @@
     <pre class="usage"><span class='fu'>sim_iviRA</span>(<span class='no'>arms</span>, <span class='no'>input_data</span>, <span class='no'>pars</span>, <span class='no'>model_structures</span>, <span class='kw'>max_months</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>tx_data</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/treatments'>treatments</a></span>, <span class='kw'>hist</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"naive"</span>, <span class='st'>"experienced"</span>),
   <span class='kw'>output</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"data"</span>, <span class='st'>"summary"</span>), <span class='kw'>discount_qalys</span> <span class='kw'>=</span> <span class='fl'>0.03</span>,
-  <span class='kw'>discount_cost</span> <span class='kw'>=</span> <span class='fl'>0.03</span>, <span class='kw'>tx_iswitch</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+  <span class='kw'>discount_cost</span> <span class='kw'>=</span> <span class='fl'>0.03</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>arms</th>
-      <td><p>Name of arms in the treatment treatment sequence. May be a vector consisting of 
+      <td><p>Name of arms in the treatment sequence. May be a vector consisting of 
 a single treatment sequence or a matrix of unique sequences for each patient.</p></td>
     </tr>
     <tr>
@@ -188,7 +188,12 @@ a single treatment sequence or a matrix of unique sequences for each patient.</p
     </tr>
     <tr>
       <th>pars</th>
-      <td><p>List of sampled parameter values generated from <a href='sample_pars.html'>sample_pars</a>.</p></td>
+      <td><p>An object of class 'par_sample' returned from <a href='sample_pars.html'>sample_pars</a>.</p></td>
+    </tr>
+    <tr>
+      <th>model_structures</th>
+      <td><p>An object of class "model_structures" 
+returned from select_model_structure.</p></td>
     </tr>
     <tr>
       <th>max_months</th>
@@ -210,7 +215,7 @@ in the same order as treatments in <code>tx_data</code>.</p></td>
       <th>output</th>
       <td><p>Specifies the format of output returned from the simulation. Options are <code>data</code> 
 and <code>summary</code>. When <code>data</code> is specified, each simulated value (i.e, by model,
-sampled parameter set, individual, and time-period) is returned in a <code>data.table</code>. If 
+sampled parameter set, patient, and time-period) is returned in a <code>data.table</code>. If 
 <code>summary</code> is selected, then only summary measures are returned.</p></td>
     </tr>
     <tr>
@@ -223,26 +228,43 @@ otherwise, discounts can be applied to the simulated output.</p></td>
       <td><p>Discount rate for cost variables. Only used when <code>output = "summary"</code>;
 otherwise, discounts can be applied to the simulated output.</p></td>
     </tr>
-    <tr>
-      <th>model_structure</th>
-      <td><p>Object of class model structure generated from select_model_structure.</p></td>
-    </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>The <code>output = "data"</code> options returns all simulated output. However, since output is 
-returned for each model, sampled parameter set, individual, and model cycle, 
-the size of the output can be very large and can cause memory management issues. The 
-<code>output = "summary"</code>, which only provides summaries of the simulation output, can be 
-useful in the cases.</p>
-<p>When <code>output = "data"</code> is selected, the simulation returns a <code>data.table</code> with the 
-following columns:</p><dl class='dl-horizontal'>
-<dt>sim</dt><dd><p>Simulation number. Indexed from 1 to S where S is the number of randomly sampled parameter sets (e.g. n from <a href='sample_pars.html'>sample_pars</a>).</p></dd>
-<dt>id</dt><dd><p>ID number. Indexed from 1 to N where N is the number of simulated patients (e.g. n from sample_pats).</p></dd>
+    <p>When <code>output = "data"</code> is selected, the simulation returns a <code>data.table</code> with 
+simulated output for every model structure (<code>model</code>), sampled parameter set 
+(<code>sim</code>), patient (<code>id</code>), treatment within a treatment sequence (<code>tx</code>),
+and time-period (<code>month</code>) is returned. For more details on the output, 
+see the 'data' section below.</p>
+<p>However, since all simulated output is returned, the size of the output can be very 
+large and can cause memory management issues. The <code>output = "summary"</code>, which only
+ provides summaries of the simulation output, can be useful in the cases. In particular, 
+ when <code>output = "summary"</code>, the simulation returns three <code>data.tables</code>:</p><dl class='dl-horizontal'>
+<dt>means</dt><dd><p>A <code>data.table</code> of mean model outcomes by model structure (<code>model</code>)
+ and sampled parameter set (<code>sim</code>). For details on the variables returned see the 
+ 'means' section below.</p></dd>
+<dt>time.means</dt><dd><p>A <code>data.table</code> of mean model outcomes by model structure (<code>model</code>),
+sampled parameter set (<code>sim</code>), and month (<code>month</code>). For details on the variables
+returned see the 'time.means' section below.</p></dd>
+<dt>out0</dt><dd><p>Simulated model outcomes during model cycle 0 for each model structure 
+(<code>model</code>), sampled parameter set (<code>sim</code>), patient (<code>id</code>), and 
+treatment within a treatment sequence (<code>tx</code>). For details on the variables returned, see
+the 'out0' section below.</p></dd>
+</dl>
+
+    
+    <h2 class="hasAnchor" id="data"><a class="anchor" href="#data"></a>data</h2>
+
+    
+    <dl class='dl-horizontal'>
+<dt>model</dt><dd><p>Integer denoting a unique model structure corresponding to the row number in
+<code>model_structures</code>.</p></dd>
+<dt>sim</dt><dd><p>Simulation number denoting a randomly sampled parameter set from <a href='sample_pars.html'>sample_pars</a>.</p></dd>
+<dt>id</dt><dd><p>ID number denoting a simulated patients (e.g., from <a href='sample_pop.html'>sample_pop</a>).</p></dd>
 <dt>month</dt><dd><p>Month since a simulated patient began the first treatment in a treatment sequence.</p></dd>
-<dt>tx</dt><dd><p>Treatment used. Given J total therapies, the first J - 1 therapies match the indices from <code>arminds</code>. The final <code>tx</code>
- is always the non-biologic treatment (<code>nbt_ind</code>).</p></dd>
+<dt>tx</dt><dd><p>Treatment used. Given J total therapies, the first J - 1 therapies match the indices from
+ <code>arminds</code>. The final <code>tx</code> is always the non-biologic treatment (<code>nbt_ind</code>).</p></dd>
 <dt>tx_seq</dt><dd><p>Number of treatment in a treatment sequence. First treatment equal to 1, 
 second treatment equal to 2, &#8230;</p></dd>
 <dt>tx_cycle</dt><dd><p>Number of model cycles since a patient began taking a given treatment in a treatment sequence. <code>tx_cycle</code> = 1
@@ -267,14 +289,128 @@ cycle.</p></dd>
 <dt>tx_cost</dt><dd><p>Treatment costs after discounts and rebates.</p></dd>
 <dt>hosp_cost</dt><dd><p>Hospitalization costs.</p></dd>
 <dt>mgmt_cost</dt><dd><p>General management costs.</p></dd>
-<dt>si_cost</dt><dd><p>Cost due to serious infections.</p></dd>
+<dt>si_cost</dt><dd><p>Costs due to serious infections.</p></dd>
 <dt>prod_loss</dt><dd><p>Productivity loss (i.e., lost earnings).</p></dd>
 <dt>utility</dt><dd><p>Simulated utility score.</p></dd>
 <dt>qalys</dt><dd><p>Quality-adjusted life-years (QALYs).</p></dd>
 </dl>
+    
+    <h2 class="hasAnchor" id="means"><a class="anchor" href="#means"></a>means</h2>
 
     
+    <dl class='dl-horizontal'>
+<dt>model</dt><dd><p>Integer denoting a unique model structure corresponding to the row number in
+<code>model_structures</code>.</p></dd>
+<dt>sim</dt><dd><p>Simulation number denoting a randomly sampled parameter set from <a href='sample_pars.html'>sample_pars</a>.</p></dd>
+<dt>lys</dt><dd><p>Life-years.</p></dd>
+<dt>dlys</dt><dd><p>Discounted life-years.</p></dd>
+<dt>lys_infusion</dt><dd><p>Total life-years with a treatment administered by infusion.</p></dd>
+<dt>lys_injection</dt><dd><p>Total life-years with a treatment administered by injection.</p></dd>
+<dt>lys_oral</dt><dd><p>Total life-years with a treatment administered orally.</p></dd>
+<dt>dhaq</dt><dd><p>Change in HAQ from baseline (i.e., month 0) to final model cycle.</p></dd>
+<dt>si</dt><dd><p>Number of serious infections.</p></dd>
+<dt>qalys</dt><dd><p>Quality-adjusted life-years (QALYs).</p></dd>
+<dt>dqalys</dt><dd><p>Discounted QALYs.</p></dd>
+<dt>tx_cost</dt><dd><p>Treatment costs.</p></dd>
+<dt>dtx_cost</dt><dd><p>Discounted treatment costs.</p></dd>
+<dt>hosp_days</dt><dd><p>Hospital days.</p></dd>
+<dt>hosp_cost</dt><dd><p>Hospital costs.</p></dd>
+<dt>dhosp_cost</dt><dd><p>Discounted hospital costs.</p></dd>
+<dt>mgmt_cost</dt><dd><p>General management costs.</p></dd>
+<dt>dmgmt_cost</dt><dd><p>Discounted general management costs.</p></dd>
+<dt>si_cost</dt><dd><p>Costs due to serious infections.</p></dd>
+<dt>dsi_cost</dt><dd><p>Discounted costs due to serious infections.</p></dd>
+<dt>prod_loss</dt><dd><p>Productivity loss (i.e., lost earnings).</p></dd>
+<dt>dprod_loss</dt><dd><p>Discounted productivity loss.</p></dd>
+<dt>dhc_cost</dt><dd><p>Discounted formal healthcare sector costs.</p></dd>
+<dt>dtot_cost</dt><dd><p>Discounted total (formal healthcare sector + productivity losses) 
+costs.</p></dd>
+<dt>yrs_since_approval</dt><dd><p>Weighted mean of the number of years since approval of all treatments 
+in a treatment sequence, with weights for a given treatment equal to the number of months a
+ simulated patient used that treatment.</p></dd>
+<dt>dqalys_ann</dt><dd><p>Annualized discounted QALYs. Assumes that QALYs accrue at a constant 
+annual rate and are calculated over the maximum number of years that each simulated patient
+could survive during the model.</p></dd>
+<dt>dhc_cost_ann</dt><dd><p>Annualized discounted formal healthcare sector costs. Calculated in the same
+way as <code>dqalys_ann</code>.</p></dd>
+<dt>dprod_loss_ann</dt><dd><p>Annualized discounted productivity losses. Calculated in the same
+way as <code>dqalys_ann</code>.</p></dd>
+</dl>
+    
+    <h2 class="hasAnchor" id="time-means"><a class="anchor" href="#time-means"></a>time.means</h2>
 
+    
+    <dl class='dl-horizontal'>
+<dt>model</dt><dd><p>Integer denoting a unique model structure corresponding to the row number in
+<code>model_structures</code>.</p></dd>
+<dt>sim</dt><dd><p>Simulation number denoting a randomly sampled parameter set from <a href='sample_pars.html'>sample_pars</a>.</p></dd>
+<dt>month</dt><dd><p>Month since a simulated patient began the first treatment in a treatment sequence.</p></dd>
+<dt>alive</dt><dd><p>Number of simulated patients alive.</p></dd>
+<dt>qalys</dt><dd><p>Quality-adjusted life-years.</p></dd>
+<dt>haq</dt><dd><p>HAQ score. Restricted to range between 0 and 3.</p></dd>
+<dt>tx_cost</dt><dd><p>Treatment costs.</p></dd>
+<dt>hosp_cost</dt><dd><p>Hospital costs.</p></dd>
+<dt>mgmt_cost</dt><dd><p>General management costs.</p></dd>
+<dt>si_cost</dt><dd><p>Costs due to serious infections.</p></dd>
+<dt>prod_loss</dt><dd><p>Productivity loss (i.e., lost earnings).</p></dd>
+</dl>
+    
+    <h2 class="hasAnchor" id="out-"><a class="anchor" href="#out-"></a>out0</h2>
+
+    
+    <dl class='dl-horizontal'>
+<dt>model</dt><dd><p>Integer denoting a unique model structure corresponding to the row number in
+<code>model_structures</code>.</p></dd>
+<dt>sim</dt><dd><p>Simulation number denoting a randomly sampled parameter set from <a href='sample_pars.html'>sample_pars</a>.</p></dd>
+<dt>id</dt><dd><p>ID number denoting a simulated patients (e.g., from <a href='sample_pop.html'>sample_pop</a>).</p></dd>
+<dt>tx</dt><dd><p>Treatment used. Given J total therapies, the first J - 1 therapies match the indices from</p></dd>
+<dt>acr</dt><dd><p>Simulated ACR response during the initial 6-month period for a new treatment Constant within <code>tx</code>.
+Categories are 0 (ACR &lt; 20), 1 (ACR 20-50), 2 (ACR 50-70), and 3 (ACR 70+).</p></dd>
+<dt>eular</dt><dd><p>Simulated EULAR response during the initial 6-month period for a new treatment Constant within <code>tx</code>. 
+Categories are 0 (no EULAR response), 1 (moderate EULAR response), and 2 (good EULAR response).</p></dd>
+<dt>ttd</dt><dd><p>Time to treatment discontinuation. Measured in terms of model cycles (e.g. ttd = 2 if treatment will discontinue in 
+1 year given 6-months cycles). <code>ttd</code> is measured at the end of each cycle. Patients switch treatments during the cycle in which <code>ttd</code> 
+becomes negative and HAQ rebounds during the cycle.</p></dd>
+<dt>ttsi</dt><dd><p>Time to serious infection. Like <code>ttd</code>, measured in terms of model cycles. <code>ttsi</code> is measured at the end of each 
+cycle.</p></dd>
+</dl>
+    
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='no'>pop</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='sample_pop.html'>sample_pop</a></span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"homog"</span>)
+<span class='no'>arm.names</span> <span class='kw'>&lt;-</span> <span class='fu'>c</span>(<span class='st'>"adamtx"</span>, <span class='st'>"cdmards"</span>)
+<span class='no'>mod.structs</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='select_model_structures.html'>select_model_structures</a></span>(<span class='kw'>tx_ihaq</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"acr-haq"</span>, <span class='st'>"acr-eular-haq"</span>),
+                                      <span class='kw'>tx_iswitch</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"acr-switch"</span>, <span class='st'>"acr-eular-switch"</span>),
+                                      <span class='kw'>cdmards_haq_model</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"lcgm"</span>, <span class='st'>"linear"</span>),
+                                      <span class='kw'>ttd_cause</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"all"</span>, <span class='st'>"si"</span>),
+                                      <span class='kw'>ttd_dist</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"gengamma"</span>, <span class='st'>"exponential"</span>),
+                                      <span class='kw'>utility_model</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"mixture"</span>, <span class='st'>"wailoo"</span>))
+<span class='no'>input.dat</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='get_input_data.html'>get_input_data</a></span>(<span class='kw'>pop</span> <span class='kw'>=</span> <span class='no'>pop</span>)
+<span class='no'>parsamp</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='sample_pars.html'>sample_pars</a></span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>input_dat</span> <span class='kw'>=</span> <span class='no'>input.dat</span>)
+<span class='no'>sim.out</span> <span class='kw'>&lt;-</span> <span class='fu'>sim_iviRA</span>(<span class='kw'>arms</span> <span class='kw'>=</span> <span class='no'>arm.names</span>, <span class='kw'>input_data</span> <span class='kw'>=</span> <span class='no'>input.dat</span>, <span class='kw'>pars</span> <span class='kw'>=</span> <span class='no'>parsamp</span>,
+                    <span class='kw'>model_structures</span> <span class='kw'>=</span> <span class='no'>mod.structs</span>, <span class='kw'>output</span> <span class='kw'>=</span> <span class='st'>"data"</span>)
+<span class='fu'>head</span>(<span class='no'>sim.out</span>)</div><div class='output co'>#&gt;    model sim id month tx tx_seq tx_cycle death  age        ttd acr eular das28
+#&gt; 1:     1   1  1     6  3      1        1     0 55.0  1.3278927   1    NA     6
+#&gt; 2:     1   1  1    12  3      1        2     0 55.5  0.3278927   1    NA     6
+#&gt; 3:     1   1  1    18  3      1        3     0 56.0 -0.6721073   1    NA     6
+#&gt; 4:     1   1  1    24  1      2        1     0 56.5  0.0000000   0    NA     6
+#&gt; 5:     1   1  1    30 14      3        1     0 57.0         NA   0    NA     6
+#&gt; 6:     1   1  1    36 14      3        2     0 57.5         NA   0    NA     6
+#&gt;    sdai cdai      haq     ttsi si yrlen    tx_cost hosp_days hosp_cost
+#&gt; 1:   43   41 1.038255 8.581680  0   0.5 21582.9359 0.3935154  417.0226
+#&gt; 2:   43   41 1.039709 7.581680  0   0.5 21582.9359 0.3935154  417.0226
+#&gt; 3:   43   41 1.443554 6.581680  0   0.5 21582.9359 0.3935154  417.0226
+#&gt; 4:   43   41 1.443554 1.661068  0   0.5   653.7732 0.3935154  417.0226
+#&gt; 5:   43   41 1.443554       NA  0   0.5   653.7732 0.3935154  417.0226
+#&gt; 6:   43   41 1.474925       NA  0   0.5   653.7732 0.3935154  417.0226
+#&gt;    mgmt_cost si_cost prod_loss   utility      qalys
+#&gt; 1:  193.3491       0  3499.935 0.7488349 0.37441746
+#&gt; 2:  193.3491       0  3504.835 0.6677723 0.33388617
+#&gt; 3:  193.3491       0  4866.189 0.6898508 0.34492539
+#&gt; 4:  193.3491       0  4866.189 0.5878675 0.29393373
+#&gt; 5:  193.3491       0  4866.189 0.6311877 0.31559386
+#&gt; 6:  193.3491       0  4971.942 0.1042358 0.05211792</div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -282,7 +418,17 @@ cycle.</p></dd>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
-          </ul>
+
+      <li><a href="#data">data</a></li>
+
+      <li><a href="#means">means</a></li>
+
+      <li><a href="#time-means">time.means</a></li>
+
+      <li><a href="#out-">out0</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>

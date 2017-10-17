@@ -7,15 +7,18 @@
 sim_iviRA(arms, input_data, pars, model_structures, max_months = NULL,
   tx_data = iviRA::treatments, hist = c("naive", "experienced"),
   output = c("data", "summary"), discount_qalys = 0.03,
-  discount_cost = 0.03, tx_iswitch = TRUE)
+  discount_cost = 0.03)
 }
 \arguments{
-\item{arms}{Name of arms in the treatment treatment sequence. May be a vector consisting of 
+\item{arms}{Name of arms in the treatment sequence. May be a vector consisting of 
 a single treatment sequence or a matrix of unique sequences for each patient.}
 
 \item{input_data}{An object of class 'input_data' returned from \link{get_input_data}.}
 
-\item{pars}{List of sampled parameter values generated from \link{sample_pars}.}
+\item{pars}{An object of class 'par_sample' returned from \link{sample_pars}.}
+
+\item{model_structures}{An object of class "model_structures" 
+returned from \link{select_model_structure}.}
 
 \item{max_months}{Maximum number of months to run the model for. Default is NULL which implies that
 the model is simulated over each patient's lifetime.}
@@ -29,7 +32,7 @@ in the same order as treatments in \code{tx_data}.}
 
 \item{output}{Specifies the format of output returned from the simulation. Options are \code{data} 
 and \code{summary}. When \code{data} is specified, each simulated value (i.e, by model,
-sampled parameter set, individual, and time-period) is returned in a \code{data.table}. If 
+sampled parameter set, patient, and time-period) is returned in a \code{data.table}. If 
 \code{summary} is selected, then only summary measures are returned.}
 
 \item{discount_qalys}{Discount rate for QALYs. Only used when \code{output = "summary"}; 
@@ -37,24 +40,44 @@ otherwise, discounts can be applied to the simulated output.}
 
 \item{discount_cost}{Discount rate for cost variables. Only used when \code{output = "summary"};
 otherwise, discounts can be applied to the simulated output.}
-
-\item{model_structure}{Object of class model structure generated from \link{select_model_structure}.}
 }
 \value{
-The \code{output = "data"} options returns all simulated output. However, since output is 
-returned for each model, sampled parameter set, individual, and model cycle, 
-the size of the output can be very large and can cause memory management issues. The 
-\code{output = "summary"}, which only provides summaries of the simulation output, can be 
-useful in the cases. 
+When \code{output = "data"} is selected, the simulation returns a \code{data.table} with 
+simulated output for every model structure (\code{model}), sampled parameter set 
+(\code{sim}), patient (\code{id}), treatment within a treatment sequence (\code{tx}),
+and time-period (\code{month}) is returned. For more details on the output, 
+see the 'data' section below. 
 
-When \code{output = "data"} is selected, the simulation returns a \code{data.table} with the 
-following columns:
+However, since all simulated output is returned, the size of the output can be very 
+large and can cause memory management issues. The \code{output = "summary"}, which only
+ provides summaries of the simulation output, can be useful in the cases. In particular, 
+ when \code{output = "summary"}, the simulation returns three \code{data.tables}:
 \describe{
-\item{sim}{Simulation number. Indexed from 1 to S where S is the number of randomly sampled parameter sets (e.g. n from \link{sample_pars}).}
-\item{id}{ID number. Indexed from 1 to N where N is the number of simulated patients (e.g. n from \link{sample_pats}).}
+\item{means}{A \code{data.table} of mean model outcomes by model structure (\code{model})
+ and sampled parameter set (\code{sim}). For details on the variables returned see the 
+ 'means' section below.}
+\item{time.means}{A \code{data.table} of mean model outcomes by model structure (\code{model}),
+sampled parameter set (\code{sim}), and month (\code{month}). For details on the variables
+returned see the 'time.means' section below.}
+\item{out0}{Simulated model outcomes during model cycle 0 for each model structure 
+(\code{model}), sampled parameter set (\code{sim}), patient (\code{id}), and 
+treatment within a treatment sequence (\code{tx}). For details on the variables returned, see
+the 'out0' section below. }
+}
+}
+\description{
+Run the IVI-RA individual patient simulation model.
+}
+\section{data}{
+
+\describe{
+\item{model}{Integer denoting a unique model structure corresponding to the row number in
+\code{model_structures}.}
+\item{sim}{Simulation number denoting a randomly sampled parameter set from \link{sample_pars}.}
+\item{id}{ID number denoting a simulated patients (e.g., from \link{sample_pop}).}
 \item{month}{Month since a simulated patient began the first treatment in a treatment sequence.}
-\item{tx}{Treatment used. Given J total therapies, the first J - 1 therapies match the indices from \code{arminds}. The final \code{tx}
- is always the non-biologic treatment (\code{nbt_ind}).}
+\item{tx}{Treatment used. Given J total therapies, the first J - 1 therapies match the indices from
+ \code{arminds}. The final \code{tx} is always the non-biologic treatment (\code{nbt_ind}).}
 \item{tx_seq}{Number of treatment in a treatment sequence. First treatment equal to 1, 
 second treatment equal to 2, \ldots}
 \item{tx_cycle}{Number of model cycles since a patient began taking a given treatment in a treatment sequence. \code{tx_cycle} = 1
@@ -79,12 +102,107 @@ cycle.}
 \item{tx_cost}{Treatment costs after discounts and rebates.}
 \item{hosp_cost}{Hospitalization costs.}
 \item{mgmt_cost}{General management costs.}
-\item{si_cost}{Cost due to serious infections.}
+\item{si_cost}{Costs due to serious infections.}
 \item{prod_loss}{Productivity loss (i.e., lost earnings).}
 \item{utility}{Simulated utility score.}
 \item{qalys}{Quality-adjusted life-years (QALYs).}
 }
 }
-\description{
-Run the IVI-RA individual patient simulation model.
+
+\section{means}{
+
+\describe{
+\item{model}{Integer denoting a unique model structure corresponding to the row number in
+\code{model_structures}.}
+\item{sim}{Simulation number denoting a randomly sampled parameter set from \link{sample_pars}.}
+\item{lys}{Life-years.}
+\item{dlys}{Discounted life-years.}
+\item{lys_infusion}{Total life-years with a treatment administered by infusion.}
+\item{lys_injection}{Total life-years with a treatment administered by injection.}
+\item{lys_oral}{Total life-years with a treatment administered orally.}
+\item{dhaq}{Change in HAQ from baseline (i.e., month 0) to final model cycle.}
+\item{si}{Number of serious infections.}
+\item{qalys}{Quality-adjusted life-years (QALYs).}
+\item{dqalys}{Discounted QALYs.}
+\item{tx_cost}{Treatment costs.}
+\item{dtx_cost}{Discounted treatment costs.}
+\item{hosp_days}{Hospital days.}
+\item{hosp_cost}{Hospital costs.}
+\item{dhosp_cost}{Discounted hospital costs.}
+\item{mgmt_cost}{General management costs.}
+\item{dmgmt_cost}{Discounted general management costs.}
+\item{si_cost}{Costs due to serious infections.}
+\item{dsi_cost}{Discounted costs due to serious infections.}
+\item{prod_loss}{Productivity loss (i.e., lost earnings).}
+\item{dprod_loss}{Discounted productivity loss.}
+\item{dhc_cost}{Discounted formal healthcare sector costs.}
+\item{dtot_cost}{Discounted total (formal healthcare sector + productivity losses) 
+costs.}
+\item{yrs_since_approval}{Weighted mean of the number of years since approval of all treatments 
+in a treatment sequence, with weights for a given treatment equal to the number of months a
+ simulated patient used that treatment.}
+\item{dqalys_ann}{Annualized discounted QALYs. Assumes that QALYs accrue at a constant 
+annual rate and are calculated over the maximum number of years that each simulated patient
+could survive during the model.}
+\item{dhc_cost_ann}{Annualized discounted formal healthcare sector costs. Calculated in the same
+way as \code{dqalys_ann}.}
+\item{dprod_loss_ann}{Annualized discounted productivity losses. Calculated in the same
+way as \code{dqalys_ann}.}
+}
+}
+
+\section{time.means}{
+
+\describe{
+\item{model}{Integer denoting a unique model structure corresponding to the row number in
+\code{model_structures}.}
+\item{sim}{Simulation number denoting a randomly sampled parameter set from \link{sample_pars}.}
+\item{month}{Month since a simulated patient began the first treatment in a treatment sequence.}
+\item{alive}{Number of simulated patients alive.}
+\item{qalys}{Quality-adjusted life-years.}
+\item{haq}{HAQ score. Restricted to range between 0 and 3.}
+\item{tx_cost}{Treatment costs.}
+\item{hosp_cost}{Hospital costs.}
+\item{mgmt_cost}{General management costs.}
+\item{si_cost}{Costs due to serious infections.}
+\item{prod_loss}{Productivity loss (i.e., lost earnings).}
+}
+}
+
+\section{out0}{
+
+\describe{
+\item{model}{Integer denoting a unique model structure corresponding to the row number in
+\code{model_structures}.}
+\item{sim}{Simulation number denoting a randomly sampled parameter set from \link{sample_pars}.}
+\item{id}{ID number denoting a simulated patients (e.g., from \link{sample_pop}).}
+\item{tx}{Treatment used. Given J total therapies, the first J - 1 therapies match the indices from
+}
+\item{acr}{Simulated ACR response during the initial 6-month period for a new treatment Constant within \code{tx}.
+Categories are 0 (ACR < 20), 1 (ACR 20-50), 2 (ACR 50-70), and 3 (ACR 70+).}
+\item{eular}{Simulated EULAR response during the initial 6-month period for a new treatment Constant within \code{tx}. 
+Categories are 0 (no EULAR response), 1 (moderate EULAR response), and 2 (good EULAR response).}
+\item{ttd}{Time to treatment discontinuation. Measured in terms of model cycles (e.g. ttd = 2 if treatment will discontinue in 
+1 year given 6-months cycles). \code{ttd} is measured at the end of each cycle. Patients switch treatments during the cycle in which \code{ttd} 
+becomes negative and HAQ rebounds during the cycle.}
+\item{ttsi}{Time to serious infection. Like \code{ttd}, measured in terms of model cycles. \code{ttsi} is measured at the end of each 
+cycle.}
+}
+}
+
+\examples{
+pop <- sample_pop(n = 10, type = "homog")
+arm.names <- c("adamtx", "cdmards")
+mod.structs <- select_model_structures(tx_ihaq = c("acr-haq", "acr-eular-haq"),
+                                      tx_iswitch = c("acr-switch", "acr-eular-switch"),
+                                      cdmards_haq_model = c("lcgm", "linear"),
+                                      ttd_cause = c("all", "si"),
+                                      ttd_dist = c("gengamma", "exponential"),
+                                      utility_model = c("mixture", "wailoo"))
+input.dat <- get_input_data(pop = pop)
+parsamp <- sample_pars(n = 10, input_dat = input.dat)
+sim.out <- sim_iviRA(arms = arm.names, input_data = input.dat, pars = parsamp,
+                    model_structures = mod.structs, output = "data")
+head(sim.out)
+
 }

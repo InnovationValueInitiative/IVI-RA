@@ -172,7 +172,7 @@ A Generalized Linear Modeling Framework for Pairwise and Network Meta-Analysis o
 Randomized Controlled Trials"</p>
     
 
-    <pre class="usage"><span class='fu'>sample_nma_acr</span>(<span class='no'>nsims</span>, <span class='no'>m</span>, <span class='no'>vcov</span>, <span class='kw'>rr_lower</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>rr_upper</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>ncovs</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+    <pre class="usage"><span class='fu'>sample_nma_acr</span>(<span class='no'>nsims</span>, <span class='no'>m</span>, <span class='no'>vcov</span>, <span class='kw'>k_lower</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>k_upper</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>ncovs</span> <span class='kw'>=</span> <span class='fl'>1</span>,
   <span class='kw'>tx_names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
@@ -191,12 +191,12 @@ Randomized Controlled Trials"</p>
       <td><p>Variance-covariance matrix of coefficients.</p></td>
     </tr>
     <tr>
-      <th>rr_lower</th>
-      <td><p>Lower bound for relative risk.</p></td>
+      <th>k_lower</th>
+      <td><p>Lower bound for constant \(k\).</p></td>
     </tr>
     <tr>
-      <th>rr_upper</th>
-      <td><p>Upper bound for relative risk.</p></td>
+      <th>k_upper</th>
+      <td><p>Upper bound for constant \(k\).</p></td>
     </tr>
     <tr>
       <th>ncovs</th>

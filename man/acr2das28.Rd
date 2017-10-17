@@ -3,7 +3,7 @@
 \docType{data}
 \name{acr2das28}
 \alias{acr2das28}
-\title{Change in DAS28 by 6-month ACR Response}
+\title{Change in DAS28 by 6-month ACR response}
 \format{A list of one data.table with four columns. Column 1 is ACR response category,
  column 2 is the point estimate for the mean change in DAS28 at 6 months, and columns 3/4 are 
  lower/upper bounds on the mean change in DAS28. Format is a list to facilitate inclusion of
@@ -21,6 +21,7 @@ therapy 7.4 (2005): R796.
 acr2das28
 }
 \description{
-Mean of change in DAS28 by 6-month ACR response category (ACR < 20, ACR20, ACR50, ACR70).
+Mean of change in DAS28 by 6-month mutually exclusive ACR response category 
+(ACR < 20, ACR 20 - <50, ACR 50 - <70, and ACR 70+).
 }
 \keyword{datasets}

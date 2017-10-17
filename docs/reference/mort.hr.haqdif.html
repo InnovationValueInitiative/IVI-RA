@@ -166,7 +166,7 @@
     </div>
 
     
-    <p>Impact of change in HAQ on for mortality from table 3 in Michaud et al (2012).</p>
+    <p>Impact of change in HAQ on for mortality from Table 3 in Michaud et al (2012).</p>
     
 
     <pre class="usage"><span class='no'>mort.hr.haqdif</span></pre>
@@ -175,7 +175,8 @@
 
     <p>A data frame with 5 rows and 8 variables. Key variables are month, log of hazard ratio, 
 and standard error of log of hazard ratio.</p><dl class='dl-horizontal'>
-  <dt>month</dt><dd><p>Month or reported hazard ratio</p></dd>
+  <dt>month</dt><dd><p>Month of reported hazard ratio (\(month \le 6\), \(6 &gt; month \le 12\), 
+  \(12 &lt; month \le 24\), \(24 &lt; month \le 36\), \(month &gt; 36\)).</p></dd>
   <dt>loghr</dt><dd><p>Log of hazard ratio for impact of .25 unit HAQ increase on mortality</p></dd>
   <dt>loghr_se</dt><dd><p>Standard error of log of hazard ratio for impact of .25 unit HAQ increase on mortality</p></dd>
 </dl>

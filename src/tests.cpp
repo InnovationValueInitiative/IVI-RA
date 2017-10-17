@@ -21,7 +21,7 @@ int sim_acr_test(){
   // line =  0
   int line = 0;
   sim.set(hist, rr, A, z2, z3, d_beta, x, line);
-  arma::rowvec acr_prob = sim.nma_acrprob();
+  arma::rowvec acr_prob = sim.acrprobs();
   if (acr_prob(0) != 0.5) {
     Rcpp::stop("Fail hist = naive, rr = .8, line = 0");
   }
@@ -29,7 +29,7 @@ int sim_acr_test(){
   // line = 1
   line = 1;
   sim.set(hist, rr, A, z2, z3, d_beta, x, line);
-  acr_prob = sim.nma_acrprob();
+  acr_prob = sim.acrprobs();
   if (acr_prob(0) != 0.6) {
     Rcpp::stop("Fail hist = naive, rr = .8, line = 1");
   }
@@ -37,7 +37,7 @@ int sim_acr_test(){
   // rr = 0
   rr = 0;
   sim.set(hist, rr, A, z2, z3, d_beta, x, line);
-  acr_prob = sim.nma_acrprob();
+  acr_prob = sim.acrprobs();
   if (acr_prob(0) != 1.0) {
     Rcpp::stop("Fail hist = naive, rr = 0, line = 1");
   }
@@ -47,7 +47,7 @@ int sim_acr_test(){
   rr = .8;
   line = 0;
   sim.set(hist, rr, A, z2, z3, d_beta, x, line);
-  acr_prob = sim.nma_acrprob();
+  acr_prob = sim.acrprobs();
   if (acr_prob(0) != 0.6) {
     Rcpp::stop("Fail hist = experienced, rr = .8, line = 0");
   }

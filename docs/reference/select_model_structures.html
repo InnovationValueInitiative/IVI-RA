@@ -236,12 +236,30 @@ characteristics. Options are:</p><ul>
     </table>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='no'>mod.structs</span> <span class='kw'>&lt;-</span> <span class='fu'>select_model_structures</span>(<span class='kw'>tx_ihaq</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"acr-haq"</span>, <span class='st'>"acr-eular-haq"</span>),
+                                      <span class='kw'>tx_iswitch</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"acr-switch"</span>, <span class='st'>"acr-eular-switch"</span>),
+                                      <span class='kw'>cdmards_haq_model</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"lcgm"</span>, <span class='st'>"linear"</span>),
+                                      <span class='kw'>ttd_cause</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"all"</span>, <span class='st'>"si"</span>),
+                                      <span class='kw'>ttd_dist</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"gengamma"</span>, <span class='st'>"exponential"</span>),
+                                      <span class='kw'>utility_model</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"mixture"</span>, <span class='st'>"wailoo"</span>))
+<span class='fu'>print</span>(<span class='no'>mod.structs</span>)</div><div class='output co'>#&gt;      tx_ihaq         tx_iswitch         cdmards_haq_model ttd_cause
+#&gt; [1,] "acr-haq"       "acr-switch"       "lcgm"            "all"    
+#&gt; [2,] "acr-eular-haq" "acr-eular-switch" "linear"          "si"     
+#&gt;      ttd_dist      utility_model
+#&gt; [1,] "gengamma"    "mixture"    
+#&gt; [2,] "exponential" "wailoo"     
+#&gt; attr(,"class")
+#&gt; [1] "model_structures"</div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+            
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>

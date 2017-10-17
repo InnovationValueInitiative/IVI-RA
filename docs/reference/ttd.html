@@ -166,10 +166,11 @@
     </div>
 
     
-    <p><code>ttd.eular</code> and <code>ttd.da</code> are lists of lists containing treatment discontinuation
-parameters stratified by EULAR response (moderate, high) and disease activity 
-(remission, low, moderate, high) respectively; <code>ttd.all</code> is a list of lists containing
-unstratified (i.e., all patients) treatment discontinuation parameters.</p>
+    <p><code>ttd.all</code>, <code>ttd.da</code>, and <code>ttd.eular</code> are lists of lists containing parameters 
+from statistical models of time to treatment discontinuation. <code>ttd.all</code> contains 
+parameters representative of all patients, <code>ttd.da</code> contains covariates for disease 
+activity level (moderate, high), and <code>ttd.eular</code> is stratified by EULAR response 
+(moderate, good).</p>
     
 
     <pre class="usage"><span class='no'>ttd.eular</span>
@@ -180,10 +181,7 @@ unstratified (i.e., all patients) treatment discontinuation parameters.</p>
         
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
-    <p>A list of lists of lists. The top level list is the level of EULAR response or
- disease activity. The second level list is the parametric distribution used. 
- The third level list contains the parameters of a given parametetric fit as described in
- <a href='sample_pars.html'>sample_pars</a>.</p>
+    <p>A list as described in <a href='sample_pars.html'>sample_pars</a></p>
     
     <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
 
@@ -195,11 +193,13 @@ Health Technology Assessment 20.35 (2016): 1-610.</p>
 <p>Zhang, Jie, et al. "Thresholds in disease activity for switching biologics in rheumatoid 
 arthritis patients: experience from a large US cohort." 
 Arthritis care &amp; research 63.12 (2011): 1672-1679.</p>
+<p>Guyot, Patricia, et al. "Enhanced secondary analysis of survival data: reconstructing the data
+ from published Kaplan-Meier survival curves." BMC medical research 
+ methodology 12.1 (2012): 9.</p>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Time to treatment discontinuation paramters for each level of EULAR response or disease activity
-are represented with a list as described in <a href='sample_pars.html'>sample_pars</a>. Models were fit using <em>flexsurv</em>.
+    <p>Models were fit using <em>flexsurv</em>.
 Survival curves are based on analyses of reconstructed individual patient data.</p>
     
 

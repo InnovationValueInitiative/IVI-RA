@@ -4,8 +4,6 @@
 using namespace Rcpp;
 
 // Predicted probabilities for single individual from ordered logistic regression
-//' @export
-// [[Rcpp::export]]
 arma::rowvec ologit_probC(arma::rowvec x, arma::rowvec beta, arma::rowvec cut) {
   int ncuts = cut.n_elem;
   double pstar = 0;
@@ -29,7 +27,6 @@ arma::rowvec ologit_probC(arma::rowvec x, arma::rowvec beta, arma::rowvec cut) {
 }
 
 // Predicted probabilities for single individual from multinomial logistic regression
-//' @export
 // [[Rcpp::export]]
 arma::rowvec mlogit_probC(arma::rowvec x, arma::mat beta) {
   int ncat = beta.n_rows + 1;
@@ -49,9 +46,4 @@ arma::rowvec mlogit_probC(arma::rowvec x, arma::mat beta) {
   return p;
 }
 
-// Logistic function
-// [[Rcpp::export]]
-double logistic(double p){
-  return 1/(1 + exp(-p));
-}
 

@@ -3,7 +3,7 @@
 \docType{data}
 \name{acr2sdai}
 \alias{acr2sdai}
-\title{Change in SDAI by 6-month ACR Response}
+\title{Change in SDAI by 6-month ACR response}
 \format{A list of two data.tables each with four columns. Column 1 is ACR response category,
  column 2 is the point estimate for the mean change in SDAI at 6 months, and columns 3/4 are 
  lower/upper bounds on the mean change in SDAI. Current default is to set bounds to +/-20% of the
@@ -25,6 +25,7 @@ therapy 7.4 (2005): R796.
 acr2sdai
 }
 \description{
-Mean of change in SDAI by 6-month ACR response category (ACR < 20, ACR20, ACR50, ACR70).
+Mean of change in SDAI by 6-month mutually exclusive ACR response category 
+(ACR < 20, ACR 20 - <50, ACR 50 - <70, and ACR 70+).
 }
 \keyword{datasets}

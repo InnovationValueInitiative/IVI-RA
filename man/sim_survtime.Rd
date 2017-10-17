@@ -32,8 +32,17 @@ the probability of death at a given age.}
 \item{cycle_length}{Length of model cycles in months. Default is 1 month cycles.}
 
 \item{loghr}{Log hazard ratio of impact of change in HAQ from baseline on mortality rate. A vector with
-each element denoting (in order) hazard ratio for months 0-6, >6 - 12, >12 - 24, >24 -36, >36.}
+each element denoting (in order) hazard ratio for \eqn{month \le 6}, \eqn{6 > month \le 12}, 
+  \eqn{12 < month \le 24}, \eqn{24 < month \le 36}, \eqn{month > 36}.}
 }
 \description{
 Simulate survival time given age and a vector of HAQ scores
+}
+\examples{
+set.seed(101)
+t <- seq(0, 45 * 2, .5) # 90 model cycles, or 45 years.
+haq.seq <-  pmin(1.5 + .03 * t, 3)
+surv <- sim_survtime(n = 1000, age = 55, haq = haq.seq, male = 0)
+summary(surv)
+      
 }

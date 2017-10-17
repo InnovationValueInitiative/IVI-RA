@@ -48,9 +48,10 @@ reference:
       - utility.mixture
       - utility.wailoo
       - utility.tx.attr
-  - title: "Generate patient population"
+  - title: "Patient population"
     contents:
       - sample_pop
+      - get_input_data
   - title: "Sample parameters for PSA"
     contents:
       - sample_pars
@@ -66,10 +67,10 @@ reference:
       - select_model_structures
   - title: "Individual patient simulation"
     contents:
-      - get_input_data
       - sim_iviRA
   - title: "Other useful functions"
     contents:
+      - sim_dhaq6
       - sim_utility_mixture
       - sim_utility_wailoo
       - sim_survtime

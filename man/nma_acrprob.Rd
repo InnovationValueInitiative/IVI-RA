@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{nma_acrprob}
 \alias{nma_acrprob}
-\title{NMA parameters to ACR response probabilities}
+\title{ACR response probabilities}
 \usage{
 nma_acrprob(A, z2, z3, d, rr = 1)
 }
@@ -17,12 +17,13 @@ from cDMARDS.}
 \item{d}{A matrix from the posterior distribution of the "d's" 
 for each treatment in the NMA.}
 
-\item{rr}{Sampled value of elative risk.}
+\item{k}{Sampled value of constant \eqn{k}.}
 }
 \value{
 List containing an array \code{non.overlap} (the probability of ACR < 20, ACR 20-50,
 ACR 50-70, and ACR 70+) and \code{overlap} (the probability of ACR20/50/70).
 }
 \description{
-Calculate ACR response probabilities from NMA ordered probit parameters.
+Calculate ACR response probabilities from an ordered probit model of ACR response used for a
+network meta-analysis.
 }

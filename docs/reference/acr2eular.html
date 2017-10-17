@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>ACR to Eular Conversion — acr2eular • iviRA</title>
+<title>ACR to EULAR Conversion — acr2eular • iviRA</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -162,19 +162,20 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>ACR to Eular Conversion</h1>
+    <h1>ACR to EULAR Conversion</h1>
     </div>
 
     
-    <p>Convert ACR response (ACR &lt; 20, ACR20, ACR50, ACR70) to Eular response (none, moderate, good).</p>
+    <p>Probability of EULAR response categories  (none, moderate, good) given
+ mutually exclusive ACR response categories (ACR &lt; 20, ACR 20 - &lt;50, ACR 50 - &lt;70, and ACR 70+).</p>
     
 
     <pre class="usage"><span class='no'>acr2eular</span></pre>
         
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
-    <p>A matrix where each row shows the probability that a particualar responder in an 
-ACR category will have a given Eular response. Probabilities are based on observed 
+    <p>A matrix where each row shows the probability that a particular responder in an 
+ACR category will have a given EULAR response. Probabilities are based on observed 
 relationships in the VARA database.</p>
     
     <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>

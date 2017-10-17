@@ -3,9 +3,9 @@
 \docType{data}
 \name{acr2eular}
 \alias{acr2eular}
-\title{ACR to Eular Conversion}
-\format{A matrix where each row shows the probability that a particualar responder in an 
-ACR category will have a given Eular response. Probabilities are based on observed 
+\title{ACR to EULAR Conversion}
+\format{A matrix where each row shows the probability that a particular responder in an 
+ACR category will have a given EULAR response. Probabilities are based on observed 
 relationships in the VARA database.}
 \source{
 Stevenson, Matt, et al. "Adalimumab, etanercept, infliximab, certolizumab pegol, 
@@ -18,6 +18,7 @@ Health Technology Assessment 20.35 (2016): 1-610.
 acr2eular
 }
 \description{
-Convert ACR response (ACR < 20, ACR20, ACR50, ACR70) to Eular response (none, moderate, good).
+Probability of EULAR response categories  (none, moderate, good) given
+ mutually exclusive ACR response categories (ACR < 20, ACR 20 - <50, ACR 50 - <70, and ACR 70+).
 }
 \keyword{datasets}

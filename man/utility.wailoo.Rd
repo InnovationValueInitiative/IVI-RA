@@ -8,7 +8,7 @@
 \describe{
   \item{var}{Name of the variable.}
   \item{est}{Point estimate on the log odds scale.}
-  \item{loghr_se}{Standard error of the point estimate.}
+  \item{se}{Standard error of the point estimate.}
 }}
 \source{
 Wailoo, A., et al. "Modeling the cost effectiveness of etanercept, adalimumab and 

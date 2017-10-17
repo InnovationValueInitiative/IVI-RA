@@ -130,7 +130,7 @@
 \newcommand{\code}[1]{\texttt{#1}}
 
 % title
-\title{A Description of the IVI-RA Model v1.0}
+\title{A Description of the IVI-RA Model v0.1}
 \author{Devin Incerti\footnote{\href{http://www.thevalueinitiative.org/}{Innovation and Value Initiative}} \and Jeroen P. Jansen\sameaff}
 \date{\today}
 
@@ -167,7 +167,7 @@ CACHE <- TRUE
 \section*{Executive summary}\label{sec:executive-summary}
 \addcontentsline{toc}{section}{Executive summary}  
 \subsection*{The Open-Source Value Project}
-This document describes version 1.0 of the \href{http://www.thevalueinitiative.org/}{Innovation and Value Initiative's (IVI's)} individual patient simulation model for rheumatoid arthritis (RA) (the IVI-RA model). The IVI-RA model is part of IVI's Open Source Value Project (OSVP), which is building an open, collaborative, and consensus-based process for the development of tools for value assessment. Models developed by the OSVP process are iterative, evolving as the science of value assessment advances and as new evidence becomes available.
+This document describes version 0.1 of the \href{http://www.thevalueinitiative.org/}{Innovation and Value Initiative's (IVI's)} individual patient simulation model for rheumatoid arthritis (RA) (the IVI-RA model). The IVI-RA model is part of IVI's Open Source Value Project (OSVP), which is building an open, collaborative, and consensus-based process for the development of tools for value assessment. Models developed by the OSVP process are iterative, evolving as the science of value assessment advances and as new evidence becomes available.
 
 Version 1.0 is IVI's first release of the IVI-RA model, and is designed to provide a starting point for open debate. As such, the model is very flexible and allows users to choose from a large number of the plausible model structures supported by clinical practice and prior decision-analytic modeling research in RA. General users may run the model online with our web-based user interfaces. 
 
@@ -984,7 +984,7 @@ imdq <- 0.49
 x <- c(1, args$age_mean, 0, args$das28_mean, 8.2, rf, acr.criteria, imdq)
 delta <- matrix(iviRA::haq.lcgm$coef[parameter %in% c("delta2", "delta3", "delta4"), est],
                 nrow = 3, byrow = TRUE)
-probs <- mlogit_prob(x, delta)
+probs <- iviRA:::mlogit_probC(x, delta)
 @
 
 The \citet{norton2014health} LCGM determined that there are four classes of patients and thus four distinct HAQ trajectories. The probability of class membership depends on 7 variables: age, gender, DAS28, disease duration, rheumatoid factor, the ACR 1987 criteria for RA, and a measure of socioeconomic status. Age, gender, and the DAS28 are relevant to the way the population is defined within our model (see \autoref{sec:populations}) and are therefore important determinants of the HAQ trajectory. Other variables (disease duration, rheumatoid factor, ACR criteria, and socioeconomic status) are not defined within our population. We consequently set disease duration (8.2 months), rheumatoid factor (0.73), and the socioeconomic status variable (0.49) equal to their mean values with the ERAS cohort. The ACR criteria was set to 1. 
@@ -2300,7 +2300,7 @@ The evidence network and inclusion criteria to go here.
 % to bDMARDs}\label{fig:nma-network-acr-naive}
 % \end{figure}
 
-\subsection{Statistical models for network-meta analysis}\label{app:nma-statistical-models}
+\subsection{Statistical models for network meta-analysis}\label{app:nma-statistical-models}
 
 \subsubsection{ACR response}
 ACR response, 6 month change in HAQ from baseline, and 6 month change in DAS28 from baseline were estimated using a Bayesian (random effects) network meta-analysis approach.  The four mutually exclusive ACR response categories were estimated using a ordered probit model appropriate for ordered categorical data \citep{dias2013evidence}. The model assumes that there is an underlying continuous variable (ACR20/50/70) categorized by specifying different cutoffs corresponding to the point at which an individual moves from one category to the next in each trial. The advantage of this approach over an analysis that considers ACR categories separately is that all possible outcomes are analyzed simultaneously based on the same randomized controlled trials, allowing for consistent estimates by category. 

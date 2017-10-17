@@ -84,44 +84,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// sim_mgmt_cost1C
-double sim_mgmt_cost1C(double yrlen, double cost);
-RcppExport SEXP _iviRA_sim_mgmt_cost1C(SEXP yrlenSEXP, SEXP costSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double >::type yrlen(yrlenSEXP);
-    Rcpp::traits::input_parameter< double >::type cost(costSEXP);
-    rcpp_result_gen = Rcpp::wrap(sim_mgmt_cost1C(yrlen, cost));
-    return rcpp_result_gen;
-END_RCPP
-}
-// sim_si_cost1C
-double sim_si_cost1C(int si, double yrlen, double cost);
-RcppExport SEXP _iviRA_sim_si_cost1C(SEXP siSEXP, SEXP yrlenSEXP, SEXP costSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type si(siSEXP);
-    Rcpp::traits::input_parameter< double >::type yrlen(yrlenSEXP);
-    Rcpp::traits::input_parameter< double >::type cost(costSEXP);
-    rcpp_result_gen = Rcpp::wrap(sim_si_cost1C(si, yrlen, cost));
-    return rcpp_result_gen;
-END_RCPP
-}
-// sim_prod_loss1C
-double sim_prod_loss1C(double& haq, double yrlen, double beta);
-RcppExport SEXP _iviRA_sim_prod_loss1C(SEXP haqSEXP, SEXP yrlenSEXP, SEXP betaSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double& >::type haq(haqSEXP);
-    Rcpp::traits::input_parameter< double >::type yrlen(yrlenSEXP);
-    Rcpp::traits::input_parameter< double >::type beta(betaSEXP);
-    rcpp_result_gen = Rcpp::wrap(sim_prod_loss1C(haq, yrlen, beta));
-    return rcpp_result_gen;
-END_RCPP
-}
 // sim_utility_wailoo1C
 double sim_utility_wailoo1C(double age, double disease_duration, double haq0, int male, double prev_dmards, double haq, arma::rowvec b);
 RcppExport SEXP _iviRA_sim_utility_wailoo1C(SEXP ageSEXP, SEXP disease_durationSEXP, SEXP haq0SEXP, SEXP maleSEXP, SEXP prev_dmardsSEXP, SEXP haqSEXP, SEXP bSEXP) {
@@ -161,41 +123,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< std::vector<double> >::type b_prev_dmards(b_prev_dmardsSEXP);
     Rcpp::traits::input_parameter< std::vector<double> >::type b_haq(b_haqSEXP);
     rcpp_result_gen = Rcpp::wrap(sim_utility_wailooC(sim, id, age, disease_duration, haq0, male, prev_dmards, haq, b_int, b_age, b_disease_duration, b_haq0, b_male, b_prev_dmards, b_haq));
-    return rcpp_result_gen;
-END_RCPP
-}
-// sim_utility_mixture1C
-double sim_utility_mixture1C(double haq, double pain_mean, double haq_mean, double pain_var, double haq_var, double painhaq_cor, double age, int male, arma::rowvec beta1, arma::rowvec beta2, arma::rowvec beta3, arma::rowvec beta4, double alpha1, double alpha2, double alpha3, double alpha4, double alpha, double epsilon1_sd, double& epsilon2_sd, double epsilon3_sd, double& epsilon4_sd, double mu, arma::mat delta, arma::rowvec w, arma::rowvec x);
-RcppExport SEXP _iviRA_sim_utility_mixture1C(SEXP haqSEXP, SEXP pain_meanSEXP, SEXP haq_meanSEXP, SEXP pain_varSEXP, SEXP haq_varSEXP, SEXP painhaq_corSEXP, SEXP ageSEXP, SEXP maleSEXP, SEXP beta1SEXP, SEXP beta2SEXP, SEXP beta3SEXP, SEXP beta4SEXP, SEXP alpha1SEXP, SEXP alpha2SEXP, SEXP alpha3SEXP, SEXP alpha4SEXP, SEXP alphaSEXP, SEXP epsilon1_sdSEXP, SEXP epsilon2_sdSEXP, SEXP epsilon3_sdSEXP, SEXP epsilon4_sdSEXP, SEXP muSEXP, SEXP deltaSEXP, SEXP wSEXP, SEXP xSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double >::type haq(haqSEXP);
-    Rcpp::traits::input_parameter< double >::type pain_mean(pain_meanSEXP);
-    Rcpp::traits::input_parameter< double >::type haq_mean(haq_meanSEXP);
-    Rcpp::traits::input_parameter< double >::type pain_var(pain_varSEXP);
-    Rcpp::traits::input_parameter< double >::type haq_var(haq_varSEXP);
-    Rcpp::traits::input_parameter< double >::type painhaq_cor(painhaq_corSEXP);
-    Rcpp::traits::input_parameter< double >::type age(ageSEXP);
-    Rcpp::traits::input_parameter< int >::type male(maleSEXP);
-    Rcpp::traits::input_parameter< arma::rowvec >::type beta1(beta1SEXP);
-    Rcpp::traits::input_parameter< arma::rowvec >::type beta2(beta2SEXP);
-    Rcpp::traits::input_parameter< arma::rowvec >::type beta3(beta3SEXP);
-    Rcpp::traits::input_parameter< arma::rowvec >::type beta4(beta4SEXP);
-    Rcpp::traits::input_parameter< double >::type alpha1(alpha1SEXP);
-    Rcpp::traits::input_parameter< double >::type alpha2(alpha2SEXP);
-    Rcpp::traits::input_parameter< double >::type alpha3(alpha3SEXP);
-    Rcpp::traits::input_parameter< double >::type alpha4(alpha4SEXP);
-    Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
-    Rcpp::traits::input_parameter< double >::type epsilon1_sd(epsilon1_sdSEXP);
-    Rcpp::traits::input_parameter< double& >::type epsilon2_sd(epsilon2_sdSEXP);
-    Rcpp::traits::input_parameter< double >::type epsilon3_sd(epsilon3_sdSEXP);
-    Rcpp::traits::input_parameter< double& >::type epsilon4_sd(epsilon4_sdSEXP);
-    Rcpp::traits::input_parameter< double >::type mu(muSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type delta(deltaSEXP);
-    Rcpp::traits::input_parameter< arma::rowvec >::type w(wSEXP);
-    Rcpp::traits::input_parameter< arma::rowvec >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(sim_utility_mixture1C(haq, pain_mean, haq_mean, pain_var, haq_var, painhaq_cor, age, male, beta1, beta2, beta3, beta4, alpha1, alpha2, alpha3, alpha4, alpha, epsilon1_sd, epsilon2_sd, epsilon3_sd, epsilon4_sd, mu, delta, w, x));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -347,19 +274,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// ologit_probC
-arma::rowvec ologit_probC(arma::rowvec x, arma::rowvec beta, arma::rowvec cut);
-RcppExport SEXP _iviRA_ologit_probC(SEXP xSEXP, SEXP betaSEXP, SEXP cutSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::rowvec >::type x(xSEXP);
-    Rcpp::traits::input_parameter< arma::rowvec >::type beta(betaSEXP);
-    Rcpp::traits::input_parameter< arma::rowvec >::type cut(cutSEXP);
-    rcpp_result_gen = Rcpp::wrap(ologit_probC(x, beta, cut));
-    return rcpp_result_gen;
-END_RCPP
-}
 // mlogit_probC
 arma::rowvec mlogit_probC(arma::rowvec x, arma::mat beta);
 RcppExport SEXP _iviRA_mlogit_probC(SEXP xSEXP, SEXP betaSEXP) {
@@ -369,17 +283,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::rowvec >::type x(xSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type beta(betaSEXP);
     rcpp_result_gen = Rcpp::wrap(mlogit_probC(x, beta));
-    return rcpp_result_gen;
-END_RCPP
-}
-// logistic
-double logistic(double p);
-RcppExport SEXP _iviRA_logistic(SEXP pSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double >::type p(pSEXP);
-    rcpp_result_gen = Rcpp::wrap(logistic(p));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -394,21 +297,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type logit_baseprob(logit_baseprobSEXP);
     rcpp_result_gen = Rcpp::wrap(newprobC(x, logor, logit_baseprob));
     return rcpp_result_gen;
-END_RCPP
-}
-// update_qxC
-void update_qxC(double baseline_haq, double current_haq, double& qx, double cycle_length, double month, arma::rowvec loghr_vec);
-RcppExport SEXP _iviRA_update_qxC(SEXP baseline_haqSEXP, SEXP current_haqSEXP, SEXP qxSEXP, SEXP cycle_lengthSEXP, SEXP monthSEXP, SEXP loghr_vecSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double >::type baseline_haq(baseline_haqSEXP);
-    Rcpp::traits::input_parameter< double >::type current_haq(current_haqSEXP);
-    Rcpp::traits::input_parameter< double& >::type qx(qxSEXP);
-    Rcpp::traits::input_parameter< double >::type cycle_length(cycle_lengthSEXP);
-    Rcpp::traits::input_parameter< double >::type month(monthSEXP);
-    Rcpp::traits::input_parameter< arma::rowvec >::type loghr_vec(loghr_vecSEXP);
-    update_qxC(baseline_haq, current_haq, qx, cycle_length, month, loghr_vec);
-    return R_NilValue;
 END_RCPP
 }
 // mortprobC
@@ -488,22 +376,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// rbvcnormC
-double rbvcnormC(double& x, double& y_mean, double& x_mean, double& y_var, double& x_var, double& cor);
-RcppExport SEXP _iviRA_rbvcnormC(SEXP xSEXP, SEXP y_meanSEXP, SEXP x_meanSEXP, SEXP y_varSEXP, SEXP x_varSEXP, SEXP corSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double& >::type x(xSEXP);
-    Rcpp::traits::input_parameter< double& >::type y_mean(y_meanSEXP);
-    Rcpp::traits::input_parameter< double& >::type x_mean(x_meanSEXP);
-    Rcpp::traits::input_parameter< double& >::type y_var(y_varSEXP);
-    Rcpp::traits::input_parameter< double& >::type x_var(x_varSEXP);
-    Rcpp::traits::input_parameter< double& >::type cor(corSEXP);
-    rcpp_result_gen = Rcpp::wrap(rbvcnormC(x, y_mean, x_mean, y_var, x_var, cor));
-    return rcpp_result_gen;
-END_RCPP
-}
 // sim_acr_test
 int sim_acr_test();
 RcppExport SEXP _iviRA_sim_acr_test() {
@@ -534,26 +406,18 @@ static const R_CallMethodDef CallEntries[] = {
     {"_iviRA_sim_dhaq_class_lcgm1C", (DL_FUNC) &_iviRA_sim_dhaq_class_lcgm1C, 3},
     {"_iviRA_sim_dhaq_lcgm1C", (DL_FUNC) &_iviRA_sim_dhaq_lcgm1C, 7},
     {"_iviRA_sim_tx_cost1C", (DL_FUNC) &_iviRA_sim_tx_cost1C, 15},
-    {"_iviRA_sim_mgmt_cost1C", (DL_FUNC) &_iviRA_sim_mgmt_cost1C, 2},
-    {"_iviRA_sim_si_cost1C", (DL_FUNC) &_iviRA_sim_si_cost1C, 3},
-    {"_iviRA_sim_prod_loss1C", (DL_FUNC) &_iviRA_sim_prod_loss1C, 3},
     {"_iviRA_sim_utility_wailoo1C", (DL_FUNC) &_iviRA_sim_utility_wailoo1C, 7},
     {"_iviRA_sim_utility_wailooC", (DL_FUNC) &_iviRA_sim_utility_wailooC, 15},
-    {"_iviRA_sim_utility_mixture1C", (DL_FUNC) &_iviRA_sim_utility_mixture1C, 25},
     {"_iviRA_sim_utility_mixtureC", (DL_FUNC) &_iviRA_sim_utility_mixtureC, 25},
     {"_iviRA_sim_qalysC", (DL_FUNC) &_iviRA_sim_qalysC, 8},
     {"_iviRA_sim_dhaq6C", (DL_FUNC) &_iviRA_sim_dhaq6C, 14},
     {"_iviRA_sim_iviRA_C", (DL_FUNC) &_iviRA_sim_iviRA_C, 61},
-    {"_iviRA_ologit_probC", (DL_FUNC) &_iviRA_ologit_probC, 3},
     {"_iviRA_mlogit_probC", (DL_FUNC) &_iviRA_mlogit_probC, 2},
-    {"_iviRA_logistic", (DL_FUNC) &_iviRA_logistic, 1},
     {"_iviRA_newprobC", (DL_FUNC) &_iviRA_newprobC, 3},
-    {"_iviRA_update_qxC", (DL_FUNC) &_iviRA_update_qxC, 6},
     {"_iviRA_mortprobC", (DL_FUNC) &_iviRA_mortprobC, 11},
     {"_iviRA_sample_deathC", (DL_FUNC) &_iviRA_sample_deathC, 11},
     {"_iviRA_sample_survC", (DL_FUNC) &_iviRA_sample_survC, 11},
     {"_iviRA_rsurvC", (DL_FUNC) &_iviRA_rsurvC, 4},
-    {"_iviRA_rbvcnormC", (DL_FUNC) &_iviRA_rbvcnormC, 6},
     {"_iviRA_sim_acr_test", (DL_FUNC) &_iviRA_sim_acr_test, 0},
     {"_iviRA_sim_lm_test", (DL_FUNC) &_iviRA_sim_lm_test, 0},
     {"_rcpp_module_boot_mod_TimeMeans", (DL_FUNC) &_rcpp_module_boot_mod_TimeMeans, 0},

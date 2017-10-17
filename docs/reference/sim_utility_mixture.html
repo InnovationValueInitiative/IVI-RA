@@ -170,7 +170,7 @@
 Hernandez-Alva (2013). Can be used to simulate utility after running <code>ivi_RA</code>.</p>
     
 
-    <pre class="usage"><span class='fu'>sim_utility_mixture</span>(<span class='no'>simhaq</span>, <span class='no'>male</span>, <span class='no'>pars</span>, <span class='kw'>check</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>sim_utility_mixture</span>(<span class='no'>simhaq</span>, <span class='no'>male</span>, <span class='no'>pars</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -189,16 +189,11 @@ Hernandez-Alva (2013). Can be used to simulate utility after running <code>ivi_R
 model. These are the parameters 'utility.mixture' described in the documentation 
 to <a href='sample_pars.html'>sample_pars</a>.</p></td>
     </tr>
-    <tr>
-      <th>check</th>
-      <td><p>Should the function check parameters and input data passed to the model? Default is TRUE.</p></td>
-    </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Matrix. First column is simulated pain score and second column is simulated utility. 
-Each row corresponds to a unique patient and time-period (i.e. month) from sim_haq.</p>
+    <p>A vector of simulated utility for each row returned by <code>simhaq</code>.</p>
     
 
   </div>
