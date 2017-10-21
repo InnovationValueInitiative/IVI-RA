@@ -35,8 +35,8 @@ Not all model structures **S1-S6** can be used with each of **H1-H3**. If **H1**
 ```{r kable, echo = FALSE}
 nums <- c(seq(1, 5), "-", seq(6, 11), rep("-", 4), 12, "-")
 tab <- matrix(nums, nrow = 3, ncol = 6, byrow = TRUE)
-colnames(tab) <- paste0("H", seq(1, 6))
-rownames(tab) <- paste0("S", seq(1, 3))
+colnames(tab) <- paste0("S", seq(1, 6))
+rownames(tab) <- paste0("H", seq(1, 3))
 kable(tab)
 ```
 
