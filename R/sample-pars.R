@@ -645,7 +645,8 @@ sample_nma_lm <- function(nsims, m, vcov, k_lower = 1, k_upper = 1, ncovs = 1,
                           tx_names = NULL){
   k.sim <- runif(nsims, k_lower, k_upper)
   sim <- sample_mvnorm(nsims, m, vcov)
-  d <- array(sim[, -c(1)], dim = c(nrow(sim), ncovs, ncol(sim[, -c(1)])))
+  d <- array(sim[, -c(1), drop = FALSE], 
+             dim = c(nrow(sim), ncovs, ncol(sim[, -c(1), drop = FALSE])))
   dimnames(d)[[3]] <- colnames(sim[, -c(1)])
   return(list(k = k.sim, A = sim[, 1], d = d))
 }
@@ -670,7 +671,8 @@ sample_nma_acr <- function(nsims, m, vcov, k_lower = 1, k_upper = 1,
                            ncovs = 1, tx_names = NULL){
   k.sim <- runif(nsims, k_lower, k_upper)
   sim <- sample_mvnorm(nsims, m, vcov)
-  d <- array(sim[, -c(1:4)], dim = c(nrow(sim), ncovs, ncol(sim[, -c(1:4)])))
+  d <- array(sim[, -c(1:4), drop = FALSE],
+             dim = c(nrow(sim), ncovs, ncol(sim[, -c(1:4), drop = FALSE])))
   dimnames(d)[[3]] <- colnames(sim[, -c(1:4)])
   return(list(k = k.sim, A = sim[, 1], z2 = sim[, 3], z3 = sim[, 4], d = d))
 }
@@ -696,6 +698,7 @@ sample_survpars <- function(nsims, x){
   for (i in 1:length(dists)){
     xi <- x[[dists[i]]]
     samp <- MASS::mvrnorm(nsims, xi$est, xi$vcov)
+    if (is.vector(samp)) samp <- t(as.matrix(samp)) 
     l[[i]] <- list(sample = samp, loc.index = xi$loc.index, anc1.index = xi$anc1.index,
                    anc2.index = xi$anc2.index)
   }
