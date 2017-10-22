@@ -130,7 +130,10 @@
 \newcommand{\code}[1]{\texttt{#1}}
 
 % title
-\title{A Description of the IVI-RA Model v1.0}
+\title{A Description of the IVI-RA Model v1.0 
+\thanks{We thank Darius Lakdawalla, Jason Shafrin, Mark Linthicum, Thanh Ton, Jeffrey Curtis, Carole Wiedmeyer, and members of the Innovation and Value Initiative's scientific advisory panel for reviewing this document. In addition, we thank Sam Norton for help with the latent class growth model.} 
+\footnote{This report should be referenced as follows: Incerti, D, Jansen, JP. A Description of the IVI-RA Model. 2017; last updated October 2017.}
+}
 \author{Devin Incerti\footnote{\href{http://www.thevalueinitiative.org/}{Innovation and Value Initiative}} \and Jeroen P. Jansen\sameaff}
 \date{\today}
 
