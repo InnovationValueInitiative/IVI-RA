@@ -91,16 +91,19 @@ private:
   double ttsi;
   ModelStructure model_structure;
 public:
-  void set_x_ttd_da();
-  double sim_ttd_eular();
-  double sim_ttd_all();
-  double sim_ttd_da();
-  double sim_ttd();
+  void set_x_da(arma::rowvec x_da_);
+  void set_da_cat(int da_cat_);
+  void set_x_da();
+  arma::rowvec get_x_da();
   void set(arma::rowvec x_eular_, arma::rowvec x_all_, arma::rowvec x_da_,
            TTDPars1 eular_mod_pars_, TTDPars1 eular_good_pars_, 
            TTDPars1 da_pars_, TTDPars1 all_pars_, int eular_,
            int da_cat_, int tswitch_, double cycle_length_, 
            double ttsi_, ModelStructure model_structure_);
+  double sim_ttd_eular();
+  double sim_ttd_all();
+  double sim_ttd_da();
+  double sim_ttd();
 };
 
 # endif

@@ -101,3 +101,16 @@ int sim_lm_test(){
 
   return 0;
 }
+
+/******************
+* Testing TTD class
+*******************/
+// [[Rcpp::export]]
+arma::rowvec ttd_da_test(int da_cat){
+  TTD ttd;
+  arma::rowvec x_da(3, arma::fill::zeros);
+  ttd.set_x_da(x_da);
+  ttd.set_da_cat(da_cat);
+  ttd.set_x_da();
+  return ttd.get_x_da();
+}

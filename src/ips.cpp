@@ -36,7 +36,7 @@ void update_haq_t(double &haq, double haq_change_therapy,
   if (age < 40){
     haq_change_age = haq_change_age_vec(0);
   }
-  else if (age >= 40 & age <= 64){
+  else if (age >= 40 & age < 65){
     haq_change_age = haq_change_age_vec(1);
   }
   else {
@@ -296,7 +296,15 @@ void TTD::set(arma::rowvec x_eular_, arma::rowvec x_all_, arma::rowvec x_da_,
   model_structure = model_structure_;
 }
 
-void TTD::set_x_ttd_da(){
+void TTD::set_x_da(arma::rowvec x_da_){
+  x_da = x_da_;
+}
+
+void TTD::set_da_cat(int da_cat_){
+  da_cat = da_cat_;
+}
+
+void TTD::set_x_da(){
   if (da_cat == 3){
     x_da(2) = 1;
   }
@@ -309,6 +317,10 @@ void TTD::set_x_ttd_da(){
   else{
     x_da(1) = 0;
   }
+}
+
+arma::rowvec TTD::get_x_da(){
+  return x_da;
 }
 
 double TTD::sim_ttd_eular(){
@@ -366,7 +378,7 @@ double TTD::sim_ttd(){
       ttd = sim_ttd_all();
     }
     else {
-      set_x_ttd_da();
+      set_x_da();
       ttd = sim_ttd_da();
     }
   }
@@ -1403,7 +1415,7 @@ List sim_iviRA_C(arma::mat arm_inds, Rcpp::DataFrame tx_data,
   double pain_var = as<double>(as<Rcpp::List>(pars_util_mix["pain"])["pain.var"]);
   double haq_var = as<double>(as<Rcpp::List>(pars_util_mix["pain"])["haq.var"]);
   double painhaq_cor = as<double>(as<Rcpp::List>(pars_util_mix["pain"])["painhaq.cor"]);
-  
+
   //// Time to treatment discontinuation
   TTDPars ttd_all = get_ttd_pars(ttd_all_list);
   TTDPars ttd_da = get_ttd_pars(ttd_da_list);
@@ -1480,7 +1492,7 @@ List sim_iviRA_C(arma::mat arm_inds, Rcpp::DataFrame tx_data,
   std::vector<double> prod_loss_vec;
   std::vector<double> utility_vec;
   std::vector<double> qalys_vec;
-  
+
   // Loop over models
   for (int m = 0; m < n_mods; ++m){
     mod_struct.set_model_structure(model_structures[m]);
@@ -1503,9 +1515,16 @@ List sim_iviRA_C(arma::mat arm_inds, Rcpp::DataFrame tx_data,
         }
         int t_cdmards = 0;
         TxISwitch tx_iswitch;
-        tx_iswitch.das28 = das28_0[i];
-        tx_iswitch.sdai = sdai0[i];
-        tx_iswitch.cdai = cdai0[i];
+        if (mod_struct.tx_iswitch == "acr-das28-switch" ||
+            mod_struct.tx_iswitch == "das28-switch"){
+          tx_iswitch.das28 = das28_0[i];
+        }
+        if (mod_struct.tx_iswitch == "acr-sdai-switch"){
+          tx_iswitch.sdai = sdai0[i];
+        }
+        if (mod_struct.tx_iswitch == "acr-cdai-switch"){
+          tx_iswitch.cdai = cdai0[i];
+        }
         arma::rowvec x_ttd_da_i;
         double utilmix_mu = R::rnorm(0, utilmix_mu_sd[s]);
         
