@@ -24,7 +24,7 @@ qx <- .01
 cycle.len <- 6
 age <- 55
 loghr <- mort.hr.haqdif$loghr
-lt <- lt_data(ltfemale = lifetable.female, ltmale = lifetable.male)
+lt <- lt_pars(ltfemale = lifetable.female, ltmale = lifetable.male)
 
 # simple R function
 mortprobR <- function(age, male, lifetable_male, lifetable_female,                      

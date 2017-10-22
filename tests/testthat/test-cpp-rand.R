@@ -15,7 +15,7 @@ test_that("rsurvC", {
   set.seed(50)
   samp1 <- rexp(n, rate = exp(fit.lrate))
   set.seed(50)
-  samp2 <- replicate(n, rsurvC(fit.lrate, anc1 = 0, dist = "exponential"))
+  samp2 <- replicate(n, iviRA:::rsurvC(fit.lrate, anc1 = 0, dist = "exponential"))
   expect_equal(samp1, samp2)
   
   ## weibull distribution
@@ -26,7 +26,7 @@ test_that("rsurvC", {
   set.seed(50)
   samp1 <- rweibull(n, shape = exp(fit.lshape), scale = exp(fit.lscale))
   set.seed(50)
-  samp2 <- replicate(n, rsurvC(fit.lscale, fit.lshape, dist = "weibull"))
+  samp2 <- replicate(n, iviRA:::rsurvC(fit.lscale, fit.lshape, dist = "weibull"))
   expect_equal(samp1, samp2)
   
   ## gompertz distribution
@@ -37,7 +37,7 @@ test_that("rsurvC", {
   set.seed(50)
   samp1 <- flexsurv::rgompertz(n, shape = fit.shape, rate = exp(fit.lrate))
   set.seed(50)
-  samp2 <- replicate(n, rsurvC(fit.lrate, fit.shape, dist = "gompertz"))
+  samp2 <- replicate(n, iviRA:::rsurvC(fit.lrate, fit.shape, dist = "gompertz"))
   expect_equal(samp1, samp2)
   
   ## lognormal distribution
@@ -48,7 +48,7 @@ test_that("rsurvC", {
   set.seed(50)
   samp1 <- rlnorm(n, meanlog = fit.meanlog, sdlog = exp(fit.lsdlog))
   set.seed(50)
-  samp2 <- replicate(n, rsurvC(fit.meanlog, fit.lsdlog, dist = "lnorm"))
+  samp2 <- replicate(n, iviRA:::rsurvC(fit.meanlog, fit.lsdlog, dist = "lnorm"))
   expect_equal(samp1, samp2)
   
   ## gamma distribution
@@ -59,7 +59,7 @@ test_that("rsurvC", {
   set.seed(50)
   samp1 <- rgamma(n, shape = exp(fit.lshape), rate = exp(fit.lrate))
   set.seed(50)
-  samp2 <- replicate(n, rsurvC(fit.lrate, fit.lshape, dist = "gamma"))
+  samp2 <- replicate(n, iviRA:::rsurvC(fit.lrate, fit.lshape, dist = "gamma"))
   expect_equal(samp1, samp2)
   
   ## log-logistic distribution
@@ -70,7 +70,7 @@ test_that("rsurvC", {
   set.seed(50)
   samp1 <- flexsurv::rllogis(n, shape = exp(fit.lshape), scale = exp(fit.lscale))
   set.seed(50)
-  samp2 <- replicate(n, rsurvC(fit.lscale, fit.lshape, dist = "llogis"))
+  samp2 <- replicate(n, iviRA:::rsurvC(fit.lscale, fit.lshape, dist = "llogis"))
   expect_equal(samp1, samp2)
   
   ## generalized gamma distribution
@@ -87,14 +87,14 @@ test_that("rsurvC", {
                                Q = fit.Q)
   summary(samp1)
   set.seed(50)
-  samp2 <- replicate(n, rsurvC(fit.mu, fit.lsigma, dist = "gengamma", fit.Q))
+  samp2 <- replicate(n, iviRA:::rsurvC(fit.mu, fit.lsigma, dist = "gengamma", fit.Q))
   summary(samp2)
   
   # lognormal case (Q = 0)
   set.seed(50)
   samp1 <- rlnorm(n, fit.mu, exp(fit.lsigma))
   set.seed(50)
-  samp2 <- replicate(n, rsurvC(fit.mu, fit.lsigma, dist = "gengamma", 0))
+  samp2 <- replicate(n, iviRA:::rsurvC(fit.mu, fit.lsigma, dist = "gengamma", 0))
   expect_equal(samp1, samp2)
   
   # gamma case (Q = sigma)
@@ -102,7 +102,7 @@ test_that("rsurvC", {
   samp1 <- rgamma(n, shape = 1/exp(fit.lsigma)^2, 
                   rate = exp(-fit.mu)/exp(fit.lsigma)^2)
   set.seed(50)
-  samp2 <- replicate(n, rsurvC(fit.mu, fit.lsigma, dist = "gengamma",
+  samp2 <- replicate(n, iviRA:::rsurvC(fit.mu, fit.lsigma, dist = "gengamma",
                                       exp(fit.lsigma)))
   expect_equal(samp1, samp2)
   
