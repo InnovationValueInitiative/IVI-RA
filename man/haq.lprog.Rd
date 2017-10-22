@@ -10,8 +10,9 @@
 the annual progression rate for that treatment, the standard error of the progression,
 the .025\% quantile of the progression rate and the 97.5\% quantile of the progression rate,
 respectively.}
-\item{diff.age}{A matrix with 5 columns (age, est, se, lower, upper) for the age band,
-the difference between progression rate for a given age band and the overall rate,
+\item{diff.age}{A matrix with 5 columns (age, est, se, lower, upper) for the 
+age range (\eqn{age < 40}, \eqn{40 \le age < 65}, \eqn{ age \ge 65}),
+the difference between progression rate for a given age range and the overall rate,
 the standard error of the progression rate difference, the .025\% quantile of the progression
 rate difference, and the 97.5\% quantile of the progression rate difference, respectively. }
 }}
