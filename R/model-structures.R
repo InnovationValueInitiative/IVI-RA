@@ -66,7 +66,16 @@ select_model_structures <- function(tx_ihaq = "acr-haq",
                                     ttd_cause = "all",
                                     ttd_dist = "exponential",
                                     utility_model = "mixture"){
-  # 
+  
+  # vectors must be characters
+  if(!is.character(tx_ihaq)) stop("tx_ihaq must be a character vector")
+  if(!is.character(tx_iswitch)) stop("tx_iswitch must be a character vector")
+  if(!is.character(cdmards_haq_model)) stop("cdmards_haq_model must be a character vector")
+  if(!is.character(ttd_cause)) stop("ttd_cause must be a character vector")
+  if(!is.character(ttd_dist)) stop("ttd_dist must be a character vector")
+  if(!is.character(utility_model)) stop("utility_model must be a character vector")
+  
+  # Length of all vectors must be equal but allows for some vectors to be size 1
   n <- vector(length = 6)
   n[1] <- length(tx_ihaq)
   n[2] <- length(tx_iswitch)
