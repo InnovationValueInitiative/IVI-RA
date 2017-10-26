@@ -285,6 +285,46 @@ test_that("sim_iviRA runs when n = 1", {
                NA)
 })
 
+# Law of large numbers testing
+pop <- sample_pop(n = 1000, type = "homog")
+tx <- c("etnmtx")
+input.dat <- get_input_data(pop = pop)
+parsamp <- sample_pars(n = 100, input_dat = input.dat)
+mod.structs <- select_model_structures(tx_ihaq = "acr-haq",
+                                       tx_iswitch = "acr-switch",
+                                       ttd_dist = "weibull")
+sim.out <- sim_iviRA(tx_seqs = tx, input_data = input.dat, pars = parsamp,
+                     model_structures = mod.structs, max_months = 6,
+                     output = "data")
+
+test_that("sim_iviRA law of large numbers: ACR response", {
+  sim.acr <- prop.table(table((sim.out$acr)))
+  nma.acr <- nma_acrprob(A = iviRA::nma.acr.naive$mean["A"],
+                         z2 = iviRA::nma.acr.naive$mean["z2"],
+                         z3 = iviRA::nma.acr.naive$mean["z3"],
+                         d = iviRA::nma.acr.naive$mean["d_etnmtx"])
+  expect_equal(as.numeric(sim.acr),
+               as.numeric(nma.acr$non.overlap),
+               tolerance = .01)
+})
+
+test_that("sim_iviRA law of large numbers: time to treatment discontinuation", {
+  sim.ttd.median.yrs <- median(sim.out[ttd > 0, ttd]/2)
+  weibull.est <- iviRA::ttd.all$weibull$est
+  weibull.sample.yrs <- rweibull(10000, shape = exp(weibull.est["shape"]), 
+                             scale = exp(weibull.est["scale"]))/12
+  expect_equal(sim.ttd.median.yrs,
+              median(weibull.sample.yrs),
+              tolerance = .1)
+})
+
+test_that("sim_iviRA law of large numbers: time to serious infection", {
+  sim.ttsi.mean.yrs <- mean(sim.out$ttsi/2 + .5)
+  exponential.mean.yrs <- 1/exp(iviRA::ttsi[sname == tx, lograte])
+  expect_equal(sim.ttsi.mean.yrs, exponential.mean.yrs,
+               tolerance = .1)
+})
+
 # Test sim_qalys --------------------------------------------------------------
 n <- 10
 pop <- sample_pop(n = 10)
