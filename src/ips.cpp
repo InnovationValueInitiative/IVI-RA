@@ -1325,7 +1325,7 @@ Rcpp::DataFrame sim_dhaq6C(int npats, int nsims, std::string hist, int line,
 *********************************/
 // Simulate HAQ score
 // [[Rcpp::export]] 
-List sim_iviRA_C(arma::mat arm_inds, Rcpp::DataFrame tx_data, 
+List sim_iviRA_C(arma::mat tx_inds, Rcpp::DataFrame tx_data, 
                  CharacterMatrix model_structures_mat, std::string hist,
              std::vector<double> haq0, std::vector<double> das28_0,
              std::vector<double> sdai0, std::vector<double> cdai0,
@@ -1437,7 +1437,7 @@ List sim_iviRA_C(arma::mat arm_inds, Rcpp::DataFrame tx_data,
   const int max_cycles = (int) max_months/cycle_length;
   const int treat_gap = 0;
   const int n_mods = model_structures.size();
-  const int n_treatments = arm_inds.n_cols;
+  const int n_treatments = tx_inds.n_cols;
   const int n_sims = logor_mort.n_rows;
   const int n_pat = x_mort.n_rows;
   const double disease_duration = 18.65;
@@ -1446,9 +1446,9 @@ List sim_iviRA_C(arma::mat arm_inds, Rcpp::DataFrame tx_data,
   int counter = 0;
   double cage_i = 0.0; // continuous age
   int age_i = 0;
-  int arm_row = 0;
-  arma::rowvec arm_ind_i = arm_inds.row(0);
-  int arm_ind_ij = 0;
+  int tx_row = 0;
+  arma::rowvec tx_ind_i = tx_inds.row(0);
+  int tx_ind_ij = 0;
   nmaACR nma_acr;
   nmaLM nma_haq;
   nmaLM nma_das28;
@@ -1470,7 +1470,7 @@ List sim_iviRA_C(arma::mat arm_inds, Rcpp::DataFrame tx_data,
   std::vector<int> id;
   std::vector<double> month_vec;
   std::vector<int> tx_vec;
-  std::vector<int> tx_seq;
+  std::vector<int> line;
   std::vector<int> tx_cycle;
   std::vector<int> death_vec;
   std::vector<double> age_vec;
@@ -1509,9 +1509,9 @@ List sim_iviRA_C(arma::mat arm_inds, Rcpp::DataFrame tx_data,
         double haq = haq0[i];
         int cycle = 0;
         bool final_cycle = false;
-        if (arm_inds.n_rows > 1){
-          arm_row = i;
-          arm_ind_i = arm_inds.row(i);
+        if (tx_inds.n_rows > 1){
+          tx_row = i;
+          tx_ind_i = tx_inds.row(i);
         }
         int t_cdmards = 0;
         TxISwitch tx_iswitch;
@@ -1538,41 +1538,41 @@ List sim_iviRA_C(arma::mat arm_inds, Rcpp::DataFrame tx_data,
           }
           
           if (j == n_treatments){
-            arm_ind_ij = nbt;
-            if (arm_ind_i(j-1) == cdmards){
+            tx_ind_ij = nbt;
+            if (tx_ind_i(j-1) == cdmards){
                 t_cdmards = tx_cycle[counter - 1] + 1; // note 0 otherwise
             } 
           }
           else{
-            arm_ind_ij = arm_ind_i(j);
+            tx_ind_ij = tx_ind_i(j);
           }
-          arma::rowvec x_attr_ij = x_attr.row(arm_ind_ij);
+          arma::rowvec x_attr_ij = x_attr.row(tx_ind_ij);
           
           // H1-H3: simulate change in HAQ during initial treatment phase
           nma_acr.set(hist, acr_k[s], acr_A[s], acr_z2[s], acr_z3[s],
-                      acr_d_beta.slice(arm_ind_ij).row(s), x_acr.row(i),
+                      acr_d_beta.slice(tx_ind_ij).row(s), x_acr.row(i),
                       j);
           nma_haq.set(hist, nma_haq_k[s], nma_haq_A[s],
-                      nma_haq_d_beta.slice(arm_ind_ij).row(s), x_haq.row(i),
+                      nma_haq_d_beta.slice(tx_ind_ij).row(s), x_haq.row(i),
                       j);
           nma_das28.set(hist, nma_das28_k[s], nma_das28_A[s],
-                      nma_das28_d_beta.slice(arm_ind_ij).row(s), x_das28.row(i),
+                      nma_das28_d_beta.slice(tx_ind_ij).row(s), x_das28.row(i),
                       j);
-          tx_ihaq.sim(mod_struct.tx_ihaq, j, arm_ind_ij, nbt,
+          tx_ihaq.sim(mod_struct.tx_ihaq, j, tx_ind_ij, nbt,
                                           nma_acr, nma_haq,
                                           acr2eular.slice(s), acr2haq.row(s), 
                                           eular2haq.row(s));
           
           // S1-S6: simulate treatment switching during first 6 months
-          tx_iswitch.sim(mod_struct.tx_iswitch, j, arm_ind_ij, nbt,
+          tx_iswitch.sim(mod_struct.tx_iswitch, j, tx_ind_ij, nbt,
                         tx_ihaq.acr, tx_ihaq.eular,
                         acr2das28.row(s), acr2sdai.row(s), acr2cdai.row(s),
                         nma_das28, tswitch_da.row(s));
           
           // Time to treatment discontinuation and serious infections
-          double ttsi_j = (-cycle_length/12 + rsurvC(as_scalar(si_loc.row(s).col(arm_ind_ij)), 
-                                                as_scalar(si_anc1.row(s).col(arm_ind_ij)),
-                                                si_dist,as_scalar(si_anc2.row(s).col(arm_ind_ij))
+          double ttsi_j = (-cycle_length/12 + rsurvC(as_scalar(si_loc.row(s).col(tx_ind_ij)), 
+                                                as_scalar(si_anc1.row(s).col(tx_ind_ij)),
+                                                si_dist,as_scalar(si_anc2.row(s).col(tx_ind_ij))
                                                 )) * (12/cycle_length);
           ttd.set(x_ttd_eular.row(i), x_ttd_all.row(i), x_ttd_da.row(i),
                   subset_ttd_pars(ttd_eular_mod, s, mod_struct.ttd_dist),
@@ -1603,10 +1603,10 @@ List sim_iviRA_C(arma::mat arm_inds, Rcpp::DataFrame tx_data,
             }
             
             // Did serious infection occur?
-            if ((ttsi_j < ttd_j && t > ttd_j && t < ttd_j + 1 && arm_ind_ij != nbt) ||
-                (ttsi_j < 0 && arm_ind_ij != nbt) ||
+            if ((ttsi_j < ttd_j && t > ttd_j && t < ttd_j + 1 && tx_ind_ij != nbt) ||
+                (ttsi_j < 0 && tx_ind_ij != nbt) ||
                 (mod_struct.ttd_cause == "si" && t > ttd_j && t < ttd_j + 1 &&
-                arm_ind_ij != nbt)) {
+                tx_ind_ij != nbt)) {
                   si = 1;
             } 
             
@@ -1620,11 +1620,11 @@ List sim_iviRA_C(arma::mat arm_inds, Rcpp::DataFrame tx_data,
               }
             }
             else if (t > 0 && t <= ttd_j){
-              if(mod_struct.cdmards_haq_model == "lcgm" && (arm_ind_ij == nbt || arm_ind_ij == cdmards)){
+              if(mod_struct.cdmards_haq_model == "lcgm" && (tx_ind_ij == nbt || tx_ind_ij == cdmards)){
                   haq = haq + sim_dhaq_lcgm1C(2.5 + t_cdmards * cycle_length/12, cycle_length, cage_i, 1 - male[i],
                                              das28_0[i], haq_lcgm_delta.slice(s), haq_lcgm_beta.slice(s));
               } else{
-                update_haq_t(haq, as_scalar(haq_lprog_therapy.row(s).col(arm_ind_ij)),
+                update_haq_t(haq, as_scalar(haq_lprog_therapy.row(s).col(tx_ind_ij)),
                              haq_lprog_age.row(s), cage_i, cycle_length);
               }
             }
@@ -1643,7 +1643,7 @@ List sim_iviRA_C(arma::mat arm_inds, Rcpp::DataFrame tx_data,
             }
             
             // Simulate costs
-            sim_cost.tx = sim_tx_cost1C(t, tc_agents_ind.slice(arm_row).row(j), tx_name,
+            sim_cost.tx = sim_tx_cost1C(t, tc_agents_ind.slice(tx_row).row(j), tx_name,
                                         init_dose_val, ann_dose_val, strength_val,
                                         init_num_doses, ann_num_doses, price,
                                         infusion_cost, loading_dose, 
@@ -1682,13 +1682,13 @@ List sim_iviRA_C(arma::mat arm_inds, Rcpp::DataFrame tx_data,
               sim_means.increment_id(m, s, i, cycle);
               sim_means.increment_varsums(qalys, sim_cost.tx, hosp,
                                           sim_cost.mgmt, sim_cost.si, sim_cost.prod, si,
-                                          route[arm_ind_ij], haq0[i], haq, final_cycle, 
-                                          yrs_since_approval[arm_ind_ij], age0[i]);
+                                          route[tx_ind_ij], haq0[i], haq, final_cycle, 
+                                          yrs_since_approval[tx_ind_ij], age0[i]);
               time_means.increment_id(m, s, month); //note: requires assumption of constant model cycles!!!
               time_means.increment_alive();
               time_means.increment_varsums(qalys, haq, sim_cost.tx, sim_cost.hosp, sim_cost.mgmt, 
                                            sim_cost.si, sim_cost.prod);
-              out0.push_back(t, m, s, i, arm_ind_ij, tx_ihaq.acr, tx_ihaq.eular,
+              out0.push_back(t, m, s, i, tx_ind_ij, tx_ihaq.acr, tx_ihaq.eular,
                              ttd_j, ttsi_j);
             }
             
@@ -1697,12 +1697,12 @@ List sim_iviRA_C(arma::mat arm_inds, Rcpp::DataFrame tx_data,
             sim.push_back(s);
             id.push_back(i);
             month_vec.push_back(month);
-            tx_vec.push_back(arm_ind_ij);
-            tx_seq.push_back(j);
+            tx_vec.push_back(tx_ind_ij);
+            line.push_back(j);
             tx_cycle.push_back(t);
             death_vec.push_back(death);
             age_vec.push_back(cage_i);
-            if (arm_ind_ij != nbt){
+            if (tx_ind_ij != nbt){
               ttd_vec.push_back(ttd_j - t);
             }
             else {
@@ -1715,7 +1715,7 @@ List sim_iviRA_C(arma::mat arm_inds, Rcpp::DataFrame tx_data,
             sdai_vec.push_back(tx_iswitch.sdai);
             cdai_vec.push_back(tx_iswitch.cdai);
             haq_vec.push_back(haq);
-            if (arm_ind_ij != nbt){
+            if (tx_ind_ij != nbt){
               ttsi_vec.push_back(ttsi_j - t);
             }
             else{
@@ -1762,7 +1762,7 @@ List sim_iviRA_C(arma::mat arm_inds, Rcpp::DataFrame tx_data,
       _["id"] = id,
       _["month"] = month_vec,
       _["tx"] = tx_vec,
-      _["tx_seq"] = tx_seq,
+      _["line"] = line,
       _["tx_cycle"] = tx_cycle,
       _["death"] = death_vec,
       _["age"] = age_vec,

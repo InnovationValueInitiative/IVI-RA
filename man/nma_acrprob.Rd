@@ -4,7 +4,7 @@
 \alias{nma_acrprob}
 \title{ACR response probabilities}
 \usage{
-nma_acrprob(A, z2, z3, d, rr = 1)
+nma_acrprob(A, z2, z3, d, k = 1)
 }
 \arguments{
 \item{A}{A vector from the posterior distribution of the probability that ACR response < 20 

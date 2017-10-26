@@ -27,20 +27,20 @@ For example, suppose that we want to simulate a treatment sequence of three biol
 
 
 ```{r }
-arm1 <- c("adamtx", "etnmtx", "ifxmtx")
-arm2 <- c("cdmards")
+txseq1 <- c("adamtx", "etnmtx", "ifxmtx")
+txseq2 <- c("cdmards")
 ```
 
-In some cases, it might also be useful to allow therapies to differ across patients. This could be useful when, for example, comparing treatment strategies that tailor treatment to individuals against one size fits all strategies. This can be done by creating a matrix of treatment sequences where the number of rows is equal to the number of patients in the cohort. Below we consider a scenario where some patients receive one of two sequences
+In some cases, it might also be useful to allow therapies to differ across patients. This could be useful when, for example, comparing treatment strategies that tailor treatment to individuals against one size fits all strategies. This can be done by creating a matrix of treatment sequences where the number of rows is equal to the number of patients in the cohort. Below we consider a scenario where some patients receive one of two sequences:
 
 1. adalimumab + methotrexate -> etanercept + methotrexate -> infliximab + methotrexate 
 2. etanercept + methotrexate -> adalimumab + methotrexate -> infliximab + methotrexate 
 
 ```{r }
-arm1.mat <- matrix(c("adamtx", "etnmtx", "ifxmtx", "etnmtx", "adamtx", "ifxmtx"), 
+txseq.mat <- matrix(c("adamtx", "etnmtx", "ifxmtx", "etnmtx", "adamtx", "ifxmtx"), 
                      nrow = nrow(pop), ncol = 3, byrow = TRUE)
-head(arm1.mat)
-nrow(arm1.mat)
+head(txseq.mat)
+nrow(txseq.mat)
 nrow(pop)
 ```
 

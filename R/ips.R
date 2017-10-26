@@ -2,8 +2,8 @@
 #'
 #' Run the IVI-RA individual patient simulation model.
 #' 
-#' @param arms Name of arms in the treatment sequence. May be a vector consisting of 
-#' a single treatment sequence or a matrix of unique sequences for each patient.
+#' @param tx_seqs Either a vector consisting of 
+#' a single treatment sequence or a matrix of unique treatment sequences for each patient.
 #' @param input_data An object of class 'input_data' returned from \link{get_input_data}.
 #' @param pars An object of class 'par_sample' returned from \link{sample_pars}.
 #' @param model_structures An object of class "model_structures" 
@@ -11,7 +11,7 @@
 #' @param max_months Maximum number of months to run the model for. Default is NULL which implies that
 #' the model is simulated over each patient's lifetime.
 #' @param tx_data Dataset of treatments with columns names equivalent to \code{iviRA::treatments}.
-#' Index of of treatments in \code{arms} are matched against treatments in
+#' The indices of of treatments in \code{tx_seqs} are matched against treatments in
 #' \code{tx_data$sname} by name. Indices of treatment-specific parameter estimates must be 
 #' in the same order as treatments in \code{tx_data}. 
 #' @param hist Is the patient biologic naive or biologic experienced?
@@ -55,16 +55,18 @@
 #' \item{id}{ID number denoting a simulated patients (e.g., from \link{sample_pop}).}
 #' \item{month}{Month since a simulated patient began the first treatment in a treatment sequence.}
 #' \item{tx}{Treatment used. Given J total therapies, the first J - 1 therapies match the indices from
-#'  \code{arminds}. The final \code{tx} is always the non-biologic treatment (\code{nbt_ind}).}
-#' \item{tx_seq}{Number of treatment in a treatment sequence. First treatment equal to 1, 
+#'  \code{tx_data}. The final \code{tx} is always the non-biologic treatment (\code{nbt_ind}).}
+#' \item{line}{Line of treatment in a treatment sequence. First treatment equal to 1, 
 #' second treatment equal to 2, \ldots}
 #' \item{tx_cycle}{Number of model cycles since a patient began taking a given treatment in a treatment sequence. \code{tx_cycle} = 1
 #' during the initial 6-month treatment period.}
 #' \item{death}{Equal to 1 if patient died during the model cycle and 0 otherwise. }
 #' \item{age}{Age of patient which increases with the model cycles.}
-#' \item{ttd}{Time to treatment discontinuation. Measured in terms of model cycles (e.g. ttd = 2 if treatment will discontinue in 
-#' 1 year given 6-months cycles). \code{ttd} is measured at the end of each cycle. Patients switch treatments during the cycle in which \code{ttd} 
-#' becomes negative and HAQ rebounds during the cycle.}
+#' \item{ttd}{Time to treatment discontinuation following the initial 6 month treatment period (i.e., after
+#' \code{tx_cycle=1}. Measured in terms of model cycles (e.g. ttd = 2 if treatment will discontinue in 
+#'  1 year given 6-months cycles). \code{ttd} is measured at the end of each cycle.
+#'  Patients switch treatments during the cycle in which \code{ttd} becomes negative and HAQ
+#'   rebounds during the cycle.}
 #' \item{acr}{Simulated ACR response during the initial 6-month period for a new treatment Constant within \code{tx}.
 #' Categories are 0 (ACR < 20), 1 (ACR 20-50), 2 (ACR 50-70), and 3 (ACR 70+).}
 #' \item{eular}{Simulated EULAR response during the initial 6-month period for a new treatment Constant within \code{tx}. 
@@ -164,7 +166,7 @@
 #'
 #' @examples 
 #' pop <- sample_pop(n = 10, type = "homog")
-#' arm.names <- c("adamtx", "cdmards")
+#' tx.seq <- c("adamtx", "cdmards")
 #' mod.structs <- select_model_structures(tx_ihaq = c("acr-haq", "acr-eular-haq"),
 #'                                       tx_iswitch = c("acr-switch", "acr-eular-switch"),
 #'                                       cdmards_haq_model = c("lcgm", "linear"),
@@ -173,12 +175,12 @@
 #'                                       utility_model = c("mixture", "wailoo"))
 #' input.dat <- get_input_data(pop = pop)
 #' parsamp <- sample_pars(n = 10, input_dat = input.dat)
-#' sim.out <- sim_iviRA(arms = arm.names, input_data = input.dat, pars = parsamp,
+#' sim.out <- sim_iviRA(tx_seqs = tx.seq, input_data = input.dat, pars = parsamp,
 #'                     model_structures = mod.structs, output = "data")
 #' head(sim.out)
 #' 
 #' @export 
-sim_iviRA <- function(arms, input_data, pars, model_structures, 
+sim_iviRA <- function(tx_seqs, input_data, pars, model_structures, 
                       max_months = NULL, tx_data = iviRA::treatments,
                       hist = c("naive", "experienced"),
                       output = c("data", "summary"), 
@@ -198,15 +200,35 @@ sim_iviRA <- function(arms, input_data, pars, model_structures,
     stop("The argument 'pars' must be of class 'par_sample'")
   }
   
-  ## treatment arm indices
-  if (is.vector(arms)) arms <- matrix(arms, nrow = 1)
-  arminds <- matrix(match(arms, tx_data$sname), nrow = nrow(arms),
-                    ncol = ncol(arms))
+  ## treatment indices
+  if (is.vector(tx_seqs)) tx_seqs <- matrix(tx_seqs, nrow = 1)
+  tx.inds <- matrix(match(tx_seqs, tx_data$sname), nrow = nrow(tx_seqs),
+                    ncol = ncol(tx_seqs))
+  if(any(is.na(tx.inds))){
+    stop("At least one treatment in tx_seqs is not in tx_data.")
+  }
+  
+  ## check for missing values
+  if ("das28-switch" %in% model_structures[, "tx_iswitch"]){
+    if (any(is.na(pars$das28$d[,,unique(tx.inds)]))){
+      stop(paste0("Parameter values relating treatment directly to change in DAS28 at 6 months ",
+                  "(i.e., from an NMA) are missing for ",
+                  "at least one of the treatments in your treatment sequences."))
+    }
+  }
+  
+  if ("haq" %in% model_structures[, "tx_ihaq"]){
+    if (any(is.na(pars$haq$d[,,unique(tx.inds)]))){
+      stop(paste0("Parameter values relating treatment directly to change in HAQ at 6 months ",
+            "(i.e., from an NMA) are missing for ",
+            "at least one of the treatments in your treatment sequences."))
+    }
+  }
   
   ## indexing
   cdmards.ind <- which(iviRA::treatments$sname == "cdmards") - 1
   nbt.ind <- which(iviRA::treatments$sname == "nbt") - 1
-  arminds <- arminds - 1
+  tx.inds <- tx.inds - 1
   
   ## default internal values
   treat_gap <- 0
@@ -234,11 +256,11 @@ sim_iviRA <- function(arms, input_data, pars, model_structures,
   
   ## treatment costs
   tc <- pars$tx.cost
-  tc.arms <- cbind(arms, "nbt")
-  lookup.inds <- match(tc.arms, tc$lookup$sname)
+  tc.seqs <- cbind(tx_seqs, "nbt")
+  lookup.inds <- match(tc.seqs, tc$lookup$sname)
   agents <- aperm(array(match(unlist(tc$lookup[lookup.inds, -1, with = FALSE]),
                          iviRA::tx.cost$cost$sname) - 1,
-                   dim = c(nrow(tc.arms), ncol(tc.arms), ncol(tc$lookup) - 1)),
+                   dim = c(nrow(tc.seqs), ncol(tc.seqs), ncol(tc$lookup) - 1)),
                   perm = c(2, 3, 1))
   
   ## utility parameters
@@ -251,7 +273,7 @@ sim_iviRA <- function(arms, input_data, pars, model_structures,
   parsamp.utility.wailoo <- pars$utility.wailoo[, wailoo.colindx, drop = FALSE]
 
   # Running the simulation
-  sim.out <- sim_iviRA_C(arm_inds = arminds, tx_data = tx_data,
+  sim.out <- sim_iviRA_C(tx_inds = tx.inds, tx_data = tx_data,
                          model_structures_mat = model_structures, hist = hist,
                          haq0 = input_data$haq0, das28_0 = input_data$das28,
                      sdai0 = input_data$sdai, cdai0 = input_data$cdai,
@@ -298,7 +320,7 @@ sim_iviRA <- function(arms, input_data, pars, model_structures,
       sim.out[, model := model + 1]
       sim.out[, sim := sim + 1]
       sim.out[, id := id + 1]
-      sim.out[, tx_seq := tx_seq + 1]
+      sim.out[, line := line + 1]
       sim.out[, tx_cycle := tx_cycle + 1]
       sim.out[, tx := tx + 1]
   } else{
@@ -344,11 +366,11 @@ sim_iviRA <- function(arms, input_data, pars, model_structures,
 #' 
 #' @examples
 #' pop <- sample_pop(n = 10)
-#' arm.names <- c("adamtx", "cdmards")
+#' tx.seq <- c("adamtx", "cdmards")
 #' mod.structs <- select_model_structures(utility_model = "wailoo")
 #' input.dat <- get_input_data(pop = pop)
 #' parsamp <- sample_pars(n = 10, input_dat = input.dat)
-#' sim.out <- sim_iviRA(arms = arm.names, input_data = input.dat, pars = parsamp,
+#' sim.out <- sim_iviRA(tx_seqs = tx.seq, input_data = input.dat, pars = parsamp,
 #'                     model_structures = mod.structs, output = "data")
 #' utility.mix <- sim_utility_mixture(simhaq = sim.out, male = pop[, "male"], pars = parsamp$utility.mixture)
 #' utility.wailoo <- sim_utility_wailoo(simhaq = sim.out, haq0 = pop[, "haq0"], male = pop[, "male"],
@@ -568,7 +590,7 @@ check_sim_qalys <- function(simhaq, utility, si_ul, x_attr, tx_attr_ug){
 #'
 #' Simulate change in HAQ at 6 months using different model structures relating treatment to HAQ.
 #' 
-#' @param treatments Vector of treatments arms to simulate. Should correpond to \code{sname} in 
+#' @param treatments Vector of treatments to simulate. Should correpond to \code{sname} in 
 #' \link{iviRA::treatments}.
 #' @param input_data An object of class \code{input_data} returned from \link{get_input_data}. 
 #' The only elements required are \code{x_acr} and \code{x_haq}.

@@ -4,14 +4,14 @@
 \alias{sim_iviRA}
 \title{The IVI-RA simulation}
 \usage{
-sim_iviRA(arms, input_data, pars, model_structures, max_months = NULL,
+sim_iviRA(tx_seqs, input_data, pars, model_structures, max_months = NULL,
   tx_data = iviRA::treatments, hist = c("naive", "experienced"),
   output = c("data", "summary"), discount_qalys = 0.03,
   discount_cost = 0.03)
 }
 \arguments{
-\item{arms}{Name of arms in the treatment sequence. May be a vector consisting of 
-a single treatment sequence or a matrix of unique sequences for each patient.}
+\item{tx_seqs}{Either a vector consisting of 
+a single treatment sequence or a matrix of unique treatment sequences for each patient.}
 
 \item{input_data}{An object of class 'input_data' returned from \link{get_input_data}.}
 
@@ -24,7 +24,7 @@ returned from \link{select_model_structure}.}
 the model is simulated over each patient's lifetime.}
 
 \item{tx_data}{Dataset of treatments with columns names equivalent to \code{iviRA::treatments}.
-Index of of treatments in \code{arms} are matched against treatments in
+The indices of of treatments in \code{tx_seqs} are matched against treatments in
 \code{tx_data$sname} by name. Indices of treatment-specific parameter estimates must be 
 in the same order as treatments in \code{tx_data}.}
 
@@ -77,8 +77,8 @@ Run the IVI-RA individual patient simulation model.
 \item{id}{ID number denoting a simulated patients (e.g., from \link{sample_pop}).}
 \item{month}{Month since a simulated patient began the first treatment in a treatment sequence.}
 \item{tx}{Treatment used. Given J total therapies, the first J - 1 therapies match the indices from
- \code{arminds}. The final \code{tx} is always the non-biologic treatment (\code{nbt_ind}).}
-\item{tx_seq}{Number of treatment in a treatment sequence. First treatment equal to 1, 
+ \code{tx_data}. The final \code{tx} is always the non-biologic treatment (\code{nbt_ind}).}
+\item{line}{Line of treatment in a treatment sequence. First treatment equal to 1, 
 second treatment equal to 2, \ldots}
 \item{tx_cycle}{Number of model cycles since a patient began taking a given treatment in a treatment sequence. \code{tx_cycle} = 1
 during the initial 6-month treatment period.}
@@ -192,7 +192,7 @@ cycle.}
 
 \examples{
 pop <- sample_pop(n = 10, type = "homog")
-arm.names <- c("adamtx", "cdmards")
+tx.seq <- c("adamtx", "cdmards")
 mod.structs <- select_model_structures(tx_ihaq = c("acr-haq", "acr-eular-haq"),
                                       tx_iswitch = c("acr-switch", "acr-eular-switch"),
                                       cdmards_haq_model = c("lcgm", "linear"),
@@ -201,7 +201,7 @@ mod.structs <- select_model_structures(tx_ihaq = c("acr-haq", "acr-eular-haq"),
                                       utility_model = c("mixture", "wailoo"))
 input.dat <- get_input_data(pop = pop)
 parsamp <- sample_pars(n = 10, input_dat = input.dat)
-sim.out <- sim_iviRA(arms = arm.names, input_data = input.dat, pars = parsamp,
+sim.out <- sim_iviRA(tx_seqs = tx.seq, input_data = input.dat, pars = parsamp,
                     model_structures = mod.structs, output = "data")
 head(sim.out)
 

@@ -9,7 +9,7 @@ sim_dhaq6(treatments, input_data, pars, tx_lookup = iviRA::treatments$sname,
   "acr-eular-haq", "haq"))
 }
 \arguments{
-\item{treatments}{Vector of treatments arms to simulate. Should correpond to \code{sname} in 
+\item{treatments}{Vector of treatments to simulate. Should correpond to \code{sname} in 
 \link{iviRA::treatments}.}
 
 \item{input_data}{An object of class \code{input_data} returned from \link{get_input_data}. 

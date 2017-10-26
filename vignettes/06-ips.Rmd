@@ -17,17 +17,17 @@ We run the IPS using the function `sim_iviRA`. The main arguments are the select
 Here, we return complete simulation output for Arm 1 and Arm 2.
 
 ```{r }
-sim.out1 <- sim_iviRA(arms = arm1, input_data = input.dat, pars = parsamp,
+sim.out1 <- sim_iviRA(tx_seqs = txseq1, input_data = input.dat, pars = parsamp,
                      model_structures = mod.structs, output = "data")
-sim.out1[, arm := "Arm 1"]
-sim.out2 <- sim_iviRA(arms = arm2, input_data = input.dat, pars = parsamp,
+sim.out1[, txseq := "Sequence 1"]
+sim.out2 <- sim_iviRA(tx_seqs = txseq2, input_data = input.dat, pars = parsamp,
                      model_structures = mod.structs, output = "data")
-sim.out2[, arm := "Arm 2"]
+sim.out2[, txseq := "Sequence 2"]
 sim.out <- rbind(sim.out1, sim.out2)
 head(sim.out)
 ```
 
-The output is data.table which is an enhanced data.frame from the data.table package designed for fast data manipulation. For a given model structure (`model`) and sampled parameter set (`sim`), a sampled patient (`id`) remains on a given treatment until time to treatment discontinuation (`ttd`) becomes less than zero in a given month. Treatment discontinuation is caused by a serious infection (`si = 1`) if the sampled time to serious infection at treatment initiation is less than the sampled time to discontinuation. After discontinuation, a patient switches to the next therapy and `tx_seq` increments by one. Patient age (`age`) increases in 6-month increments. 
+The output is data.table which is an enhanced data.frame from the data.table package designed for fast data manipulation. For a given model structure (`model`) and sampled parameter set (`sim`), a sampled patient (`id`) remains on a given treatment until time to treatment discontinuation (`ttd`) becomes less than zero in a given month. Treatment discontinuation is caused by a serious infection (`si = 1`) if the sampled time to serious infection at treatment initiation is less than the sampled time to discontinuation. After discontinuation, a patient switches to the next line of treatment and `line` increments by one. Patient age (`age`) increases in 6-month increments. 
 
 The HAQ score (`haq`) during the initial 6-month period (`therapy_cycle = 1`), disease activity measures (`das28`, `sdai`, and `cdai`), and `ttd` depend on the model structure chosen. For example, in the first model structure, HAQ and time to treatment discontinuation depend on ACR response (`acr`) and in turn, EULAR response (`eular`). The simulation returned NA values for the three disease activity measures because treatment switching is is not a function of disease activity (i.e., **S6** was chosen in the first model structure). The simulation ends when a patient dies (`death = 1`).
 
@@ -41,7 +41,7 @@ One drawback of returning all simulation output is that it can place significant
 In particular, by invoking the `output = summary` option, the data.table objects `means`, `time.means`, and `out0` are returned. `means` reports simulated outcomes averaged over individuals and time and `tmeans` reports simulated outcomes averaged across individuals but conditional on time. `out0` provides outcomes for the first model cycle including time to treatment discontinuation and time to a serious infection. Output is always conditional on the model structure and sampled parameter set. 
 
 ```{r }
-sim.out1.summary <- sim_iviRA(arms = arm1, input_data = input.dat, pars = parsamp,
+sim.out1.summary <- sim_iviRA(tx_seqs = txseq1, input_data = input.dat, pars = parsamp,
                      model_structures = mod.structs, output = "summary")
 head(sim.out1.summary$means)
 head(sim.out1.summary$time.means)

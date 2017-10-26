@@ -62,11 +62,11 @@ the HAQ score are taken from the simulation output.
 }
 \examples{
 pop <- sample_pop(n = 10)
-arm.names <- c("adamtx", "cdmards")
+tx.seq <- c("adamtx", "cdmards")
 mod.structs <- select_model_structures(utility_model = "wailoo")
 input.dat <- get_input_data(pop = pop)
 parsamp <- sample_pars(n = 10, input_dat = input.dat)
-sim.out <- sim_iviRA(arms = arm.names, input_data = input.dat, pars = parsamp,
+sim.out <- sim_iviRA(tx_seqs = tx.seq, input_data = input.dat, pars = parsamp,
                     model_structures = mod.structs, output = "data")
 utility.mix <- sim_utility_mixture(simhaq = sim.out, male = pop[, "male"], pars = parsamp$utility.mixture)
 utility.wailoo <- sim_utility_wailoo(simhaq = sim.out, haq0 = pop[, "haq0"], male = pop[, "male"],

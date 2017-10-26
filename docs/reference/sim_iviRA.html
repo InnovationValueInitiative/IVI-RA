@@ -169,7 +169,7 @@
     <p>Run the IVI-RA individual patient simulation model.</p>
     
 
-    <pre class="usage"><span class='fu'>sim_iviRA</span>(<span class='no'>arms</span>, <span class='no'>input_data</span>, <span class='no'>pars</span>, <span class='no'>model_structures</span>, <span class='kw'>max_months</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+    <pre class="usage"><span class='fu'>sim_iviRA</span>(<span class='no'>tx_seqs</span>, <span class='no'>input_data</span>, <span class='no'>pars</span>, <span class='no'>model_structures</span>, <span class='kw'>max_months</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>tx_data</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/treatments'>treatments</a></span>, <span class='kw'>hist</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"naive"</span>, <span class='st'>"experienced"</span>),
   <span class='kw'>output</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"data"</span>, <span class='st'>"summary"</span>), <span class='kw'>discount_qalys</span> <span class='kw'>=</span> <span class='fl'>0.03</span>,
   <span class='kw'>discount_cost</span> <span class='kw'>=</span> <span class='fl'>0.03</span>)</pre>
@@ -178,9 +178,9 @@
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>arms</th>
-      <td><p>Name of arms in the treatment sequence. May be a vector consisting of 
-a single treatment sequence or a matrix of unique sequences for each patient.</p></td>
+      <th>tx_seqs</th>
+      <td><p>Either a vector consisting of 
+a single treatment sequence or a matrix of unique treatment sequences for each patient.</p></td>
     </tr>
     <tr>
       <th>input_data</th>
@@ -203,7 +203,7 @@ the model is simulated over each patient's lifetime.</p></td>
     <tr>
       <th>tx_data</th>
       <td><p>Dataset of treatments with columns names equivalent to <code><a href='http://www.rdocumentation.org/packages/iviRA/topics/treatments'>iviRA::treatments</a></code>.
-Index of of treatments in <code>arms</code> are matched against treatments in
+The indices of of treatments in <code>tx_seqs</code> are matched against treatments in
 <code>tx_data$sname</code> by name. Indices of treatment-specific parameter estimates must be 
 in the same order as treatments in <code>tx_data</code>.</p></td>
     </tr>
@@ -264,7 +264,7 @@ the 'out0' section below.</p></dd>
 <dt>id</dt><dd><p>ID number denoting a simulated patients (e.g., from <a href='sample_pop.html'>sample_pop</a>).</p></dd>
 <dt>month</dt><dd><p>Month since a simulated patient began the first treatment in a treatment sequence.</p></dd>
 <dt>tx</dt><dd><p>Treatment used. Given J total therapies, the first J - 1 therapies match the indices from
- <code>arminds</code>. The final <code>tx</code> is always the non-biologic treatment (<code>nbt_ind</code>).</p></dd>
+ <code>tx_data</code>. The final <code>tx</code> is always the non-biologic treatment (<code>nbt_ind</code>).</p></dd>
 <dt>tx_seq</dt><dd><p>Number of treatment in a treatment sequence. First treatment equal to 1, 
 second treatment equal to 2, &#8230;</p></dd>
 <dt>tx_cycle</dt><dd><p>Number of model cycles since a patient began taking a given treatment in a treatment sequence. <code>tx_cycle</code> = 1
@@ -378,7 +378,7 @@ cycle.</p></dd>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='no'>pop</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='sample_pop.html'>sample_pop</a></span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"homog"</span>)
-<span class='no'>arm.names</span> <span class='kw'>&lt;-</span> <span class='fu'>c</span>(<span class='st'>"adamtx"</span>, <span class='st'>"cdmards"</span>)
+<span class='no'>tx.seq</span> <span class='kw'>&lt;-</span> <span class='fu'>c</span>(<span class='st'>"adamtx"</span>, <span class='st'>"cdmards"</span>)
 <span class='no'>mod.structs</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='select_model_structures.html'>select_model_structures</a></span>(<span class='kw'>tx_ihaq</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"acr-haq"</span>, <span class='st'>"acr-eular-haq"</span>),
                                       <span class='kw'>tx_iswitch</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"acr-switch"</span>, <span class='st'>"acr-eular-switch"</span>),
                                       <span class='kw'>cdmards_haq_model</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"lcgm"</span>, <span class='st'>"linear"</span>),
@@ -387,29 +387,29 @@ cycle.</p></dd>
                                       <span class='kw'>utility_model</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"mixture"</span>, <span class='st'>"wailoo"</span>))
 <span class='no'>input.dat</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='get_input_data.html'>get_input_data</a></span>(<span class='kw'>pop</span> <span class='kw'>=</span> <span class='no'>pop</span>)
 <span class='no'>parsamp</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='sample_pars.html'>sample_pars</a></span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>input_dat</span> <span class='kw'>=</span> <span class='no'>input.dat</span>)
-<span class='no'>sim.out</span> <span class='kw'>&lt;-</span> <span class='fu'>sim_iviRA</span>(<span class='kw'>arms</span> <span class='kw'>=</span> <span class='no'>arm.names</span>, <span class='kw'>input_data</span> <span class='kw'>=</span> <span class='no'>input.dat</span>, <span class='kw'>pars</span> <span class='kw'>=</span> <span class='no'>parsamp</span>,
+<span class='no'>sim.out</span> <span class='kw'>&lt;-</span> <span class='fu'>sim_iviRA</span>(<span class='kw'>tx_seqs</span> <span class='kw'>=</span> <span class='no'>tx.seq</span>, <span class='kw'>input_data</span> <span class='kw'>=</span> <span class='no'>input.dat</span>, <span class='kw'>pars</span> <span class='kw'>=</span> <span class='no'>parsamp</span>,
                     <span class='kw'>model_structures</span> <span class='kw'>=</span> <span class='no'>mod.structs</span>, <span class='kw'>output</span> <span class='kw'>=</span> <span class='st'>"data"</span>)
-<span class='fu'>head</span>(<span class='no'>sim.out</span>)</div><div class='output co'>#&gt;    model sim id month tx tx_seq tx_cycle death  age        ttd acr eular das28
-#&gt; 1:     1   1  1     6  3      1        1     0 55.0  1.3278927   1    NA     6
-#&gt; 2:     1   1  1    12  3      1        2     0 55.5  0.3278927   1    NA     6
-#&gt; 3:     1   1  1    18  3      1        3     0 56.0 -0.6721073   1    NA     6
-#&gt; 4:     1   1  1    24  1      2        1     0 56.5  0.0000000   0    NA     6
-#&gt; 5:     1   1  1    30 14      3        1     0 57.0         NA   0    NA     6
-#&gt; 6:     1   1  1    36 14      3        2     0 57.5         NA   0    NA     6
-#&gt;    sdai cdai      haq     ttsi si yrlen    tx_cost hosp_days hosp_cost
-#&gt; 1:   43   41 1.038255 8.581680  0   0.5 21582.9359 0.3935154  417.0226
-#&gt; 2:   43   41 1.039709 7.581680  0   0.5 21582.9359 0.3935154  417.0226
-#&gt; 3:   43   41 1.443554 6.581680  0   0.5 21582.9359 0.3935154  417.0226
-#&gt; 4:   43   41 1.443554 1.661068  0   0.5   653.7732 0.3935154  417.0226
-#&gt; 5:   43   41 1.443554       NA  0   0.5   653.7732 0.3935154  417.0226
-#&gt; 6:   43   41 1.474925       NA  0   0.5   653.7732 0.3935154  417.0226
-#&gt;    mgmt_cost si_cost prod_loss   utility      qalys
-#&gt; 1:  193.3491       0  3499.935 0.7488349 0.37441746
-#&gt; 2:  193.3491       0  3504.835 0.6677723 0.33388617
-#&gt; 3:  193.3491       0  4866.189 0.6898508 0.34492539
-#&gt; 4:  193.3491       0  4866.189 0.5878675 0.29393373
-#&gt; 5:  193.3491       0  4866.189 0.6311877 0.31559386
-#&gt; 6:  193.3491       0  4971.942 0.1042358 0.05211792</div><div class='input'>
+<span class='fu'>head</span>(<span class='no'>sim.out</span>)</div><div class='output co'>#&gt;    model sim id month tx tx_seq tx_cycle death  age      ttd acr eular das28
+#&gt; 1:     1   1  1     6  3      1        1     0 55.0 20.78231   1    NA    NA
+#&gt; 2:     1   1  1    12  3      1        2     0 55.5 19.78231   1    NA    NA
+#&gt; 3:     1   1  1    18  3      1        3     0 56.0 18.78231   1    NA    NA
+#&gt; 4:     1   1  1    24  3      1        4     0 56.5 17.78231   1    NA    NA
+#&gt; 5:     1   1  1    30  3      1        5     0 57.0 16.78231   1    NA    NA
+#&gt; 6:     1   1  1    36  3      1        6     0 57.5 15.78231   1    NA    NA
+#&gt;    sdai cdai       haq     ttsi si yrlen  tx_cost hosp_days hosp_cost mgmt_cost
+#&gt; 1:   NA   NA 1.0213851 6.554679  0   0.5 21184.95 0.7402112 1109.4537  192.7529
+#&gt; 2:   NA   NA 1.0157794 5.554679  0   0.5 21184.95 0.7402112 1109.4537  192.7529
+#&gt; 3:   NA   NA 1.0101737 4.554679  0   0.5 21184.95 0.7402112 1109.4537  192.7529
+#&gt; 4:   NA   NA 1.0045680 3.554679  0   0.5 21184.95 0.7402112 1109.4537  192.7529
+#&gt; 5:   NA   NA 0.9989624 2.554679  0   0.5 21184.95 0.2274975  320.0589  192.7529
+#&gt; 6:   NA   NA 0.9933567 1.554679  0   0.5 21184.95 0.2274975  320.0589  192.7529
+#&gt;    si_cost prod_loss   utility     qalys
+#&gt; 1:       0  4766.272 0.7083124 0.3541562
+#&gt; 2:       0  4740.114 0.7993602 0.3996801
+#&gt; 3:       0  4713.955 0.6103863 0.3051932
+#&gt; 4:       0  4687.796 0.7506935 0.3753468
+#&gt; 5:       0  4661.637 0.6416012 0.3208006
+#&gt; 6:       0  4635.479 0.7459858 0.3729929</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

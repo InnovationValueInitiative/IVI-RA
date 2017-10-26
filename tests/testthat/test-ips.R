@@ -12,14 +12,23 @@ cdai.0 <- formals(sample_pop)$cdai_mean
 pop <- sample_pop(n = 30, type = "homog", haq0_mean = haq0,
                   das28_mean = das28.0, sdai_mean = sdai.0, 
                   cdai_mean = cdai.0)
-arm.names <- c("etnmtx", "cdmards")
+tx.seq <- c("etnmtx", "cdmards")
 input.dat <- get_input_data(pop = pop)
 parsamp <- sample_pars(n = 30, input_dat = input.dat)
+
+# Structures with length > 1
+mod.structs <- select_model_structures(tx_ihaq = c("acr-haq", "acr-eular-haq"),
+                                       tx_iswitch = c("acr-switch", "acr-eular-switch"),
+                                       cdmards_haq_model = c("lcgm", "linear"),
+                                       ttd_cause = c("all", "si"),
+                                       ttd_dist = c("gengamma", "exponential"))
+sim.out <- sim_iviRA(tx_seqs = tx.seq, input_data = input.dat, pars = parsamp,
+                     model_structures = mod.structs, output = "data")
 
 # Stucture = tx_ihaq = "acr-haq", tx_iswitch = "acr-switch"
 mod.structs <- select_model_structures(tx_ihaq = "acr-haq",
                                      tx_iswitch = "acr-switch")
-sim.out <- sim_iviRA(arms = arm.names, input_data = input.dat, pars = parsamp,
+sim.out <- sim_iviRA(tx_seqs = tx.seq, input_data = input.dat, pars = parsamp,
                      model_structures = mod.structs, output = "data")
 sim.out[, dhaq := ifelse(month == 6, haq - haq0,
                          haq - shift(haq)), by = c("model", "sim", "id")]
@@ -27,7 +36,7 @@ sim.out[, dhaq := ifelse(month == 6, haq - haq0,
 test_that("sim_iviRA ACR to HAQ ", {
   tmp.sim <- 1
   x <- sim.out[model == 1 & sim == tmp.sim & tx_cycle == 1 & tx != nbt.ind & si !=1, 
-                .(id, tx, tx_seq, acr, haq, dhaq)]
+                .(id, tx, line, acr, haq, dhaq)]
   expect_equal(unique(x[acr == 0, dhaq]), 0) # acr = 0 implies dhaq = 0 because acr-switch implies switch/rebound
   expect_equal(unique(x[acr == 1, round(dhaq, 4)]), 
                as.numeric(round(parsamp$acr2haq[tmp.sim, 2], 4)))
@@ -56,7 +65,7 @@ sim_da <- function(da_name = c("das28", "sdai", "cdai"), da0){
   }
   mod.structs <- select_model_structures(tx_ihaq = "acr-haq",
                                          tx_iswitch = tx.iswitch)
-  sim.out <- sim_iviRA(arms = arm.names, input_data = input.dat, pars = parsamp,
+  sim.out <- sim_iviRA(tx_seqs = tx.seq, input_data = input.dat, pars = parsamp,
                        model_structures = mod.structs, output = "data")
   sim.out[, paste0("d", da.name) := ifelse(month == 6, get(da.name) - da0,
                                            get(da.name) - shift(get(da.name))),
@@ -78,7 +87,7 @@ expect_acr2da <- function(sim, sim.num, da_name = c("das28", "sdai", "cdai")){
   
   # first 6 months
   x <- sim[model == 1 & sim == sim.num & tx_cycle == 1 & si !=1, 
-               c("id", "tx", "tx_seq", "acr", da.name, dda.name),
+               c("id", "tx", "line", "acr", da.name, dda.name),
                with = FALSE]
   x <- x[get(da.name) > 0] # da measures cannot go below 0
   expect_equal(unique(x[acr == 0, round(get(dda.name), 2)]), 
@@ -92,7 +101,7 @@ expect_acr2da <- function(sim, sim.num, da_name = c("das28", "sdai", "cdai")){
   
   # beyond 6 months
   x <- sim.out[model == 1 & sim == sim.num & tx_cycle > 1 & si !=1, 
-               c("id", "tx", "tx_seq", "acr", da.name, dda.name),
+               c("id", "tx", "line", "acr", da.name, dda.name),
                with = FALSE]
   expect_equal(unique(x[[dda.name]]), 0)
 }
@@ -131,7 +140,7 @@ test_that("sim_iviRA DAS28 and SDAI should be NA if acr-das28 is chosen",{
 # assuming constant impact of tx on DAS28 across patients
 mod.structs <- select_model_structures(tx_ihaq = "acr-haq",
                                        tx_iswitch = "das28-switch")
-sim.out <- sim_iviRA(arms = arm.names, input_data = input.dat, pars = parsamp,
+sim.out <- sim_iviRA(tx_seqs = tx.seq, input_data = input.dat, pars = parsamp,
                      model_structures = mod.structs, output = "data")
 sim.out[, ddas28 := ifelse(month == 6, das28 - das28.0,
                          das28 - shift(das28)), by = c("model", "sim", "id")]
@@ -139,7 +148,7 @@ sim.out[, ddas28 := ifelse(month == 6, das28 - das28.0,
 test_that("sim_iviRA impact of tx on change in DAS28 at 6 months",{
   sim.num <- 2
   x <- sim.out[model == 1 & sim == sim.num & tx_cycle == 1 & tx != nbt.ind, 
-               .(id, tx, tx_seq, das28, ddas28)]
+               .(id, tx, line, das28, ddas28)]
   tx.inds <- unique(x$tx)
   ddas28 <- parsamp$das28$A[sim.num] + parsamp$das28$d[sim.num,, tx.inds]
   expect_equal(unique(round(x[tx == tx.inds[1], ddas28], 4)),
@@ -151,7 +160,7 @@ test_that("sim_iviRA impact of tx on change in DAS28 at 6 months",{
 # Stucture = tx_ihaq = "acr-eular-haq", tx_iswitch = "acr-switch"
 mod.structs <- select_model_structures(tx_ihaq = "acr-eular-haq",
                                        tx_iswitch = "acr-switch")
-sim.out <- sim_iviRA(arms = arm.names, input_data = input.dat, pars = parsamp,
+sim.out <- sim_iviRA(tx_seqs = tx.seq, input_data = input.dat, pars = parsamp,
                      model_structures = mod.structs, output = "data")
 sim.out[, dhaq := ifelse(month == 6, haq - haq0,
                          haq - shift(haq)), by = c("model", "sim", "id")]
@@ -160,7 +169,7 @@ sim.out[, N := .N, by = c("model", "sim", "id", "tx")]
 test_that("sim_iviRA EULAR to HAQ", {
   sim.num <- 4
   x <- sim.out[model == 1 & sim == sim.num & tx_cycle == 1 & tx != nbt.ind, 
-               .(id, tx, tx_seq, N, acr, eular, haq, dhaq)]
+               .(id, tx, line, N, acr, eular, haq, dhaq)]
   expect_equal(unique(x[eular == 0, round(dhaq, 4)]), 
                as.numeric(round(parsamp$eular2haq[sim.num, 1], 4)))
   expect_equal(unique(x[eular == 1 & N > 1, round(dhaq, 4)]), 
@@ -183,7 +192,7 @@ input.dat <- get_input_data(pop = pop)
 mod.structs <- select_model_structures(tx_ihaq = "haq",
                                        tx_iswitch = "das28-switch")
 parsamp <- sample_pars(n = 30, input_dat = input.dat)
-sim.out <- sim_iviRA(arms = arm.names, input_data = input.dat, pars = parsamp,
+sim.out <- sim_iviRA(tx_seqs = tx.seq, input_data = input.dat, pars = parsamp,
                      model_structures = mod.structs,
                      output = "data")
 sim.out[, dhaq := ifelse(month == 6, haq - haq0,
@@ -194,7 +203,7 @@ sim.out[, N := .N,  by = c("model", "sim", "id", "tx")]
 test_that("sim_iviRA direct effect of tx on HAQ", {
   sim.num <- 4
   x <- sim.out[model == 1 & sim == sim.num & tx_cycle == 1 & tx != nbt.ind & N > 1, 
-               .(id, tx, tx_seq, haq, dhaq)]
+               .(id, tx, line, haq, dhaq)]
   tx.inds <- unique(x$tx)
   dhaq <- parsamp$haq$A[sim.num] + parsamp$haq$d[sim.num, , tx.inds]
   expect_equal(as.numeric(round(dhaq[1], 4)), 
@@ -204,7 +213,7 @@ test_that("sim_iviRA direct effect of tx on HAQ", {
 })
 
 # Structure: cdmards_haq_model = "linear"
-sim.out <- sim_iviRA(arms = arm.names, input_data = input.dat, pars = parsamp,
+sim.out <- sim_iviRA(tx_seqs = tx.seq, input_data = input.dat, pars = parsamp,
                      model_structures = select_model_structures(cdmards_haq_model = "linear"),
                      output = "data")
 sim.out[, dhaq := ifelse(month == 6, haq - haq0,
@@ -215,7 +224,7 @@ test_that("sim_iviRA change in maintenance HAQ with linear progression",{
   sim.num <- 4
   x <- sim.out[model == 1 & sim == sim.num & tx_cycle > 1 & 
                  age >= 40 & age < 65 & tx_cycle != N, 
-               .(id, tx, tx_seq, age, haq, dhaq)]
+               .(id, tx, line, age, haq, dhaq)]
   tx.inds <- unique(x$tx)
   dhaq.tx <- parsamp$haq.lprog.tx[sim.num, tx.inds]
   dhaq.age <- parsamp$haq.lprog.age[sim.num, 2] 
@@ -226,7 +235,7 @@ test_that("sim_iviRA change in maintenance HAQ with linear progression",{
 })
 
 # Stucture: ttd_cause = "all"
-sim.out <- sim_iviRA(arms = arm.names, input_data = input.dat, pars = parsamp,
+sim.out <- sim_iviRA(tx_seqs = tx.seq, input_data = input.dat, pars = parsamp,
                      model_structures = select_model_structures(ttd_cause = "all"),
                      output = "data")
 
@@ -237,7 +246,7 @@ test_that("sim_iviRA serious infections",{
 })
 
 # Structure: any
-sim.out <- sim_iviRA(arms = arm.names, input_data = input.dat, pars = parsamp,
+sim.out <- sim_iviRA(tx_seqs = tx.seq, input_data = input.dat, pars = parsamp,
                      model_structures = select_model_structures(),
                      output = "data")
 ## Costs
@@ -268,10 +277,10 @@ test_that("sim_iviRA productivity losses",{
 })
 
 test_that("sim_iviRA runs when n = 1", {
-  arm.names <- c("etnmtx", "cdmards")
+  tx.seq <- c("etnmtx", "cdmards")
   input.dat <- get_input_data(pop = sample_pop(n = 1))
   parsamp <- sample_pars(n = 1, input_dat = input.dat)
-  expect_error(sim_iviRA(arms = arm.names, input_data = input.dat, pars = parsamp,
+  expect_error(sim_iviRA(tx_seqs = tx.seq, input_data = input.dat, pars = parsamp,
                          model_structures = select_model_structures(), output = "data"),
                NA)
 })

@@ -64,7 +64,7 @@ print(mod.structs)
 
 <div>
 <ul class="pager">
-  <li class="previous"><a href="02-arms.html">Previous</a></li>
+  <li class="previous"><a href="02-tx-seqs.html">Previous</a></li>
   <li class="next"><a href="04-input-data.html">Next</a></li>
 </ul>
 </div>

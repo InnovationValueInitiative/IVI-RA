@@ -169,7 +169,7 @@ CACHE <- TRUE
 \phantomsection
 \section*{Executive summary}\label{sec:executive-summary}
 \addcontentsline{toc}{section}{Executive summary}
-This document describes version 1.0 of the \href{http://www.thevalueinitiative.org/}{Innovation and Value Initiative's (IVI's)} individual patient simulation model for rheumatoid arthritis (RA) (the IVI-RA model). The model simulates the costs, health outcomes, and risks associated with disease-modifying anti-rheumatic drugs (DMARDs) and biologic DMARDSs (bDMARDs) for patients with moderate to severe rheumatoid arthritis (RA). The model is intended to help decision-makers assess the value of treatments for RA given a patient population of interest. 
+This document describes version 1.0 of the \href{http://www.thevalueinitiative.org/}{Innovation and Value Initiative's (IVI's)} individual patient simulation model for rheumatoid arthritis (RA) (the IVI-RA model). The model simulates the costs, health outcomes, and risks associated with disease-modifying anti-rheumatic drugs (DMARDs) and biologic DMARDSs (bDMARDs) for patients with moderate to severe rheumatoid arthritis (RA). The model is intended to help decision-makers assess the value of treatments for a population of patients with RA.
 
 \subsection*{Open-Source Value Project}
 The IVI-RA model is part of IVI's Open Source Value Project (OSVP), which is building an open, collaborative, and consensus-based process for the development of tools for value assessment. Models developed by the OSVP process are iterative, evolving as the science of value assessment advances and as new evidence becomes available.
@@ -608,10 +608,10 @@ Any combination of simulated model outcomes can be used for MCDA. In IVI's user 
 The effect of treatment on ACR response, DAS28, and HAQ at 6 months for bDMARD naive patients are estimated using Bayesian network meta-analyses (NMA) of published randomized controlled trials (RCTs). Primary outcomes were ACR response, change in DAS28 from baseline at 6 months, and the change in HAQ from baseline at 6 months. Results from the NMA are shown in \autoref{tbl:nma-acr-das28-haq}. Details of the systematic literature review and the statistical methodology are provided in the Appendix (\autoref{app:nma-statistical-models}).
 
 <<nma_results, cache=CACHE, echo=FALSE, include=FALSE>>=
-arm.snames <- c("cdmards", "abtivmtx", "adamtx", "etnmtx", "golmtx", "ifxmtx", "tczmtx", "czpmtx", "abtscmtx", "rtxmtx", "tofmtx")
+tx.snames <- c("cdmards", "abtivmtx", "adamtx", "etnmtx", "golmtx", "ifxmtx", "tczmtx", "czpmtx", "abtscmtx", "rtxmtx", "tofmtx")
 nsims <- 1000
-arminds <- which(iviRA::treatments$sname %in% arm.snames)
-arm.names <- iviRA::treatments[sname %in% arm.snames, mname]
+tx.inds <- which(iviRA::treatments$sname %in% tx.snames)
+tx.names <- iviRA::treatments[sname %in% tx.snames, mname]
 format_table <- function(m, l, u, digits = 3){
   m <- formatC(m, format = "f", digits = digits)
   l <- formatC(l, format = "f", digits = digits)
@@ -642,8 +642,8 @@ acr.mean <- formatC(apply(acr.prob$overlap, c(3, 2), mean), format = "f", digits
 acr.l <- formatC(apply(acr.prob$overlap, c(3, 2), quantile, .025, na.rm = TRUE), format = "f", digits = 3)
 acr.u <- formatC(apply(acr.prob$overlap, c(3,2), quantile, .975, na.rm = TRUE), format = "f", digits = 3)
 acr.tab <- format_table(acr.mean, acr.l, acr.u, digits = 3)
-acr.tab <- acr.tab[arminds, ]
-rownames(acr.tab) <- arm.names
+acr.tab <- acr.tab[tx.inds, ]
+rownames(acr.tab) <- tx.names
 
 # DAS28
 das28.pars <- sample_nma_lm(nsims, m = iviRA::nma.das28.naive$mean,
@@ -657,7 +657,7 @@ das28.mean <- apply(das28.dy, 2, mean)
 das28.l <- apply(das28.dy, 2, quantile, .025, na.rm = TRUE)
 das28.u <- apply(das28.dy, 2, quantile, .975, na.rm = TRUE)
 das28.tab <- format_table(das28.mean, das28.l, das28.u, digits = 3)
-das28.tab <- das28.tab[arminds]
+das28.tab <- das28.tab[tx.inds]
 
 # HAQ
 haq.pars <- sample_nma_lm(nsims, m = iviRA::nma.haq.naive$mean,
@@ -671,11 +671,11 @@ haq.mean <- apply(haq.dy, 2, mean)
 haq.l <- apply(haq.dy, 2, quantile, .025, na.rm = TRUE)
 haq.u <- apply(haq.dy, 2, quantile, .975, na.rm = TRUE)
 haq.tab <- format_table(haq.mean, haq.l, haq.u, digits = 3)
-haq.tab <- haq.tab[arminds]
+haq.tab <- haq.tab[tx.inds]
 
 # NICE vs IVI NMA
 nice.po <- iviRA::nma.acr.naive.nice$p.overlap
-pos <- which(rownames(nice.po) %in% arm.snames)
+pos <- which(rownames(nice.po) %in% tx.snames)
 nice.po <- formatC(nice.po[pos, -1], format = "f", digits = 3)
 nice.po <- trimws(nice.po)
 nice.po[nice.po == "NA"] <- "-"
@@ -715,7 +715,7 @@ Notes: ACR20/50/70 categories are the probability of at least a 20/50/70\% impro
 \end{center}
 \end{sidewaystable}
 
-Its important to note that treatment effects for each bDMARD were estimated relative to cDMARDs and then applied to the average response for patients using cDMARDs. A limitation of our current approach is that that the average response for patients using cDMARDs is estimated using data from the clinical trials include in the NMA, and may not reflect outcomes seen in routine practice. Future versions of the model could consider using real-world data instead of clinicial tial evidence to estimate this average response.
+Its important to note that treatment effects for each bDMARD were estimated relative to cDMARDs and then applied to the average response for patients using cDMARDs. A limitation of our current approach is that that the average response for patients using cDMARDs is estimated using data from the clinical trials include in the NMA, and may not reflect outcomes seen in routine practice. Future versions of the model could consider using real-world data instead of clinicial trial evidence to estimate this average response.
 
 Given that there is limited evidence that treatment effects vary across patients in the published literature, treatment response at 6 months for a given treatment does not vary according to patient characteristics. Nonetheless, in our \R{} package, treatment effects for each simulated patient can be modeled as a function of any variables chosen by the user. Our approach to modeling treatment effect heterogeneity is described in \autoref{app:nma-statistical-models}  
 
@@ -1213,40 +1213,40 @@ set.seed(100)
 pop <- sample_pop(n = 1000)
 input.dat <- get_input_data(pop = pop)
 parsamp <- sample_pars(n = 1000, input_data = input.dat)
-arm.snames <- c("cdmards", "adamtx")
-arm.names <- c("cDMARDs or NBT", "bDMARDs")
+tx.snames <- c("cdmards", "adamtx")
+tx.names <- c("cDMARDs or NBT", "bDMARDs")
 dur.dist <- c("exponential", "weibull", "gompertz", "gamma", "llogis", "lnorm", "gengamma")
 dur.dist.l <- c("Exponential", "Weibull", "Gompertz", "Gamma", "Log-logistic", "Lognormal",
                    "Generalized gamma")
-sim6 <- vector(length(dur.dist) * length(arm.snames), mode = "list")
+sim6 <- vector(length(dur.dist) * length(tx.snames), mode = "list")
 counter <- 1
-for (i in 1:length(arm.snames)){
+for (i in 1:length(tx.snames)){
   for(j in 1:length(dur.dist)){
     mod.struct <- select_model_structures(tx_ihaq = "acr-haq",
                                      tx_iswitch = "acr-switch",
                                      cdmards_haq_model = "lcgm",
                                      ttd_dist = dur.dist[i],
                                      utility_model = "wailoo")
-    sim6[[counter]] <- sim_iviRA(arms = arm.snames[i], input_data = input.dat, pars = parsamp,
+    sim6[[counter]] <- sim_iviRA(tx_seqs = tx.snames[i], input_data = input.dat, pars = parsamp,
                      model_structures = mod.struct, max_months = 6)
     sim6[[counter]][, dur_dist := dur.dist.l[j]]
-    sim6[[counter]][, arm := arm.names[i]]
+    sim6[[counter]][, txseq := tx.names[i]]
     counter <- counter + 1
-    print(paste0("arm ", i, ", distribution ", j))
+    print(paste0("txseq ", i, ", distribution ", j))
   }
 }
 sim6 <- rbindlist(sim6)
 sim6[, si_ever := ifelse(ttsi <= ttd, 1, 0)]
-si.prop <- sim6[, .(si = mean(si_ever)), by = c("dur_dist", "arm", "sim")]
+si.prop <- sim6[, .(si = mean(si_ever)), by = c("dur_dist", "txseq", "sim")]
 si.prop <- si.prop[, .(si_mean = mean(si), si_lower = quantile(si, .025),
-                       si_upper = quantile(si, .974)), by = c("dur_dist", "arm")]
+                       si_upper = quantile(si, .974)), by = c("dur_dist", "txseq")]
 
 # tables comparing serious infection rates by drugs
-si1.mtx <- si.prop[dur_dist == "Generalized gamma" & arm == "cDMARDs or NBT",
+si1.mtx <- si.prop[dur_dist == "Generalized gamma" & txseq == "cDMARDs or NBT",
                    si_mean]
-si1.bio <- si.prop[dur_dist == "Generalized gamma" & arm == "bDMARDs",
+si1.bio <- si.prop[dur_dist == "Generalized gamma" & txseq == "bDMARDs",
                    si_mean]
-tab1 <- si.prop[dur_dist == "Generalized gamma", .(arm, si_mean, si_lower, si_upper)]
+tab1 <- si.prop[dur_dist == "Generalized gamma", .(txseq, si_mean, si_lower, si_upper)]
 tab1[, si_mean := formatC(si_mean, format = "f", digits = 4)]
 tab1[, si_lower := formatC(si_lower, format = "f", digits = 4)]
 tab1[, si_upper := formatC(si_upper, format = "f", digits = 4)]
@@ -1256,7 +1256,7 @@ tex <- print(xtable(tab1),
       file = "tables/si-prop-gengamma.txt")
 
 # tables comparing serious infection by distribution
-tab2 <- si.prop[arm == arm.names[1], .(dur_dist, si_mean)]
+tab2 <- si.prop[txseq == tx.names[1], .(dur_dist, si_mean)]
 tab2[, si_mean := formatC(si_mean, format = "f", digits = 4)]
 tex <- print(xtable(tab2),
       include.rownames = FALSE, include.colnames = FALSE,

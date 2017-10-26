@@ -7,7 +7,7 @@ articles:
     contents:
     - 00-intro
     - 01-population
-    - 02-arms
+    - 02-tx-seqs
     - 03-structures
     - 04-input-data
     - 05-parameters
@@ -85,7 +85,7 @@ navbar:
       - text: "1. Generate population"
         href: articles/01-population.html
       - text: "2. Select treatment sequences"
-        href: articles/02-arms.html
+        href: articles/02-tx-seqs.html
       - text: "3. Select model structures"
         href: articles/03-structures.html
       - text: "4. Generate input data"

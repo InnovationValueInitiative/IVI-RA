@@ -56,7 +56,10 @@ nma_lm_dy <- function(A, d){
 #' ACR 50-70, and ACR 70+) and \code{overlap} (the probability of ACR20/50/70).
 #' 
 #' @export
-nma_acrprob <- function(A, z2, z3, d, rr = 1){
+nma_acrprob <- function(A, z2, z3, d, k = 1){
+  if(is.vector(d)){
+    d <- matrix(d, ncol = 1)
+  }
   nther <- ncol(d)
   nsims <- length(A)
   p <- array(NA, dim = c(nsims, 4, nther))
