@@ -21,7 +21,7 @@ library(iviRA)
 * [Model description](https://innovationvalueinitiative.github.io/IVI-RA/model-description/model-description.pdf)
 
 ## Collaborate
-* If you found a bug or would like to request a new feature request, then submit an [issue](https://github.com/InnovationValueInitiative/IVI-RA/issues).
+* If you found a bug or would like to request a new feature, then submit an [issue](https://github.com/InnovationValueInitiative/IVI-RA/issues).
 * If you would like to contribute to the code base, then create a pull request. We, for the most part, adhere to Hadley Wickham's [style guide](http://adv-r.had.co.nz/Style.html). The one exception is that we use dots to separate object names as in my.name.
 
 
