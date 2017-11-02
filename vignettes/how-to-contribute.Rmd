@@ -1,5 +1,5 @@
 ---
-title: "Ways to contribute"
+title: "How to contribute"
 output: html_document
 ---
 
