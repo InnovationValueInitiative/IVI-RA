@@ -15,7 +15,7 @@ articles:
     - 07-analysis
   - title: "Collaborate"
     contents:
-    - ways-to-contribute
+    - how-to-contribute
     - suggested-improvements
     - pull-requests
   - title: "About"
@@ -100,12 +100,10 @@ navbar:
     href: reference/index.html
   - text: "Collaborate"
     menu:
-      - text: "Ways to contribute"
-        href: articles/ways-to-contribute.html
+      - text: "How to contribute"
+        href: articles/how-to-contribute.html
       - text: "Suggested improvements"
         href: articles/suggested-improvements.html
-      - text: "GitHub pull requests"
-        href: articles/pull-requests.html
   - text: "About"
     menu:
       - text: "OSVP"
@@ -119,7 +117,7 @@ navbar:
         href: articles/hesim.html
   - text: "Web apps"
     menu:
-      - text: "IVI-RA model web interface"
+      - text: "IVI-RA Model Interface"
         href: https://innovationandvalueinitiative.shinyapps.io/ivi-ra-expert/
       - text: "IVI-RA Value Tool"
         href: https://innovationandvalueinitiative.shinyapps.io/ivi-ra/

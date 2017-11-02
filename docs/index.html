@@ -42,7 +42,7 @@
       <a href="articles/01-population.html">1. Generate population</a>
     </li>
     <li>
-      <a href="articles/02-arms.html">2. Select treatment sequences</a>
+      <a href="articles/02-tx-seqs.html">2. Select treatment sequences</a>
     </li>
     <li>
       <a href="articles/03-structures.html">3. Select model structures</a>
@@ -72,13 +72,10 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="articles/ways-to-contribute.html">Ways to contribute</a>
+      <a href="articles/how-to-contribute.html">How to contribute</a>
     </li>
     <li>
       <a href="articles/suggested-improvements.html">Suggested improvements</a>
-    </li>
-    <li>
-      <a href="articles/pull-requests.html">GitHub pull requests</a>
     </li>
   </ul>
 </li>
@@ -112,7 +109,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra-expert/">IVI-RA model web interface</a>
+      <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra-expert/">IVI-RA Model Interface</a>
     </li>
     <li>
       <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra/">IVI-RA Value Tool</a>
@@ -138,17 +135,13 @@
       
       </header><div class="row">
   <div class="contents col-md-9">
-    
-<div id="overview" class="section level1">
+    <div id="overview" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#overview" class="anchor"></a>Overview</h1></div>
-<p><code>iviRA</code> is an R package that runs the <a href="http://www.thevalueinitiative.org/">Innovation and Value Initiative’s (IVI’s)</a> individual patient simulation model for rheumatoid arthritis. The IVI-RA model is an iterative open-source model that is updated according to evidence-based suggestions for improvement. Information on the collaborative and consensus-based process can be found <a href="articles/ways-to-contribute.html">here</a>.</p>
-<p>The model simulates the costs, health outcomes, and risks associated with disease-modifying anti-rheumatic drugs (DMARDs) and biologic DMARDSs (bDMARDs) for patients with moderate to severe rheumatoid arthritis. The model contains 384 possible model structures, which can be used to quantify structural uncertainty or to evaluate the implications of different modeling assumptions. Parameter uncertainty is quantified using probabilistic sensitivity analysis (PSA). The simulation is mostly written in C++ so that it can be run in a reasonable amount of time. For a detailed explanation of the model see the <a href="model-description/model-description.pdf">model description</a>.</p>
-<p>In addition to running the model with the R package, users can run the model online with extensive control over settings using the <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra-expert/">IVI-RA model web interface</a>. Furthermore, stakeholders without expertise in RA modeling or value assessment can run the model with the <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra">IVI-RA Value Tool</a>.</p>
-</div>
-<div id="installation" class="section level1">
-<h1 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h1>
+<p><code>iviRA</code> is an R package that runs the <a href="http://www.thevalueinitiative.org/">Innovation and Value Initiative’s (IVI’s)</a> individual patient simulation model for rheumatoid arthritis (RA) (the IVI-RA model). The model simulates the costs, health outcomes, and risks associated with disease-modifying anti-rheumatic drugs (DMARDs) including conventional DMARDs (cDMARDs), biologic DMARDs (bDMARDs), and Janus kinase/STAT pathway inhibitors for patients with moderate to severe rheumatoid arthritis (RA). The model is intended to help decision-makers assess the value of treatments for a population of patients with RA.</p>
+<div id="installation" class="section level2">
+<h2 class="hasAnchor">
+<a href="#installation" class="anchor"></a>Installation</h2>
 <p><code>iviRA</code> can be installed from GitHub using <code>devtools</code>:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># install.packages("devtools")</span>
 <span class="kw">library</span>(devtools)
@@ -156,7 +149,26 @@ devtools::<span class="kw"><a href="http://www.rdocumentation.org/packages/devto
 <p>It can then be loaded into <code>R</code>:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(iviRA)</code></pre></div>
 </div>
-
+<div id="documentation" class="section level2">
+<h2 class="hasAnchor">
+<a href="#documentation" class="anchor"></a>Documentation</h2>
+<ul>
+<li><a href="model-description/model-description.pdf">Model description</a></li>
+<li><a href="articles/00-intro.html">iviRA tutorial</a></li>
+<li><a href="reference/index.html">iviRA API</a></li>
+</ul>
+</div>
+<div id="collaborate" class="section level2">
+<h2 class="hasAnchor">
+<a href="#collaborate" class="anchor"></a>Collaborate</h2>
+<p>The IVI-RA model is part of the Open Source Value Project (OSVP), a consensus-based process for the development of open-source cost-effectiveness models and other tools for value assessment of medical interventions. Learn more about how to collaborate <a href="articles/how-to-contribute.html">here</a>.</p>
+</div>
+<div id="web-applications" class="section level2">
+<h2 class="hasAnchor">
+<a href="#web-applications" class="anchor"></a>Web applications</h2>
+<p>In addition to running the model with the R package, users can run the model online with extensive control over settings using the <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra-expert/">IVI-RA Model Interface</a>. Furthermore, stakeholders without expertise in decision-analytic modeling can run the model with the <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra">IVI-RA Value Tool</a>.</p>
+</div>
+</div>
   </div>
 
   <div class="col-md-3" id="sidebar">

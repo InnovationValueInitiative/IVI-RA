@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GitHub pull requests • iviRA</title>
+<title>Ways to contribute • iviRA</title>
 <!-- jquery --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/simplex/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 <!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
@@ -136,14 +136,37 @@
       </header><div class="row">
   <div class="col-md-9">
     <div class="page-header toc-ignore">
-      <h1>GitHub pull requests</h1>
+      <h1>Ways to contribute</h1>
             
           </div>
 
     
     
 <div class="contents">
-<p>We use <a href="https://git-scm.com/">Git</a> and host our code on <a href="https://github.com/">GitHub</a>. To collaborate, you will need to create a GitHub account and <a href="https://help.github.com/articles/set-up-git/">install</a> Git on your machine. Once your setup you can then follow the steps outlined below to contribute to the model.</p>
+<div id="two-ways-to-collaborate" class="section level2">
+<h2 class="hasAnchor">
+<a href="#two-ways-to-collaborate" class="anchor"></a>Two ways to collaborate</h2>
+<p>There are two ways to collaborate with IVI.</p>
+<ol style="list-style-type: decimal">
+<li><p>You can comment on the scientific approach or evidence considered at [url]. IVI and a technical panel will review the comments and determine whether they should be incorporated into the model. A synthesis of the comments we have received can be found <a href="suggested-improvements.html">here</a>.</p></li>
+<li><p>You can make changes to the code itself by making a <a href="https://help.github.com/articles/about-pull-requests/">pull request</a>. Code changes that affect the scientific approach or evidence considered will only be incorporated after a review by the technical panel but other changes such as bug fixes or performance improvements may be immediately accepted.</p></li>
+</ol>
+</div>
+<div id="ivi-model-releases" class="section level2">
+<h2 class="hasAnchor">
+<a href="#ivi-model-releases" class="anchor"></a>IVI model releases</h2>
+<p>New releases of the IVI-RA model follow the paradigm <a href="http://r-pkgs.had.co.nz/release.html">described</a> by Hadley Wickham. Package versions follow the format <code>major.minor.patch</code>.</p>
+<ul>
+<li><p><strong>Patch</strong>: A patch is a bug fix without any significant new features (e.g., <code>1.0.1</code>).</p></li>
+<li><p><strong>Minor release</strong>: A minor release includes bug fixes or significant new features like a speed improvement (e.g., <code>1.1.0</code>).</p></li>
+<li><p><strong>Major release</strong>: A major release involves a change to the scientific approach or evidence considered (e.g, <code>2.0.0</code>).</p></li>
+</ul>
+<p>Patches and minor releases do not need to be reviewed by the technical expert panel and can be implemented through pull requests. Major releases only occur after improvements have been recommended by the panel.</p>
+</div>
+<div id="pull-requests" class="section level2">
+<h2 class="hasAnchor">
+<a href="#pull-requests" class="anchor"></a>Pull requests</h2>
+<p>To collaborate on the source code, you will need to create a GitHub account and <a href="https://help.github.com/articles/set-up-git/">install</a> Git on your machine. Once your setup you can then follow the steps outlined below to contribute to the model.</p>
 <p><strong>Step 1</strong>: After signing into <a href="https://github.com/">GitHub</a>, you need to create your own remote repository of the IVI model. Click the “Fork” button in the upper right corner of the <a href="https://github.com/InnovationValueInitiative/IVI-RA">IVI-RA Github</a> page. When asked “Where should we fork this repository?” select your username.</p>
 <p><strong>Step 2</strong>: Use the command line to create a directory where you would like your local repository to live, and navigate to this directory.</p>
 <p><strong>Step 3</strong>: Create a local repository by typing the following command into the command line:</p>
@@ -182,9 +205,19 @@ git merge upstream/master</code></pre>
 <pre><code>git push origin [new-branch-name]</code></pre>
 <p><strong>Step 11</strong>: Using the GitHub user interface, <a href="https://help.github.com/articles/creating-a-pull-request/#creating-the-pull-request">open a pull request</a>.</p>
 </div>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+        <div id="tocnav">
+      <h2 class="hasAnchor">
+<a href="#tocnav" class="anchor"></a>Contents</h2>
+      <ul class="nav nav-pills nav-stacked">
+<li><a href="#two-ways-to-collaborate">Two ways to collaborate</a></li>
+      <li><a href="#ivi-model-releases">IVI model releases</a></li>
+      <li><a href="#pull-requests">Pull requests</a></li>
+      </ul>
+</div>
       </div>
 
 </div>

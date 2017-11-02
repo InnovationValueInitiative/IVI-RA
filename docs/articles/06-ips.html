@@ -72,13 +72,10 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/ways-to-contribute.html">Ways to contribute</a>
+      <a href="../articles/how-to-contribute.html">How to contribute</a>
     </li>
     <li>
       <a href="../articles/suggested-improvements.html">Suggested improvements</a>
-    </li>
-    <li>
-      <a href="../articles/pull-requests.html">GitHub pull requests</a>
     </li>
   </ul>
 </li>
@@ -112,7 +109,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra-expert/">IVI-RA model web interface</a>
+      <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra-expert/">IVI-RA Model Interface</a>
     </li>
     <li>
       <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra/">IVI-RA Value Tool</a>
@@ -159,35 +156,28 @@ sim.out2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/si
 sim.out2[, txseq :<span class="er">=</span><span class="st"> "Sequence 2"</span>]
 sim.out &lt;-<span class="st"> </span><span class="kw">rbind</span>(sim.out1, sim.out2)
 <span class="kw">head</span>(sim.out)</code></pre></div>
-<pre><code>##    model sim id month tx tx_seq tx_cycle death      age      ttd acr eular
-## 1:     1   1  1     6  3      1        1     0 72.19485  0.00000   0     0
-## 2:     1   1  1    12  5      2        1     1 72.69485  0.00000   0     0
-## 3:     1   1  2     6  3      1        1     0 62.58502 14.15943   0     1
-## 4:     1   1  2    12  3      1        2     0 63.08502 13.15943   0     1
-## 5:     1   1  2    18  3      1        3     0 63.58502 12.15943   0     1
-## 6:     1   1  2    24  3      1        4     0 64.08502 11.15943   0     1
-##    das28 sdai cdai      haq      ttsi si yrlen  tx_cost   hosp_days
-## 1:    NA   NA   NA 2.991765 39.170292  0   0.5 20923.22 2.304586511
-## 2:    NA   NA   NA 2.991765  6.776969  0   0.5 21711.63 2.304586511
-## 3:    NA   NA   NA 0.000000 62.475420  0   0.5 20923.22 0.001053779
-## 4:    NA   NA   NA 0.000000 61.475420  0   0.5 20923.22 0.001053779
-## 5:    NA   NA   NA 0.000000 60.475420  0   0.5 20923.22 0.001053779
-## 6:    NA   NA   NA 0.000000 59.475420  0   0.5 20923.22 0.001053779
-##      hosp_cost mgmt_cost si_cost prod_loss    utility      qalys
-## 1: 2312.715836  195.5237       0  10609.97  0.5525272  0.2762636
-## 2: 2312.715836  195.5237       0  10609.97 -0.1140018 -0.0570009
-## 3:    1.076654  195.5237       0      0.00  0.7224955  0.3612477
-## 4:    1.076654  195.5237       0      0.00  0.7936764  0.3968382
-## 5:    1.076654  195.5237       0      0.00  0.6513612  0.3256806
-## 6:    1.076654  195.5237       0      0.00  0.7476286  0.3738143
-##         txseq
-## 1: Sequence 1
-## 2: Sequence 1
-## 3: Sequence 1
-## 4: Sequence 1
-## 5: Sequence 1
-## 6: Sequence 1</code></pre>
-<p>The output is data.table which is an enhanced data.frame from the data.table package designed for fast data manipulation. For a given model structure (<code>model</code>) and sampled parameter set (<code>sim</code>), a sampled patient (<code>id</code>) remains on a given treatment until time to treatment discontinuation (<code>ttd</code>) becomes less than zero in a given month. Treatment discontinuation is caused by a serious infection (<code>si = 1</code>) if the sampled time to serious infection at treatment initiation is less than the sampled time to discontinuation. After discontinuation, a patient switches to the next therapy and <code>tx_seq</code> increments by one. Patient age (<code>age</code>) increases in 6-month increments.</p>
+<pre><code>##    model sim id month tx line tx_cycle death      age      ttd acr eular
+## 1:     1   1  1     6  3    1        1     0 46.58456 71.68726   3     2
+## 2:     1   1  1    12  3    1        2     0 47.08456 70.68726   3     2
+## 3:     1   1  1    18  3    1        3     0 47.58456 69.68726   3     2
+## 4:     1   1  1    24  3    1        4     0 48.08456 68.68726   3     2
+## 5:     1   1  1    30  3    1        5     0 48.58456 67.68726   3     2
+## 6:     1   1  1    36  3    1        6     0 49.08456 66.68726   3     2
+##    das28 sdai cdai      haq     ttsi si yrlen  tx_cost  hosp_days
+## 1:    NA   NA   NA 1.344515 204.7453  0   0.5 23349.31 0.09110172
+## 2:    NA   NA   NA 1.341469 203.7453  0   0.5 23349.31 0.09110172
+## 3:    NA   NA   NA 1.338424 202.7453  0   0.5 23349.31 0.09110172
+## 4:    NA   NA   NA 1.335378 201.7453  0   0.5 23349.31 0.09110172
+## 5:    NA   NA   NA 1.332332 200.7453  0   0.5 23349.31 0.09110172
+## 6:    NA   NA   NA 1.329287 199.7453  0   0.5 23349.31 0.09110172
+##    hosp_cost mgmt_cost si_cost prod_loss    utility      qalys      txseq
+## 1:  128.0058  191.0793       0  3195.817 0.64847963 0.32423981 Sequence 1
+## 2:  128.0058  191.0793       0  3188.578 0.60728087 0.30364044 Sequence 1
+## 3:  128.0058  191.0793       0  3181.339 0.56601515 0.28300757 Sequence 1
+## 4:  128.0058  191.0793       0  3174.099 0.63162802 0.31581401 Sequence 1
+## 5:  128.0058  191.0793       0  3166.860 0.08067509 0.04033754 Sequence 1
+## 6:  128.0058  191.0793       0  3159.621 0.58726893 0.29363446 Sequence 1</code></pre>
+<p>The output is data.table which is an enhanced data.frame from the data.table package designed for fast data manipulation. For a given model structure (<code>model</code>) and sampled parameter set (<code>sim</code>), a sampled patient (<code>id</code>) remains on a given treatment until time to treatment discontinuation (<code>ttd</code>) becomes less than zero in a given month. Treatment discontinuation is caused by a serious infection (<code>si = 1</code>) if the sampled time to serious infection at treatment initiation is less than the sampled time to discontinuation. After discontinuation, a patient switches to the next line of treatment and <code>line</code> increments by one. Patient age (<code>age</code>) increases in 6-month increments.</p>
 <p>The HAQ score (<code>haq</code>) during the initial 6-month period (<code>therapy_cycle = 1</code>), disease activity measures (<code>das28</code>, <code>sdai</code>, and <code>cdai</code>), and <code>ttd</code> depend on the model structure chosen. For example, in the first model structure, HAQ and time to treatment discontinuation depend on ACR response (<code>acr</code>) and in turn, EULAR response (<code>eular</code>). The simulation returned NA values for the three disease activity measures because treatment switching is is not a function of disease activity (i.e., <strong>S6</strong> was chosen in the first model structure). The simulation ends when a patient dies (<code>death = 1</code>).</p>
 <p>Health care sector costs consist of treatment costs (<code>tx_cost</code>); hospital costs (<code>hosp_cost</code>), which increase with the HAQ score; general management costs (<code>mgmt_cost</code>); and the costs of caused by serious infections (<code>si_cost</code>). Non-health care sector costs are those due to lost wages. Analyses performed from a societal perspective should include these productivity losses (<code>prod_loss</code>).</p>
 <p>Utility (<code>utility</code>) depends on whether the Hernandez-Alava mixture model or Wailoo logistic regression equation is used to simulate utility. In both cases, QALYs (<code>qalys</code>) are calculated as a function of utility and the estimated utility loss from a serious infection.</p>
@@ -201,63 +191,63 @@ sim.out &lt;-<span class="st"> </span><span class="kw">rbind</span>(sim.out1, si
                      <span class="dt">model_structures =</span> mod.structs, <span class="dt">output =</span> <span class="st">"summary"</span>)
 <span class="kw">head</span>(sim.out1.summary$means)</code></pre></div>
 <pre><code>##    model sim    lys     dlys lys_infusion lys_injection lys_oral
-## 1:     1   1 19.460 13.42548       1.2675       18.1925        0
-## 2:     1   2 19.630 13.52371       1.0550       18.5750        0
-## 3:     1   3 19.890 13.90279       1.0975       18.7925        0
-## 4:     1   4 19.875 13.85949       1.2275       18.6475        0
-## 5:     1   5 20.465 13.92973       0.8275       19.6375        0
-## 6:     1   6 20.040 13.77736       1.7825       18.2575        0
-##          dhaq   si    qalys   dqalys  tx_cost dtx_cost hosp_days hosp_cost
-## 1: 0.11615180 0.16 10.53379 7.358245 370461.0 288368.6  11.54531  12839.26
-## 2: 0.13341638 0.28 10.63656 7.408429 423002.6 328036.2  18.89955  23775.60
-## 3: 0.15921831 0.24 10.62703 7.539865 411377.0 326007.1  17.48632  21241.43
-## 4: 0.29471111 0.17 10.48073 7.449594 371098.2 297793.1  16.64830  21366.17
-## 5: 0.08628915 0.17 11.26959 7.763000 402211.2 313101.5  11.02039  15123.86
-## 6: 0.08643242 0.13 10.89037 7.590052 452628.8 356027.3  15.47551  20856.57
-##    dhosp_cost mgmt_cost dmgmt_cost   si_cost  dsi_cost prod_loss
-## 1:   8325.126  7609.781   5249.999 1019.0148  791.0773  176911.3
-## 2:  16172.154  7153.136   4928.016 1679.8205 1365.1682  176671.8
-## 3:  14730.282  7501.022   5243.092 1327.7616 1043.9600  173686.9
-## 4:  14213.715  7283.127   5078.765  897.3802  726.5485  157765.9
-## 5:   9798.893  8027.096   5463.734  802.5094  613.8604  177648.4
-## 6:  13901.123  8029.514   5520.236  734.4325  509.2745  127338.4
+## 1:     1   1 20.255 13.70733       0.9275       19.3275        0
+## 2:     1   2 19.540 13.60669       1.7050       17.8350        0
+## 3:     1   3 19.430 13.29994       1.4775       17.9525        0
+## 4:     1   4 17.765 12.47968       1.1325       16.6325        0
+## 5:     1   5 20.095 13.82560       1.4525       18.6425        0
+## 6:     1   6 21.510 14.46436       1.0375       20.4725        0
+##           dhaq   si    qalys   dqalys  tx_cost dtx_cost hosp_days
+## 1:  0.30536432 0.21 10.71725 7.419656 435478.2 340297.8 15.496571
+## 2:  0.16877173 0.27 10.59087 7.504361 422308.4 327586.9 13.863972
+## 3:  0.13206630 0.22 10.99875 7.555376 463881.4 353960.0 13.440847
+## 4:  0.04878472 0.20 10.24590 7.274467 367115.1 295254.9  7.991302
+## 5: -0.01603874 0.16 11.82374 8.128972 454772.9 351598.4 10.059827
+## 6:  0.08666930 0.20 12.43796 8.552119 410316.4 321679.0 11.552024
+##    hosp_cost dhosp_cost mgmt_cost dmgmt_cost   si_cost  dsi_cost prod_loss
+## 1: 19549.866  12334.730  7740.621   5238.372  998.1886  707.5729 125232.62
+## 2: 16704.661  11011.549  8247.096   5742.871 1759.4904 1228.7983  97595.50
+## 3: 16548.629  10848.293  7387.705   5056.924 1312.7391  967.1426  68448.38
+## 4:  9806.049   6496.077  6966.553   4893.911 1061.3876  811.5818 113134.84
+## 5: 12295.541   8345.185  7330.765   5043.653 1098.9330  823.3055 152131.23
+## 6: 15624.823   9201.626  7923.372   5328.057 1076.9352  869.8956 152943.77
 ##    dprod_loss dhc_cost dtot_cost yrs_since_approval dqalys_ann
-## 1:  118574.11 302734.8  421308.9           22.24250  0.5221426
-## 2:  118513.78 350501.5  469015.3           21.81325  0.5292202
-## 3:  118310.38 347024.4  465334.8           22.31798  0.5229102
-## 4:  106576.03 317812.1  424388.1           22.78800  0.5112612
-## 5:  117741.81 328978.0  446719.8           22.40183  0.5318809
-## 6:   85355.26 375957.9  461313.2           21.90114  0.5242442
+## 1:   81420.27 358578.5  439998.7           21.66158  0.5144027
+## 2:   66176.90 345570.1  411747.0           21.95649  0.5428280
+## 3:   46252.69 370832.3  417085.0           21.41510  0.5481396
+## 4:   77865.71 307456.5  385322.2           21.43015  0.5532962
+## 5:  104119.71 365810.6  469930.3           21.44582  0.5624021
+## 6:   97786.71 337078.6  434865.3           22.17800  0.5855121
 ##    dhc_cost_ann dprod_loss_ann
-## 1:     25839.83       9076.127
-## 2:     28926.00       9267.797
-## 3:     27974.90       8907.940
-## 4:     25830.27       8145.264
-## 5:     26440.76       9279.815
-## 6:     30018.74       6605.225</code></pre>
+## 1:     29537.51       6380.117
+## 2:     27942.09       5112.531
+## 3:     30715.32       3748.107
+## 4:     28546.92       6846.994
+## 5:     28981.80       8188.276
+## 6:     26443.51       7054.269</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(sim.out1.summary$time.means)</code></pre></div>
 <pre><code>##    model sim month alive     qalys      haq  tx_cost hosp_cost mgmt_cost
-## 1:     1   1     6   100 0.2775493 1.208088 20923.22  329.0589  195.5237
-## 2:     1   1    12    98 0.2885176 1.144848 21261.11  248.8528  195.5237
-## 3:     1   1    18    97 0.2926693 1.137598 19779.71  258.4967  195.5237
-## 4:     1   1    24    95 0.2810448 1.111729 18199.56  281.6436  195.5237
-## 5:     1   1    30    94 0.2951257 1.075346 16881.22  225.3881  195.5237
-## 6:     1   1    36    92 0.3029216 1.080399 16627.64  233.7332  195.5237
-##      si_cost prod_loss
-## 1: 254.75370  4284.354
-## 2:  64.98819  4060.081
-## 3:  65.65817  4034.369
-## 4:   0.00000  3942.629
-## 5:   0.00000  3813.599
-## 6:   0.00000  3831.519</code></pre>
+## 1:     1   1     6   100 0.2806339 1.187097 23349.31  385.4880  191.0793
+## 2:     1   1    12    97 0.2841514 1.116199 22767.11  310.5204  191.0793
+## 3:     1   1    18    96 0.2954516 1.111360 21816.70  350.4733  191.0793
+## 4:     1   1    24    94 0.2971157 1.092923 20435.87  317.7575  191.0793
+## 5:     1   1    30    92 0.2748561 1.089201 19861.02  337.7217  191.0793
+## 6:     1   1    36    91 0.2818066 1.103396 19206.92  346.2664  191.0793
+##     si_cost prod_loss
+## 1: 95.06558  2821.645
+## 2:  0.00000  2653.126
+## 3: 49.51332  2641.625
+## 4:  0.00000  2597.802
+## 5:  0.00000  2588.955
+## 6:  0.00000  2622.694</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(sim.out1.summary$out0)</code></pre></div>
 <pre><code>##    model sim id tx acr eular       ttd         ttsi
-## 1:     1   1  1  3   3     1 5.6967308 7.164881e-01
-## 2:     1   1  1  5   2     2 3.1223535 2.026537e+01
-## 3:     1   1  2  3   2     1 0.6466163 2.581899e+00
-## 4:     1   1  2  5   0     0 0.0000000 3.276237e+01
-## 5:     1   1  2  8   0     0 0.0000000 9.476721e+01
-## 6:     1   1  2 14   0     0 0.0000000 2.859812e+10</code></pre>
+## 1:     1   1  1  3   3     2 20.552361 1.173203e+02
+## 2:     1   1  1  5   0     0  0.000000 4.222381e+00
+## 3:     1   1  1  8   3     2  5.738928 3.050037e+01
+## 4:     1   1  1 14   0     0  0.000000 2.369535e+09
+## 5:     1   1  2  3   0     0  0.000000 1.566822e+02
+## 6:     1   1  3  3   3     2  2.816782 5.604460e+01</code></pre>
 <div>
 <ul class="pager">
 <li class="previous">

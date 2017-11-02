@@ -84,9 +84,11 @@ second treatment equal to 2, \ldots}
 during the initial 6-month treatment period.}
 \item{death}{Equal to 1 if patient died during the model cycle and 0 otherwise. }
 \item{age}{Age of patient which increases with the model cycles.}
-\item{ttd}{Time to treatment discontinuation. Measured in terms of model cycles (e.g. ttd = 2 if treatment will discontinue in 
-1 year given 6-months cycles). \code{ttd} is measured at the end of each cycle. Patients switch treatments during the cycle in which \code{ttd} 
-becomes negative and HAQ rebounds during the cycle.}
+\item{ttd}{Time to treatment discontinuation following the initial 6 month treatment period (i.e., after
+\code{tx_cycle=1}. Measured in terms of model cycles (e.g. ttd = 2 if treatment will discontinue in 
+ 1 year given 6-months cycles). \code{ttd} is measured at the end of each cycle.
+ Patients switch treatments during the cycle in which \code{ttd} becomes negative and HAQ
+  rebounds during the cycle.}
 \item{acr}{Simulated ACR response during the initial 6-month period for a new treatment Constant within \code{tx}.
 Categories are 0 (ACR < 20), 1 (ACR 20-50), 2 (ACR 50-70), and 3 (ACR 70+).}
 \item{eular}{Simulated EULAR response during the initial 6-month period for a new treatment Constant within \code{tx}. 
