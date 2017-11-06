@@ -20,6 +20,12 @@ library(iviRA)
 * [R package](https://innovationvalueinitiative.github.io/IVI-RA/)
 * [Model description](https://innovationvalueinitiative.github.io/IVI-RA/model-description/model-description.pdf)
 
+## Web interface
+You can also run the model online using our web interfaces.
+
+* [IVI-RA Model Interface](https://innovationandvalueinitiative.shinyapps.io/ivi-ra-expert/): full control over the treatment sequences, the patient population, model parameters, model strucutres, and time horizon. 
+* [IVI-RA Value Tool](http://apps.thevalueinitiative.org/ivi-ra/): a more streamlined experience for users with less experience in decision-analytic modeling and rheumatoid arthritis. 
+
 ## Collaborate
 * If you found a bug or would like to request a new feature, then submit an [issue](https://github.com/InnovationValueInitiative/IVI-RA/issues).
 * If you would like to contribute to the code base, then create a pull request. We, for the most part, adhere to Hadley Wickham's [style guide](http://adv-r.had.co.nz/Style.html). The one exception is that we use dots to separate object names as in my.name.
