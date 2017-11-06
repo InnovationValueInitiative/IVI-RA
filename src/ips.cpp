@@ -970,15 +970,15 @@ void SimMeans::increment_varsums(double qalys, double tx_cost, Hosp hosp,
   varsums["dhc_cost"][index] = varsums["dhc_cost"][index] + dhc_cost;
   varsums["dtot_cost"][index] = varsums["dtot_cost"][index] + dtot_cost;
   if (final_cycle == true){
-    //int maxt = (100 - int(age0)) * (12/cycle_length);
+    int maxt = (100 - int(age0)) * (12/cycle_length);
     varsums["yrs_since_approval"][index] = varsums["yrs_since_approval"][index] +
       indivsums["yrs_since_approval"]/(cycle + 1);
     varsums["dqalys_ann"][index] = varsums["dqalys_ann"][index] +
-      const_geometric_series(indivsums["dqalys"], beta_qalys, cycle + 1, 1) * 12/cycle_length;
+      const_geometric_series(indivsums["dqalys"], beta_qalys, maxt, 1) * 12/cycle_length;
     varsums["dhc_cost_ann"][index] = varsums["dhc_cost_ann"][index] +
-      const_geometric_series(indivsums["dhc_cost"], beta_cost, cycle + 1, 1) * 12/cycle_length;
+      const_geometric_series(indivsums["dhc_cost"], beta_cost, maxt, 1) * 12/cycle_length;
     varsums["dprod_loss_ann"][index] = varsums["dprod_loss_ann"][index] +
-      const_geometric_series(indivsums["dprod_loss"], beta_cost, cycle + 1, 1) * 12/cycle_length;
+      const_geometric_series(indivsums["dprod_loss"], beta_cost, maxt, 1) * 12/cycle_length;
   }
 }
 
@@ -1614,7 +1614,6 @@ List sim_iviRA_C(arma::mat tx_inds, Rcpp::DataFrame tx_data,
             if (t == 0){ // initial haq change
               if (ttd_j == 0){ // immediate rebound for patients switching treatment during the initial period
                   // haq = haq + tx_ihaq.dhaq - tx_ihaq.dhaq * rebound_factor[s]; 
-                  haq = haq;
               } else{
                 haq = haq + tx_ihaq.dhaq; 
               }
