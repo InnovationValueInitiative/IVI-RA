@@ -20,7 +20,7 @@ library(iviRA)
 * [R package](https://innovationvalueinitiative.github.io/IVI-RA/)
 * [Model description](https://innovationvalueinitiative.github.io/IVI-RA/model-description/model-description.pdf)
 
-## Web interface
+## Web interfaces
 You can also run the model online using our web interfaces.
 
 * [IVI-RA Model Interface](https://innovationandvalueinitiative.shinyapps.io/ivi-ra-expert/): full control over the treatment sequences, the patient population, model parameters, model strucutres, and time horizon. 
