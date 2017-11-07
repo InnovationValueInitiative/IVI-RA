@@ -10,7 +10,7 @@ sim_dhaq6(treatments, input_data, pars, tx_lookup = iviRA::treatments$sname,
 }
 \arguments{
 \item{treatments}{Vector of treatments to simulate. Should correpond to \code{sname} in 
-\link{iviRA::treatments}.}
+iviRA::treatments.}
 
 \item{input_data}{An object of class \code{input_data} returned from \link{get_input_data}. 
 The only elements required are \code{x_acr} and \code{x_haq}.}
@@ -24,7 +24,7 @@ Index of treatments in \code{treatments} are matched against treatments in \code
 name. Indices of parameter estimates from the network meta-analyses bust be in the same order as
 in \code{tx_data}.}
 
-\item{hist}{Is the patient biologic naive or biologic experienced?}
+\item{hist}{Is the patient tDMARD naive or tDMARD experienced?}
 
 \item{line}{Line of therapy}
 

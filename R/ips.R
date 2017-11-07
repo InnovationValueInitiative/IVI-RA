@@ -7,14 +7,14 @@
 #' @param input_data An object of class 'input_data' returned from \link{get_input_data}.
 #' @param pars An object of class 'par_sample' returned from \link{sample_pars}.
 #' @param model_structures An object of class "model_structures" 
-#' returned from \link{select_model_structure}.
+#' returned from \link{select_model_structures}.
 #' @param max_months Maximum number of months to run the model for. Default is NULL which implies that
 #' the model is simulated over each patient's lifetime.
 #' @param tx_data Dataset of treatments with columns names equivalent to \code{iviRA::treatments}.
 #' The indices of of treatments in \code{tx_seqs} are matched against treatments in
 #' \code{tx_data$sname} by name. Indices of treatment-specific parameter estimates must be 
 #' in the same order as treatments in \code{tx_data}. 
-#' @param hist Is the patient biologic naive or biologic experienced?
+#' @param hist Is the patient tDMARD naive or tDMARD experienced?
 #' @param output Specifies the format of output returned from the simulation. Options are \code{data} 
 #' and \code{summary}. When \code{data} is specified, each simulated value (i.e, by model,
 #' sampled parameter set, patient, and time-period) is returned in a \code{data.table}. If 
@@ -351,7 +351,7 @@ sim_iviRA <- function(tx_seqs, input_data, pars, model_structures,
 #' Simulate utility after running \link{sim_iviRA} with \code{output = "data"}. This can be useful 
 #' in cases where you want to use a different algorithm to estimate utility, but do not want to rerun 
 #' the entire simulation.
-#' @param simhaq Simulation output from \link{sim_haq}. Must include columns \code{yrlen} for
+#' @param simhaq Simulation output from \link{sim_iviRA}. Must include columns \code{yrlen} for
 #' year length of model cycle, \code{sim} for simulation number, and \code{si} for whether a serious
 #' infection occured during the model cycle. 
 #' @param male Indicator = 1 for males and 0 for females.
@@ -501,7 +501,7 @@ sim_utility_wailoo <- function(simhaq, haq0, male, prev_dmards,
 #'
 #' Error messages when incorrect inputs are passed to sim_utility_wailoo.
 #' 
-#' @param simhaq Simulation output from \link{sim_haq}
+#' @param simhaq Simulation output from \link{sim_iviRA}
 #' @param male Vector indiciating patient gender (1 = male, 0 = female)
 #' @param pars \code{pars} as passed to \link{sim_utility_mixture}
 #' @keywords internal
@@ -591,7 +591,7 @@ check_sim_qalys <- function(simhaq, utility, si_ul, x_attr, tx_attr_ug){
 #' Simulate change in HAQ at 6 months using different model structures relating treatment to HAQ.
 #' 
 #' @param treatments Vector of treatments to simulate. Should correpond to \code{sname} in 
-#' \link{iviRA::treatments}.
+#' iviRA::treatments.
 #' @param input_data An object of class \code{input_data} returned from \link{get_input_data}. 
 #' The only elements required are \code{x_acr} and \code{x_haq}.
 #' @param pars List of sampled parameter values generated from \link{get_input_data}. The only 
@@ -601,7 +601,7 @@ check_sim_qalys <- function(simhaq, utility, si_ul, x_attr, tx_attr_ug){
 #' Index of treatments in \code{treatments} are matched against treatments in \code{tx_lookup} by 
 #' name. Indices of parameter estimates from the network meta-analyses bust be in the same order as
 #' in \code{tx_data}.
-#' @param hist Is the patient biologic naive or biologic experienced? 
+#' @param hist Is the patient tDMARD naive or tDMARD experienced? 
 #' @param line Line of therapy
 #' @param tx_ihaq Equivalent to argument \code{tx_haq} in \link{select_model_structures}.
 #' 

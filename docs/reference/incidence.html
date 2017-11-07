@@ -65,7 +65,7 @@
       <a href="../articles/01-population.html">1. Generate population</a>
     </li>
     <li>
-      <a href="../articles/02-arms.html">2. Select treatment sequences</a>
+      <a href="../articles/02-tx-seqs.html">2. Select treatment sequences</a>
     </li>
     <li>
       <a href="../articles/03-structures.html">3. Select model structures</a>
@@ -95,13 +95,10 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/ways-to-contribute.html">Ways to contribute</a>
+      <a href="../articles/how-to-contribute.html">How to contribute</a>
     </li>
     <li>
       <a href="../articles/suggested-improvements.html">Suggested improvements</a>
-    </li>
-    <li>
-      <a href="../articles/pull-requests.html">GitHub pull requests</a>
     </li>
   </ul>
 </li>
@@ -135,7 +132,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra-expert/">IVI-RA model web interface</a>
+      <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra-expert/">IVI-RA Model Interface</a>
     </li>
     <li>
       <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra/">IVI-RA Value Tool</a>
@@ -166,7 +163,7 @@
     </div>
 
     
-    <p>Annual incidence rate of rheumatoid arthritis in the United States.</p>
+    <p>Incidence of rheumatoid arthritis in the United States.</p>
     
 
     <pre class="usage"><span class='no'>incidence.female</span>
@@ -175,18 +172,23 @@
         
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
-    <p>A data frame with 101 rows and 4 variables:</p><dl class='dl-horizontal'>
+    <p>A data frame with 86 rows and 4 variables:</p><dl class='dl-horizontal'>
   <dt>age</dt><dd><p>Age in years.</p></dd>
-  <dt>events</dt><dd><p>Number of events (i.e., number of patients with RA).</p></dd>
-  <dt>person_years</dt><dd><p>Person years, or, time at risk of event.</p></dd>
-  <dt>incidence_rate</dt><dd><p>Annual incidence rate.</p></dd>
+  <dt>events</dt><dd><p>Number of events occuring between ages x and x + 1.</p></dd>
+  <dt>person_years</dt><dd><p>Number of person years between ages x and x + 1.</p></dd>
+  <dt>incidence_rate</dt><dd><p>Incidence rate between ages x and x + 1.</p></dd>
     </dl>
     
     <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
 
-    <p>Myasoedova, Elena, et al. "Is the incidence of rheumatoid arthritis rising?: 
-results from Olmsted County, Minnesota, 1955–2007." 
-Arthritis &amp; Rheumatology 62.6 (2010): 1576-1582.</p>
+    <p>Myasoedova, Elena, et al. "Is the incidence of rheumatoid arthritis rising? 
+results from Olmsted County, Minnesota, 1955–2007." Arthritis &amp; Rheumatology 62.6 (2010): 1576-1582.</p>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>The incidence rate for each age is derived from Table 2 in Myasoedova et al. (2010), which
+was a study conducted in Olmsted County, Minnesota for residents age 18 years of age and older 
+between 1995–2007.</p>
     
 
   </div>
@@ -197,6 +199,8 @@ Arthritis &amp; Rheumatology 62.6 (2010): 1576-1582.</p>
       <li><a href="#format">Format</a></li>
 
       <li><a href="#source">Source</a></li>
+
+      <li><a href="#details">Details</a></li>
           </ul>
 
   </div>

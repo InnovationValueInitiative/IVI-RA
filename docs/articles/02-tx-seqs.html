@@ -146,51 +146,51 @@
 <div id="available-treatments" class="section level2">
 <h2 class="hasAnchor">
 <a href="#available-treatments" class="anchor"></a>Available treatments</h2>
-<p>The primary purpose of the model is to simulate health and cost outcomes for patients with RA treated as a function of the treatments use. Since patients typically use multiple treatments over a lifetime, the model is capable of simulating a treatment sequence of any arbitrary length. Treatments that can be included in a sequence include conventional disease-modifying anti-rheumatic drugs (cDMARDs) such as methotrexate and biologic DMARDs (bDMARDs).</p>
-<p>A dataset of available treatments loads with the <code>iviRA</code> package. The <code>name</code>, <code>mname</code>, and <code>sname</code> columns are long-form, medium-form, and short-form names, respectively. The column <code>biologic</code> is an indicator equal to 1 if the drug is a biologic and 0 otherwise.</p>
+<p>The primary purpose of the model is to simulate health and cost outcomes for patients with RA treated as a function of the treatments use. Since patients typically use multiple treatments over a lifetime, the model is capable of simulating a treatment sequence of any arbitrary length. Treatments that can be included in a sequence are cDMARDs, bDMARDs, and JAK/STAT inhibitors. We refer to bDMARDs and JAK/STAT inhibitors collectively as targeted DMARDs (tDMARDs).</p>
+<p>A dataset of available treatments loads with the <code>iviRA</code> package. The <code>name</code>, <code>mname</code>, and <code>sname</code> columns are long-form, medium-form, and short-form names, respectively. The column <code>route</code> refers to route of administration; if a treatment is a combination therapy, then all routes of administration in the combination are listed. Finally, <code>approval_date</code> is the date that a treatment was approved by the FDA in the US and <code>years_since_approval</code> is the number of years (from the last update of the model) since the treatment was approved.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><a href="http://www.rdocumentation.org/packages/iviRA/topics/treatments">iviRA::treatments</a></code></pre></div>
-<pre><code>##                                   name        mname    sname biologic
-##  1:                            cDMARDs      cDMARDs  cdmards        0
-##  2:        abatacept IV + methotrexate ABT IV + MTX abtivmtx        1
-##  3:          adalimumab + methotrexate    ADA + MTX   adamtx        1
-##  4:                         adalimumab          ADA      ada        1
-##  5:          etanercept + methotrexate    ETN + MTX   etnmtx        1
-##  6:                         etanercept          ETN      etn        1
-##  7:           golimumab + methotrexate    GOL + MTX   golmtx        1
-##  8:          infliximab + methotrexate    IFX + MTX   ifxmtx        1
-##  9:                            placebo      Placebo  placebo        0
-## 10:         tocilizumab + methotrexate    TCZ + MTX   tczmtx        1
-## 11:                        tocilizumab          TCZ      tcz        1
-## 12:  certolizumab pegol + methotrexate    CZP + MTX   czpmtx        1
-## 13:        abatacept SC + methotrexate ABT SC + MTX abtscmtx        1
-## 14:                       non-biologic          NBT      nbt        0
-## 15:           rituximab + methotrexate    RTX + MTX   rtxmtx        1
-## 16: tofacitinib citrate + methotrexate    TOF + MTX   tofmtx        1
-## 17:                          rituximab          RTX      rtx        1
-## 18:                tofacitinib citrate          TOF      tof        1
-## 19:                 certolizumab pegol          CZP      czp        1
-## 20:                          golimumab          GOL      gol        1
+<pre><code>##                                   name        mname    sname
+##  1:                            cDMARDs      cDMARDs  cdmards
+##  2:        abatacept IV + methotrexate ABT IV + MTX abtivmtx
+##  3:          adalimumab + methotrexate    ADA + MTX   adamtx
+##  4:                         adalimumab          ADA      ada
+##  5:          etanercept + methotrexate    ETN + MTX   etnmtx
+##  6:                         etanercept          ETN      etn
+##  7:           golimumab + methotrexate    GOL + MTX   golmtx
+##  8:          infliximab + methotrexate    IFX + MTX   ifxmtx
+##  9:                            placebo      Placebo  placebo
+## 10:         tocilizumab + methotrexate    TCZ + MTX   tczmtx
+## 11:                        tocilizumab          TCZ      tcz
+## 12:  certolizumab pegol + methotrexate    CZP + MTX   czpmtx
+## 13:        abatacept SC + methotrexate ABT SC + MTX abtscmtx
+## 14:                       non-biologic          NBT      nbt
+## 15:           rituximab + methotrexate    RTX + MTX   rtxmtx
+## 16: tofacitinib citrate + methotrexate    TOF + MTX   tofmtx
+## 17:                          rituximab          RTX      rtx
+## 18:                tofacitinib citrate          TOF      tof
+## 19:                 certolizumab pegol          CZP      czp
+## 20:                          golimumab          GOL      gol
 ##                  route approval_date years_since_approval
-##  1:          injection    12/31/1988            28.809296
-##  2: infusion/injection    12/23/2005            11.855092
-##  3:          injection    12/31/2002            14.829802
-##  4:          injection    12/31/2002            14.829802
-##  5:          injection     11/2/1998            18.985646
-##  6:          injection     11/2/1998            18.985646
-##  7:          injection     4/24/2009             8.524949
-##  8: infusion/injection    11/10/1999            17.965824
-##  9:               none    12/31/1988            28.809296
-## 10:          injection    10/21/2013             4.038278
-## 11:          injection    10/21/2013             4.038278
-## 12:          injection     4/22/2008             9.528366
-## 13:          injection      8/2/2011             6.255639
-## 14:          injection    12/31/1988            28.809296
-## 15: infusion/injection     2/28/2006            11.671907
-## 16:     oral/injection     11/6/2012             4.992481
-## 17:          injection     2/28/2006            11.671907
-## 18:               oral     11/6/2012             4.992481
-## 19:          injection     4/22/2008             9.528366
-## 20:          injection     4/24/2009             8.524949</code></pre>
+##  1:          injection      12/31/88           -71.053999
+##  2: infusion/injection      12/23/05            11.855092
+##  3:          injection      12/31/02            14.829802
+##  4:          injection      12/31/02            14.829802
+##  5:          injection       11/2/98           -80.877649
+##  6:          injection       11/2/98           -80.877649
+##  7:          injection       4/24/09             8.524949
+##  8: infusion/injection      11/10/99           -81.897471
+##  9:               none    12/31/1988         -1968.415584
+## 10:          injection      10/21/13             4.038278
+## 11:          injection      10/21/13             4.038278
+## 12:          injection       4/22/08             9.528366
+## 13:          injection        8/2/11             6.255639
+## 14:          injection    12/31/1988         -1968.415584
+## 15: infusion/injection       2/28/06            11.671907
+## 16:     oral/injection       11/6/12             4.992481
+## 17:          injection       2/28/06            11.671907
+## 18:               oral       11/6/12             4.992481
+## 19:          injection       4/22/08             9.528366
+## 20:          injection       4/24/09             8.524949</code></pre>
 </div>
 <div id="selecting-treatments" class="section level2">
 <h2 class="hasAnchor">
@@ -199,7 +199,7 @@
 <p>For example, suppose that we want to simulate a treatment sequence of three biologics: adalimumab + methotrexate, etanercept + methotrexate, and infliximab + methotrexate. They should be specified as a vector with elements matching the <code>sname</code> in <code><a href="http://www.rdocumentation.org/packages/iviRA/topics/treatments">iviRA::treatments</a></code>. For comparison purposes, we might want to also simulate outcomes for a non-biologic treatment sequence of only cDMARDs.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">txseq1 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">"adamtx"</span>, <span class="st">"etnmtx"</span>, <span class="st">"ifxmtx"</span>)
 txseq2 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">"cdmards"</span>)</code></pre></div>
-<p>In some cases, it might also be useful to allow therapies to differ across patients. This could be useful when, for example, comparing treatment strategies that tailor treatment to individuals against one size fits all strategies. This can be done by creating a matrix of treatment sequences where the number of rows is equal to the number of patients in the cohort. Below we consider a scenario where some patients receive one of two sequences:</p>
+<p>In some cases, it might also be useful to allow treatments to differ across patients. This could be useful when, for example, comparing treatment strategies that tailor treatment to individuals against one size fits all strategies. This can be done by creating a matrix of treatment sequences where the number of rows is equal to the number of patients in the cohort. Below we consider a scenario where some patients receive one of two sequences:</p>
 <ol style="list-style-type: decimal">
 <li>adalimumab + methotrexate -&gt; etanercept + methotrexate -&gt; infliximab + methotrexate</li>
 <li>etanercept + methotrexate -&gt; adalimumab + methotrexate -&gt; infliximab + methotrexate</li>

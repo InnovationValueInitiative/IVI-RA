@@ -231,7 +231,6 @@
 #' Life tables by single-year of age from National Vital Statistics Reports
 #' Volume 64, Number 11.
 #'
-#' @name lifetable
 #' @format A data frame with 101 rows and 7 variables:
 #' \describe{
 #'   \item{age}{Age in years.}
@@ -441,3 +440,26 @@
 #' 
 #' @source None. Currently determined by the user. 
 "utility.tx.attr"
+
+#' Incidence
+#'
+#' Incidence of rheumatoid arthritis in the United States.
+#'
+#' @format A data frame with 86 rows and 4 variables:
+#' \describe{
+#'   \item{age}{Age in years.}
+#'   \item{events}{Number of events occuring between ages x and x + 1.}
+#'   \item{person_years}{Number of person years between ages x and x + 1.}
+#'   \item{incidence_rate}{Incidence rate between ages x and x + 1.}
+#'
+#' }
+#' @details The incidence rate for each age is derived from Table 2 in Myasoedova et al. (2010), which
+#' was a study conducted in Olmsted County, Minnesota for residents age 18 years of age and older 
+#' between 1995–2007.
+#' 
+#' @source Myasoedova, Elena, et al. "Is the incidence of rheumatoid arthritis rising? 
+#' results from Olmsted County, Minnesota, 1955–2007." Arthritis & Rheumatology 62.6 (2010): 1576-1582.
+#' @name incidence
+"incidence.female"
+#' @rdname incidence
+"incidence.male"

@@ -21,6 +21,51 @@ New releases of the IVI-RA model follow the paradigm [described](http://r-pkgs.h
 
 Patches and minor releases do not need to be reviewed by the technical expert panel and can be implemented through pull requests. Major releases only occur after improvements have been recommended by the panel. 
 
+## Style guide
+We, for the most part, adhere to Hadley Wickham's [style guide](http://adv-r.had.co.nz/Style.html), with a few exceptions and clarifications. 
+
+### Variable names
+Variable names should be all lower case and separated by a dot.
+
+```
+# Good
+object.name
+my.list <- list(my.integer = 3)
+
+# Bad 
+objectName
+ObjectName
+object_name
+```
+
+### Function names
+Function names should be all lower case and separated by an underscore.
+
+```
+# Good
+my_function
+
+# Bad 
+myFunction
+MyFunction
+my.function
+```
+
+### Variable and column names in data frames or matrices
+Variable names in a `data.frame`, `data.table`, or `matrix` should be all lower case and separated by an underscore.
+
+```
+# Good
+data.frame(my_var = 3)
+
+# Bad 
+data.frame(myVar = 3)
+data.frame(MyVar = 3)
+data.frame(my.var = 3)
+```
+
+
+
 ## Pull requests
 To collaborate on the source code, you will need to create a GitHub account and [install](https://help.github.com/articles/set-up-git/) Git on your machine. Once your setup you can then follow the steps outlined below to contribute to the model.
 

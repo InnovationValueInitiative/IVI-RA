@@ -12,9 +12,9 @@ load("output.RData")
 ```
 
 ## Available treatments
-The primary purpose of the model is to simulate health and cost outcomes for patients with RA treated as a function of the treatments use. Since patients typically use multiple treatments over a lifetime, the model is capable of simulating a treatment sequence of any arbitrary length. Treatments that can be included in a sequence include conventional disease-modifying anti-rheumatic drugs (cDMARDs) such as methotrexate and biologic DMARDs (bDMARDs). 
+The primary purpose of the model is to simulate health and cost outcomes for patients with RA treated as a function of the treatments use. Since patients typically use multiple treatments over a lifetime, the model is capable of simulating a treatment sequence of any arbitrary length. Treatments that can be included in a sequence are cDMARDs, bDMARDs, and JAK/STAT inhibitors. We refer to bDMARDs and JAK/STAT inhibitors collectively as targeted DMARDs (tDMARDs).
 
-A dataset of available treatments loads with the `iviRA` package. The `name`, `mname`, and `sname` columns are long-form, medium-form, and short-form names, respectively. The column `biologic` is an indicator equal to 1 if the drug is a biologic and 0 otherwise. 
+A dataset of available treatments loads with the `iviRA` package. The `name`, `mname`, and `sname` columns are long-form, medium-form, and short-form names, respectively. The column `route` refers to route of administration; if a treatment is a combination therapy, then all routes of administration in the combination are listed. Finally, `approval_date` is the date that a treatment was approved by the FDA in the US and `years_since_approval` is the number of years (from the last update of the model) since the treatment was approved.
 
 ```{r }
 iviRA::treatments
@@ -31,7 +31,7 @@ txseq1 <- c("adamtx", "etnmtx", "ifxmtx")
 txseq2 <- c("cdmards")
 ```
 
-In some cases, it might also be useful to allow therapies to differ across patients. This could be useful when, for example, comparing treatment strategies that tailor treatment to individuals against one size fits all strategies. This can be done by creating a matrix of treatment sequences where the number of rows is equal to the number of patients in the cohort. Below we consider a scenario where some patients receive one of two sequences:
+In some cases, it might also be useful to allow treatments to differ across patients. This could be useful when, for example, comparing treatment strategies that tailor treatment to individuals against one size fits all strategies. This can be done by creating a matrix of treatment sequences where the number of rows is equal to the number of patients in the cohort. Below we consider a scenario where some patients receive one of two sequences:
 
 1. adalimumab + methotrexate -> etanercept + methotrexate -> infliximab + methotrexate 
 2. etanercept + methotrexate -> adalimumab + methotrexate -> infliximab + methotrexate 

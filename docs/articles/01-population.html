@@ -151,31 +151,38 @@
 <p>We can randomly sample a heterogeneous population with default setting. To examine these settings type <code>?sample_pats</code> into the console.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pop &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pop.html">sample_pop</a></span>(<span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">type =</span> <span class="st">"heterog"</span>)
 <span class="kw">head</span>(pop)</code></pre></div>
-<pre><code>##           age male weight prev_dmards    das28     sdai     cdai      haq0
-## [1,] 75.75533    0     75           5 4.764370 25.19009 20.31422 2.0647197
-## [2,] 83.38045    0     75           4 5.792313 42.20752 43.73523 1.1958552
-## [3,] 48.72447    0     75           4 7.201885 50.67412 45.64099 0.2479035
-## [4,] 38.73915    1     89           2 5.448010 35.18488 35.20514 1.8108385
-## [5,] 39.83666    1     89           3 6.846793 45.70542 45.61261 2.2207975
-## [6,] 36.23352    0     75           4 6.738932 61.85921 59.72827 0.9173235</code></pre>
+<pre><code>##           age male weight prev_dmards    das28     sdai     cdai
+## [1,] 62.67101    1     89           6 7.983405 65.05488 58.44067
+## [2,] 47.56272    0     75           6 3.776722 27.43748 25.03512
+## [3,] 55.04557    1     89           1 6.716985 41.71129 51.80744
+## [4,] 41.96176    0     75           5 7.377591 58.48140 55.05158
+## [5,] 52.40354    1     89           4 4.254106 32.38495 29.48690
+## [6,] 69.28016    0     75           1 6.373148 35.47052 38.30510
+##            haq0
+## [1,] 1.95725453
+## [2,] 0.09793803
+## [3,] 1.88187862
+## [4,] 2.16377416
+## [5,] 0.89744683
+## [6,] 1.42908864</code></pre>
 <p>We can also customize the distribution of patients. For example, suppose we want to study a younger and healthier population. We might then sample patients by customizing arguments in <code>sample_pats</code>,</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pop2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pop.html">sample_pop</a></span>(<span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">type =</span> <span class="st">"heterog"</span>, <span class="dt">age_mean =</span> <span class="dv">45</span>, <span class="dt">das28_mean =</span> <span class="dv">4</span>, <span class="dt">sdai_mean =</span> <span class="dv">20</span>, 
                     <span class="dt">cdai_mean =</span> <span class="dv">18</span>)
 <span class="kw">head</span>(pop2)</code></pre></div>
-<pre><code>##           age male weight prev_dmards    das28      sdai     cdai
-## [1,] 35.96685    0     75           2 4.332940 25.769943 24.60511
-## [2,] 35.24039    0     75           4 3.127195 24.298791 10.79018
-## [3,] 35.81931    1     89           5 3.388578  1.288336  1.20799
-## [4,] 35.10785    0     75           3 5.141506 34.676210 34.06656
-## [5,] 60.01497    0     75           4 3.702631  9.315033 10.97513
-## [6,] 18.83895    0     75           1 4.309022 15.654692 18.00685
+<pre><code>##           age male weight prev_dmards    das28      sdai      cdai
+## [1,] 32.67925    1     89           6 3.812153  6.535394  4.755403
+## [2,] 19.05564    1     89           5 2.931376 14.627736 12.064956
+## [3,] 25.47520    0     75           3 3.543231 19.162891 14.581126
+## [4,] 28.95069    0     75           4 3.115839  9.279418 11.032193
+## [5,] 31.46281    0     75           1 4.119586 21.742909 17.104835
+## [6,] 41.05185    1     89           5 5.762705 35.019006 29.941916
 ##           haq0
-## [1,] 1.9216136
-## [2,] 1.4351770
-## [3,] 0.1591244
-## [4,] 1.0379416
-## [5,] 1.6945060
-## [6,] 0.9931240</code></pre>
+## [1,] 1.7059338
+## [2,] 1.0067518
+## [3,] 1.6467381
+## [4,] 0.5647467
+## [5,] 2.0562821
+## [6,] 2.0135672</code></pre>
 </div>
 <div id="using-your-own-patient-population" class="section level2">
 <h2 class="hasAnchor">

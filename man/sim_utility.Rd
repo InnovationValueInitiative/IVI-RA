@@ -14,7 +14,7 @@ sim_utility_wailoo(simhaq, haq0, male, prev_dmards, coefs)
 sim_qalys(simhaq, utility, si_ul, x_attr, tx_attr_coef)
 }
 \arguments{
-\item{simhaq}{Simulation output from \link{sim_haq}. Must include columns \code{yrlen} for
+\item{simhaq}{Simulation output from \link{sim_iviRA}. Must include columns \code{yrlen} for
 year length of model cycle, \code{sim} for simulation number, and \code{si} for whether a serious
 infection occured during the model cycle.}
 

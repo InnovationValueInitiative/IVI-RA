@@ -2,7 +2,6 @@ context("ips.cpp unit tests")
 library("flexsurv")
 library("data.table")
 library("Rcpp")
-source("../../data-raw/func.R")
 seed <- runif(1, 0, 1000)
 
 # Network-meta analyses -------------------------------------------------------
@@ -64,6 +63,7 @@ test_that("sim_haq_lcgm1C", {
   }
   haq <- cumsum(c(1.5, dhaq.C))
   plot(c(2, year), haq)
+  expect_false(any(haq <0  | haq > 3))
 })
 
 

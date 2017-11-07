@@ -7,7 +7,7 @@
 check_sim_utility_wailoo(simhaq, haq0, male, prev_dmards, coefs)
 }
 \arguments{
-\item{simhaq}{Simulation output from \link{sim_haq}}
+\item{simhaq}{Simulation output from \link{sim_iviRA}}
 
 \item{male}{Vector indiciating patient gender (1 = male, 0 = female)}
 

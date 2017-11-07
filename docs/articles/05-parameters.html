@@ -165,7 +165,7 @@
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">parsamp2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pars.html">sample_pars</a></span>(<span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">input_data =</span> input.dat, <span class="dt">si_cost =</span> <span class="dv">7000</span>)
 <span class="kw">summary</span>(parsamp2$si.cost)</code></pre></div>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##    5602    6267    6895    6884    7399    8365</code></pre>
+##    5673    6230    7144    7019    7611    8388</code></pre>
 <p>To view the full list of arguments in <code>sample_pars</code> that can changed by the user view the documentation by typing <code><a href="../reference/sample_pars.html">?sample_pars</a></code>. All default arguments are loaded with the package and are based on IVI’s statistical estimates and synthesis of the literature. The parameter estimates can be viewed by typing the command <code>data(package = "iviRA")</code> into the R console.</p>
 <p>Below we describe these parameter estimates and separate them into 8 main categories: treatment effects estimated from a network meta-analysis (NMA); mappings between various measured of treatment response, disease activity, and/or function; long-term progression of disease, treatment duration, serious infections, mortality, utility, and costs.</p>
 <div id="treatment-effects-during-initial-6-month-period" class="section level2">
@@ -250,7 +250,7 @@
 <div id="long-term-haq-progression" class="section level2">
 <h2 class="hasAnchor">
 <a href="#long-term-haq-progression" class="anchor"></a>Long-term HAQ progression</h2>
-<p>The progression of HAQ over time is modeled in two ways: first, assuming a constant annual rate, and second, by using a LCGM. The LCGM can currently only be used to model progression in the absence of bDMARDs while a constant annual rate can be used for all treatments.</p>
+<p>The progression of HAQ over time is modeled in two ways: first, assuming a constant annual rate, and second, by using a LCGM. The LCGM can currently only be used to model progression in the absence of tDMARDs while a constant annual rate can be used for all treatments.</p>
 <p>The constant annual rate of progression for patients on cDMARDs (and NBT) are based on <a href="https://arthritis-research.biomedcentral.com/articles/10.1186/ar2944">Wolfe and Michaud’s (2010)</a> analysis of 3,829 RA patients who switched from non-biologic treatment to biologic treatment and participated in the National Data Bank for Rheumatic Diseases (NDB). The progression rate for patients on biologics are based on treatment-specific rates from <a href="http://onlinelibrary.wiley.com/doi/10.1002/acr.20405/full">Michaud et al. (2011)</a> adjusted for baseline HAQ score, age, sex, education, smoking, BMI, comorbidity, and RA onset. Importantly, The average HAQ rate among patients on a biologic was -0.001 in the Michaud et al. analysis, which instills confidence that the reported HAQ progression rates for different bDMARDs can be directly compared with the overall annual HAQ progression rate of 0.031 reported in the 2010 Wolfe and Michaud analysis.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iviRA::haq.lprog$tx</code></pre></div>
 <pre><code>##        sname    est          se   lower  upper
@@ -414,7 +414,7 @@
 </tr>
 </tbody>
 </table>
-<p>The <code>iviRA</code> package currently only allows for models in which the location parameter, but not the ancillary parameters, depends on covariates. The indies of the location parameter, first ancillary parameter, and second ancillary parameter in the <code>est</code> and <code>vcov</code> objects are contained in the <code>loc.index</code>, <code>anc1.index</code>, and <code>anc2.index</code> objects, respectively. For example, in a regression model with no covariates, the index of the location parameter is 2 and the index of the first ancillary parameter is 1.</p>
+<p>The <code>iviRA</code> package currently only allows for models in which the location parameter, but not the ancillary parameters, depends on covariates. The indices of the location parameter, first ancillary parameter, and second ancillary parameter in the <code>est</code> and <code>vcov</code> objects are contained in the <code>loc.index</code>, <code>anc1.index</code>, and <code>anc2.index</code> objects, respectively. For example, in a regression model with no covariates, the index of the location parameter is 2 and the index of the first ancillary parameter is 1.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iviRA::ttd.all$weibull$loc.index</code></pre></div>
 <pre><code>## [1] 2</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iviRA::ttd.all$weibull$anc1.index</code></pre></div>
@@ -425,7 +425,7 @@
 <div id="serious-infections" class="section level2">
 <h2 class="hasAnchor">
 <a href="#serious-infections" class="anchor"></a>Serious infections</h2>
-<p>Serious infection rates are based on the NMA and Cochrane review by <a href="http://onlinelibrary.wiley.com/doi/10.1002/14651858.CD008794/full">Singh et al. (2011)</a>. In accordance with the 2016 NICE report we assume a constant serious infection rate of 0.026 for patients using cDMARDs and a constant rate of <code>exp(iviRA::ttsi[sname == "etnmtx", lograte])</code> for patient using bDMARDs. A such we constantly assume that the time to a serious infection is exponentially distributed and that it does not vary across bDMARDs.</p>
+<p>Serious infection rates are based on the NMA and Cochrane review by <a href="http://onlinelibrary.wiley.com/doi/10.1002/14651858.CD008794/full">Singh et al. (2011)</a>. In accordance with the 2016 NICE report we assume a constant serious infection rate of 0.026 for patients using cDMARDs and a constant rate of <code>exp(iviRA::ttsi[sname == "etnmtx", lograte])</code> for patient using tDMARDs. A such we constantly assume that the time to a serious infection is exponentially distributed and that it does not vary across tDMARDs.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><a href="http://www.rdocumentation.org/packages/iviRA/topics/ttsi">iviRA::ttsi</a></code></pre></div>
 <pre><code>##        sname    lograte lograte_se
 ##  1:  cdmards  -3.649659   0.135922
@@ -870,19 +870,19 @@
 <p>Hospitalization costs are estimated as a function of the HAQ score. In particular, <a href="https://www.ncbi.nlm.nih.gov/pubmed/25773552">Carlson 2015</a>, report estimates of the number of days in the hospital for a given HAQ score range as well as the cost of a single day in the hospital.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><a href="http://www.rdocumentation.org/packages/iviRA/topics/hosp.cost">iviRA::hosp.cost</a></code></pre></div>
 <pre><code>##          haq days_mean days_se cost_pday_mean cost_pday_se
-## 1: 0 to &lt;0.5      0.26     0.5           1251          191
-## 2: 0.5 to &lt;1      0.13     0.5           1251          191
-## 3: 1 to &lt;1.5      0.51     0.5           1251          191
-## 4: 1.5 to &lt;2      0.72     0.5           1251          191
-## 5: 2 to &lt;2.5      1.86     0.5           1251          191
-## 6:      &gt;2.5      4.16     0.5           1251          191</code></pre>
+## 1: 0 to &lt;0.5      0.26     0.5       1292.358     197.3144
+## 2: 0.5 to &lt;1      0.13     0.5       1292.358     197.3144
+## 3: 1 to &lt;1.5      0.51     0.5       1292.358     197.3144
+## 4: 1.5 to &lt;2      0.72     0.5       1292.358     197.3144
+## 5: 2 to &lt;2.5      1.86     0.5       1292.358     197.3144
+## 6:      &gt;2.5      4.16     0.5       1292.358     197.3144</code></pre>
 <p>Management costs are based on mean costs and cost ranges reported in <a href="http://www.jmcp.org/doi/full/10.18553/jmcp.2016.22.9.1088">Claxton (2016)</a>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><a href="http://www.rdocumentation.org/packages/iviRA/topics/mgmt.cost">iviRA::mgmt.cost</a></code></pre></div>
-<pre><code>##                service   est lower upper        se
-## 1:          chest_xray 109.0  97.0 121.0  6.122561
-## 2:          xray_visit  53.0  45.0  61.0  4.081708
-## 3: outpatient_followup 187.0 159.0 215.0 14.285977
-## 4:                 tst  30.5  30.5  30.5  0.000000</code></pre>
+<pre><code>##                service       est     lower     upper        se
+## 1:          chest_xray 112.60353 100.20681 125.00025  6.324973
+## 2:          xray_visit  54.75218  46.48770  63.01666  4.216649
+## 3: outpatient_followup 193.18221 164.25653 222.10788 14.758270
+## 4:                 tst  31.50833  31.50833  31.50833  0.000000</code></pre>
 </div>
 <div id="productivity-losses" class="section level3">
 <h3 class="hasAnchor">

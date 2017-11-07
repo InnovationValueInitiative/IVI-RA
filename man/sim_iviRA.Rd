@@ -18,7 +18,7 @@ a single treatment sequence or a matrix of unique treatment sequences for each p
 \item{pars}{An object of class 'par_sample' returned from \link{sample_pars}.}
 
 \item{model_structures}{An object of class "model_structures" 
-returned from \link{select_model_structure}.}
+returned from \link{select_model_structures}.}
 
 \item{max_months}{Maximum number of months to run the model for. Default is NULL which implies that
 the model is simulated over each patient's lifetime.}
@@ -28,7 +28,7 @@ The indices of of treatments in \code{tx_seqs} are matched against treatments in
 \code{tx_data$sname} by name. Indices of treatment-specific parameter estimates must be 
 in the same order as treatments in \code{tx_data}.}
 
-\item{hist}{Is the patient biologic naive or biologic experienced?}
+\item{hist}{Is the patient tDMARD naive or tDMARD experienced?}
 
 \item{output}{Specifies the format of output returned from the simulation. Options are \code{data} 
 and \code{summary}. When \code{data} is specified, each simulated value (i.e, by model,

@@ -84,7 +84,7 @@ iviRA::eular2haq
 ```
 
 ## Long-term HAQ progression
-The progression of HAQ over time is modeled in two ways: first, assuming a constant annual rate, and second, by using a LCGM. The LCGM can currently only be used to model progression in the absence of bDMARDs while a constant annual rate can be used for all treatments. 
+The progression of HAQ over time is modeled in two ways: first, assuming a constant annual rate, and second, by using a LCGM. The LCGM can currently only be used to model progression in the absence of tDMARDs while a constant annual rate can be used for all treatments. 
 
 The constant annual rate of progression for patients on cDMARDs (and NBT) are based on [Wolfe and Michaud's (2010)](https://arthritis-research.biomedcentral.com/articles/10.1186/ar2944) analysis of 3,829 RA patients who switched from non-biologic treatment to biologic treatment and participated in the National Data Bank for Rheumatic Diseases (NDB). The progression rate for patients on biologics are based on treatment-specific rates from [Michaud et al. (2011)](http://onlinelibrary.wiley.com/doi/10.1002/acr.20405/full) adjusted for baseline HAQ score, age, sex, education, smoking, BMI, comorbidity, and RA onset. Importantly, The average HAQ rate among patients on a biologic was -0.001 in the Michaud et al. analysis, which instills confidence that the reported HAQ progression rates for different bDMARDs can be directly compared with the overall annual HAQ progression rate of 0.031 reported in the 2010 Wolfe and Michaud analysis. 
 
@@ -146,7 +146,7 @@ kable(survdist.table)
 
 ```
 
-The `iviRA` package currently only allows for models in which the location parameter, but not the ancillary parameters, depends on covariates. The indies of the location parameter, first ancillary parameter, and second ancillary parameter in the `est` and `vcov` objects are contained in the `loc.index`, `anc1.index`, and `anc2.index` objects, respectively. For example, in a regression model with no covariates, the index of the location parameter is `r iviRA::ttd.all$weibull$loc.index` and the index of the first ancillary parameter is `r iviRA::ttd.all$weibull$anc1.index`.  
+The `iviRA` package currently only allows for models in which the location parameter, but not the ancillary parameters, depends on covariates. The indices of the location parameter, first ancillary parameter, and second ancillary parameter in the `est` and `vcov` objects are contained in the `loc.index`, `anc1.index`, and `anc2.index` objects, respectively. For example, in a regression model with no covariates, the index of the location parameter is `r iviRA::ttd.all$weibull$loc.index` and the index of the first ancillary parameter is `r iviRA::ttd.all$weibull$anc1.index`.  
 
 ```{r }
 iviRA::ttd.all$weibull$loc.index
@@ -155,7 +155,7 @@ iviRA::ttd.all$weibull$anc2.index
 ```
 
 ## Serious infections
-Serious infection rates are based on the NMA and Cochrane review by [Singh et al. (2011)](http://onlinelibrary.wiley.com/doi/10.1002/14651858.CD008794/full). In accordance with the 2016 NICE report we assume a constant serious infection rate of `r exp(iviRA::ttsi[sname == "cdmards", lograte])` for patients using cDMARDs and a constant rate of `exp(iviRA::ttsi[sname == "etnmtx", lograte])` for patient using bDMARDs. A such we constantly assume that the time to a serious infection is exponentially distributed and that it does not vary across bDMARDs. 
+Serious infection rates are based on the NMA and Cochrane review by [Singh et al. (2011)](http://onlinelibrary.wiley.com/doi/10.1002/14651858.CD008794/full). In accordance with the 2016 NICE report we assume a constant serious infection rate of `r exp(iviRA::ttsi[sname == "cdmards", lograte])` for patients using cDMARDs and a constant rate of `exp(iviRA::ttsi[sname == "etnmtx", lograte])` for patient using tDMARDs. A such we constantly assume that the time to a serious infection is exponentially distributed and that it does not vary across tDMARDs. 
 
 
 ```{r }

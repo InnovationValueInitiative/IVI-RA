@@ -28,7 +28,8 @@ You can also run the model online using our web interfaces.
 
 ## Collaborate
 * If you found a bug or would like to request a new feature, then submit an [issue](https://github.com/InnovationValueInitiative/IVI-RA/issues).
-* If you would like to contribute to the code base, then create a pull request. We, for the most part, adhere to Hadley Wickham's [style guide](http://adv-r.had.co.nz/Style.html). The one exception is that we use dots to separate object names as in my.name.
+* If you would like to contribute to the code base, then create a pull request. For more about contributing to the code, see [here](file:///Users/devin.incerti/IVI/IVI-RA/docs/articles/how-to-contribute.html). 
+
 
 
 

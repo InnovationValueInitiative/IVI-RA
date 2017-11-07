@@ -163,6 +163,48 @@
 </ul>
 <p>Patches and minor releases do not need to be reviewed by the technical expert panel and can be implemented through pull requests. Major releases only occur after improvements have been recommended by the panel.</p>
 </div>
+<div id="style-guide" class="section level2">
+<h2 class="hasAnchor">
+<a href="#style-guide" class="anchor"></a>Style guide</h2>
+<p>We, for the most part, adhere to Hadley Wickham’s <a href="http://adv-r.had.co.nz/Style.html">style guide</a>, with a few exceptions and clarifications.</p>
+<div id="variable-names" class="section level3">
+<h3 class="hasAnchor">
+<a href="#variable-names" class="anchor"></a>Variable names</h3>
+<p>Variable names should be all lower case and separated by a dot.</p>
+<pre><code># Good
+object.name
+my.list &lt;- list(my.integer = 3)
+
+# Bad 
+objectName
+ObjectName
+object_name</code></pre>
+</div>
+<div id="function-names" class="section level3">
+<h3 class="hasAnchor">
+<a href="#function-names" class="anchor"></a>Function names</h3>
+<p>Function names should be all lower case and separated by an underscore.</p>
+<pre><code># Good
+my_function
+
+# Bad 
+myFunction
+MyFunction
+my.function</code></pre>
+</div>
+<div id="variable-and-column-names-in-data-frames-or-matrices" class="section level3">
+<h3 class="hasAnchor">
+<a href="#variable-and-column-names-in-data-frames-or-matrices" class="anchor"></a>Variable and column names in data frames or matrices</h3>
+<p>Variable names in a <code>data.frame</code>, <code>data.table</code>, or <code>matrix</code> should be all lower case and separated by an underscore.</p>
+<pre><code># Good
+data.frame(my_var = 3)
+
+# Bad 
+data.frame(myVar = 3)
+data.frame(MyVar = 3)
+data.frame(my.var = 3)</code></pre>
+</div>
+</div>
 <div id="pull-requests" class="section level2">
 <h2 class="hasAnchor">
 <a href="#pull-requests" class="anchor"></a>Pull requests</h2>
@@ -215,6 +257,7 @@ git merge upstream/master</code></pre>
       <ul class="nav nav-pills nav-stacked">
 <li><a href="#two-ways-to-collaborate">Two ways to collaborate</a></li>
       <li><a href="#ivi-model-releases">IVI model releases</a></li>
+      <li><a href="#style-guide">Style guide</a></li>
       <li><a href="#pull-requests">Pull requests</a></li>
       </ul>
 </div>
