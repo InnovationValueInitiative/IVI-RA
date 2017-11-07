@@ -1480,7 +1480,7 @@ Notes: Baseline HAQ is 1 for the ``Constant HAQ'' and ``HAQ increase of 0.03 per
 
 \FloatBarrier
 
-\subsection{Cost}\label{cost}
+\subsection{Costs}\label{cost}
 <<treat_cost, echo = FALSE, include = FALSE>>=
 # cost for non-weight based dosing
 tab = copy(iviRA::tx.cost$cost)
