@@ -223,7 +223,7 @@ Version 1.0 is IVI's first release of the IVI-RA model, and is designed to provi
 
 \begin{itemize}
 \item \textbf{Source code}: {\R{}} and \CPP{} code for the model is available in our IVI GitHub \href{https://github.com/InnovationValueInitiative/IVI-RA}{repository}. Modelers and programmers may adapt the source code for their own purposes or collaborate with IVI to improve the code. 
-\item \textbf{{\R{}} package}: The IVI-RA model is released as an \href{https://cran.r-project.org/}{\R{}} package with documentation available \href{https://innovationvalueinitiative.github.io/IVI-RA/index.html}{online}. Researchers can use the package to run the IVI-RA model for custom analyses. Use of the {\R{}} package is recommended when peforming analyses for academic publication.
+\item \textbf{{\R{}} package}: The IVI-RA model is released as an \R{} package with documentation available \href{https://innovationvalueinitiative.github.io/IVI-RA/index.html}{online}. Researchers can use the package to run the IVI-RA model for custom analyses. Use of the {\R{}} package is recommended when peforming analyses for academic publication.
 \item \textbf{Model documentation}: This document provides provides technical details on the model structure, statistical methods for parameter estimation, and source data.
 \item \textbf{IVI-RA Model Interface}: For users not be well-versed in the {\R{}} programming language, we provide a web application for running the model online. The web application is designed for custom analyses and allows users full control over the treatments, patient population, model structures, parameter values, and simulation settings.  
 \item \textbf{The IVI-RA Value Tool}: An important aim of the OSVP project is to obtain feedback from as many relevant stakeholders as possible. The IVI-RA Value Tool is a general audience web-application allowing those who are not experts in modeling, health economics, or RA to interact with the IVI-RA model. 
@@ -1714,7 +1714,7 @@ We consider structural uncertainty due to two factors:
 \item The statistical model used to estimate parameters.
 \end{itemize}
 
-\autoref{tbl:competing-structures} summarizes the competing model structures, which are conditional on the perspective of the decision maker. In total, there are 12 x 2 x 7 x 2 = 336 possible model structures. The choice of model structure for the initial treatment phase (\textbf{H1-H3} and \textbf{S1-S6}) depends on the preferred measures of disease activity included in the model as well as whether statistical relationships should be modeled directly or indirectly. Likewise, model structures related to HAQ progression, treatment duration, and converting HAQ to utility all reflect uncertainty in the appropriate statistical model. 
+\autoref{tbl:competing-structures} summarizes the competing model structures, which are conditional on the perspective of the decision maker. In total, there are 12 x 2 x 8 x 2 = 384 possible model structures. The choice of model structure for the initial treatment phase (\textbf{H1-H3} and \textbf{S1-S6}) depends on the preferred measures of disease activity included in the model as well as whether statistical relationships should be modeled directly or indirectly. Likewise, model structures related to HAQ progression, treatment duration, and converting HAQ to utility all reflect uncertainty in the appropriate statistical model. 
 
 \renewcommand{\arraystretch}{1.5}
 
@@ -1728,7 +1728,7 @@ We consider structural uncertainty due to two factors:
 \hline
 Initial effect of treatment on HAQ (\textbf{H1-H3}) and switching (\textbf{S1-S6}) & 12  \\
 HAQ trajectory & 2 \\
-Probability distribution for treatment duration & 7 \\
+Cause and probability distribution used to model treatment discontinuation & 8 \\
 Utility algorithm & 2 \\
 \hline
 \end{tabular}
@@ -2228,18 +2228,18 @@ ifx.cost <- iviRA::tx.cost$cost[sname == "ifx"]
 Drug acquisition and administration costs are calculated separately during the initial treatment phase and the maintenance phase since dosing typically differs. Costs are separated into acquisition costs and infusion costs. Infusion costs are calculated by multiplying the number of doses in a 6 month period by the cost of an infusion and acquisition costs are calculated as,
 
 \begin{align}
-cost = \left\lceil\frac{dose_{amt}}{strength_{amt}}\right\rceil \cdot doses_{num} \cdot WAC,
+cost = \left\lceil\frac{dose_{amt}}{strength_{amt}}\right\rceil \cdot doses_{num} \cdot price,
 \end{align}
 
-where $\lceil\cdot\rceil$ is the ceiling function and implies that products cannot be reused after opening, $dose_{amt}$ is the recommended dose of the drug, $strength_{amt}$ is the strength of the drug, $doses_{num}$ is the number of doses in a 6 month period, and $WAC$ is the WAC. For example, as shown in \autoref{tbl:treat-cost}, both the strength and the dose of adalimumab are 50 mg, so costs for the initial 6 month period are calculated by multiplying the number of doses (\Sexpr{ada.cost$init_num_doses}) by the WAC (\$\Sexpr{formatC(ada.cost$price_per_unit, format = "f", big.mark = ",", digits = 2)}).
+where $\lceil\cdot\rceil$ is the ceiling function and implies that products cannot be reused after opening, $dose_{amt}$ is the recommended dose of the drug, $strength_{amt}$ is the strength of the drug, $doses_{num}$ is the number of doses in a 6 month period, and $price$ is the price per unit of the treatment after discounts and rebates. For example, as shown in \autoref{tbl:treat-cost}, both the strength and the dose of adalimumab are 50 mg, so costs (before discounts and rebates) for the initial 6 month period are calculated by multiplying the number of doses (\Sexpr{ada.cost$init_num_doses}) by the WAC (\$\Sexpr{formatC(ada.cost$price_per_unit, format = "f", big.mark = ",", digits = 2)}).
 
 When dosing depends on weight, costs are calculated separately for each patient in the simulation. In particular, costs are calculated as,
 
 \begin{align}
-cost &= \lceil weight \cdot dose_{amt}/strength_{amt}\rceil \cdot doses_{num} \cdot WAC,
+cost &= \lceil weight \cdot dose_{amt}/strength_{amt}\rceil \cdot doses_{num} \cdot price,
 \end{align}
 
-where $weight$ is patient weight, $dose_{amt}$ is the dose per weight, and $strength_{amt}$, $WAC$, and $doses_{num}$ are defined in the same way as in the non-weight based scenario. To illustrate, the acquisition cost for infliximab after the first 6 months is calculated by multiplying each patient's weight by the dose (6 mg/kg) and dividing by the size of a vial (100 mg), and then multiplying by the number of doses (\Sexpr{formatC(ifx.cost$ann_num_doses, format = "f", digits = 2)}) and the WAC (\$\Sexpr{formatC(ifx.cost$price_per_unit, format = "f", big.mark = ",", digits = 2)}). 
+where $weight$ is patient weight, $dose_{amt}$ is the dose per weight, and $strength_{amt}$, $price$, and $doses_{num}$ are defined in the same way as in the non-weight based scenario. To illustrate, the acquisition cost (before discounts and rebates) for infliximab after the first 6 months is calculated by multiplying each patient's weight by the dose (6 mg/kg) and dividing by the size of a vial (100 mg), and then multiplying by the number of doses (\Sexpr{formatC(ifx.cost$ann_num_doses, format = "f", digits = 2)}) and the price per unit (\$\Sexpr{formatC(ifx.cost$price_per_unit, format = "f", big.mark = ",", digits = 2)}). 
 
 \section{Annualized costs and benefits}\label{app:insurance-value}
 Annualized QALY gains and costs, which are used to estimate the annual insurance value of treatment, are calculated using the formula for a geometric series and assuming a constant flow rate each model cycle. In particular, if $t$ indexes time (in years), $\hat{cost}$ and $\hat{qalys}$ denote lifetime costs and QALYs simulated by the model, respectively, then annualized costs, $c$ and QALYs, $q$, can be derived from,  
