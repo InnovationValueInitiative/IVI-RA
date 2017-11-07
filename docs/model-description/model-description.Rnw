@@ -1542,7 +1542,7 @@ An overview of drug acquisition and administration costs is presented in \autore
 \hline
 \end{tabular}
 \tiny
-Notes: Costs in the table do not include rebates or discounts, but rebates and discounts are used in the simulation. Cost for infliximab are calculated by assuming that \Sexpr{male.prop}\% of patients are male and that the weight of men and women are \Sexpr{wtmale} kg and \Sexpr{wtfemale} kg respectively. Tocilizumab is dosed weekly if weight is greater than 100 kg; costs for tocilizumab reported in the table are for patients weighing less than 100 kg. IV = intravenous; SC = subcutaneous; WAC = wholesale acquisition cost. 
+Notes: Costs in the table do not include rebates or discounts, but rebates and discounts are used in the simulation. Cost for infliximab are calculated by assuming that \Sexpr{male.prop}\% of patients are male and that the weight of men and women are \Sexpr{wtmale} kg and \Sexpr{wtfemale} kg respectively. Tocilizumab is dosed weekly if weight is greater than 100 kg; costs for tocilizumab reported in the table are for patients weighing less than 100 kg. IV = intravenous; SC = subcutaneous. 
 \end{threeparttable}
 \end{center}
 \end{sidewaystable}
