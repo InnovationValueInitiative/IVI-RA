@@ -129,9 +129,42 @@
 \newcommand\ceil[1]{\lceil#1\rceil}
 \newcommand{\code}[1]{\texttt{#1}}
 
+% subsubsection
+
+\titleclass{\subsubsubsection}{straight}[\subsection]
+
+\newcounter{subsubsubsection}[subsubsection]
+\renewcommand\thesubsubsubsection{\thesubsubsection.\arabic{subsubsubsection}}
+\renewcommand\theparagraph{\thesubsubsubsection.\arabic{paragraph}} % optional; useful if paragraphs are to be numbered
+
+\titleformat{\subsubsubsection}
+  {\normalfont\normalsize\bfseries}{\thesubsubsubsection}{1em}{}
+\titlespacing*{\subsubsubsection}
+{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+
+\makeatletter
+\renewcommand\paragraph{\@startsection{paragraph}{5}{\z@}%
+  {3.25ex \@plus1ex \@minus.2ex}%
+  {-1em}%
+  {\normalfont\normalsize\bfseries}}
+\renewcommand\subparagraph{\@startsection{subparagraph}{6}{\parindent}%
+  {3.25ex \@plus1ex \@minus .2ex}%
+  {-1em}%
+  {\normalfont\normalsize\bfseries}}
+\def\toclevel@subsubsubsection{4}
+\def\toclevel@paragraph{5}
+\def\toclevel@paragraph{6}
+\def\l@subsubsubsection{\@dottedtocline{4}{7em}{4em}}
+\def\l@paragraph{\@dottedtocline{5}{10em}{5em}}
+\def\l@subparagraph{\@dottedtocline{6}{14em}{6em}}
+\makeatother
+
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{4}
+
 % title
 \title{A Description of the IVI-RA Model v1.0 
-\thanks{We thank Darius Lakdawalla, Jason Shafrin, Mark Linthicum, Thanh Ton, Jeffrey Curtis, Carole Wiedmeyer, and members of the Innovation and Value Initiative's scientific advisory panel for reviewing this document. In addition, we thank Sam Norton for help with the latent class growth model.} 
+\thanks{We thank Darius Lakdawalla, Jason Shafrin, Mark Linthicum, Thanh Ton, Jeffrey Curtis, Carole Wiedmeyer, and members of the Innovation and Value Initiative's scientific advisory panel for reviewing this document. In addition, we thank Sam Norton for help with the latent class growth model. Finally, we thank Maria Lorenzi, Andrew Frederickson, Jacky Zhang, and Mark Embrett for conducting the systematic literature review and running the network meta-analysis.} 
 \footnote{This report should be referenced as follows: Incerti, D, Jansen, JP. A Description of the IVI-RA Model. 2017; last updated October 2017.}
 }
 \author{Devin Incerti\footnote{\href{http://www.thevalueinitiative.org/}{Innovation and Value Initiative}} \and Jeroen P. Jansen\sameaff}
@@ -169,7 +202,7 @@ CACHE <- TRUE
 \phantomsection
 \section*{Executive summary}\label{sec:executive-summary}
 \addcontentsline{toc}{section}{Executive summary}
-This document describes version 1.0 of the \href{http://www.thevalueinitiative.org/}{Innovation and Value Initiative's (IVI's)} individual patient simulation model for rheumatoid arthritis (RA) (the IVI-RA model). The model simulates the costs, health outcomes, and risks associated with disease-modifying anti-rheumatic drugs (DMARDs) and biologic DMARDSs (bDMARDs) for patients with moderate to severe rheumatoid arthritis (RA). The model is intended to help decision-makers assess the value of treatments for a population of patients with RA.
+This document describes version 1.0 of the \href{http://www.thevalueinitiative.org/}{Innovation and Value Initiative's (IVI's)} individual patient simulation model for rheumatoid arthritis (RA) (the IVI-RA model). The model simulates the costs, health outcomes, and risks associated with disease-modifying anti-rheumatic drugs (DMARDs) including conventional DMARDs (cDMARDs), biologic DMARDs (bDMARDs), and Janus kinase/signal transducers and activators of transcription (JAK/STAT) inhibitors for patients with moderate to severe rheumatoid arthritis (RA) who have previously failed treatment with cDMARDs. The model is intended to help decision-makers assess the value of treatments for a population of patients with RA.
 
 \subsection*{Open-Source Value Project}
 The IVI-RA model is part of IVI's Open Source Value Project (OSVP), which is building an open, collaborative, and consensus-based process for the development of tools for value assessment. Models developed by the OSVP process are iterative, evolving as the science of value assessment advances and as new evidence becomes available.
@@ -192,7 +225,7 @@ Version 1.0 is IVI's first release of the IVI-RA model, and is designed to provi
 \item \textbf{Source code}: {\R{}} and \CPP{} code for the model is available in our IVI GitHub \href{https://github.com/InnovationValueInitiative/IVI-RA}{repository}. Modelers and programmers may adapt the source code for their own purposes or collaborate with IVI to improve the code. 
 \item \textbf{{\R{}} package}: The IVI-RA model is released as an \href{https://cran.r-project.org/}{\R{}} package with documentation available \href{https://innovationvalueinitiative.github.io/IVI-RA/index.html}{online}. Researchers can use the package to run the IVI-RA model for custom analyses. Use of the {\R{}} package is recommended when peforming analyses for academic publication.
 \item \textbf{Model documentation}: This document provides provides technical details on the model structure, statistical methods for parameter estimation, and source data.
-\item \textbf{IVI-RA model web interface}: For users not be well-versed in the {\R{}} programming language, we provide a web application for running the model online. The web application is designed for custom analyses and allows users full control over the treatments, patient population, model structures, parameter values, and simulation settings.  
+\item \textbf{IVI-RA Model Interface}: For users not be well-versed in the {\R{}} programming language, we provide a web application for running the model online. The web application is designed for custom analyses and allows users full control over the treatments, patient population, model structures, parameter values, and simulation settings.  
 \item \textbf{The IVI-RA Value Tool}: An important aim of the OSVP project is to obtain feedback from as many relevant stakeholders as possible. The IVI-RA Value Tool is a general audience web-application allowing those who are not experts in modeling, health economics, or RA to interact with the IVI-RA model. 
 \end{itemize}
 
@@ -277,7 +310,7 @@ To facilitate transparency, understanding, and debate among diverse stakeholders
 \item \textbf{Source code}: {\R{}} and \CPP{} code for the model is available in our IVI GitHub \href{https://github.com/InnovationValueInitiative/IVI-RA}{repository}. Modelers and programmers may adapt the source code for their own purposes or collaborate with IVI to improve the code.  
 \item \textbf{{\R{}} package}: The IVI-RA model is released as an \href{https://cran.r-project.org/}{\R{}} package with documentation available \href{https://innovationvalueinitiative.github.io/IVI-RA/index.html}{online}. Researchers can use the package to run the IVI-RA model for custom analyses. Use of the {\R{}} package is recommended when peforming analyses for academic publication.
 \item \textbf{Model documentation}: This document provides provides technical details on the model structure, statistical methods for parameter estimation, and source data.
-\item \textbf{IVI-RA model web interface}: For users not be well-versed in the {\R{}} programming language, we provide a web application for running the model online. The web application is designed for custom analyses and allows users full control over the treatments, patient population, model structures, parameter values, and simulation settings.  
+\item \textbf{IVI-RA Model Interface}: For users not be well-versed in the {\R{}} programming language, we provide a web application for running the model online. The web application is designed for custom analyses and allows users full control over the treatments, patient population, model structures, parameter values, and simulation settings.  
 \item \textbf{The IVI-RA Value Tool}: An important aim of the OSVP project is to obtain feedback from as many relevant stakeholders as possible. The IVI-RA Value Tool is a general audience web-application allowing those who are not experts in modeling, health economics, or RA to interact with the IVI-RA model. 
 \end{itemize}
 
@@ -301,7 +334,7 @@ The first and most obvious use of the model is for value assessment. Two approac
 
 Second, the model can be used to evaluate the consequences of clinical guidelines such as the current treat-to-target guidelines in the US \citep{singh20162015} or guidelines based on treatment response like in the UK \citep{deighton2010bsr}. Unlike most previous models, our flexible framework allows treatment switching decisions to depend on disease activity level or treatment response, so outcomes under different decision rules can be simulated.   
 
-Third, although the model is currently desnged for population level decision-making, it could, in principle, be used to predict longterm health and economic consequences for patients. The predicted outcomes could, for example, be used to inform patient and providers decision making. For instance, \citet{ioannidis2011individualized} argue that cost-effectiveness has relevance to patients spending their own money on health care services, particularly as out-of-pocket costs grow. Likewise, providers have a growing interest in cost-effectiveness models to demonstrate the value of their care whether through participation in Accountable Care Organizations (ACOs), to ensure coverage of medical interventions for their patients, or to reduce unwanted variability in management. 
+Third, although the model is currently desnged for population level decision-making, it could, in principle, be used to predict long-term health and economic consequences for patients. The predicted outcomes could, for example, be used to inform patient and providers decision making. For instance, \citet{ioannidis2011individualized} argue that cost-effectiveness has relevance to patients spending their own money on health care services, particularly as out-of-pocket costs grow. Likewise, providers have a growing interest in cost-effectiveness models to demonstrate the value of their care whether through participation in Accountable Care Organizations (ACOs), to ensure coverage of medical interventions for their patients, or to reduce unwanted variability in management. 
 
 \section{Value assessment}\label{sec:value-assessment}
 The IVI-RA model simulates clinical and economic outcomes for each individual in a given population of interest. Outcomes can be simulated over a particular time horizon or over a lifetime. 
@@ -381,7 +414,7 @@ Each criterion is assigned points, say ranging from 0 to 10, by the decision mak
 
 To aggregate results, we assume an additive model. In other words, the total score for a given treatment sequence is calculated by multiplying each criterion by the simulated standardized score and summing across criteria.
 
-As with CEA, MCDA results are subject to statistical uncertainty. In the user interface, users choose a single model structure at a time, so uncertainty in MCDA outcomes is quantified using PSA. This produces a probability distribution around the simulated total score for each treatment sequence, which can be used to derive quantities of interest such as Bayesian credible intervals around the total score or the probability that each treatment sequence obtains a particular ranking among relevant treatment sequences.
+As with CEA, MCDA results are subject to statistical uncertainty. In our web applications, users choose a single model structure at a time, so uncertainty in MCDA outcomes is quantified using PSA. This produces a probability distribution around the simulated total score for each treatment sequence, which can be used to derive quantities of interest such as Bayesian credible intervals around the total score or the probability that each treatment sequence obtains a particular ranking among relevant treatment sequences.
 
 \section{Broader concepts of value}\label{sec:braoder-value}
 \citet{garrison2017toward} suggest five concepts of value that researchers should consider adding to the standard cost per QALY based CEA: (1) a reduction in uncertainty from a diagnostic test; (2) insurance value for healthy patients due to reduction against physical risk; (3) the value of hope for individuals who become risk-loving and would rather pay for a therapy with a long right survival tail than a therapy with a shorter right survival tail but an equivalent (or shorter) expected life-expectancy; (4) real option value when a therapy allows an individual to benefit from future medical innovations; and (5) scientific spillovers when the benefits of an innovation cannot be entirely appropriated by the innovator. 
@@ -403,9 +436,9 @@ The value of a technology to a healthy consumer (with no health insurance), $V^{
 
 The marginal value of the technology, $dV^{NHI}$, can be shown to be,
 
-\begin{align}
+\begin{align} 
 dV^{NHI} &= \pi (k \cdot dh - dp) + \pi (1 - \pi)(k \cdot dh - dp)\left(\frac{u_c^s - u_c^w}{\pi u_c^s + (1-\pi)u_c^w} \right) \\
-&= \left[\underbrace{k \cdot dh - dp}_{INMB}\right] \left[\pi + \pi (1 - \pi)\left(\frac{u_c^s/u_c^w - 1}{\pi u_c^s/u_c^w + 1 - \pi}\right)\right],
+&= \left[k \cdot dh - dp\right] \left[\pi + \pi (1 - \pi)\left(\frac{u_c^s/u_c^w - 1}{\pi u_c^s/u_c^w + 1 - \pi}\right)\right],  \label{eqn:insurance-value}
 \end{align}
 
 where $k = \partial u_h^s/\partial u_c^s$ is the marginal value of a one unit health gain in dollar terms, $dh$ is the marginal health gain from the technology, and $dp$ is the marginal cost of the technology. The term $k \cdot dh - dp$ is equivalent to the INMB in conventional CEA. The insurance value framework can therefore be implemented with knowledge of only two additional parameters beyond those in conventional CEA: the probability of illness, $\pi$, and the marginal rate of substitution between the sick and the well states, $u_c^s/u_c^w$. 
@@ -466,7 +499,7 @@ Our default population consists of individuals that, on average, have high disea
 \end{table}
 
 \section{Treatment strategies}\label{sec:treatments}
-Since patients typically use multiple treatments over a lifetime, the model is capable of simulating a treatment sequence of any arbitrary length. Treatments that can be included in a sequence include conventional disease-modifying anti-rheumatic drugs (cDMARDs) such as methotrexate as well as the following biologic DMARDs (bDMARDs) or Janus kinase/STAT pathway inhibitors (collectively referred to as bDMARDs):
+Since patients typically use multiple treatments over a lifetime, the model is capable of simulating a treatment sequence of any arbitrary length. Treatments that can be included in a sequence include conventional disease-modifying anti-rheumatic drugs (cDMARDs), biologic DMARDs (bDMARDs), and Janus kinase/STAT (JAK/STAT) pathway inhibitors. The bDMARDs and JAK/STAT inhibitors, which we refer to collectively as targeted DMARDs (tDMARDs), included in the current version of the model are:
 
 \begin{itemize}
 \item \textbf{Tumor necrosis factor (TNF) inhibitors}: etanercept, adalimumab, infliximab, certolizumab, golimumab
@@ -565,7 +598,7 @@ Notes: Rectangles represent ``processes'' determining the effect of treatment on
 \end{minipage}
 \end{figure}
 
-The influence diagram in \autoref{fig:influence-diagram} summarizes the assumed relationships among different variables in the model. Each arrow represents the direct effect of one parameter on another. Dashed lines represent relationships that depend on the structural assumptions used. \autoref{subfig:treatment-effects} focuses on the effect of treatment on disease progression and adverse events while \autoref{subfig:model-outcomes} looks at the variables influencing the primary health and cost outcomes. 
+The influence diagram in \autoref{fig:influence-diagram} summarizes the assumed relationships among different variables in the model. Each arrow represents the direct effect of one parameter on another. Dashed lines represent relationships that depend on the structural assumptions used. \autoref{subfig:treatment-effects} focuses on the effect of treatment on disease progression and adverse events while \autoref{subfig:model-outcomes} looks at the relationships between the health and cost outcome variables. 
 
 \begin{figure}
 \centering
@@ -577,7 +610,7 @@ The influence diagram in \autoref{fig:influence-diagram} summarizes the assumed 
 \begin{subfigure}{\textwidth}
 \centering
 \includegraphics[width=.8\textwidth]{influence-diagram-b.png}
-\caption{Model outcomes} \label{subfig:model-outcomes}
+\caption{Long-term model outcomes} \label{subfig:model-outcomes}
 \end{subfigure}
 \caption{Influence diagram outlining structural relationships}\label{fig:influence-diagram}
 \begin{minipage}{\linewidth}
@@ -586,26 +619,30 @@ Notes: ACR: American College of Rheumatology; EULAR: European League Against Rhe
 \end{minipage}
 \end{figure}
 
-The model accounts for patient heterogeneity in two ways. First, baseline event rates vary across patients by both observable and unobservable factors. For example, longterm HAQ progression, mortality, and utility depend on patient specific variables including age, gender, and baseline disease level. Moreover, unobserved differences in longterm HAQ progression and utility across patients are modeled using mixture models. Second, relative treatment effects for ACR response, the change in HAQ at 6 months, and the change in DAS28 at 6 months, can be modeled as a function of explanatory variables in the \R{} package. 
+The model accounts for patient heterogeneity in two ways. First, baseline event rates vary across patients by both observable and unobservable factors. For example, long-term HAQ progression, mortality, and utility depend on patient specific variables including age, gender, and baseline disease level. Moreover, unobserved differences in long-term HAQ progression and utility across patients are modeled using mixture models. Second, relative treatment effects for ACR response, the change in HAQ at 6 months, and the change in DAS28 at 6 months, can be modeled as a function of explanatory variables in the \R{} package. 
 
 \subsection{Model outcomes}\label{model-outcomes}
+\subsubsection{Benefits, costs, and risks}
 The model simulates the health outcomes, costs, and risks associated with treatment. Depending on the model structure, model outcomes include the following:
 \begin{itemize}
 \item \textbf{Clinical outcomes during initial treatment phase}: ACR response, EULAR response, DAS28, SDAI, CDAI
-\item \textbf{Longterm clinical outcomes}: HAQ, QALYs
-\item \textbf{Adverse events}: Number of serious infections
+\item \textbf{Long-term clinical outcomes}: HAQ, QALYs
+\item \textbf{Adverse events}: number of serious infections
 \item \textbf{Health care sector costs}: drug acquisition and administration costs, general management and monitoring costs, adverse event costs, hospitalization costs
 \item \textbf{Non-health care sector costs}: productivity losses
 \end{itemize}
 
-If a CEA approach is used for value assessment, then the value of treatment is estimated using the net-monetary benefit (NMB), as described in \autoref{sec:cea}. CEA from a societal perspective would include productivity losses while analyses from a health care sector perspective would not.
+\subsubsection{Outcomes for value assessment}
+If CEA is used for value assessment, then the value of treatment is estimated using the NMB, as described in \autoref{sec:cea}. CEA from a societal perspective would include productivity losses while analyses from a health care sector perspective would not.
 
-Any combination of simulated model outcomes can be used for MCDA. In IVI's user interfaces, the MCDA is currently based on the following criteria: (i) QALYs, (ii) total health care sector costs, (iii) productivity losses, (iv) number of serious infections, (v) number of treatment switches, (vi) route of administration (oral/injection/infusion) and (vii) time the medication has been on the market.
+Any combination of simulated model outcomes can be used for MCDA. In IVI's web interfaces, the MCDA is currently based on the following criteria: (i) QALYs, (ii) total health care sector costs, (iii) productivity losses, (iv) number of serious infections, (v) number of treatment switches, (vi) route of administration (oral/injection/infusion) and (vii) time the medication has been on the market. In the web interfaces users can input their own weights, but it is important to note that we have not conducted the surveys required to elicit weights in a representative sample of patients. 
+
+When analyzing value to healthy individuals---rather than sick patients---we use the framework described in \autoref{sec:braoder-value}. Following \citet{lakdawalla2015insurance} we calculate annual value for patients (e.g., benefits to an insurance enrollee during a plan year) by annualizing lifetime health gains (i.e., QALYs) and costs (see \autoref{app:insurance-value} for more details). To calculate the conventional value of a treatment to a healthy individual (i.e., $\pi( k \cdot dh - dp)$ from \autoref{eqn:insurance-value}), we estimate $dh$ using annualized incremental QALYs, $dp$ using annualized incremental costs, $k$ using willingness to pay thresholds, and $\pi$ as the probability of obtaining RA within the next year.  
 
 \section{Source data and parameter estimation}\label{sec:data-parameters}
 
 \subsection{Treatment effects at 6 months}\label{nma-parameters}
-The effect of treatment on ACR response, DAS28, and HAQ at 6 months for bDMARD naive patients are estimated using Bayesian network meta-analyses (NMA) of published randomized controlled trials (RCTs). Primary outcomes were ACR response, change in DAS28 from baseline at 6 months, and the change in HAQ from baseline at 6 months. Results from the NMA are shown in \autoref{tbl:nma-acr-das28-haq}. Details of the systematic literature review and the statistical methodology are provided in the Appendix (\autoref{app:nma-statistical-models}).
+The effect of treatment on ACR response, DAS28, and HAQ at 6 months for tDMARD naive patients are estimated using Bayesian network meta-analyses (NMA) of published randomized controlled trials (RCTs). Primary outcomes were ACR response, change in DAS28 from baseline at 6 months, and the change in HAQ from baseline at 6 months. Results from the NMA are shown in \autoref{tbl:nma-acr-das28-haq}. Details of the systematic literature review and the statistical methodology are provided in the Appendix (\autoref{app:nma-analyses}).
 
 <<nma_results, cache=CACHE, echo=FALSE, include=FALSE>>=
 tx.snames <- c("cdmards", "abtivmtx", "adamtx", "etnmtx", "golmtx", "ifxmtx", "tczmtx", "czpmtx", "abtscmtx", "rtxmtx", "tofmtx")
@@ -715,13 +752,13 @@ Notes: ACR20/50/70 categories are the probability of at least a 20/50/70\% impro
 \end{center}
 \end{sidewaystable}
 
-Its important to note that treatment effects for each bDMARD were estimated relative to cDMARDs and then applied to the average response for patients using cDMARDs. A limitation of our current approach is that that the average response for patients using cDMARDs is estimated using data from the clinical trials include in the NMA, and may not reflect outcomes seen in routine practice. Future versions of the model could consider using real-world data instead of clinicial trial evidence to estimate this average response.
+Its important to note that treatment effects for each tDMARD were estimated relative to cDMARDs and then applied to the average response for patients using cDMARDs. A limitation of our current approach is that that the average response for patients using cDMARDs is estimated using data from the clinical trials include in the NMA, and may not reflect outcomes seen in routine practice. Future versions of the model could consider using real-world data instead of clinicial trial evidence to estimate this average response.
 
-Given that there is limited evidence that treatment effects vary across patients in the published literature, treatment response at 6 months for a given treatment does not vary according to patient characteristics. Nonetheless, in our \R{} package, treatment effects for each simulated patient can be modeled as a function of any variables chosen by the user. Our approach to modeling treatment effect heterogeneity is described in \autoref{app:nma-statistical-models}  
+Given that there is limited evidence that treatment effects vary across patients in the published literature, treatment response at 6 months for a given treatment does not vary according to patient characteristics. Nonetheless, in our \R{} package, treatment effects for each simulated patient can be modeled as a function of any variables chosen by the user. Our approach to modeling treatment effect heterogeneity is described in \autoref{app:nma-analyses}. 
 
-Treatment effects for bDMARD experienced patients are reduced by multiplying treatment effects for bDMARD naive patients by a constant $k$. Based on evidence reported in \citet{carlson2015economic}, we assume that $k$ is uniformly distributed and ranges between .75 and .92, implying that (rounding up) the average value of $k$ is .84. In other words, reductions in DAS28 and HAQ scores for bDMARD experienced patients are, on average, 84\% of the reduction in DAS28 and HAQ scores for bDMARD naive patients, and an ACR response of 60/40/20 for bDMARD naive patients would, on average, be reduced to 50/33/16 for bDMARD experienced patients. 
+Treatment effects for tDMARD experienced patients are reduced by multiplying treatment effects for tDMARD naive patients by a constant $\gamma$. Based on evidence reported in \citet{carlson2015economic}, we assume that $\gamma$ is uniformly distributed and ranges between .75 and .92, implying that (rounding up) the average value of $\gamma$ is .84. In other words, reductions in DAS28 and HAQ scores for tDMARD experienced patients are, on average, 84\% of the reduction in DAS28 and HAQ scores for tDMARD naive patients, and an ACR response of 60/40/20 for tDMARD naive patients would, on average, be reduced to 50/33/16 for tDMARD experienced patients. 
 
-In the simulation, treatment response depends on the line of therapy and whether a patient is bDMARD naive or bDMARD experienced at baseline. For bDMARD naive patients, first line treatment response is based on the NMA results for bDMARD naive patients while response for all other treatments in a treatment sequence is reduced using the constant $k$. For bDMARD experienced patients, treatment response is reduced using $k$ at each line of therapy including the first line. One limitation of this approach is that we are unable to model the relationship between line of therapy and $k$; that is, treatment response for a patient who has failed at least one biologic is assumed to be reduced by, on average, .84, regardless of line of therapy. 
+In the simulation, treatment response depends on the line of therapy and whether a patient is tDMARD naive or tDMARD experienced at baseline. For tDMARD naive patients, first line treatment response is based on the NMA results for tDMARD naive patients while response for all other treatments in a treatment sequence is reduced using the constant $\gamma$. For tDMARD experienced patients, treatment response is reduced using $\gamma$ at each line of therapy including the first line. One limitation of this approach is that we are unable to model the relationship between line of therapy and $\gamma$; that is, treatment response for a patient who has failed at least one biologic is assumed to be reduced by, on average, .84, regardless of line of therapy. 
 
 \subsection{Treatment switching at 6 months}
 The data required to determine treatment switching at 6 months depends on the selected model structure. If \textbf{S1} is selected, then treatment switching depends on the simulated ACR response; likewise, if \textbf{S5} is selected, then treatment switching depends on the simulated level of DAS28 at 6 months. When \textbf{S2-S4} are used, treatment switching is determined by the relationship between ACR response and the change in disease activity, and in \textbf{S6}, switching is based on the relationship between ACR response and EULAR response. Details of the mapping between ACR response and change in disease activity and between ACR response and EULAR response are provided below.  
@@ -914,12 +951,12 @@ Notes: \textbf{H1}, \textbf{H2}, and \textbf{H3} are the Treatment $\rightarrow$
 
 Estimates for \textbf{H1} and \textbf{H3} are generally similar but treatment response is considerably smaller when using \textbf{H2}. This suggests that the additional mapping between ACR response and EULAR response attenuates treatment response. Given these varying estimates of the change in HAQ during the initial treatment phase and the impact of HAQ on other important outcomes within the model including utility and health care costs, the choice of \textbf{H1-H3} (and in particular \textbf{H2} vs. \textbf{H1/H3}) appears to have important consequences for value assessment.  
 
-\subsection{HAQ progression in the absence of bDMARD treatment}\label{haq-progression-in-the-absence-of-bdmard-treatment}
+\subsection{HAQ progression in the absence of tDMARD treatment}\label{haq-progression-in-the-absence-of-tDMARD-treatment}
 
-The natural course of HAQ progression in the absence of bDMARDs develops over time according to an estimated natural course for patients remaining on cDMARDs or following discontinuation of the last bDMARD of the sequence (i.e., on NBT). The natural course of HAQ can either be assumed to change at a constant linear rate or be modeled using a LCGM that accounts for non-linear progression and heterogeneity across patients. 
+The natural course of HAQ progression in the absence of tDMARDs develops over time according to an estimated natural course for patients remaining on cDMARDs or following discontinuation of the last tDMARD of the sequence (i.e., on NBT). The natural course of HAQ can either be assumed to change at a constant linear rate or be modeled using a LCGM that accounts for non-linear progression and heterogeneity across patients. 
 
 \subsubsection{Constant linear rate of progression} \label{sec:haq-linear-rate}
-The rate of progression in the linear case is based on the observational study by \citet{wolfe2010loss}. They assessed the development of HAQ over time at six month intervals for up to 11 years among 3,829 RA patients who switched from non-biologic treatment to biologic treatment and participated in the National Data Bank for Rheumatic Diseases (NDB) longitudinal study of RA outcomes. The annual HAQ progression rate prior to biologic therapy was 0.031 (95\% confidence interval (95\%CI): 0.026 to 0.036) and is assumed to reflect the course of progression of HAQ in the absence of bDMARDs.
+The rate of progression in the linear case is based on the observational study by \citet{wolfe2010loss}. They assessed the development of HAQ over time at six month intervals for up to 11 years among 3,829 RA patients who switched from non-biologic treatment to biologic treatment and participated in the National Data Bank for Rheumatic Diseases (NDB) longitudinal study of RA outcomes. The annual HAQ progression rate prior to biologic therapy was 0.031 (95\% confidence interval (95\%CI): 0.026 to 0.036) and is assumed to reflect the course of progression of HAQ in the absence of tDMARDs.
 
 Based on the same data, \citet{michaud2011treatment} reported overall and age-specific specific HAQ progression rates. The differences between the overall and age specific rates are as follows: \textless{}40: -0.020 (95\%CI: -0.0223 to -0.0177); 40-64: -0.008 (95\%CI: -0.0101 to -0.0059); \(\geq\) 65 0.017 (95\%CI: 0.0136 to 0.0204). These estimates are applied to the overall progression rate of 0.031 to obtain age specific HAQ progression rates (see \autoref{app:age-linear-haq}).
 
@@ -947,7 +984,7 @@ tex2 <- print(xtable(tab2),
 \begin{table}[!ht]
 \begin{center}
 \begin{threeparttable}
-\caption{Annual linear progression of HAQ in the absence of bDMARDs beyond 6 months} \label{tbl:haq-lprog}
+\caption{Annual linear progression of HAQ in the absence of tDMARDs beyond 6 months} \label{tbl:haq-lprog}
 \footnotesize
 \begin{tabularx}{\textwidth}{@{\extracolsep{\fill}}lrrrl}
 \hline
@@ -968,7 +1005,7 @@ Notes: 95\% confidence intervals are calculated using a normal distribution. Con
 \end{table}
 
 \subsubsection{Latent class growth model} \label{sec:haq-lcgm}
-We also model the rate of HAQ progression in the absence of bDMARDs using a mixture model approach that has increasingly been used to model HAQ progression over time \citep{stevenson2016adalimumab, norton2013trajectories, norton2014health}. These models suggest that different subgroups have distinct HAQ trajectories and that the rate of worsening of HAQ progression decreases over time. We use the LCGM estimated by \citet{norton2014health} and since we aim to model trajectories for cDMARDs and NBTs we chose the specification based on data from the Early Rheumatoid Arthritis Cohort Study (ERAS) cohort, which has a high percentage of patients receiving methotrexate and a very small percentage receiving biologics. Complete details of the LCGM are provided in \autoref{app:lcgm-haq}. 
+We also model the rate of HAQ progression in the absence of tDMARDs using a mixture model approach that has increasingly been used to model HAQ progression over time \citep{stevenson2016adalimumab, norton2013trajectories, norton2014health}. These models suggest that different subgroups have distinct HAQ trajectories and that the rate of worsening of HAQ progression decreases over time. We use the LCGM estimated by \citet{norton2014health} and since we aim to model trajectories for cDMARDs and NBTs we chose the specification based on data from the Early Rheumatoid Arthritis Cohort Study (ERAS) cohort, which has a high percentage of patients receiving methotrexate and a very small percentage receiving biologics. Complete details of the LCGM are provided in \autoref{app:lcgm-haq}. 
 
 <<haq_lcgm_probs, echo = FALSE, include = FALSE>>=
 # latent class probabilities 
@@ -1040,8 +1077,8 @@ In the moderate, high, and severe groups the rate of HAQ progression is higher i
 \caption{A comparison of predicted yearly changes in HAQ between a latent class growth model and constant linear progression from year 2 onwards}\label{fig:lcgm-vs-linear}
 \end{figure}
 
-\subsection{HAQ trajectory with bDMARD maintenance treatment}
-Based on the NDB longitudinal study, \citet{wolfe2010loss} estimated the overall annual HAQ progression rate among RA patients who had switched to biologic treatment at -0.001 (95CI: -0.004 to 0.002). In a separate analysis, also based on NDB data, \citet{michaud2011treatment} reported annual HAQ progression rates by treatment adjusted for baseline HAQ score, age, sex, education, smoking, BMI, comorbidity, and RA onset. The average HAQ rate among patients on a biologic was -0.001 as well, which instills confidence that the reported HAQ progression rates for different bDMARDs as reported by \citet{michaud2011treatment} can be directly compared with the overall annual HAQ progression rate of 0.031 reported by \citet{wolfe2010loss}. Accordingly, bDMARD specific HAQ progression rates by \citet{michaud2011treatment} are used in the model. For bDMARD treatments evaluated in the model for which no HAQ progression rate was reported by \citet{michaud2011treatment}, the overall biologic rate of -0.001 is used. 
+\subsection{HAQ trajectory with tDMARD maintenance treatment}
+Based on the NDB longitudinal study, \citet{wolfe2010loss} estimated the overall annual HAQ progression rate among RA patients who had switched to biologic treatment at -0.001 (95CI: -0.004 to 0.002). In a separate analysis, also based on NDB data, \citet{michaud2011treatment} reported annual HAQ progression rates by treatment adjusted for baseline HAQ score, age, sex, education, smoking, BMI, comorbidity, and RA onset. The average HAQ rate among patients on a biologic was -0.001 as well, which instills confidence that the reported HAQ progression rates for different biologics as reported by \citet{michaud2011treatment} can be directly compared with the overall annual HAQ progression rate of 0.031 reported by \citet{wolfe2010loss}. Accordingly, biologic specific HAQ progression rates by \citet{michaud2011treatment} are used in the model. For tDMARD treatments evaluated in the model for which no HAQ progression rate was reported by \citet{michaud2011treatment}, the overall biologic rate of -0.001 is used. 
 
 \subsection{Duration of maintenance treatment}\label{duration-of-maintenance-treatment}
 Time to treatment discontinuation in the maintenance phase depends on the pathway (\textbf{S1-S6}) used to model treatment switching. If \textbf{S1} is selected, a single treatment discontinuation curve based on an analysis from the CORRONA database is used for all patients. In \textbf{S2-S5}, time to treatment discontinuation is stratified by the level of disease activity, and in \textbf{S6} treatment duration depends on EULAR response.  
@@ -1083,7 +1120,7 @@ tex <- print(xtable(tab),
 
 We considered estimating separate time to discontinuation curves for each treatment, but did not for a number of the reasons cited in \citet{stevenson2016adalimumab}. The majority of the literature focuses on anti-TNFs (e.g., infliximab, etanercept, and adalimumab) \citep[e.g.][]{gomez2006switching, yazici2009changing, pan2009comparison}, which makes it difficult to estimate discontinuation curves for the other treatments. Furthermore, studies comparing rates of discontinuation across treatments tend to be observational because clinical trials are of short duration and do not reflect real-world patient populations. However, although observational studies provide accurate predictions on time to discontinuation, it is difficult to avoid bias from confounding when estimating differences across treatments because patients are not randomized into treatment and control groups \citep{souto2015rate} .   
 
-We also lack data on treatment duration for patients on cDMARDs. Following \citet{stevenson2016adalimumab}, we assume that, conditional on continuing treatment at 6 months, treatment duration for bDMARDs is applicable to treatment duration for cDMARDs. This is, in turn, based on the assumption that cDMARDs are not likely to be more toxic than biologics used in combination with cDMARDs.
+We also lack data on treatment duration for patients on cDMARDs. Following \citet{stevenson2016adalimumab}, we assume that, conditional on continuing treatment at 6 months, treatment duration for tDMARDs is applicable to treatment duration for cDMARDs. This is, in turn, based on the assumption that cDMARDs are not likely to be more toxic than biologics used in combination with cDMARDs.
 
 \subsubsection{Treatment duration by disease activity level}\label{ttd-da}
 When \textbf{S2-S5} are selected, treatment duration is stratified by the level of disease activity. Since patients in the CORRONA database tended to have moderate disease activity (mean CDAI = 16), we use the CORRONA survival curve to model treatment duration for patients with moderate disease activity. We adjust this curve for patients in remission or low disease activity using the odds ratios reported in \citet{zhang2011thresholds}, which imply that patients in remission or with low disease activity have .52 times the odds of stopping treatment as patients with moderate disease activity. In particular, we adjust the probability of treatment failure at each point in time using the methodology described in \autoref{app:odds-ratio-prob}. As with the analysis described in \autoref{sec:ttd-overall}, we then fit 7 parametric survival models to individual patient data reconstructed from the adjusted survival curve using the \citet{guyot2012enhanced} algorithm. Generalized gamma time to treatment discontinuation curves stratified by disease activity level are shown in \autoref{fig:ttd-gg-da}. Survival curves for patients with severe disease activity are not displayed because patients with severe disease activity are assumed to switch treatments after the first 6 months of treatment.
@@ -1206,15 +1243,15 @@ tex <- print(xtable(tab),
 Since no data exists on the size of the HAQ rebound post treatment, we vary its size as a proportion of the initial 6-month HAQ decline. 1 is used as an upper bound, which implies that the HAQ rebound is equal to the improvement experienced at the end of the initial 6-month period with that treatment. 0.7 is currently used as a lower bound.
 
 \subsection{Serious infections}
-Based on the NMA by \citet{singh2011adverse} and in accordance with \citet{stevenson2016adalimumab}, we assume a rate of 0.035 (95\% CI: 0.027 to 0.046) infections per person-year with all bDMARDs and a rate of 0.026 (no CI reported) infections per person-year with cDMARDs. The rate of infection is assumed to be equal across bDMARDs because the published results for specific bDMARDs are estimated with very little precision. The standard error on the infection rate for bDMARDs is assumed to be the same as the standard error for cDMARDs since no standard error was reported for bDMARDs in \citet{singh2011adverse}.
+Based on the NMA by \citet{singh2011adverse} and in accordance with \citet{stevenson2016adalimumab}, we assume a rate of 0.035 (95\% CI: 0.027 to 0.046) infections per person-year with all tDMARDs and a rate of 0.026 (no CI reported) infections per person-year with cDMARDs. The rate of infection is assumed to be equal across tDMARDs because the published results for specific tDMARDs are estimated with very little precision. The standard error on the infection rate for tDMARDs is assumed to be the same as the standard error for cDMARDs since no standard error was reported for tDMARDs in \citet{singh2011adverse}.
 
 <<si, echo=FALSE, include=FALSE, cache=CACHE>>=
 set.seed(100)
 pop <- sample_pop(n = 1000)
 input.dat <- get_input_data(pop = pop)
-parsamp <- sample_pars(n = 1000, input_data = input.dat)
+parsamp <- sample_pars(n = 100, input_data = input.dat)
 tx.snames <- c("cdmards", "adamtx")
-tx.names <- c("cDMARDs or NBT", "bDMARDs")
+tx.names <- c("cDMARDs or NBT", "tDMARDs")
 dur.dist <- c("exponential", "weibull", "gompertz", "gamma", "llogis", "lnorm", "gengamma")
 dur.dist.l <- c("Exponential", "Weibull", "Gompertz", "Gamma", "Log-logistic", "Lognormal",
                    "Generalized gamma")
@@ -1244,7 +1281,7 @@ si.prop <- si.prop[, .(si_mean = mean(si), si_lower = quantile(si, .025),
 # tables comparing serious infection rates by drugs
 si1.mtx <- si.prop[dur_dist == "Generalized gamma" & txseq == "cDMARDs or NBT",
                    si_mean]
-si1.bio <- si.prop[dur_dist == "Generalized gamma" & txseq == "bDMARDs",
+si1.bio <- si.prop[dur_dist == "Generalized gamma" & txseq == "tDMARDs",
                    si_mean]
 tab1 <- si.prop[dur_dist == "Generalized gamma", .(txseq, si_mean, si_lower, si_upper)]
 tab1[, si_mean := formatC(si_mean, format = "f", digits = 4)]
@@ -1267,7 +1304,7 @@ tex <- print(xtable(tab2),
 rm(sim6)
 @
 
-A patient in the IPS has a serious infection if the simulated time to serious infection occurs before the simulated time of treatment discontinuation. \autoref{tbl:si-prob} shows the probability of this occurring when treatment duration is modeled using a generalized gamma distribution. The probability of a serious infection is relatively rare as only \Sexpr{formatC(100 * si1.mtx, format = "f", digits = 2)}\% of patients using cDMARDs and \Sexpr{formatC(100 * si1.bio, format = "f", digits = 2)}\% of patients using bDMARDs have serious infections. However, differences between cDMARDs and bDMARDs are not insignificant as the probability of a serious infection is almost \Sexpr{formatC(100*(si1.bio - si1.mtx), format = "f", digits = 0)} percentage points higher with bDMARDs than with cDMARDs.
+A patient in the IPS has a serious infection if the simulated time to serious infection occurs before the simulated time of treatment discontinuation. \autoref{tbl:si-prob} shows the probability of this occurring when treatment duration is modeled using a generalized gamma distribution. The probability of a serious infection is relatively rare as only \Sexpr{formatC(100 * si1.mtx, format = "f", digits = 2)}\% of patients using cDMARDs and \Sexpr{formatC(100 * si1.bio, format = "f", digits = 2)}\% of patients using tDMARDs have serious infections. However, differences between cDMARDs and tDMARDs are not insignificant as the probability of a serious infection is almost \Sexpr{formatC(100*(si1.bio - si1.mtx), format = "f", digits = 0)} percentage points higher with tDMARDs than with cDMARDs.
 
 \begin{table}[!ht]
 \begin{center}
@@ -1468,7 +1505,7 @@ tab2 <- tab[, .(init_num_doses, ann_num_doses, price_per_unit, infusion_cost,
 tab2[, ann_num_doses := round(ann_num_doses, 2)]
 tab2f <- matrix(NA, nrow = nrow(tab2), ncol = ncol(tab2))
 for (i in 1:ncol(tab2)){
-  if (names(tab2)[i] %in% c("ann_num_doses", "wac_per_unit")){
+  if (names(tab2)[i] %in% c("ann_num_doses", "price_per_unit")){
       tab2f[, i] <- formatC(tab2[[i]], format = "f", digits = 2, big.mark = ",")
   } else{
       tab2f[, i] <- formatC(tab2[[i]], format = "d", big.mark = ",") 
@@ -1592,6 +1629,9 @@ Notes: 95\% confidence intervals for hospital days per year by HAQ score and hos
 \end{center}
 \end{table}
 
+\subsubsection{Insurance value}
+In the IVI-RA Model interface, users have complete control over the probability of illness parameter and the marginal rate of substitution between the sick and the well states. In the IVI-RA Value Tool, we set the probability of obtaining RA in the next year equal to $0.000633$, based on the annual incidence rate reported for individuals age 55 to 64 in \citet{myasoedova2010incidence}. Furthermore, we set the the marginal rate of substitution between the sick and well states equal to 1.5 given that positive demand for health insurance suggests that it is positive, but note that there is considerable uncertainty around this estimate and that more research is required.  
+
 \section{Simulation and uncertainty analysis}\label{sec:sim-uncertainty}
 
 \subsection{Individual patient simulation}\label{individual-patient-simulation}
@@ -1714,19 +1754,21 @@ We aim to validate the model using the five types of validation described by \ci
 In the future, we plan to use both external validation and predictive validation to help fine tune our model. External validation will be performed by comparing outcomes simulated using our model to real-world outcomes and predictive validity will involve using our model to forecast future events and comparing our forecasted outcomes to the observed outcomes. 
 
 \section{Limitations and areas for improvement}\label{sec:limitations}
-The IVI-RA model is an open-source model that is meant to be updated and improved over time. We believe that there are number of potential areas for improvement.
+The IVI-RA model is an open-source model that is part of the OSVP process and therefore designed to be updated and improved over time. We believe that there are number of potential areas for improvement.
 
 \begin{itemize}
 \item \textbf{Adverse events other than serious infections:} The current model does not account for side effects other than serious infections even though these are important to patients and can result in treatment switching. 
-\item \textbf{Adverse events that vary across biologics:} The model allows the serious infection rate to differ between cDMARDs and bDMARDs but assumes that the infection rate is equal among bDMARDs. Future model versions might want to reconsider the evidence underlying this assumption.
+\item \textbf{Adverse events that vary across biologics:} The model allows the serious infection rate to differ between cDMARDs and tDMARDs but assumes that the infection rate is equal among tDMARDs. Future model versions might want to reconsider the evidence underlying this assumption.
 \item \textbf{Time to treatment discontinuation:} Our time to treatment discontinuation curves are based on scanned data and combine information from multiple sources. Direct analyses of databases like the CORRONA database or the National Data Bank for Rheumatic Diseases (NDB) could generate more accurate estimates of treatment duration as well the effect of treatment response or disease activity level on discontinuation rates.  
 \item \textbf{Patient preferences:} In the current model, patient utility is a function of the HAQ score and varies according to age, gender, and unobserved patient-specific factors. In other words, utility depends on treatment (through the effect of treatment on HAQ) and the characteristics of the patient. Future iterations of the model should consider other ways that treatment influences utility and that utility varies across patients. For example, disease activity level or the number of previous therapies might help predict utility conditional on HAQ. Furthermore, surveys could be used to estimate the effect of treatment attributes such as route of administration or frequency of administration on utility. Finally, since unobserved patient-specific factors are very important predictors of utility, the model could be run for specific classes of patients within the mixture model (e.g., subgroups where HAQ has the largest effect on utility), although it might be difficult to identify these patient subgroups in a real-world setting. 
 
 \item \textbf{Treatment effect modifiers:} There is currently little evidence (that we are aware of) suggesting that treatment effects vary across patients. When there is sufficient evidence in the literature related to treatment response heterogeneity, we will allow treatment response at 6 months to depend on the characteristics of the patient.  
-\item \textbf{Treatment effects after treatment failure:} There are two main limitations in the model related to reductions in treatment response after failing a biologic; first, there are not enough RCTs to reliably estimate bDMARD-specific treatment effects for bDMARD experienced patients using a NMA, and second, treatment response likely does not only depend on whether a patient is bDMARD naive or experienced, but on the number of previous failures as well. Our current approach is to assume that treatment response is reduced for bDMARD experience patients based on evidence from \citet{carlson2015economic}. One possible extension is to use a Bayesian NMA approach in which the \citet{carlson2015economic} results are used to generate priors for the bDMARD experienced group. As new RCTs become available, the posterior distributions from the Bayesian analysis would move further from the prior and closer to estimates from the trials. The estimates could be further improved by combing NMA results with real-world data and modeling reductions in treatment response as a flexible function of the number of failed biologics. 
-\item \textbf{A LCGM for the progression of bDMARDs over time:} The LCGM can be used to model HAQ progression for patients using cDMARDs or on NBT; however, we only have estimates of constant linear progression of HAQ for patients on bDMARDs. Future studies that use non-linear mixture models to model the long-term progression of disease for patients using bDMARDs are needed. 
+\item \textbf{Treatment effects after treatment failure:} There are two main limitations in the model related to reductions in treatment response after failing a biologic; first, there are not enough RCTs to reliably estimate tDMARD-specific treatment effects for tDMARD experienced patients using a NMA, and second, treatment response likely does not only depend on whether a patient is tDMARD naive or experienced, but on the number of previous failures as well. Our current approach is to assume that treatment response is reduced for tDMARD experience patients based on evidence from \citet{carlson2015economic}. One possible extension is to use a Bayesian NMA approach in which the \citet{carlson2015economic} results are used to generate priors for the tDMARD experienced group. As new RCTs become available, the posterior distributions from the Bayesian analysis would move further from the prior and closer to estimates from the trials. The estimates could be further improved by combing NMA results with real-world data and modeling reductions in treatment response as a flexible function of the number of failed biologics. 
+\item \textbf{A LCGM for the progression of tDMARDs over time:} The LCGM can be used to model HAQ progression for patients using cDMARDs or on NBT; however, we only have estimates of constant linear progression of HAQ for patients on biologics. Future studies that use non-linear mixture models to model the long-term progression of disease for patients using tDMARDs are needed. 
+\item \textbf{Long-term trends in disease activity:} The current model uses results from RCTs to model changes in disease activity during the first 6 months of treatment. But there is, to our knowledge, no evidence on the progression of disease activity over time. New studies are needed to model both the long-term impact of treatment on disease activity and the correlation between changes in disease activity and changes in HAQ.
 \item \textbf{The patient population:} Our population characteristics are based on summary data reported in the published literature. As a result, the sampled patient populations within the model do not account for correlations across all of the variables. Distributions estimated from patient databases like the CORRONA database or the NDB would yield more realistic patient populations. 
 \item \textbf{Estimating the rebound effect:} One of the most important predictors of cost-effectiveness is the degree to which the HAQ score increases following treatment failure. Most models currently assume that the HAQ score increases by the same amount as the initial 6 month decline in the HAQ score, but there is little evidence to support this. Studies that attempt to quantify the rebound effect are critical. 
+\item \textbf{Insurance value:} Additional research is needed on insurance value and its use in value assessment. First, the framework presented here assumes that there is a single probability of illness and that treatment benefits and costs can be attributed to that sick state. However, in practice, the probability of illness depends on age and illness (e.g., RA) worsens over time. Moreover, in RA, treatment benefits and costs depend on disease severity. Future research should consider insurance value in a dynamic context, in which the value to a healthy individual today depends on the probability of all future health states. Second, new research is needed on the marginal rate of substitution between the sick and well states. \citet{lakdawalla2017insurance} suggest a few promising approaches.     
 \end{itemize}
 
 \begin{appendices}
@@ -2189,7 +2231,7 @@ Drug acquisition and administration costs are calculated separately during the i
 cost = \left\lceil\frac{dose_{amt}}{strength_{amt}}\right\rceil \cdot doses_{num} \cdot WAC,
 \end{align}
 
-where $\lceil\cdot\rceil$ is the ceiling function and implies that products cannot be reused after opening, $dose_{amt}$ is the recommended dose of the drug, $strength_{amt}$ is the strength of the drug, $doses_{num}$ is the number of doses in a 6 month period, and $WAC$ is the WAC. For example, as shown in \autoref{tbl:treat-cost}, both the strength and the dose of adalimumab are 50 mg, so costs for the initial 6 month period are calculated by multiplying the number of doses (\Sexpr{ada.cost$init_num_doses}) by the WAC (\$\Sexpr{formatC(ada.cost$wac_per_unit, format = "f", big.mark = ",", digits = 2)}).
+where $\lceil\cdot\rceil$ is the ceiling function and implies that products cannot be reused after opening, $dose_{amt}$ is the recommended dose of the drug, $strength_{amt}$ is the strength of the drug, $doses_{num}$ is the number of doses in a 6 month period, and $WAC$ is the WAC. For example, as shown in \autoref{tbl:treat-cost}, both the strength and the dose of adalimumab are 50 mg, so costs for the initial 6 month period are calculated by multiplying the number of doses (\Sexpr{ada.cost$init_num_doses}) by the WAC (\$\Sexpr{formatC(ada.cost$price_per_unit, format = "f", big.mark = ",", digits = 2)}).
 
 When dosing depends on weight, costs are calculated separately for each patient in the simulation. In particular, costs are calculated as,
 
@@ -2197,108 +2239,157 @@ When dosing depends on weight, costs are calculated separately for each patient 
 cost &= \lceil weight \cdot dose_{amt}/strength_{amt}\rceil \cdot doses_{num} \cdot WAC,
 \end{align}
 
-where $weight$ is patient weight, $dose_{amt}$ is the dose per weight, and $strength_{amt}$, $WAC$, and $doses_{num}$ are defined in the same way as in the non-weight based scenario. To illustrate, the acquisition cost for infliximab after the first 6 months is calculated by multiplying each patient's weight by the dose (6 mg/kg) and dividing by the size of a vial (100 mg), and then multiplying by the number of doses (\Sexpr{formatC(ifx.cost$ann_num_doses, format = "f", digits = 2)}) and the WAC (\$\Sexpr{formatC(ifx.cost$wac_per_unit, format = "f", big.mark = ",", digits = 2)}).  
+where $weight$ is patient weight, $dose_{amt}$ is the dose per weight, and $strength_{amt}$, $WAC$, and $doses_{num}$ are defined in the same way as in the non-weight based scenario. To illustrate, the acquisition cost for infliximab after the first 6 months is calculated by multiplying each patient's weight by the dose (6 mg/kg) and dividing by the size of a vial (100 mg), and then multiplying by the number of doses (\Sexpr{formatC(ifx.cost$ann_num_doses, format = "f", digits = 2)}) and the WAC (\$\Sexpr{formatC(ifx.cost$price_per_unit, format = "f", big.mark = ",", digits = 2)}). 
+
+\section{Annualized costs and benefits}\label{app:insurance-value}
+Annualized QALY gains and costs, which are used to estimate the annual insurance value of treatment, are calculated using the formula for a geometric series and assuming a constant flow rate each model cycle. In particular, if $t$ indexes time (in years), $\hat{cost}$ and $\hat{qalys}$ denote lifetime costs and QALYs simulated by the model, respectively, then annualized costs, $c$ and QALYs, $q$, can be derived from,  
+
+\begin{align}
+\hat{cost} = \sum_{t=1}^T c \frac{1-\beta_c^T}{1- \beta_c},\\
+\hat{qalys} = \sum_{t=1}^T q \frac{1-\beta_q^T}{1- \beta_q},
+\end{align}
+where $\beta_c$ is the discount factor for costs and $\beta_q$ is the discount factor for QALYs. The discount factor is a function of the annual discount rate (typically assumed to be 0.03); that is, $\beta_s = 1/(1+r_s)$ where $r_s$ is the discount rate for $s=c,q$. The time horizon $T$ is set to equal the maximum number of years that a patient could survive within the model---currently the maximum age that a patient could survive to is 100 given the default lifetables used within the model, so $T$ is equal to 100 minus a patient's age at the start of the simulation.
 
 \section{Network Meta-Analysis}\label{appendix:NMA}
+Treatment effects with tDMARDs relative to cDMARDs for moderate to severe RA patients who failed treatment with a conventional DMARD were estimated based on currently available evidence as reported in the literature. The two populations of interest were: 1) RA patients without a history of prior tDMARD treatment (tDMARD naive population); and 2) RA patient with a history of tDMARD treatment (tDMARD experienced population). Relevant randomized controlled trials were identified with a systematic literature review and treatment effects were estimated by means of a network meta-analysis.
+\subsection{Systematic literature review to identify relevant studies}\label{systematic-literature-review}
+\subsubsection{Eligibility criteria}
+Study eligibility criteria were defined in terms of the population, interventions, comparisons, outcomes, and study design (PICOS).
 
-\subsection{Systematic literature review}\label{systematic-literature-review}
+\begin{table}[!ht]
+\begin{center}
+\scriptsize
+\begin{threeparttable}
+\caption{Study eligibility criteria} \label{tbl:study-eligibility}
+\begin{tabular}{p{0.20\linewidth}p{0.80\linewidth}}
+\hline
+\multicolumn{1}{l}{Criteria} & \multicolumn{1}{l}{Description}\\
+\hline
+Population & Adult (>18) patients with moderate to severe active rheumatoid arthritis who failed treatment with a conventional DMARD and were either targeted DMARD naive or experienced. \\
+&\\
+Interventions & Approved dosing regimens (or equivalent) of the following tDMARDs as monotherapy or in combination with a cDMARD: abatacept, adalimumab, anakinra, certolizumab, etanercept, golimumab, infliximab, rituximab, sarilumab, tocilizumab, tofacitinib \\
+& \\
+Comparators & cDMARDs (methotrexate, leflunomide, hydroxychloroquinine, sulfasalazine); placebo; any of the interventions of interest; any other intervention (or dosing regimen) that facilitates an indirect comparison between the interventions of interest \\
+&\\
+Outcomes & At least one of the following outcomes at 6 months of follow-up: ACR 20/50/70, HAQ-DI, DAS28 \\
+&\\
+Study design & Randomized clinical trials \\
+&\\
+Other & Only full text reported in Enlgish were included. Studies only available as conference abstractsor presentations were excluded. \\
+\hline
+\end{tabular}
+\scriptsize
+\end{threeparttable}
+\end{center}
+\end{table}
 
-\textbf{Population}
-\begin{itemize}
-\item Adult (\textgreater{}18 years) patients with moderate to severe RA who have had inadequate response to cDMARDs
-\end{itemize}
+\subsubsection{Literature search}
+Relevant studies were identified by searching the following databases: Medline, EMBASE, and Cochrane Central Register of Controlled Trials. The searches were executed June 2017 with the following predefined search strategies and corresponding results.
 
-\textbf{Interventions and comparators}
+<<search, echo = FALSE, include = FALSE>>=
+search <- list()
+search$medline <- read.csv("search-medline.csv")
+search$embase <- read.csv("search-embase.csv")
+search$cochrane <- read.csv("search-cochrane.csv")
+for (i in 1:length(search)){
+  search[[i]]$results <- formatC(search[[i]]$results , format = "d", big.mark = ",")
+  search[[i]]$search_terms <- gsub("\\$", "\\\\$",  search[[i]]$search_terms)
+  tex <- print(xtable(search[[i]]), 
+      include.rownames = FALSE, include.colnames = FALSE,
+      only.contents = TRUE, sanitize.text.function = identity,
+      hline.after = NULL,
+      file = paste0("tables/", names(search)[i], "-search.txt"))
+}
+@
 
-\begin{itemize}
-\item Biologics as monotherapy or in combination with cDMARDs (adalimumab, certolizumab pegol, etanercept, golimumab, infliximab, abatacept, rituximab, tocilizumab, sarilumab, tofacitinib)
+\setlength\LTleft{0pt}
+\setlength\LTright{0pt}
 
-\item cDMARDs alone or in combination (MTX, HCQ, SSZ or LEF)
-\end{itemize}
+\subsubsubsection{Medline}
 
-\textbf{Outcomes}
-\begin{itemize}
-\item ACR20/ACR50/ACR70
-\item DAS28
-\item HAQ-DI score
-\end{itemize}
+\begin{center}
+\footnotesize
+\begin{longtable}{@{\extracolsep{\fill}}rp{0.70\linewidth}r}
+\caption{Medline literature search strategy} \label{tbl:medline-search} \\
+\hline
+\multicolumn{1}{r}{Order} & \multicolumn{1}{c}{Search terms} & \multicolumn{1}{r}{Results}  \\
+  \hline 
+\endfirsthead
+  \caption[]{Medline literature search strategy}\\
+  \hline
+\multicolumn{1}{r}{Order} & \multicolumn{1}{c}{Search terms} & \multicolumn{1}{r}{Results}  \\
+  \hline
+\endhead
+\hline
+\multicolumn{2}{l}{Continued on next page}\\
+\endfoot
+\endlastfoot
+\ExpandableInput{tables/medline-search.txt}
+\hline
+\end{longtable}
+\end{center}
 
-\textbf{Study design}
-\begin{itemize}
-\item Randomized controlled trials
-\end{itemize}
+\subsubsubsection{Embase}
 
-\textbf{Other}
+\begin{center}
+\footnotesize
+\begin{longtable}{@{\extracolsep{\fill}}rp{0.70\linewidth}r}
+\caption{Embase literature search strategy} \label{tbl:embase-search} \\
+\hline
+\multicolumn{1}{r}{Order} & \multicolumn{1}{c}{Search terms} & \multicolumn{1}{r}{Results}  \\
+  \hline 
+\endfirsthead
+  \caption[]{EMBASE literature search strategy}\\
+  \hline
+\multicolumn{1}{r}{Order} & \multicolumn{1}{c}{Search terms} & \multicolumn{1}{r}{Results}  \\
+  \hline
+\endhead
+\hline
+\multicolumn{2}{l}{Continued on next page}\\
+\endfoot
+\endlastfoot
+\ExpandableInput{tables/embase-search.txt}
+\hline
+\end{longtable}
+\end{center}
 
-\begin{itemize}
-\item Studies published in English
-\item Primary study available as full text published manuscript only; no study available as a conference abstract only was included.
-\end{itemize}
+\subsubsubsection{Cochrane Central Register of Controlled Trials}
 
-\subsection{Criteria for studies to be selected from the systematic literature review and included in the NMA}\label{criteria-for-studies-to-be-selected-from-the-systematic-literature-review-and-included-in-the-nma}
+\begin{center}
+\footnotesize
+\begin{longtable}{@{\extracolsep{\fill}}rp{0.70\linewidth}r}
+\caption{Cochrane Central Register of Controlled Trials literature search strategy} \label{tbl:cochrane-search} \\
+\hline
+\multicolumn{1}{r}{Order} & \multicolumn{1}{c}{Search terms} & \multicolumn{1}{r}{Results}  \\
+  \hline 
+\endfirsthead
+  \caption[]{Cochrane Central Register of Controlled Trials literature search strategy}\\
+  \hline
+\multicolumn{1}{r}{Order} & \multicolumn{1}{c}{Search terms} & \multicolumn{1}{r}{Results}  \\
+  \hline
+\endhead
+\hline
+\multicolumn{2}{l}{Continued on next page}\\
+\endfoot
+\endlastfoot
+\ExpandableInput{tables/cochrane-search.txt}
+\hline
+\end{longtable}
+\end{center}
 
-The following criteria were used to select relevant studies to be included in the NMA:
+\subsubsection{Study selection}
+Two investigators working independently scanned all abstracts identified in the literature search. The same two investigators independently reviewed relevant abstracts in full-text. Discrepancies occurring between the studies selected by the two investigators were resolved by involving a third investigator and reaching consensus.
 
-\textbf{Population}
+\subsubsection{Data extraction}
+Two investigators working independently extracted relevant data on study characteristics, interventions, patient characteristics, and outcomes from the final list of selected eligible studies. Discrepancies observed between the data extracted by the two investigators were resolved by involving a third investigator and reaching consensus.
 
-\begin{itemize}
-\item Adult (\textgreater{}18 years) patients with moderate to severe RA who have had inadequate response to cDMARDs and are bDMARD-naive
-\end{itemize}
+\subsection{Analyses}\label{app:nma-analyses}
+In order to perform a network meta-analysis where the risk of biased relative treatment effect estimates is limited we need to have 1) a single evidence network where each randomized controlled trial has at least one intervention in common with another trial; and 2) no differences in study designs and the distribution of patient characteristics that act as relative treatment effect-modifiers across the studies in the network (ref). For both the tDMARD naive population and the tDMARD experienced population a connected evidence network could be defined, however for the latter population the treatment history across studies was considered too different to obtain valid results from a network meta-analysis, and the limited number of studies would not allow adjusting for these differences with statistical techniques. Hence, network meta-analyses were only performed for the tDMARD naive population. Studies that reported results for a mixed population regarding prior tDMARD use were excluded from the analyses; only studies with results reported for a tDMARD naive population were included. 
 
-\textbf{Interventions}
+Treatment effects at 6 months with each of the interventions in the network relative to cDMARDs were estimated in terms of ACR response, change from baseline in HAQ, and change from baseline in DAS28 with Bayesian random effects network meta-analysis models as presented by Dias et al. 2013. To avoid influencing the observed results by prior belief, uninformative prior distributions were used for the estimated treatment effect and between-study heterogeneity parameters. Posterior distributions for the model parameters are derived with the Markov chain Monte Carlo method using the JAGS software package (\url{http://mcmcjags.sourceforge.net/}). The studies included in each analysis for the tDMARD naive population were considered sufficiently similar regarding study design and distribution of patient characteristics that may act as relative treatment effect-modifiers. Accordingly, no meta-regression was performed to adjust for between-trial differences and the obtained estimated for each of the interventions were considered reflective of this target population of interest. 
 
-\begin{itemize}
-\item Biologics as monotherapy or in combination with cDMARDs (adalimumab, certolizumab pegol, etanercept, golimumab, infliximab, abatacept, rituximab, tocilizumab, sarilumab, tofacitinib)
-\end{itemize}
-
-\textbf{Comparators}
-
-\begin{itemize}
-\item cDMARDs
-\item Any active comparator that allows for an indirect comparison between the bDMARDs of interest
-\end{itemize}
-
-\textbf{Outcomes}
-
-\begin{itemize}
-\item ACR20/ACR50/ACR70 at 6 months follow-up
-\item Change in DAS28 from baseline at 6 months follow-up
-\item Change in HAQ-DI score from baseline at 6 months follow-up 
-\end{itemize}
-
-\subsection{Identified evidence base}\label{identified-evidence-base}
-%The evidence network is presented in \autoref{fig:nma-network-acr-naive}. 
-The evidence network and inclusion criteria to go here.
-
-% \autoref{fig:study-selection} summarizes the study identification and selection process. Of the 181 studies included in the large systematic literature review, 79 studies concerned the bDMARD-naive population (table NMA studies). There were 66 studies evaluating 36 interventions for which ACR response criteria were reported at 6 months (with a tolerability window of \(\pm 4\) weeks).  
-
-% For the network meta-analysis the following were deemed to be clinically equivalent and were pooled.
-
-% \begin{itemize}
-% \item ``INF 3mg/kg q8w'' or ``INF 5mg/kg q8w'' or ``INF 6mg/kg q8w''
-% \item ``ETN 50mg qw'' or ``ETN 25mg biw''
-% \item ``ABA 10mg/kg q4wa or''ABA SC 125mg qw"
-% \item ``CER 200mg q2w+MTX'' or ``CER 400mg q4w+MTX
-% \item DMARDs including methotrexate, sulfasalazine, hydroxychloroquine, leflunomide at any dosage; studies which only described DMARD therapy as conventional or nonbiologic
-% \end{itemize}
-
-% \begin{figure}
-% \centering
-% \includegraphics[max size={\textwidth}{\textheight}]{study-selection.png}
-% \caption{Study identification and selection}\label{fig:study-selection}
-% \end{figure}
-
-% \begin{figure}
-% \centering
-% \includegraphics{nma-network-acr-naive.pdf}
-% \caption{Bayesian random effects NMA network diagram for patients naive
-% to bDMARDs}\label{fig:nma-network-acr-naive}
-% \end{figure}
-
-\subsection{Statistical models for network meta-analysis}\label{app:nma-statistical-models}
-
-\subsubsection{ACR response}
-ACR response, 6 month change in HAQ from baseline, and 6 month change in DAS28 from baseline were estimated using a Bayesian (random effects) network meta-analysis approach.  The four mutually exclusive ACR response categories were estimated using a ordered probit model appropriate for ordered categorical data \citep{dias2013evidence}. The model assumes that there is an underlying continuous variable (ACR20/50/70) categorized by specifying different cutoffs corresponding to the point at which an individual moves from one category to the next in each trial. The advantage of this approach over an analysis that considers ACR categories separately is that all possible outcomes are analyzed simultaneously based on the same randomized controlled trials, allowing for consistent estimates by category. 
+\subsubsection{ACR response at 6 months}
+The four mutually exclusive ACR response categories were estimated from the overlapping ACR categories using a ordered probit model appropriate for ordered categorical data \citep{dias2013evidence}. The model assumes that there is an underlying continuous variable (ACR20/50/70) categorized by specifying different cutoffs corresponding to the point at which an individual moves from one category to the next in each trial. The advantage of this approach over an analysis that considers ACR categories separately is that all possible outcomes are analyzed simultaneously based on the same randomized controlled trials, allowing for consistent estimates by category. 
 
 More specifically, let $r_{jkl}$ be the number of patients in trial $j$ for treatment $k$ in the mutually exclusive category $l = 1,2,3,4$. The model can be written as,
 
@@ -2311,21 +2402,21 @@ where $p_{jkl}$ is the probability that a patient from trial $j$ and treatment $
 \begin{align}
 \Phi^{-1}(p_{jkl}) =
  \begin{cases}
-     u_{jb} + z_{jl} & b=A,B,C,\ldots \text{ if } k = b \\
-     u_{jb} + z_{jl} + \delta_{jkb} & \text{if $k$ alphabetically after } b, \\
+     u_{jb} + z_{jl} & \text{ if } k = b \\
+     u_{jb} + z_{jl} + \delta_{jbk} & \text{ if } k \succ b, \\
   \end{cases}
 \end{align}
 
-where $u_j$ is a trial specific intercept, $z_{jl}$ is a cutpoint for trial $j$ and category $l$, and $\delta_{jkb}$ is the effect of treatment $k$ relative to treatment $b$. The cutpoint for category $c$, $z_{jc}$, is modeled as random,
+where $u_j$ is a trial specific intercept, $z_{jl}$ is a cutpoint for trial $j$ and category $l$, and $\delta_{jbk}$ is the effect of treatment $k$ relative to treatment $b$. The cutpoint for category $c$, $z_{jc}$, is modeled as random,
 
 \begin{align}
 z_{jc} \sim N(v_c, \sigma^2_z).
 \end{align}
 
-The study-specific relative treatment effects are also drawn from a common population distribution with mean $d_{kb}$ and variance $\tau^2$,
+The study-specific relative treatment effects are also drawn from a common population distribution with mean $d_{bk}$ and variance $\tau^2$,
 
 \begin{align}
-\delta_{jkb} \sim N(d_{kb}, \tau^2).
+\delta_{jbk} \sim N(d_{bk}, \tau^2).
 \end{align}
 
 To generate treatment responses, we estimate the response for treatment $A$ by averaging $\mu_{jA}$ across trials containing treatment $A$. In particular, letting $S_A = \{\mu_{1A}, \ldots \mu_{|S_A|A}\}$ be the set of all trials containing treatment $A$, we estimate,
@@ -2352,11 +2443,10 @@ P(ACR_k > 20) &= \gamma \cdot (1 - P(ACR_k < 20)),
 
 where $\gamma$ is the reduction in treatment response at a given line of therapy. $\gamma = 1$ is a patient is bDMARD naive and on average, equal to .84 after failing a biologic. The mutually exclusive ACR response categories are easily derived from the overlapping categories. 
 
-To avoid influencing the observed results by prior belief, uninformative prior distributions were used for the estimated model parameters. Posterior distributions for the model parameters are derived with the Markov chain Monte Carlo method using the JAGS software package (\url{http://mcmc-jags.sourceforge.net/}).
+To avoid influencing the observed results by prior belief, uninformative prior distributions were used for the estimated model parameters. Posterior distributions for the model parameters are derived with the Markov chain Monte Carlo method.
 
-\subsubsection{Continuous outcomes}
-
-Changes in HAQ and DAS28 from baseline at 6 months were estimated using a Bayesian (random effects) network meta-analyses model for continuous data \citep{dias2013evidence}. The models use a normal likelihood (since the sample mean is approximately normally distributed by the central limit theorem if the sample size is reasonably large) and an identity link. 
+\subsubsection{Change in HAQ and DAS28 at 6 months}
+The models of changes in HAQ and DAS28 at 6 months use a normal likelihood (since the sample mean is approximately normally distributed by the central limit theorem if the sample size is reasonably large) and an identity link. 
 
 More specifically, let $y_{jk}$ be the outcome of interest in trial $j$ and treatment $k$, and consider the model,
 
@@ -2369,36 +2459,131 @@ where,
 \begin{align}
 \theta_{jk} &=
  \begin{cases}
-     \mu_{jb} & b=A,B,C,\ldots \text{ if } k = b \\
-     \mu_{jb} + \delta_{jkb} & \text{if $k$ alphabetically after } b.
+     \mu_{jb} & \text{ if } k = b \\
+     \mu_{jb} + \delta_{jbk} & \text{ if } k \succ b.
   \end{cases}
 \end{align}
 
-$\delta_{jkb}$ is modeled using a random effect with $d_{AA} =0$,
+$\delta_{jbk}$ is modeled using a random effect with $d_{AA} =0$,
 
 \begin{align}
-\delta_{jkb} \sim N(d_{kb}, \sigma^2).
+\delta_{jbk} \sim N(d_{bk}, \sigma^2).
 \end{align}
 
-As with the ACR response model, we allow treatment response to depend on patient characteristics by modeling $d_{kb}$ as a function of covariates for each individual patient $i$,
+As with the ACR response model, we allow treatment response to depend on patient characteristics by modeling $d_{bk}$ as a function of covariates for each individual patient $i$,
 
 \begin{align}
-d_{kb} &= x_{i}^T\beta_{kb},
+d_{bk} &= x_{i}^T\beta_{bk},
 \end{align}
 
-In the simulation, we allow for treatment effect modifiers by modeling $d_{kb}$ as a function of covariates for each individual patient $i$,
+In the simulation, we allow for treatment effect modifiers by modeling $d_{bk}$ as a function of covariates for each individual patient $i$,
 
 \begin{align}
-d_{kb} &= x_{i}^T\beta_{kb}.
+d_{bk} &= x_{i}^T\beta_{bk}.
 \end{align}
 
-Treatment response is estimating by calculating $A$ as in \autoref{eqn:NMA-A}. The response for treatment $k$ is then,
+The absolute treatment effect is estimated by calculating $A$ as in \autoref{eqn:NMA-A}. The absolute treatment effect for treatment $k$ is then,
 
 \begin{align}
 \gamma (A + d_{kA}),
 \end{align}
 
-where $\gamma$ is defined as in \autoref{eqn:ACR-overlap}. Uninformative priors and the JAGS software package were used to derive posterior distributions.
+where $\gamma$ is defined as in \autoref{eqn:ACR-overlap}. Uninformative priors were used to derive the posterior distributions.
+
+\subsection{Evidence base}
+\subsubsection{Study identification and selection}
+\begin{figure}[H]
+\centering
+\includegraphics{study-selection.png}
+\vspace*{10mm}
+\caption{Study identification and selection}\label{fig:study-identification}
+\end{figure}
+
+\subsubsection{Included studies}
+<<included-studies, echo = FALSE, include = FALSE>>=
+included.studies <- read.csv("included-studies.csv")
+tex <- print(xtable(included.studies), 
+      include.rownames = FALSE, include.colnames = FALSE,
+      only.contents = TRUE, sanitize.text.function = identity,
+      hline.after = NULL,
+      file = "tables/included-studies.txt")
+@
+
+\begin{center}
+\scriptsize
+\renewcommand*{\arraystretch}{1.4}
+\begin{longtable}{@{\extracolsep{\fill}}lll}
+\caption{Included studies} \label{tbl:medline-search} \\
+\hline
+\multicolumn{1}{l}{Population} & \multicolumn{1}{l}{Study} & \multicolumn{1}{l}{Publications/reports}  \\
+  \hline 
+\endfirsthead
+  \caption[]{Studies included in the netork meta-analyses}\\
+  \hline
+\multicolumn{1}{l}{Population} & \multicolumn{1}{l}{Study} & \multicolumn{1}{l}{Publications/reports}  \\
+  \hline
+\endhead
+\hline
+\multicolumn{2}{l}{Continued on next page}\\
+\endfoot
+\endlastfoot
+\ExpandableInput{tables/included-studies.txt}
+\hline
+\end{longtable}
+\end{center}
+
+\subsubsection{Evidence network, tDMARD naive population}
+
+\begin{figure}[H]
+\centering
+\includegraphics{evidence-network.png}
+\vspace*{10mm}
+\caption{Evidence network, tDMARD naive population}\label{fig:evidence-network}
+\end{figure}
+
+\subsubsection{Study specific data, tDMARD naive population}
+<<study-data, echo = FALSE, include = FALSE>>=
+trial.data <- read.csv("trial-data.csv")
+trial.data <- gsub("\\%", "\\\\%", as.matrix(trial.data))
+tex <- print(xtable(trial.data), 
+      include.rownames = FALSE, include.colnames = FALSE,
+      only.contents = TRUE, sanitize.text.function = identity,
+      hline.after = NULL,
+      file = "tables/trial-data.txt")
+@
+
+\begin{center}
+\scriptsize
+\renewcommand*{\arraystretch}{1.4}
+\begin{longtable}{@{\extracolsep{\fill}}lp{.10\linewidth}rcrrrrr}
+\caption{Study specific data, tDMARD naive population} \label{tbl:trial-data} \\
+\hline
+  \multicolumn{1}{l}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} 
+& \multicolumn{1}{c}{Time} & \multicolumn{1}{c}{ACR 20}  & \multicolumn{1}{c}{ACR 50}  & \multicolumn{1}{c}{ACR 70} & \multicolumn{1}{c}{$\Delta$DAS28}  & \multicolumn{1}{c}{$\Delta$HAQ-DI} \\
+
+\multicolumn{1}{l}{Trial ID} & \multicolumn{1}{c}{Treatment} & \multicolumn{1}{c}{N} 
+& \multicolumn{1}{c}{in weeks} & \multicolumn{1}{c}{(\%)}  & \multicolumn{1}{c}{(\%)}  & \multicolumn{1}{c}{(\%)} & \multicolumn{1}{c}{(SE)}  & \multicolumn{1}{c}{(SE)} \\
+  \hline 
+\endfirsthead
+  \caption[]{Study specific data, tDMARD naive population}\\
+  \hline
+  \multicolumn{1}{l}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} 
+& \multicolumn{1}{c}{Time} & \multicolumn{1}{c}{ACR 20}  & \multicolumn{1}{c}{ACR 50}  & \multicolumn{1}{c}{ACR 70} & \multicolumn{1}{c}{$\Delta$DAS28}  & \multicolumn{1}{c}{$\Delta$HAQ-DI} \\
+
+\multicolumn{1}{l}{Trial ID} & \multicolumn{1}{c}{Treatment} & \multicolumn{1}{c}{N} 
+& \multicolumn{1}{c}{in weeks} & \multicolumn{1}{c}{(\%)}  & \multicolumn{1}{c}{(\%)}  & \multicolumn{1}{c}{(\%)} & \multicolumn{1}{c}{(SE)}  & \multicolumn{1}{c}{(SE)} \\
+  \hline
+\endhead
+\hline
+\multicolumn{2}{l}{Continued on next page}\\
+\endfoot
+\multicolumn{9}{l}{Note: $\Delta$DAS28 and $\Delta$HAQ-DI denote differences between the end of the trial and baseline.}\\
+\endlastfoot
+\ExpandableInput{tables/trial-data.txt}
+\hline
+\end{longtable}
+\end{center}
+
 
 \subsection{Comparing the IVI NMA to the NICE NMA}\label{app:nma-ivi-nice-comp}
 To help ensure that differences in cost-effectiveness estimates from our model relative to others are not driven by the NMA results, we compared our NMA estimates to estimates reported by NICE in \citet{stevenson2016adalimumab}. We focus on ACR response, since the NICE report and other models use treatment pathways similar to \textbf{H1} and \textbf{H2} and rarely use DAS28 to inform treatment duration. As shown in \autoref{tbl:nma-acr-nice-vs-ivi}, our results are similar and the NICE point estimates are generally within the 95\% credible intervals surrounding our point estimates.
