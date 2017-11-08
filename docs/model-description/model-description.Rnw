@@ -357,7 +357,7 @@ Incremental health benefits are typially measured in terms of health gains or pa
 
 In practice, costs and health benefits are subject to statistical uncertainty. We quantify this uncertainty using probabilistic sensitivity analysis (PSA) and structural uncertainty analysis, which is described in more detail in \autoref{sec:sim-uncertainty}. This approach allows us to generate standard measures of uncertainty in CEA including cost-effectiveness planes \citep{black1990plane}, cost-effectiveness acceptability curves (CEACs) \citep{van1994costs, briggs1999bayesian, fenwick2001representing}, and estimates of the expected value of perfect information (EVPI) \citep{fenwick2001representing}.
 
-\subsection{Multiple-decision criteria-analysis}
+\subsection{Multi-criteria decision-analysis}
 An alternative approach to CEA is MCDA. \citet{keeney1993decisions} define MCDA as ``an extension of decision theory that covers any decision with multiple objectives. A methodology for appraising alternatives on individual, often conflicting criteria, and combining them into one overall appraisal...'' We use a similar approach, which implies that separate criteria are aggregated into a single measure of value.
 
 There are many approaches to MCDA; here, we discuss the approach used by IVI in the web-based user interface, which is based on the discussion in \citet{thokala2016multiple}. First, decision-makers must select the relevent criteria for the analysis. These criteria are based on the costs, health outcomes, and risks simulated from the underlying health-economic model. We discuss the criteria relevant to the IVI-RA model in \autoref{model-outcomes}.
