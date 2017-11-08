@@ -23,7 +23,10 @@ library(iviRA)
 
 
 ## Collaborate
-The IVI-RA model is part of the Open Source Value Project (OSVP), a consensus-based process for the development of open-source cost-effectiveness models and other tools for value assessment of medical interventions. Learn more about how to collaborate [here](articles/how-to-contribute.html).
+The IVI-RA model is part of the [Open Source Value Project (OSVP)](http://www.thevalueinitiative.org/open-source-value-project/), a consensus-based process for the development of open-source cost-effectiveness models and other tools for value assessment of medical interventions. Learn more about how to collaborate [here](articles/how-to-contribute.html).
 
 ## Web applications
-In addition to running the model with the R package, users can run the model online with extensive control over settings using the [IVI-RA Model Interface](https://innovationandvalueinitiative.shinyapps.io/ivi-ra-expert/). Furthermore, stakeholders without expertise in decision-analytic modeling can run the model with the [IVI-RA Value Tool](https://innovationandvalueinitiative.shinyapps.io/ivi-ra).
+In addition to running the model with the R package, users can run the model online with our web interfaces:
+
+* [IVI-RA Model Interface](https://innovationandvalueinitiative.shinyapps.io/ivi-ra-expert/): full control over the treatment sequences, the patient population, model parameters, model strucutres, and time horizon.
+* [IVI-RA Value Tool](https://innovationandvalueinitiative.shinyapps.io/ivi-ra): a more streamlined experience for users with less experience in decision-analytic modeling and rheumatoid arthritis.

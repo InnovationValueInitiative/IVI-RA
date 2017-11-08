@@ -86,7 +86,9 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
-<li class="dropdown-header">OSVP</li>
+<li>
+      <a href="http://www.thevalueinitiative.org/open-source-value-project/">OSVP</a>
+    </li>
     <li>
       <a href="../model-description/model-description.pdf">Model description</a>
     </li>
@@ -151,38 +153,31 @@
 <p>We can randomly sample a heterogeneous population with default setting. To examine these settings type <code>?sample_pats</code> into the console.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pop &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pop.html">sample_pop</a></span>(<span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">type =</span> <span class="st">"heterog"</span>)
 <span class="kw">head</span>(pop)</code></pre></div>
-<pre><code>##           age male weight prev_dmards    das28     sdai     cdai
-## [1,] 62.67101    1     89           6 7.983405 65.05488 58.44067
-## [2,] 47.56272    0     75           6 3.776722 27.43748 25.03512
-## [3,] 55.04557    1     89           1 6.716985 41.71129 51.80744
-## [4,] 41.96176    0     75           5 7.377591 58.48140 55.05158
-## [5,] 52.40354    1     89           4 4.254106 32.38495 29.48690
-## [6,] 69.28016    0     75           1 6.373148 35.47052 38.30510
-##            haq0
-## [1,] 1.95725453
-## [2,] 0.09793803
-## [3,] 1.88187862
-## [4,] 2.16377416
-## [5,] 0.89744683
-## [6,] 1.42908864</code></pre>
+<pre><code>##           age male weight prev_dmards    das28     sdai     cdai     haq0
+## [1,] 55.14921    0     75           3 6.622908 50.19626 44.60206 1.891104
+## [2,] 46.29101    0     75           2 7.560150 67.38874 53.82839 2.441999
+## [3,] 63.40711    0     75           5 7.091096 49.76836 46.16739 0.806606
+## [4,] 48.13572    0     75           1 6.858114 36.99154 36.55717 1.679703
+## [5,] 63.70294    0     75           3 5.222976 34.70945 31.26100 2.989835
+## [6,] 61.23696    0     75           3 6.034616 46.80841 43.58292 1.616233</code></pre>
 <p>We can also customize the distribution of patients. For example, suppose we want to study a younger and healthier population. We might then sample patients by customizing arguments in <code>sample_pats</code>,</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pop2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pop.html">sample_pop</a></span>(<span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">type =</span> <span class="st">"heterog"</span>, <span class="dt">age_mean =</span> <span class="dv">45</span>, <span class="dt">das28_mean =</span> <span class="dv">4</span>, <span class="dt">sdai_mean =</span> <span class="dv">20</span>, 
                     <span class="dt">cdai_mean =</span> <span class="dv">18</span>)
 <span class="kw">head</span>(pop2)</code></pre></div>
-<pre><code>##           age male weight prev_dmards    das28      sdai      cdai
-## [1,] 32.67925    1     89           6 3.812153  6.535394  4.755403
-## [2,] 19.05564    1     89           5 2.931376 14.627736 12.064956
-## [3,] 25.47520    0     75           3 3.543231 19.162891 14.581126
-## [4,] 28.95069    0     75           4 3.115839  9.279418 11.032193
-## [5,] 31.46281    0     75           1 4.119586 21.742909 17.104835
-## [6,] 41.05185    1     89           5 5.762705 35.019006 29.941916
+<pre><code>##           age male weight prev_dmards    das28       sdai      cdai
+## [1,] 55.52831    0     75           6 4.636125 27.0001666 29.905644
+## [2,] 63.25520    1     89           2 4.944673 36.1980417 40.148846
+## [3,] 55.48963    0     75           3 3.386372 19.0071923 15.853219
+## [4,] 48.17975    0     75           1 3.993438  1.3276528  3.934924
+## [5,] 59.89722    0     75           2 4.446694 26.2293319 17.924403
+## [6,] 54.02207    1     89           1 2.301949  0.7964649  1.665960
 ##           haq0
-## [1,] 1.7059338
-## [2,] 1.0067518
-## [3,] 1.6467381
-## [4,] 0.5647467
-## [5,] 2.0562821
-## [6,] 2.0135672</code></pre>
+## [1,] 2.9131395
+## [2,] 2.3137736
+## [3,] 1.5814379
+## [4,] 1.4318938
+## [5,] 1.1425068
+## [6,] 0.6160969</code></pre>
 </div>
 <div id="using-your-own-patient-population" class="section level2">
 <h2 class="hasAnchor">

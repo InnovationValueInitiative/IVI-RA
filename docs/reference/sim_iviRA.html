@@ -109,7 +109,9 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
-    <li class="dropdown-header">OSVP</li>
+    <li>
+      <a href="http://www.thevalueinitiative.org/open-source-value-project/">OSVP</a>
+    </li>
     <li>
       <a href="../model-description/model-description.pdf">Model description</a>
     </li>
@@ -388,27 +390,27 @@ cycle.</p></dd>
 <span class='no'>parsamp</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='sample_pars.html'>sample_pars</a></span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>input_dat</span> <span class='kw'>=</span> <span class='no'>input.dat</span>)
 <span class='no'>sim.out</span> <span class='kw'>&lt;-</span> <span class='fu'>sim_iviRA</span>(<span class='kw'>tx_seqs</span> <span class='kw'>=</span> <span class='no'>tx.seq</span>, <span class='kw'>input_data</span> <span class='kw'>=</span> <span class='no'>input.dat</span>, <span class='kw'>pars</span> <span class='kw'>=</span> <span class='no'>parsamp</span>,
                     <span class='kw'>model_structures</span> <span class='kw'>=</span> <span class='no'>mod.structs</span>, <span class='kw'>output</span> <span class='kw'>=</span> <span class='st'>"data"</span>)
-<span class='fu'>head</span>(<span class='no'>sim.out</span>)</div><div class='output co'>#&gt;    model sim id month tx line tx_cycle death  age      ttd acr eular das28 sdai
-#&gt; 1:     1   1  1     6  3    1        1     0 55.0 20.78231   1    NA    NA   NA
-#&gt; 2:     1   1  1    12  3    1        2     0 55.5 19.78231   1    NA    NA   NA
-#&gt; 3:     1   1  1    18  3    1        3     0 56.0 18.78231   1    NA    NA   NA
-#&gt; 4:     1   1  1    24  3    1        4     0 56.5 17.78231   1    NA    NA   NA
-#&gt; 5:     1   1  1    30  3    1        5     0 57.0 16.78231   1    NA    NA   NA
-#&gt; 6:     1   1  1    36  3    1        6     0 57.5 15.78231   1    NA    NA   NA
-#&gt;    cdai       haq     ttsi si yrlen  tx_cost hosp_days hosp_cost mgmt_cost
-#&gt; 1:   NA 1.0213851 6.554679  0   0.5 21184.95 0.7402112  1146.132  199.1253
-#&gt; 2:   NA 1.0157794 5.554679  0   0.5 21184.95 0.7402112  1146.132  199.1253
-#&gt; 3:   NA 1.0101737 4.554679  0   0.5 21184.95 0.7402112  1146.132  199.1253
-#&gt; 4:   NA 1.0045680 3.554679  0   0.5 21184.95 0.7402112  1146.132  199.1253
-#&gt; 5:   NA 0.9989624 2.554679  0   0.5 21184.95 0.2274975   330.640  199.1253
-#&gt; 6:   NA 0.9933567 1.554679  0   0.5 21184.95 0.2274975   330.640  199.1253
-#&gt;    si_cost prod_loss   utility     qalys
-#&gt; 1:       0  4766.272 0.7083124 0.3541562
-#&gt; 2:       0  4740.114 0.7993602 0.3996801
-#&gt; 3:       0  4713.955 0.6103863 0.3051932
-#&gt; 4:       0  4687.796 0.7506935 0.3753468
-#&gt; 5:       0  4661.637 0.6416012 0.3208006
-#&gt; 6:       0  4635.479 0.7459858 0.3729929</div><div class='input'>
+<span class='fu'>head</span>(<span class='no'>sim.out</span>)</div><div class='output co'>#&gt;    model sim id month tx line tx_cycle death  age        ttd acr eular das28
+#&gt; 1:     1   1  1     6  3    1        1     0 55.0  3.5129569   3    NA    NA
+#&gt; 2:     1   1  1    12  3    1        2     0 55.5  2.5129569   3    NA    NA
+#&gt; 3:     1   1  1    18  3    1        3     0 56.0  1.5129569   3    NA    NA
+#&gt; 4:     1   1  1    24  3    1        4     0 56.5  0.5129569   3    NA    NA
+#&gt; 5:     1   1  1    30  3    1        5     0 57.0 -0.4870431   3    NA    NA
+#&gt; 6:     1   1  1    36  1    2        1     0 57.5  0.0000000   0    NA    NA
+#&gt;    sdai cdai       haq     ttsi si yrlen  tx_cost   hosp_days  hosp_cost
+#&gt; 1:   NA   NA 0.3083497 31.15677  0   0.5 23128.73 0.006605459   7.730806
+#&gt; 2:   NA   NA 0.3017281 30.15677  0   0.5 23128.73 0.006605459   7.730806
+#&gt; 3:   NA   NA 0.2951065 29.15677  0   0.5 23128.73 0.006605459   7.730806
+#&gt; 4:   NA   NA 0.2884848 28.15677  0   0.5 23128.73 0.006605459   7.730806
+#&gt; 5:   NA   NA 1.3581981 27.15677  0   0.5 23128.73 0.080437281 136.170389
+#&gt; 6:   NA   NA 1.3581981 48.25451  0   0.5   635.56 0.080437281 136.170389
+#&gt;    mgmt_cost si_cost prod_loss    utility      qalys
+#&gt; 1:  204.7222       0  1255.943 0.74529884 0.37264942
+#&gt; 2:  204.7222       0  1228.972 0.70871794 0.35435897
+#&gt; 3:  204.7222       0  1202.002 0.66356234 0.33178117
+#&gt; 4:  204.7222       0  1175.031 0.28858455 0.14429227
+#&gt; 5:  204.7222       0  5532.093 0.62809011 0.31404505
+#&gt; 6:  204.7222       0  5532.093 0.02784297 0.01392149</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

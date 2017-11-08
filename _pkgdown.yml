@@ -107,6 +107,7 @@ navbar:
   - text: "About"
     menu:
       - text: "OSVP"
+        href: http://www.thevalueinitiative.org/open-source-value-project/
       - text: "Model description"
         href: model-description/model-description.pdf
       - text: "Release history"
