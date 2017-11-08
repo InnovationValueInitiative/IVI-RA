@@ -53,6 +53,10 @@ test_that("sim_iviRA EULAR, DAS28, SDAI, and CDAI should be NA if acr-haq is cho
   expect_equal(is.na(unique(sim.out$cdai)), TRUE)
 })
 
+test_that("sim_iviRA no ACR response if nbt",{
+  expect_equal(unique(sim.out[tx == nbt.ind, acr]), 0)
+})
+
 # Stucture = tx_ihaq = "acr-haq", tx_iswitch = "acr-das28" | "acr-sdai" | "acr-cdai"
 sim_da <- function(da_name = c("das28", "sdai", "cdai"), da0){
   da.name <- match.arg(da_name)
@@ -183,6 +187,10 @@ test_that("sim_iviRA DAS28, SDAI, and CDAI should be NA if acr-eular-haq is chos
   expect_equal(is.na(unique(sim.out$das28)), TRUE)
   expect_equal(is.na(unique(sim.out$sdai)), TRUE)
   expect_equal(is.na(unique(sim.out$cdai)), TRUE)
+})
+
+test_that("sim_iviRA no EULAR response if nbt",{
+  expect_equal(unique(sim.out[tx == nbt.ind, eular]), 0)
 })
 
 # Structure: tx_ihaq = "haq" with no switching (i.e. das28 = 0) and 
@@ -323,6 +331,57 @@ test_that("sim_iviRA law of large numbers: time to serious infection", {
   exponential.mean.yrs <- 1/exp(iviRA::ttsi[sname == tx, lograte])
   expect_equal(sim.ttsi.mean.yrs, exponential.mean.yrs,
                tolerance = .1)
+})
+
+# output = "data" vs. output = "summary"
+pop <- sample_pop(n = 10, type = "homog")
+tx <- c("etnmtx")
+input.dat <- get_input_data(pop = pop)
+parsamp <- sample_pars(n = 10, input_dat = input.dat)
+mod.structs <- select_model_structures()
+set.seed(102)
+sim1.out <- sim_iviRA(tx_seqs = tx, input_data = input.dat, pars = parsamp,
+                      model_structures = mod.structs, max_months = 12,
+                      output = "data")
+sim1.out <- cbind(sim1.out, 
+      iviRA::treatments[sim1.out$tx, .(route, years_since_approval)])
+set.seed(102)
+sim2.out <- sim_iviRA(tx_seqs = tx, input_data = input.dat, pars = parsamp,
+                      model_structures = mod.structs, max_months = 12,
+                      output = "summary")
+
+test_that("sim_iviRA years since approval range", {
+  expect_true(max(sim2.out$means$yrs_since_approval) <=
+                max(iviRA::treatments$years_since_approval))
+  expect_true(min(sim2.out$means$yrs_since_approval) >= 0)
+  expect_true(min(iviRA::treatments$years_since_approval) >= 0)
+})
+
+test_that("sim_iviRA mean data equal to summary means", {
+  sim1.means <- sim1.out[, lapply(.SD, function(x) sum(x)/input.dat$n),
+                         by = c("model", "sim"),
+                         .SDcols = c("qalys", "tx_cost")]
+  expect_equal(mean(sim1.means$qalys), mean(sim2.out$means$qalys))
+  expect_equal(mean(sim1.means$tx_cost), mean(sim2.out$means$tx_cost))
+})
+
+test_that("sim_iviRA time means data equal to summary time.means", {
+  sim1.tmeans <- sim1.out[, lapply(.SD, mean), by = c("model", "sim", "month"),
+                          .SDcols = c("haq", "qalys")]
+  expect_equal(sim1.tmeans$haq, sim2.out$time.means$haq)
+  expect_equal(sim1.tmeans$qalys, sim2.out$time.means$qalys)
+})
+
+test_that("sim_iviRA annualized outcomes", {
+  maxt <- (100 - unique(pop[, "age"])) * 2
+  sim1.out[, dqalys := (1/(1 + .03))^(month/12) * qalys]
+  sim.dqalys.id <- sim1.out[, .(dqalys = sum(dqalys)), 
+                           by = c("model", "sim", "id")]
+  r <- 1/(1 + .03)^.5
+  sim.dqalys.id[, dqalys_ann := dqalys * (1 - r)/(r * (1 - r^maxt))]
+  sim.dqalys <- sim.dqalys.id[, .(dqalys_ann = mean(dqalys_ann)), 
+                            by = c("model", "sim")]
+  expect_equal(sim.dqalys$dqalys_ann * 2, sim2.out$means$dqalys_ann)
 })
 
 # Test sim_qalys --------------------------------------------------------------

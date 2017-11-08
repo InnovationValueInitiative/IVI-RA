@@ -195,7 +195,7 @@ return(x)
 }
 
 # globals
-CACHE <- FALSE
+CACHE <- TRUE
 @
 
 \clearpage
@@ -2418,10 +2418,10 @@ z_{jc} \sim N(v_c, \sigma^2_z).
 The study-specific relative treatment effects are also drawn from a common population distribution with mean $d_{bk}$ and variance $\tau^2$,
 
 \begin{align}
-\delta_{jbk} \sim N(d_{bk}, \tau^2).
+\delta_{jbk} \sim N(d_{bk}, \tau^2),
 \end{align}
 
-To generate treatment responses, we estimate the response for treatment $A$ by averaging $\mu_{jA}$ across trials containing treatment $A$. In particular, letting $S_A = \{\mu_{1A}, \ldots \mu_{|S_A|A}\}$ be the set of all trials containing treatment $A$, we estimate,
+where $d_{bk} = d_{Ak} - d_{Ab}$. To generate treatment responses, we estimate the response for treatment $A$ by averaging $\mu_{jA}$ across trials containing treatment $A$. In particular, letting $S_A = \{\mu_{1A}, \ldots \mu_{|S_A|A}\}$ be the set of all trials containing treatment $A$, we estimate,
 
 \begin{align} \label{eqn:NMA-A}
 A = \frac{1}{|S_A|}\sum_{\mu_{A} \in S_A} \mu_{A}.
@@ -2469,10 +2469,10 @@ where,
 $\delta_{jbk}$ is modeled using a random effect with $d_{AA} =0$,
 
 \begin{align}
-\delta_{jbk} \sim N(d_{bk}, \sigma^2).
+\delta_{jbk} \sim N(d_{bk}, \sigma^2),
 \end{align}
 
-As with the ACR response model, we allow treatment response to depend on patient characteristics by modeling $d_{bk}$ as a function of covariates for each individual patient $i$,
+where $d_{bk} = d_{Ak} - d_{Ab}$. As with the ACR response model, we allow treatment response to depend on patient characteristics by modeling $d_{bk}$ as a function of covariates for each individual patient $i$,
 
 \begin{align}
 d_{bk} &= x_{i}^T\beta_{bk},
