@@ -1,0 +1,9 @@
+citHeader("To cite the IVI-RA model in publications, please refer to the model description:")
+
+citEntry(entry = "Manual",
+  author = personList(as.person("Devin Incerti"),
+                            as.person("Jeroen P Jansen")),
+  title = "A Description of the IVI-RA Model",
+  year = "2017",
+  note = "last updated October 2017",
+  textVersion = "Incerti, D, Jansen, JP. A Description of the IVI-RA Model. 2017; last updated October 2017.")
