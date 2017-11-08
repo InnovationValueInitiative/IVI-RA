@@ -81,3 +81,7 @@ ttd_da_test <- function(da_cat) {
     .Call('_iviRA_ttd_da_test', PACKAGE = 'iviRA', da_cat)
 }
 
+arma_rowvec_anyNA <- function(x) {
+    .Call('_iviRA_arma_rowvec_anyNA', PACKAGE = 'iviRA', x)
+}
+

@@ -1,4 +1,6 @@
-#include <Rcpp.h>
+// [[Rcpp::depends(RcppArmadillo)]]
+
+#include <RcppArmadillo.h>
 
 // Discount factor
 double discount_factor(double t, double discount, double period_length = 1){
@@ -38,4 +40,17 @@ std::vector<std::vector<std::string> > charmat2stdvec(Rcpp::CharacterMatrix x){
     }
   }
   return vecs;
+}
+
+// [[Rcpp::export]]
+bool arma_rowvec_anyNA(arma::rowvec x) {
+  bool any_na = false;
+  int len = x.size();
+  for (int i = 0; i < len; ++i) {
+    if (!arma::is_finite(x(i))){
+      any_na = true;
+      break;
+    }
+  }
+  return any_na;
 }

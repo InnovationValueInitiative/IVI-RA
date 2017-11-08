@@ -1285,26 +1285,34 @@ Rcpp::DataFrame sim_dhaq6C(int npats, int nsims, std::string hist, int line,
   
   // Simulation
   TxIHaq tx_ihaq;
+  double dhaq;
   for (int j = 0; j < J; ++j){
     int tx_ind_j = tx_inds[j];
     for (int m = 0; m < M; ++m){
       for (int s = 0; s < nsims; ++s){
         for (int i = 0; i < npats; ++i){
-          nma_acr.set(hist, acr_k[s], acr_A[s], acr_z2[s], acr_z3[s],
-                      acr_d_beta.slice(tx_ind_j).row(s), x_acr.row(i),
-                      line);
-          nma_haq.set(hist, nma_haq_k[s], nma_haq_A[s],
-                      nma_haq_d_beta.slice(tx_ind_j).row(s), x_haq.row(i),
-                      line);
-          tx_ihaq.sim(tx_ihaq_type[m], line, tx_ind_j, nbt_ind,
-                      nma_acr, nma_haq,
-                      acr2eular.slice(s), acr2haq.row(s), 
-                      eular2haq.row(s));
+          bool acr_na = arma_rowvec_anyNA(acr_d_beta.slice(tx_ind_j).row(s));
+          if (acr_na == false || tx_ihaq_type[m] == "haq"){
+            nma_acr.set(hist, acr_k[s], acr_A[s], acr_z2[s], acr_z3[s],
+                        acr_d_beta.slice(tx_ind_j).row(s), x_acr.row(i),
+                        line);
+            nma_haq.set(hist, nma_haq_k[s], nma_haq_A[s],
+                        nma_haq_d_beta.slice(tx_ind_j).row(s), x_haq.row(i),
+                        line);
+            tx_ihaq.sim(tx_ihaq_type[m], line, tx_ind_j, nbt_ind,
+                        nma_acr, nma_haq,
+                        acr2eular.slice(s), acr2haq.row(s), 
+                        eular2haq.row(s)); 
+            dhaq = tx_ihaq.dhaq;
+          }
+          else {
+            dhaq = NA_REAL;
+          }
           tx_vec.push_back(tx_ind_j);
           model_vec.push_back(tx_ihaq_type[m]);
           sim_vec.push_back(s);
           id_vec.push_back(i);
-          dhaq_vec.push_back(tx_ihaq.dhaq);
+          dhaq_vec.push_back(dhaq);
         }
       }
     }

@@ -407,6 +407,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// arma_rowvec_anyNA
+bool arma_rowvec_anyNA(arma::rowvec x);
+RcppExport SEXP _iviRA_arma_rowvec_anyNA(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::rowvec >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(arma_rowvec_anyNA(x));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 RcppExport SEXP _rcpp_module_boot_mod_TimeMeans();
 RcppExport SEXP _rcpp_module_boot_mod_Out0();
@@ -432,6 +443,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_iviRA_sim_acr_test", (DL_FUNC) &_iviRA_sim_acr_test, 0},
     {"_iviRA_sim_lm_test", (DL_FUNC) &_iviRA_sim_lm_test, 0},
     {"_iviRA_ttd_da_test", (DL_FUNC) &_iviRA_ttd_da_test, 1},
+    {"_iviRA_arma_rowvec_anyNA", (DL_FUNC) &_iviRA_arma_rowvec_anyNA, 1},
     {"_rcpp_module_boot_mod_TimeMeans", (DL_FUNC) &_rcpp_module_boot_mod_TimeMeans, 0},
     {"_rcpp_module_boot_mod_Out0", (DL_FUNC) &_rcpp_module_boot_mod_Out0, 0},
     {NULL, NULL, 0}

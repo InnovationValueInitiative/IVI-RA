@@ -195,7 +195,7 @@ return(x)
 }
 
 # globals
-CACHE <- TRUE
+CACHE <- FALSE
 @
 
 \clearpage
@@ -330,7 +330,7 @@ The model simulates the costs, health outcomes and risks associated with treatme
 
 The model can therefore be used for a number of purposes, conditional on the population of interest and the perspective of the decision maker. Here we describe a few possibilities. 
 
-The first and most obvious use of the model is for value assessment. Two approaches, cost-effectiveness analysis (CEA) and multiple-criteria decision analysis (MCDA), are discussed in more detail in \autoref{sec:value-assessment}. Within the CEA approach, cost-effectiveness can be evaluated from the conventional perspective of a sick individual or from the perspective of a healthy individual using the "insurance value" framework developed by \citet{lakdawalla2017insurance}. 
+The first and most obvious use of the model is for value assessment. Two approaches, cost-effectiveness analysis (CEA) and multi-criteria decision analysis (MCDA), are discussed in more detail in \autoref{sec:value-assessment}. Within the CEA approach, cost-effectiveness can be evaluated from the conventional perspective of a sick individual or from the perspective of a healthy individual using the "insurance value" framework developed by \citet{lakdawalla2017insurance}. 
 
 Second, the model can be used to evaluate the consequences of clinical guidelines such as the current treat-to-target guidelines in the US \citep{singh20162015} or guidelines based on treatment response like in the UK \citep{deighton2010bsr}. Unlike most previous models, our flexible framework allows treatment switching decisions to depend on disease activity level or treatment response, so outcomes under different decision rules can be simulated.   
 
@@ -645,7 +645,7 @@ When analyzing value to healthy individuals---rather than sick patients---we use
 The effect of treatment on ACR response, DAS28, and HAQ at 6 months for tDMARD naive patients are estimated using Bayesian network meta-analyses (NMA) of published randomized controlled trials (RCTs). Primary outcomes were ACR response, change in DAS28 from baseline at 6 months, and the change in HAQ from baseline at 6 months. Results from the NMA are shown in \autoref{tbl:nma-acr-das28-haq}. Details of the systematic literature review and the statistical methodology are provided in the Appendix (\autoref{app:nma-analyses}).
 
 <<nma_results, cache=CACHE, echo=FALSE, include=FALSE>>=
-tx.snames <- c("cdmards", "abtivmtx", "adamtx", "etnmtx", "golmtx", "ifxmtx", "tczmtx", "czpmtx", "abtscmtx", "rtxmtx", "tofmtx")
+tx.snames <- iviRA::treatments[!sname %in% c("nbt", "gol"), sname]
 nsims <- 1000
 tx.inds <- which(iviRA::treatments$sname %in% tx.snames)
 tx.names <- iviRA::treatments[sname %in% tx.snames, mname]
@@ -895,7 +895,7 @@ The relationship between EULAR response and HAQ is based on analyses conducted b
 \autoref{tbl:sim-haq-change} compares the impact of treatment on HAQ when using \textbf{H1-H3}. Results were estimated by simulating $1,000$ patients for 6 months and randomly sampling $1,000$ parameter sets. For each randomly sampled parameter set, we calculated the average decrease in HAQ at 6 months across the $1,000$ patients. Estimates reported in the table are the mean and 95\% credible interval of the mean decrease in HAQ at 6 months. To maintain consistency across \textbf{H1-H3}, we did not allow HAQ scores for patients who might have otherwise switched treatments accoring to \textbf{S1-S6} to rebound back to their baseline levels (i.e., levels at the start of the simulation) at the end of the 6 month period.   
 
 <<sim6-haq, cache=CACHE, echo=FALSE, include=FALSE>>=
-treatments <- c("cdmards", "abtivmtx", "adamtx", "etnmtx", "golmtx", "ifxmtx", "tczmtx", "czpmtx", "abtscmtx", "rtxmtx", "tofmtx")
+treatments <- iviRA::treatments[!sname %in% c("nbt", "gol"), sname]
 pop <- sample_pop(n = 1000)
 input.dat <- get_input_data(pop = pop)
 parsamp <- sample_pars(n = 1000, input_data = input.dat)
