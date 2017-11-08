@@ -901,11 +901,11 @@ input.dat <- get_input_data(pop = pop)
 parsamp <- sample_pars(n = 1000, input_data = input.dat)
 dhaq6.sim <- sim_dhaq6(treatments = treatments, input_data = input.dat,
                        pars = parsamp, hist = "naive")
-dhaq6.means <- dhaq6.sim[, .(dhaq = mean(dhaq)),
+dhaq6.means <- dhaq6.sim[, .(dhaq = mean(dhaq, na.rm = TRUE)),
                            by = c("tx", "model", "sim")]
 dhaq6.means.summary <- dhaq6.means[, .(mean = mean(dhaq),
-                                       lower = quantile(dhaq, .025),
-                                        upper = quantile(dhaq, .975)),
+                                       lower = quantile(dhaq, .025, na.rm = TRUE),
+                                        upper = quantile(dhaq, .975, na.rm = TRUE)),
                                    by = c("tx", "model")]
 @
 
@@ -914,8 +914,10 @@ dhaq6.means.summary <- dhaq6.means[, .(mean = mean(dhaq),
 dhaq6.means.summary[, tx_sname := iviRA::treatments[tx, sname]]
 dhaq.mat <- as.matrix(dhaq6.means.summary[, .(lower, mean, upper)])
 dhaq.fmat <- trimws(formatC(dhaq.mat, format = "f", digits = 2))
-dhaq.fest <- paste0(dhaq.fmat[, "mean"], " (", dhaq.fmat[, "lower"], ", ", 
-                    dhaq.fmat[, "upper"], ")")
+dhaq.fmat[dhaq.fmat == "NA" | dhaq.fmat == "NaN"] <- ""
+dhaq.fest <- trimws(paste0(dhaq.fmat[, "mean"], " (", dhaq.fmat[, "lower"], ", ", 
+                    dhaq.fmat[, "upper"], ")"))
+dhaq.fest[dhaq.fest == "(, )"] <- "-"
 dhaq6.dt <- data.table(tx_name = dhaq6.means.summary$tx_sname,
                      model = as.character(dhaq6.means.summary$model),
                      est = dhaq.fest)
