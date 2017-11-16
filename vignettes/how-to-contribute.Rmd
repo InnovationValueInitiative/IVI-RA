@@ -6,7 +6,7 @@ output: html_document
 ## Two ways to collaborate
 There are two ways to collaborate with IVI. 
 
-1. You can comment on the scientific approach or evidence considered at [url]. IVI and a technical panel will review the comments and determine whether they should be incorporated into the model. A synthesis of the comments we have received can be found [here](suggested-improvements.html). 
+1. You can comment on the scientific approach or evidence considered. IVI and a technical panel will review the comments and determine whether they should be incorporated into the model. Information on how to do this is available [here](http://www.thevalueinitiative.org/help-improve-the-model/). A synthesis of the feedback we have received can be found [here](suggested-improvements.html). 
 
 2. You can make changes to the code itself by making a [pull request](https://help.github.com/articles/about-pull-requests/). Code changes that affect the scientific approach or evidence considered will only be incorporated after a review by the technical panel but other changes such as bug fixes or performance improvements may be immediately accepted. 
 

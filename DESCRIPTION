@@ -1,7 +1,7 @@
 Package: iviRA
 Type: Package
 Title: The IVI-RA model
-Version: 1.0.0
+Version: 1.0.0.9000
 Authors@R: c(
     person("Devin", "Incerti", , "devin.incerti@thevalueinitiative.org", c("aut", "cre")),
     person("Jeroen P.", "Jansen", , "jeroen.jansen@thevalueinitiative.org", role = "aut")
