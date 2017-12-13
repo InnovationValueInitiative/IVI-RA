@@ -1,21 +1,3 @@
-#' Convert list of matrices to an array
-#'
-#' Convert a list of matrices to an array.
-#' 
-#' @param l List of matrices
-#' @keywords internal
-list2array <- function(l){
-  if (class(l[[1]]) == "numeric"){
-      dim1 <- 1; dim2 <- length(l[[1]]); dim3 <- length(l)
-  } else {
-      dim1 <- nrow(l[[1]]); dim2 <- ncol(l[[1]]); dim3 <- length(l) 
-  }
-  x <-  array(unlist(l),
-                dim = c(dim1, dim2, dim3))
- 
-  return(x)
-}
-
 #' NMA parameters to change in continuous outcome
 #'
 #' Calculate change in continuous outcome from linear model used for NMA.

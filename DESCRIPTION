@@ -18,14 +18,15 @@ LazyData: TRUE
 Depends:  R (>= 2.10)
 LinkingTo: Rcpp, RcppArmadillo, hesim, testthat
 Imports:
-    Rcpp,
-    hesim,
     data.table,
+    hesim,
     MASS,
     msm,
+    Rcpp,
     tmvtnorm
 Remotes: InnovationValueInitiative/hesim
 Suggests:
-    testthat,
-    flexsurv
+    covr,
+    flexsurv,
+    testthat
 RoxygenNote: 6.0.1
