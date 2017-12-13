@@ -1113,21 +1113,6 @@ std::map<std::string, std::vector<double> > TimeMeans::calc_means(){
   return varmeans;
 }
 
-RCPP_MODULE(mod_TimeMeans) {
-  
-  class_<TimeMeans>("TimeMeans")
-  .constructor<int, int, int, int, double>()
-  .method("get_varsums", &TimeMeans::get_varsums)
-  .method("get_id", &TimeMeans::get_id)
-  .method("get_index", &TimeMeans::get_index)
-  .method("get_alive", &TimeMeans::get_alive)
-  .method("increment_id", &TimeMeans::increment_id)
-  .method("increment_alive", &TimeMeans::increment_alive)
-  .method("increment_varsums", &TimeMeans::increment_varsums)
-  .method("calc_means", &TimeMeans::calc_means)
-  ;
-}
-
 // Output at time-period 0 for each treatment 
 class Out0 {         
 private:
@@ -1209,22 +1194,6 @@ void Out0::push_back(int cycle, int mod, int sim, int id, int tx, int acr, int e
     ttd_vec.push_back(ttd);
     ttsi_vec.push_back(ttsi);
   }
-}
-
-RCPP_MODULE(mod_Out0) {
-  
-  class_<Out0>("Out0")
-  .constructor<int, int, int, int>()
-  .method("get_sim", &Out0::get_sim)
-  .method("get_mod", &Out0::get_mod)
-  .method("get_id", &Out0::get_id)
-  .method("get_tx", &Out0::get_tx)
-  .method("get_acr", &Out0::get_acr)
-  .method("get_eular", &Out0::get_eular)
-  .method("get_ttd", &Out0::get_ttd)
-  .method("get_ttsi", &Out0::get_ttsi)
-  .method("push_back", &Out0::push_back)
-  ;
 }
 
 /****************************************

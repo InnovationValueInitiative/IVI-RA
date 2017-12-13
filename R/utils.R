@@ -83,7 +83,7 @@ nma_acrprob <- function(A, z2, z3, d, k = 1){
 #' @param ltmale Identical to \code{ltfemale} but for men.
 #' @param x_mort Design matrix for mortality adjustment with odds ratios. Number of rows equal to n. 
 #' @param logor Vector of log odds ratio mortality adjusters. Length equal to number of columns in x.
-#' @param cycle_length Length of model cycles in months. Default is 1 month cycles.
+#' @param cycle_length Length of model cycles in months. Default is 6 month cycles.
 #' @param loghr Log hazard ratio of impact of change in HAQ from baseline on mortality rate. A vector with
 #' each element denoting (in order) hazard ratio for \eqn{month \le 6}, \eqn{6 > month \le 12}, 
 #'   \eqn{12 < month \le 24}, \eqn{24 < month \le 36}, \eqn{month > 36}.
@@ -98,9 +98,10 @@ nma_acrprob <- function(A, z2, z3, d, k = 1){
 #' @export
 sim_survtime <- function(n = 1000, age = 55, haq0 = 1, male = 0, 
                       haq = rep(haq0, 12/cycle_length * (100 - age + 1)), 
-                      ltfemale = lifetable.female, ltmale = lifetable.male, 
-                      x_mort = haq0, logor = mort.or$logor, 
-                      cycle_length = 6, loghr = mort.hr.haqdif$loghr){
+                      ltfemale = iviRA::lifetable.female, 
+                      ltmale = iviRA::lifetable.male, 
+                      x_mort = haq0, logor = iviRA::mort.or$logor, 
+                      cycle_length = 6, loghr = iviRA::mort.hr.haqdif$loghr){
   lt.data <- lt_pars(ltfemale, ltmale)
   le <- sample_survC(n, age, male, lt.data$male, lt.data$female,
                    x_mort, logor, haq0, haq,

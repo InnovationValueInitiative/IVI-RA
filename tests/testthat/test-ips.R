@@ -1,9 +1,9 @@
-context("ips.R")
+context("ips.R unit tests")
 library("data.table")
 library("Rcpp")
 nbt.ind <- which(iviRA::treatments$sname == "nbt")
 
-# sim_iviRA -------------------------------------------------------------------
+# sim_iviRA --------------------------------------------------------------------
 set.seed(101)
 haq0 <- formals(sample_pop)$haq0_mean
 das28.0 <- formals(sample_pop)$das28_mean
@@ -17,13 +17,18 @@ input.dat <- get_input_data(pop = pop)
 parsamp <- sample_pars(n = 30, input_dat = input.dat)
 
 # Structures with length > 1
-mod.structs <- select_model_structures(tx_ihaq = c("acr-haq", "acr-eular-haq"),
-                                       tx_iswitch = c("acr-switch", "acr-eular-switch"),
-                                       cdmards_haq_model = c("lcgm", "linear"),
-                                       ttd_cause = c("all", "si"),
-                                       ttd_dist = c("gengamma", "exponential"))
-sim.out <- sim_iviRA(tx_seqs = tx.seq, input_data = input.dat, pars = parsamp,
-                     model_structures = mod.structs, output = "data")
+test_that("model structures with length > 1 ", {
+  mod.structs <- select_model_structures(tx_ihaq = c("acr-haq", "acr-eular-haq"),
+                                         tx_iswitch = c("acr-switch", "acr-eular-switch"),
+                                         cdmards_haq_model = c("lcgm", "linear"),
+                                         ttd_cause = c("all", "si"),
+                                         ttd_dist = c("gengamma", "exponential"))
+  sim.out <- sim_iviRA(tx_seqs = tx.seq, input_data = input.dat, pars = parsamp,
+                       model_structures = mod.structs, output = "data")
+  expect_equal(length(unique(sim.out$model)), 2)
+  expect_true(all(is.na(sim.out[model == 1, eular])))
+  expect_true(all(sim.out[model == 2, eular] %in% seq(0, 2)))
+})
 
 # Stucture = tx_ihaq = "acr-haq", tx_iswitch = "acr-switch"
 mod.structs <- select_model_structures(tx_ihaq = "acr-haq",
@@ -384,7 +389,7 @@ test_that("sim_iviRA annualized outcomes", {
   expect_equal(sim.dqalys$dqalys_ann * 2, sim2.out$means$dqalys_ann)
 })
 
-# Test sim_qalys --------------------------------------------------------------
+# sim_qalys --------------------------------------------------------------------
 n <- 10
 pop <- sample_pop(n = 10)
 input.dat <- get_input_data(pop)
@@ -411,5 +416,40 @@ test_that("sim_qalys", {
                          tx_attr_coef = tx.attr.coef)
   expect_equal(sim.qalys[1], 0.5)
 })
+
+# sim_utility_mixture ----------------------------------------------------------
+test_that("sim_utility_mixture", {
+  pop <- sample_pop(n = 10)
+  tx.seq <- c("adamtx", "cdmards")
+  mod.structs <- select_model_structures(utility_model = "wailoo")
+  input.dat <- get_input_data(pop = pop)
+  parsamp <- sample_pars(n = 10, input_dat = input.dat)
+  sim.out <- sim_iviRA(tx_seqs = tx.seq, input_data = input.dat, pars = parsamp,
+                       model_structures = mod.structs, output = "data")
+  utility.mix <- sim_utility_mixture(simhaq = sim.out, male = pop[, "male"],
+                                     pars = parsamp$utility.mixture)
+  expect_equal(length(utility.mix), nrow(sim.out))
+  expect_true(all(utility.mix <= 1))
+})
+
+
+# sim_dhaq6 --------------------------------------------------------------------
+test_that("sim_dhaq6", {
+  input.dat <- get_input_data(pop = sample_pop(n = 10))
+
+  # HAQ directly
+  parsamp <- sample_pars(n = 10, input_data = input.dat)
+  sim <- sim_dhaq6(treatments = c("cdmards"), input_data = input.dat,
+                   pars = parsamp, tx_ihaq = c("haq"))
+  expect_equal(sim$dhaq[1], sim$dhaq[2])
+  expect_equal(sim$dhaq[1], parsamp$haq$A[1])
+  expect_equal(sim[sim == 2, dhaq][1], parsamp$haq$A[2])
+  
+  # response with NA
+  sim <- sim_dhaq6(treatments = c("gol"), input_data = input.dat,
+                   pars = parsamp, tx_ihaq = c("haq"))
+  expect_true(all(is.na(sim$dhaq)))
+})
+
 
 

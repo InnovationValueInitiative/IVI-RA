@@ -419,9 +419,6 @@ BEGIN_RCPP
 END_RCPP
 }
 
-RcppExport SEXP _rcpp_module_boot_mod_TimeMeans();
-RcppExport SEXP _rcpp_module_boot_mod_Out0();
-
 static const R_CallMethodDef CallEntries[] = {
     {"_iviRA_test_ttd", (DL_FUNC) &_iviRA_test_ttd, 1},
     {"_iviRA_sim_mlogit_classC", (DL_FUNC) &_iviRA_sim_mlogit_classC, 2},
@@ -444,8 +441,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_iviRA_sim_lm_test", (DL_FUNC) &_iviRA_sim_lm_test, 0},
     {"_iviRA_ttd_da_test", (DL_FUNC) &_iviRA_ttd_da_test, 1},
     {"_iviRA_arma_rowvec_anyNA", (DL_FUNC) &_iviRA_arma_rowvec_anyNA, 1},
-    {"_rcpp_module_boot_mod_TimeMeans", (DL_FUNC) &_rcpp_module_boot_mod_TimeMeans, 0},
-    {"_rcpp_module_boot_mod_Out0", (DL_FUNC) &_rcpp_module_boot_mod_Out0, 0},
     {NULL, NULL, 0}
 };
 

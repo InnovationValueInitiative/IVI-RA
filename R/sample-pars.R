@@ -479,7 +479,7 @@ sample_pars <- function(n = 100, input_data, tx_names = iviRA::treatments$sname,
   ## utility
   sim$utility.mixture <- sample_pars_utility_mixture(n, utility_mixture_pain)    
   sim$utility.wailoo <- sample_normals(n, iviRA::utility.wailoo$est, iviRA::utility.wailoo$se,
-                                       col_names = utility.wailoo$var) 
+                                       col_names = iviRA::utility.wailoo$var) 
   sim$si.ul <- runif(n, si_ul * (1 - si_ul_range), si_ul * (1 + si_ul_range))
   sim$utility.tx.attr <-  sample_uniforms(n, tx_attr_utilcoef_lower, tx_attr_utilcoef_upper,
                                           tx_attr_utilcoef_names)
