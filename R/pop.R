@@ -194,35 +194,44 @@ get_input_data <- function(pop,
   if (!is.matrix(pop)){
     stop("pop must be a matrix.")
   }
-  if (is.null(pop[, "age"])){
+  if (!"age" %in% colnames(pop)){
     stop("The variable age is missing from pop.")
   }
-  if (is.null(pop[, "haq0"])){
+  if (!"haq0" %in% colnames(pop)){
     stop("The variable haq0 is missing from pop.")
   }
-  if (is.null(pop[, "male"])){
+  if (!"male" %in% colnames(pop)){
     stop("The variable male is missing from pop.")
   }
-  if (is.null(pop[, "weight"])){
+  if (!"weight" %in% colnames(pop)){
     stop("The variable weight is missing from pop.")
   }
-  if (is.null(pop[, "prev_dmards"])){
+  if (!"prev_dmards" %in% colnames(pop)){
     stop("The variable prev_dmards is missing from pop.")
   }
-  if (is.null(pop[, "das28"])){
+  if (!"das28" %in% colnames(pop)){
     stop("The variable das28 is missing from pop.")
   }
-  if (is.null(pop[, "sdai"])){
+  if (!"sdai" %in% colnames(pop)){
     stop("The variable sdai is missing from pop.")
   }
-  if (is.null(pop[, "cdai"])){
+  if (!"cdai" %in% colnames(pop)){
     stop("The variable cdai is missing from pop.")
   }
+  stopifnot(is.matrix(x_acr) | is.data.frame(x_acr) | is.null(x_acr), 
+            is.matrix(x_haq) | is.data.frame(x_haq) | is.null(x_haq),
+            is.matrix(x_das28) | is.data.frame(x_das28) | is.null(x_das28),
+            is.matrix(x_ttd_all) | is.data.frame(x_ttd_all) | is.null(x_ttd_all),
+            is.matrix(x_ttd_da) | is.data.frame(x_ttd_da) | is.null(x_ttd_da),
+            is.matrix(x_ttd_eular) | is.data.frame(x_ttd_eular) | is.null(x_ttd_eular),
+            is.matrix(x_mort) | is.data.frame(x_mort) | is.null(x_mort),
+            is.matrix(x_attr) | is.data.frame(x_attr))
   
   # mortality
   if (is.null(x_mort)){
       x.mort <- pop[, "haq0", drop = FALSE]
   } else{
+      x_mort <- as.matrix(x_mort)
       if (nrow(x_mort) != npats){
           stop("Number of rows in 'x_mort' must equal number of simulated patients.")
       }
@@ -233,26 +242,29 @@ get_input_data <- function(pop,
   if (is.null(x_acr)){
     x.acr <- matrix(1, nrow = nrow(pop), ncol = 1)
   } else{
+    x_acr <- as.matrix(x_acr)
     if (nrow(x_acr) != npats){
       stop("Number of rows in 'x_acr' must equal number of simulated patients.")
     }
-    x.acr <- x.acr
+    x.acr <- x_acr
   }
   
   # Change in HAQ matrix for treatment by covariate interactions for d's
   if (is.null(x_haq)){
     x.haq <- matrix(1, nrow = nrow(pop), ncol = 1)
   } else{
+    x_haq <- as.matrix(x_haq)
     if (nrow(x_haq) != npats){
       stop("Number of rows in 'x_acr' must equal number of simulated patients.")
     }
-    x.haq <- x.haq
+    x.haq <- x_haq
   }
   
   # DAS28 matrix for treatment by covariate interactions for d's
   if (is.null(x_das28)){
     x.das28 <- matrix(1, nrow = nrow(pop), ncol = 1)
   } else{
+    x_das28 <- as.matrix(x_das28)
     if (nrow(x_das28) != npats){
       stop("Number of rows in 'x_das28' must equal number of simulated patients.")
     }
@@ -263,6 +275,7 @@ get_input_data <- function(pop,
     if(is.null(x_ttd_all)){
         x.ttd.all <- matrix(1, nrow = nrow(pop), ncol = 1)
     } else{
+      x_ttd_all <- as.matrix(x_ttd_all)
       if (nrow(x_ttd_all) != npats){
         stop("Number of rows in 'x_ttd_all' must equal number of simulated patients.")
       }
@@ -272,6 +285,7 @@ get_input_data <- function(pop,
     if(is.null(x_ttd_eular)){
       x.ttd.eular <- matrix(1, nrow = nrow(pop), ncol = 1)
     } else{
+      x_ttd_eular <- as.matrix(x_ttd_eular)
       if (nrow(x_ttd_eular) != npats){
         stop("Number of rows in 'x_ttd_eular' must equal number of simulated patients.")
       }
@@ -281,6 +295,7 @@ get_input_data <- function(pop,
     if(is.null(x_ttd_da)){
       x.ttd.da <- matrix(c(1, 0, 0), nrow = nrow(pop), ncol = 3, byrow = TRUE)
     } else{
+      x_ttd_da <- as.matrix(x_ttd_da)
       if (nrow(x_ttd_da) != npats){
         stop("Number of rows in 'x_ttd_da' must equal number of simulated patients.")
       }
@@ -288,15 +303,8 @@ get_input_data <- function(pop,
     }
   
   # treatment attributes
-  if (!is.matrix(x_attr)){
-    if (is.data.frame(x_attr)){
-        x.attr <- as.matrix(x_attr)
-    } else{
-        stop("x_attr must be a matrix or data.frame.")
-    }
-  } else{
-      x.attr <- x_attr
-  }
+  x.attr <- x_attr
+
   
   # combine
   l <- list(n = nrow(pop), haq0 = pop[, "haq0"], age = pop[, "age"],
