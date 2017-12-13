@@ -18,17 +18,6 @@ double const_geometric_series(double sum, double r, int T, int start = 1){
   }
 }
 
-// Convert std::vector to matrix (ie., 2-dimensional vector) filling rowwise
-std::vector<std::vector<std::string> > stdvec2matrix(std::vector<std::string> x, int nrow, int ncol){
-  std::vector<std::vector<std::string> > vecs(nrow, std::vector<std::string>(ncol));
-  for (int i = 0; i < ncol; ++i){
-    for (int j = 0; j < nrow; ++j){
-      vecs[i][j] = x[j + i * ncol];
-    }
-  }
-  return vecs;
-}
-
 // Convert character matrix to 2-dimensional std string vector
 std::vector<std::vector<std::string> > charmat2stdvec(Rcpp::CharacterMatrix x){
   int N = x.ncol();
