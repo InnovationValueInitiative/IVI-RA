@@ -21,7 +21,7 @@ test_that("model structures with length > 1 ", {
   mod.structs <- select_model_structures(tx_ihaq = c("acr-haq", "acr-eular-haq"),
                                          tx_iswitch = c("acr-switch", "acr-eular-switch"),
                                          cdmards_haq_model = c("lcgm", "linear"),
-                                         ttd_cause = c("all", "si"),
+                                         ttd_cause = c("all", "all"),
                                          ttd_dist = c("gengamma", "exponential"))
   sim.out <- sim_iviRA(tx_seqs = tx.seq, input_data = input.dat, pars = parsamp,
                        model_structures = mod.structs, output = "data")
