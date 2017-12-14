@@ -169,9 +169,10 @@
     
 
     <pre class="usage"><span class='fu'>sim_survtime</span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>age</span> <span class='kw'>=</span> <span class='fl'>55</span>, <span class='kw'>haq0</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>male</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>haq</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='no'>haq0</span>,
-  <span class='fl'>12</span>/<span class='no'>cycle_length</span> * (<span class='fl'>100</span> - <span class='no'>age</span> + <span class='fl'>1</span>)), <span class='kw'>ltfemale</span> <span class='kw'>=</span> <span class='no'>lifetable.female</span>,
-  <span class='kw'>ltmale</span> <span class='kw'>=</span> <span class='no'>lifetable.male</span>, <span class='kw'>x_mort</span> <span class='kw'>=</span> <span class='no'>haq0</span>, <span class='kw'>logor</span> <span class='kw'>=</span> <span class='no'>mort.or</span>$<span class='no'>logor</span>,
-  <span class='kw'>cycle_length</span> <span class='kw'>=</span> <span class='fl'>6</span>, <span class='kw'>loghr</span> <span class='kw'>=</span> <span class='no'>mort.hr.haqdif</span>$<span class='no'>loghr</span>)</pre>
+  <span class='fl'>12</span>/<span class='no'>cycle_length</span> * (<span class='fl'>100</span> - <span class='no'>age</span> + <span class='fl'>1</span>)), <span class='kw'>ltfemale</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/lifetable'>lifetable.female</a></span>,
+  <span class='kw'>ltmale</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/lifetable'>lifetable.male</a></span>, <span class='kw'>x_mort</span> <span class='kw'>=</span> <span class='no'>haq0</span>,
+  <span class='kw'>logor</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/mort.or'>mort.or</a></span>$<span class='no'>logor</span>, <span class='kw'>cycle_length</span> <span class='kw'>=</span> <span class='fl'>6</span>,
+  <span class='kw'>loghr</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/mort.hr.haqdif'>mort.hr.haqdif</a></span>$<span class='no'>loghr</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -215,7 +216,7 @@ the probability of death at a given age.</p></td>
     </tr>
     <tr>
       <th>cycle_length</th>
-      <td><p>Length of model cycles in months. Default is 1 month cycles.</p></td>
+      <td><p>Length of model cycles in months. Default is 6 month cycles.</p></td>
     </tr>
     <tr>
       <th>loghr</th>

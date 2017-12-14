@@ -1,4 +1,5 @@
 [![Travis-CI Build Status](https://travis-ci.org/InnovationValueInitiative/IVI-RA.svg?branch=master)](https://travis-ci.org/InnovationValueInitiative/IVI-RA)
+[![Coverage Status](https://codecov.io/gh/InnovationValueInitiative/IVI-RA/branch/master/graph/badge.svg)](https://codecov.io/gh/InnovationValueInitiative/IVI-RA)
 
 # Overview
 `iviRA` is an R package that runs the [Innovation and Value Initiative's (IVI's)](http://www.thevalueinitiative.org/) individual patient simulation model for rheumatoid arthritis (RA) (the IVI-RA model). The model simulates the costs, health outcomes, and risks associated with disease-modifying anti-rheumatic drugs (DMARDs) including conventional DMARDs (cDMARDs), biologic DMARDs (bDMARDs), and Janus kinase/signal transducers and activators of transcription (JAK/STAT) inhibitors for patients with moderate to severe rheumatoid arthritis (RA). The model is intended to help decision-makers assess the value of treatments for a population of patients with RA. 
