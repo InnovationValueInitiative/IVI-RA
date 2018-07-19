@@ -16,7 +16,7 @@ BugReports: https://github.com/InnovationValueInitiative/IVI-RA/issues
 License: GPL-3
 LazyData: TRUE
 Depends:  R (>= 2.10)
-LinkingTo: Rcpp, RcppArmadillo, hesim, testthat, RcppEigen
+LinkingTo: Rcpp, RcppArmadillo, hesim, testthat, RcppEigen, RcppNumerical
 Imports:
     data.table,
     hesim,
@@ -30,3 +30,4 @@ Suggests:
     flexsurv,
     testthat
 RoxygenNote: 6.0.1
+SystemRequirements: C++11
