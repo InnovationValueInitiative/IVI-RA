@@ -22,7 +22,8 @@ double rsurvC(double location, double anc1, std::string dist, double anc2 = 0.0)
   else if (dist == "gompertz"){
     double shape = anc1;
     double rate = exp(location);
-    surv = hesim::rgompertz(shape, rate);
+    hesim::stats::gompertz gomp(shape, rate);
+    surv = gomp.random();
   }
   else if (dist == "lnorm"){
     double meanlog = location;
@@ -37,13 +38,15 @@ double rsurvC(double location, double anc1, std::string dist, double anc2 = 0.0)
   else if (dist == "llogis"){
     double scale = exp(location);
     double shape = exp(anc1);
-    surv = hesim::rllogis(shape, scale);
+    hesim::stats::loglogistic llogis(shape, scale);
+    surv = llogis.random();
   }
   else if (dist == "gengamma"){
     double mu = location;
     double sigma = exp(anc1);
     double Q = anc2;
-    surv = hesim::rgengamma(mu, sigma, Q);
+    hesim::stats::gengamma gengamma(mu, sigma, Q);
+    surv = gengamma.random();
   }
   return surv;
 }
