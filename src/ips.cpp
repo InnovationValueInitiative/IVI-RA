@@ -91,7 +91,7 @@ arma::rowvec nmaACR::acrprobs(){
 
 double nmaACR::sim_acr(){
   arma::rowvec p = acrprobs();
-  double acr = hesim::rcat(p);
+  double acr = hesim::stats::rcat(p);
   return acr;
 }
 
@@ -143,7 +143,7 @@ void TxIHaq::sim(std::string model, int line, int therapy, int nbt,
   // EULAR response
   if (model == "acr-eular-haq"){
       if (therapy != nbt){
-        eular = hesim::rcat(acr2eular.row(acr));
+        eular = hesim::stats::rcat(acr2eular.row(acr));
       }
       else{
         eular = 0;
@@ -450,7 +450,7 @@ Rcpp::List test_ttd(Rcpp::List x){
 // [[Rcpp::export]]
 int sim_mlogit_classC(arma::rowvec w, arma::mat delta){
   arma::rowvec latclass_prob = mlogit_probC(w, delta);
-  int latclass = hesim::rcat(latclass_prob); 
+  int latclass = hesim::stats::rcat(latclass_prob); 
   return(latclass);
 }
 
@@ -674,7 +674,7 @@ double sim_utility_mixture1C(double haq,
   
   // latent class
   arma::rowvec latclass_prob = mlogit_probC(w, delta);
-  int latclass = hesim::rcat(latclass_prob); 
+  int latclass = hesim::stats::rcat(latclass_prob); 
   
   // utility conditional on latent class
   double ystar = 0.0;
