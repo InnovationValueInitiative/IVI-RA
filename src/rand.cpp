@@ -2,7 +2,6 @@
 // [[Rcpp::depends(RcppArmadillo)]]
 
 #include <RcppArmadillo.h>
-#include <RcppArmadilloExtensions/sample.h>
 #include <hesim.h>
 using namespace Rcpp;
 
