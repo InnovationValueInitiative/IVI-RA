@@ -1631,7 +1631,7 @@ Notes: 95\% confidence intervals for hospital days per year by HAQ score and hos
 \end{center}
 \end{table}
 
-\subsubsection{Insurance value}
+\subsection{Insurance value}
 In the IVI-RA Model interface, users have complete control over the probability of illness parameter and the marginal rate of substitution between the sick and the well states. In the IVI-RA Value Tool, we set the probability of obtaining RA in the next year equal to $0.000633$, based on the annual incidence rate reported for individuals age 55 to 64 in \citet{myasoedova2010incidence}. Furthermore, we set the the marginal rate of substitution between the sick and well states equal to 1.5 given that positive demand for health insurance suggests that it is positive, but note that there is considerable uncertainty around this estimate and that more research is required.  
 
 \section{Simulation and uncertainty analysis}\label{sec:sim-uncertainty}
