@@ -793,6 +793,7 @@ tex <- print(xtable(tab),
 \hline
 \end{tabularx}
 \scriptsize
+Sources: \citet{aletaha2005simplified}, \citet{smolen2003simplified}, and  \citet{aletaha2005acute} 
 \end{threeparttable}
 \end{center}
 \end{table}
@@ -827,8 +828,7 @@ tex <- print(xtable(tab),
 \hline
 \end{tabularx}
 \scriptsize
-Notes: The VARA registry is a multicentre, US database of veterans age 19 and older. Each cell represents the number of patients in the 
-database in a given category. 
+Notes: Obtained from the US Veterans Affairs Rheumatoid Arthritis (VARA) registry by \citet{stevenson2016adalimumab}. The VARA registry is a multicentre, US database of veterans age 19 and older. Each cell represents the number of patients in the database in a given category. 
 \end{threeparttable}
 \end{center}
 \end{table}
@@ -887,7 +887,7 @@ The relationship between EULAR response and HAQ is based on analyses conducted b
 \hline
 \end{tabularx}
 \scriptsize
-%Notes: 
+Notes: Based on an analysis BSRBR database by \citet{stevenson2016adalimumab}.
 \end{threeparttable}
 \end{center}
 \end{table}
