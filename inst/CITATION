@@ -1,9 +1,14 @@
-citHeader("To cite the IVI-RA model in publications, please refer to the model description:")
-
-citEntry(entry = "Manual",
+bibentry(bibtype = "article",
   author = personList(as.person("Devin Incerti"),
-                            as.person("Jeroen P Jansen")),
-  title = "A Description of the IVI-RA Model",
-  year = "2017",
-  note = "last updated October 2017",
-  textVersion = "Incerti, D, Jansen, JP. A Description of the IVI-RA Model. 2017; last updated October 2017.")
+                      as.person("Jeffrey R Curtis"),
+                      as.person("Jason Shafrin"),
+                      as.person("Darius N Lakdawalla"),
+                      as.person("Jeroen P Jansen")),
+  title = " A Flexible Open-Source Decision Model for Value Assessment of Biologic Treatment for Rheumatoid Arthritis",
+  journal = "PharmacoEconomics",
+  year = "2019",
+  publisher = "Springer",
+  doi = "10.1007/s40273-018-00765-2",
+  header = "To cite the IVI-RA model in publications, please use:")
+  
+  

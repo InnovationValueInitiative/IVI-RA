@@ -8,14 +8,17 @@
 <title>Run the IPS • iviRA</title>
 <!-- jquery --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/simplex/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
-<!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script><script src="../pkgdown.js"></script><!-- mathjax --><script src="https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--[if lt IE 9]>
+<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
+<script src="../pkgdown.js"></script><meta property="og:title" content="Run the IPS">
+<meta property="og:description" content="">
+<meta name="twitter:card" content="summary">
+<!-- mathjax --><script src="https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 </head>
 <body>
-    <div class="container template-vignette">
+    <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
@@ -24,8 +27,12 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">IVI-RA</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">iviRA</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">1.0.0.9000</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li class="dropdown">
@@ -64,20 +71,8 @@
 <li>
   <a href="../reference/index.html">API</a>
 </li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Collaborate
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/how-to-contribute.html">How to contribute</a>
-    </li>
-    <li>
-      <a href="../articles/suggested-improvements.html">Suggested improvements</a>
-    </li>
-  </ul>
+  <a href="../articles/how-to-contribute.html">Collaborate</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -136,15 +131,18 @@
 
       
       </header><div class="row">
-  <div class="col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1>Run the IPS</h1>
             
-          </div>
+      
+      <small class="dont-index">Source: <a href="https://github.com/InnovationValueInitiative/IVI-RA/blob/master/vignettes/06-ips.Rmd"><code>vignettes/06-ips.Rmd</code></a></small>
+      <div class="hidden name"><code>06-ips.Rmd</code></div>
+
+    </div>
 
     
     
-<div class="contents">
 <p>We run the IPS using the function <code>sim_iviRA</code>. The main arguments are the selected treatment arms, the input data, the parameter samples, and the model structure. The simulation can either return all simulated output (i.e., a dataset of simulated outcomes for each model structure, sampled parameter set, individual, and time period) or summaries of the simulated output.</p>
 <div id="complete-output" class="section level2">
 <h2 class="hasAnchor">
@@ -152,33 +150,33 @@
 <p>Here, we return complete simulation output for Arm 1 and Arm 2.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sim.out1 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sim_iviRA.html">sim_iviRA</a></span>(<span class="dt">tx_seqs =</span> txseq1, <span class="dt">input_data =</span> input.dat, <span class="dt">pars =</span> parsamp,
                      <span class="dt">model_structures =</span> mod.structs, <span class="dt">output =</span> <span class="st">"data"</span>)
-sim.out1[, txseq :<span class="er">=</span><span class="st"> "Sequence 1"</span>]
+sim.out1[, txseq <span class="op">:</span><span class="er">=</span><span class="st"> "Sequence 1"</span>]
 sim.out2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sim_iviRA.html">sim_iviRA</a></span>(<span class="dt">tx_seqs =</span> txseq2, <span class="dt">input_data =</span> input.dat, <span class="dt">pars =</span> parsamp,
                      <span class="dt">model_structures =</span> mod.structs, <span class="dt">output =</span> <span class="st">"data"</span>)
-sim.out2[, txseq :<span class="er">=</span><span class="st"> "Sequence 2"</span>]
+sim.out2[, txseq <span class="op">:</span><span class="er">=</span><span class="st"> "Sequence 2"</span>]
 sim.out &lt;-<span class="st"> </span><span class="kw">rbind</span>(sim.out1, sim.out2)
 <span class="kw">head</span>(sim.out)</code></pre></div>
-<pre><code>##    model sim id month tx line tx_cycle death      age         ttd acr
-## 1:     1   1  1     6  3    1        1     0 49.34167  0.00000000   0
-## 2:     1   1  1    12  5    2        1     0 49.84167  1.01616606   1
-## 3:     1   1  1    18  5    2        2     0 50.34167  0.01616606   1
-## 4:     1   1  1    24  5    2        3     0 50.84167 -0.98383394   1
-## 5:     1   1  1    30  8    3        1     0 51.34167  0.00000000   0
-## 6:     1   1  1    36 14    4        1     0 51.84167          NA   0
-##    eular das28 sdai cdai      haq      ttsi si yrlen    tx_cost hosp_days
-## 1:     0    NA   NA   NA 2.061876  25.58617  0   0.5 22554.8552 0.7550633
-## 2:     2    NA   NA   NA 1.372245  37.78928  0   0.5 22339.1997 0.6093987
-## 3:     2    NA   NA   NA 1.366207  36.78928  0   0.5 22339.1997 0.6093987
-## 4:     2    NA   NA   NA 1.947925  35.78928  0   0.5 22339.1997 0.2276890
-## 5:     0    NA   NA   NA 1.947925 101.26948  0   0.5 14550.2739 0.2276890
-## 6:     0    NA   NA   NA 1.947925        NA  0   0.5   615.8625 0.2276890
-##    hosp_cost mgmt_cost si_cost prod_loss    utility      qalys      txseq
-## 1: 1018.1458   179.451       0  5896.261 0.20580269 0.10290134 Sequence 1
-## 2:  836.5431   179.451       0  3924.151 0.59441250 0.29720625 Sequence 1
-## 3:  836.5431   179.451       0  3906.885 0.66479710 0.33239855 Sequence 1
-## 4:  302.4408   179.451       0  5570.399 0.55065326 0.27532663 Sequence 1
-## 5:  302.4408   179.451       0  5570.399 0.03168531 0.01584266 Sequence 1
-## 6:  302.4408   179.451       0  5570.399 0.69352011 0.34676006 Sequence 1</code></pre>
+<pre><code>##    model sim id month tx line tx_cycle death      age       ttd acr eular
+## 1:     1   1  1     6  3    1        1     0 49.43622 12.982301   0     1
+## 2:     1   1  1    12  3    1        2     0 49.93622 11.982301   0     1
+## 3:     1   1  1    18  3    1        3     0 50.43622 10.982301   0     1
+## 4:     1   1  1    24  3    1        4     0 50.93622  9.982301   0     1
+## 5:     1   1  1    30  3    1        5     0 51.43622  8.982301   0     1
+## 6:     1   1  1    36  3    1        6     0 51.93622  7.982301   0     1
+##    das28 sdai cdai      haq     ttsi si yrlen  tx_cost hosp_days hosp_cost
+## 1:    NA   NA   NA 1.431665 139.9466  0   0.5 20903.76 0.1401969  172.8017
+## 2:    NA   NA   NA 1.427322 138.9466  0   0.5 20903.76 0.1401969  172.8017
+## 3:    NA   NA   NA 1.422980 137.9466  0   0.5 20903.76 0.1401969  172.8017
+## 4:    NA   NA   NA 1.418638 136.9466  0   0.5 20903.76 0.1401969  172.8017
+## 5:    NA   NA   NA 1.414295 135.9466  0   0.5 20903.76 0.1401969  172.8017
+## 6:    NA   NA   NA 1.409953 134.9466  0   0.5 20903.76 0.1401969  172.8017
+##    mgmt_cost si_cost prod_loss   utility      qalys      txseq
+## 1:  180.0968       0  4719.724 0.5971431 0.29857156 Sequence 1
+## 2:  180.0968       0  4705.408 0.6357343 0.31786715 Sequence 1
+## 3:  180.0968       0  4691.092 0.6341664 0.31708321 Sequence 1
+## 4:  180.0968       0  4676.777 0.6894384 0.34471921 Sequence 1
+## 5:  180.0968       0  4662.461 0.5915446 0.29577228 Sequence 1
+## 6:  180.0968       0  4648.145 0.1065019 0.05325096 Sequence 1</code></pre>
 <p>The output is data.table which is an enhanced data.frame from the data.table package designed for fast data manipulation. For a given model structure (<code>model</code>) and sampled parameter set (<code>sim</code>), a sampled patient (<code>id</code>) remains on a given treatment until time to treatment discontinuation (<code>ttd</code>) becomes less than zero in a given month. Treatment discontinuation is caused by a serious infection (<code>si = 1</code>) if the sampled time to serious infection at treatment initiation is less than the sampled time to discontinuation. After discontinuation, a patient switches to the next line of treatment and <code>line</code> increments by one. Patient age (<code>age</code>) increases in 6-month increments.</p>
 <p>The HAQ score (<code>haq</code>) during the initial 6-month period (<code>therapy_cycle = 1</code>), disease activity measures (<code>das28</code>, <code>sdai</code>, and <code>cdai</code>), and <code>ttd</code> depend on the model structure chosen. For example, in the first model structure, HAQ and time to treatment discontinuation depend on ACR response (<code>acr</code>) and in turn, EULAR response (<code>eular</code>). The simulation returned NA values for the three disease activity measures because treatment switching is is not a function of disease activity (i.e., <strong>S6</strong> was chosen in the first model structure). The simulation ends when a patient dies (<code>death = 1</code>).</p>
 <p>Health care sector costs consist of treatment costs (<code>tx_cost</code>); hospital costs (<code>hosp_cost</code>), which increase with the HAQ score; general management costs (<code>mgmt_cost</code>); and the costs of caused by serious infections (<code>si_cost</code>). Non-health care sector costs are those due to lost wages. Analyses performed from a societal perspective should include these productivity losses (<code>prod_loss</code>).</p>
@@ -191,65 +189,65 @@ sim.out &lt;-<span class="st"> </span><span class="kw">rbind</span>(sim.out1, si
 <p>In particular, by invoking the <code>output = summary</code> option, the data.table objects <code>means</code>, <code>time.means</code>, and <code>out0</code> are returned. <code>means</code> reports simulated outcomes averaged over individuals and time and <code>tmeans</code> reports simulated outcomes averaged across individuals but conditional on time. <code>out0</code> provides outcomes for the first model cycle including time to treatment discontinuation and time to a serious infection. Output is always conditional on the model structure and sampled parameter set.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sim.out1.summary &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sim_iviRA.html">sim_iviRA</a></span>(<span class="dt">tx_seqs =</span> txseq1, <span class="dt">input_data =</span> input.dat, <span class="dt">pars =</span> parsamp,
                      <span class="dt">model_structures =</span> mod.structs, <span class="dt">output =</span> <span class="st">"summary"</span>)
-<span class="kw">head</span>(sim.out1.summary$means)</code></pre></div>
-<pre><code>##    model sim    lys     dlys lys_infusion lys_injection lys_oral      dhaq
-## 1:     1   1 21.630 14.80567       1.0175       20.6125        0 0.2277345
-## 2:     1   2 23.265 15.43161       1.0675       22.1975        0 0.1895127
-## 3:     1   3 17.400 12.19669       0.8650       16.5350        0 0.1369388
-## 4:     1   4 20.610 14.12631       1.0625       19.5475        0 0.2013628
-## 5:     1   5 20.320 13.90575       0.8050       19.5150        0 0.2217152
-## 6:     1   6 21.235 14.41850       1.0825       20.1525        0 0.2513651
-##      si     qalys   dqalys  tx_cost dtx_cost hosp_days hosp_cost
-## 1: 0.24 10.781622 7.595900 404620.3 319132.0 21.251140  26756.43
-## 2: 0.26 12.268406 8.253489 503911.6 378024.5 20.856204  26019.48
-## 3: 0.13  9.480336 6.772433 315813.9 263269.5 11.214770  16389.78
-## 4: 0.11 10.599809 7.426626 427604.8 323790.1 15.030416  20373.70
-## 5: 0.18  9.791653 6.946507 350917.6 281202.6 14.792480  19951.80
-## 6: 0.15 10.967505 7.600056 381010.6 298179.4  9.644956  12744.59
-##    dhosp_cost mgmt_cost dmgmt_cost   si_cost dsi_cost prod_loss dprod_loss
-## 1:  17279.423  7763.052   5313.785 1176.1537 913.8319  172889.1  114264.52
-## 2:  16688.794  8837.976   5862.203 1453.5467 983.4124  212493.7  137498.08
-## 3:  10738.498  7123.387   4993.203  635.7526 504.5201  182292.2  123132.51
-## 4:  13082.205  8663.688   5938.181  517.9750 385.7249  136780.7   90882.26
-## 5:  11980.865  7173.839   4909.330  982.4709 750.3847  187826.4  122587.31
-## 6:   7705.313  8794.608   5971.514  964.6748 737.1856  218022.0  143544.78
-##    dhc_cost dtot_cost yrs_since_approval dqalys_ann dhc_cost_ann
-## 1: 342639.0  456903.6           22.72163  0.2960171     13672.26
-## 2: 401558.9  539057.0           22.51578  0.3209304     15814.13
-## 3: 279505.7  402638.2           22.28904  0.2650214     11158.08
-## 4: 343196.2  434078.5           22.38295  0.2906845     13617.82
-## 5: 298843.2  421430.5           22.49300  0.2691092     11782.40
-## 6: 312593.4  456138.2           22.70989  0.2950108     12305.85
-##    dprod_loss_ann
-## 1:       4463.188
-## 2:       5377.726
-## 3:       4809.389
-## 4:       3573.674
-## 5:       4774.171
-## 6:       5567.512</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(sim.out1.summary$time.means)</code></pre></div>
+<span class="kw">head</span>(sim.out1.summary<span class="op">$</span>means)</code></pre></div>
+<pre><code>##    model sim    lys     dlys lys_infusion lys_injection lys_oral
+## 1:     1   1 20.895 14.09810       1.0400       19.8550        0
+## 2:     1   2 20.885 14.17093       1.1525       19.7325        0
+## 3:     1   3 20.355 13.91551       0.9250       19.4300        0
+## 4:     1   4 19.150 13.48714       0.6825       18.4675        0
+## 5:     1   5 21.085 14.30082       1.2275       19.8575        0
+## 6:     1   6 21.350 14.65675       1.6775       19.6725        0
+##          dhaq   si    qalys   dqalys  tx_cost dtx_cost hosp_days hosp_cost
+## 1: 0.10587768 0.26 11.35006 7.831600 437681.3 333365.8 10.738665  12461.68
+## 2: 0.29679059 0.22 10.54195 7.521116 379215.8 303640.8 13.605340  17981.94
+## 3: 0.27222085 0.23 10.83045 7.687801 369215.8 302111.8 10.846623  14160.47
+## 4: 0.07801418 0.17 10.82399 7.723904 434832.4 334769.1  8.837646  11778.25
+## 5: 0.19359357 0.15 11.40913 7.984962 466395.1 356547.5 10.998807  13810.31
+## 6: 0.14586573 0.28 11.72070 8.164887 495979.5 383364.2 19.867598  28330.36
+##    dhosp_cost mgmt_cost dmgmt_cost   si_cost  dsi_cost prod_loss
+## 1:   7650.772  7526.247   5078.045 1652.3335 1206.1992  166015.5
+## 2:  10601.706  7769.914   5272.057 1427.1379 1083.7476  200557.6
+## 3:   8375.257  7838.644   5358.817 1418.4949 1089.8306  210545.0
+## 4:   7888.793  7422.638   5227.683 1065.7569  817.1346  157897.1
+## 5:   8124.581  7921.401   5372.659  877.7412  649.8134  199585.9
+## 6:  18561.784  8469.510   5814.308 1326.7902  996.6037  100278.5
+##    dprod_loss dhc_cost dtot_cost yrs_since_approval dqalys_ann
+## 1:  107718.86 347300.8  455019.7           21.85011  0.3105838
+## 2:  126995.33 320598.3  447593.6           22.29601  0.3012485
+## 3:  136062.00 316935.8  452997.8           22.49813  0.3081736
+## 4:  108624.55 348702.7  457327.2           21.60991  0.3079992
+## 5:  129374.66 370694.6  500069.3           21.66821  0.3181279
+## 6:   67101.71 408736.9  475838.6           21.88356  0.3268039
+##    dhc_cost_ann dprod_loss_ann
+## 1:     14051.53       4251.623
+## 2:     13215.93       5024.046
+## 3:     13045.73       5419.896
+## 4:     14132.04       4311.842
+## 5:     15000.58       5123.857
+## 6:     16609.79       2699.484</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(sim.out1.summary<span class="op">$</span>time.means)</code></pre></div>
 <pre><code>##    model sim month alive     qalys      haq  tx_cost hosp_cost mgmt_cost
-## 1:     1   1     6   100 0.2645210 1.309635 22554.86  571.5816   179.451
-## 2:     1   1    12    98 0.2580874 1.212526 22447.03  474.8873   179.451
-## 3:     1   1    18    98 0.2707105 1.161609 20685.29  448.5548   179.451
-## 4:     1   1    24    97 0.2976020 1.148461 20127.85  432.2242   179.451
-## 5:     1   1    30    96 0.2763700 1.161930 19131.92  445.0664   179.451
-## 6:     1   1    36    96 0.2852212 1.158026 17965.50  454.0132   179.451
+## 1:     1   1     6   100 0.2829719 1.146948 20903.76  253.4783  180.0968
+## 2:     1   1    12    97 0.2862925 1.058111 21002.36  217.8435  180.0968
+## 3:     1   1    18    95 0.2815945 1.068854 20202.25  227.3757  180.0968
+## 4:     1   1    24    95 0.2982769 1.074813 18782.95  229.5153  180.0968
+## 5:     1   1    30    95 0.2745592 1.121349 18355.88  228.3262  180.0968
+## 6:     1   1    36    94 0.2920960 1.059242 17112.73  221.2133  180.0968
 ##      si_cost prod_loss
-## 1:  98.01281  3745.108
-## 2:  50.00653  3467.411
-## 3:  50.00653  3321.804
-## 4:   0.00000  3284.206
-## 5: 102.09667  3322.722
-## 6:   0.00000  3311.559</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(sim.out1.summary$out0)</code></pre></div>
-<pre><code>##    model sim id tx acr eular       ttd      ttsi
-## 1:     1   1  1  3   1     1 17.019789  27.61814
-## 2:     1   1  1  5   0     0  0.000000  14.01862
-## 3:     1   1  1  8   2     2 47.005763  18.30061
-## 4:     1   1  2  3   0     0  0.000000 129.20949
-## 5:     1   1  2  5   1     1  2.850435 105.22817
-## 6:     1   1  2  8   0     0  0.000000  10.96291</code></pre>
+## 1:  63.55129  3781.105
+## 2:  65.51679  3488.239
+## 3:  66.89609  3523.658
+## 4: 133.79219  3543.302
+## 5:   0.00000  3696.714
+## 6:   0.00000  3491.971</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(sim.out1.summary<span class="op">$</span>out0)</code></pre></div>
+<pre><code>##    model sim id tx acr eular        ttd         ttsi
+## 1:     1   1  1  3   1     2  3.0977332 5.130062e+01
+## 2:     1   1  1  5   2     2 47.4728565 1.898929e+01
+## 3:     1   1  1  8   1     2  0.5384596 2.110232e+02
+## 4:     1   1  1 14   0     0  0.0000000 5.457277e+09
+## 5:     1   1  2  3   3     2  3.1130602 2.722444e+01
+## 6:     1   1  2  5   0     0  0.0000000 3.018634e+01</code></pre>
 <div>
 <ul class="pager">
 <li class="previous">
@@ -259,7 +257,6 @@ sim.out &lt;-<span class="st"> </span><span class="kw">rbind</span>(sim.out1, si
 <a href="07-analysis.html">Next</a>
 </li>
 </ul>
-</div>
 </div>
 </div>
   </div>
@@ -283,11 +280,13 @@ sim.out &lt;-<span class="st"> </span><span class="kw">rbind</span>(sim.out1, si
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>
 </div>
+
+  
 
   </body>
 </html>

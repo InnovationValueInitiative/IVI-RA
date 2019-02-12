@@ -18,13 +18,25 @@
 <!-- Font Awesome icons -->
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 
+<!-- clipboard.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
+
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-  
-  
+
+
+
+<meta property="og:title" content="The IVI-RA simulation — sim_iviRA" />
+
+<meta property="og:description" content="Run the IVI-RA individual patient simulation model." />
+<meta name="twitter:card" content="summary" />
+
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -47,8 +59,12 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">IVI-RA</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">iviRA</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">1.0.0.9000</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li class="dropdown">
@@ -87,20 +103,8 @@
 <li>
   <a href="../reference/index.html">API</a>
 </li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Collaborate
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="../articles/how-to-contribute.html">How to contribute</a>
-    </li>
-    <li>
-      <a href="../articles/suggested-improvements.html">Suggested improvements</a>
-    </li>
-  </ul>
+<li>
+  <a href="../articles/how-to-contribute.html">Collaborate</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -151,6 +155,7 @@
   </a>
 </li>
       </ul>
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -158,22 +163,26 @@
       
       </header>
 
-      <div class="row">
+<div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>The IVI-RA simulation</h1>
+    <small class="dont-index">Source: <a href='https://github.com/InnovationValueInitiative/IVI-RA/blob/master/R/ips.R'><code>R/ips.R</code></a></small>
+    <div class="hidden name"><code>sim_iviRA.Rd</code></div>
     </div>
 
+    <div class="ref-description">
     
     <p>Run the IVI-RA individual patient simulation model.</p>
     
+    </div>
 
     <pre class="usage"><span class='fu'>sim_iviRA</span>(<span class='no'>tx_seqs</span>, <span class='no'>input_data</span>, <span class='no'>pars</span>, <span class='no'>model_structures</span>, <span class='kw'>max_months</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>tx_data</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/iviRA/topics/treatments'>treatments</a></span>, <span class='kw'>hist</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"naive"</span>, <span class='st'>"experienced"</span>),
   <span class='kw'>output</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"data"</span>, <span class='st'>"summary"</span>), <span class='kw'>discount_qalys</span> <span class='kw'>=</span> <span class='fl'>0.03</span>,
   <span class='kw'>discount_cost</span> <span class='kw'>=</span> <span class='fl'>0.03</span>)</pre>
     
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
@@ -201,7 +210,7 @@ the model is simulated over each patient's lifetime.</p></td>
     </tr>
     <tr>
       <th>tx_data</th>
-      <td><p>Dataset of treatments with columns names equivalent to <code><a href='http://www.rdocumentation.org/packages/iviRA/topics/treatments'>iviRA::treatments</a></code>.
+      <td><p>Dataset of treatments with columns names equivalent to <code><a href='treatments.html'>iviRA::treatments</a></code>.
 The indices of of treatments in <code>tx_seqs</code> are matched against treatments in
 <code>tx_data$sname</code> by name. Indices of treatment-specific parameter estimates must be 
 in the same order as treatments in <code>tx_data</code>.</p></td>
@@ -440,11 +449,14 @@ cycle.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>
    </div>
 
+  
+
   </body>
 </html>
+

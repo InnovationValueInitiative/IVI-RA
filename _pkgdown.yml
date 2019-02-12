@@ -2,6 +2,9 @@ template:
   params:
     bootswatch: simplex
     
+development:
+  mode: release     
+    
 articles:
   - title: "How to run the model"
     contents:
@@ -99,11 +102,7 @@ navbar:
   - text: "API"
     href: reference/index.html
   - text: "Collaborate"
-    menu:
-      - text: "How to contribute"
-        href: articles/how-to-contribute.html
-      - text: "Suggested improvements"
-        href: articles/suggested-improvements.html
+    href: articles/how-to-contribute.html
   - text: "About"
     menu:
       - text: "OSVP"
