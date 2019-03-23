@@ -4,9 +4,10 @@
 \alias{sim_dhaq6}
 \title{Simulate change in HAQ at 6 months}
 \usage{
-sim_dhaq6(treatments, input_data, pars, tx_lookup = iviRA::treatments$sname,
-  hist = c("naive", "experienced"), line = 1, tx_ihaq = c("acr-haq",
-  "acr-eular-haq", "haq"))
+sim_dhaq6(treatments, input_data, pars,
+  tx_lookup = iviRA::treatments$sname, hist = c("naive",
+  "experienced"), line = 1, tx_ihaq = c("acr-haq", "acr-eular-haq",
+  "haq"))
 }
 \arguments{
 \item{treatments}{Vector of treatments to simulate. Should correpond to \code{sname} in 

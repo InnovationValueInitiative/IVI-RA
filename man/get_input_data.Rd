@@ -5,8 +5,8 @@
 \title{Input data for simulation}
 \usage{
 get_input_data(pop, x_acr = NULL, x_haq = NULL, x_das28 = NULL,
-  x_ttd_all = NULL, x_ttd_da = NULL, x_ttd_eular = NULL, x_mort = NULL,
-  x_attr = iviRA::utility.tx.attr$x)
+  x_ttd_all = NULL, x_ttd_da = NULL, x_ttd_eular = NULL,
+  x_mort = NULL, x_attr = iviRA::utility.tx.attr$x)
 }
 \arguments{
 \item{pop}{The patient population. A matrix that must contain variables generated from 

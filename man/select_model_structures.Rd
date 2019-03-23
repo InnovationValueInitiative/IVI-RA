@@ -5,8 +5,8 @@
 \title{Select model structures}
 \usage{
 select_model_structures(tx_ihaq = "acr-haq", tx_iswitch = "acr-switch",
-  cdmards_haq_model = "lcgm", ttd_cause = "all", ttd_dist = "exponential",
-  utility_model = "mixture")
+  cdmards_haq_model = "lcgm", ttd_cause = "all",
+  ttd_dist = "exponential", utility_model = "mixture")
 }
 \arguments{
 \item{tx_ihaq}{Model structure relating treatment to HAQ during the first 6 months of 

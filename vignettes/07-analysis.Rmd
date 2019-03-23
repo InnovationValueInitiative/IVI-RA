@@ -19,13 +19,12 @@ Cost-effectiveness analysis (CEA) is a well-established technique for value asse
 To prepare the data so that it can be analyzed with `hesim`, mean (discounted) clinical effectiveness and costs can be calculated for each simulation number and each treatment sequence.
 
 ```{r }
-n.inner <- max(sim.out$sim)
 sim.out[, hc_cost := tx_cost + hosp_cost + mgmt_cost + si_cost]
 sim.out[, pv := (1/(1 + .03))^(month/12)]
-sim.out.means <- sim.out[, .(qalys = sum(qalys)/n.inner,
-                             dqalys = sum(qalys * pv)/n.inner,
-                             hc_cost = sum(hc_cost)/n.inner,
-                             dhc_cost = sum(hc_cost * pv)/n.inner),
+sim.out.means <- sim.out[, .(qalys = sum(qalys)/n.pats,
+                             dqalys = sum(qalys * pv)/n.pats,
+                             hc_cost = sum(hc_cost)/n.pats,
+                             dhc_cost = sum(hc_cost * pv)/n.pats),
                          by = c("sim", "txseq")]
 ```
 

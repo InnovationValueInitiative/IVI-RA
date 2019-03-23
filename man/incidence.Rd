@@ -15,8 +15,8 @@
 
 }}
 \source{
-Myasoedova, Elena, et al. "Is the incidence of rheumatoid arthritis rising? 
-results from Olmsted County, Minnesota, 1955–2007." Arthritis & Rheumatology 62.6 (2010): 1576-1582.
+Myasoedova, Elena, et al. "Is the incidence of rheumatoid arthritis rising? Results from
+Olmsted Country, Minnesota, 1995-2007." Arthritis & Rheumatology 62.6 (2010): 1576-1582.
 }
 \usage{
 incidence.female
@@ -28,7 +28,7 @@ Incidence of rheumatoid arthritis in the United States.
 }
 \details{
 The incidence rate for each age is derived from Table 2 in Myasoedova et al. (2010), which
-was a study conducted in Olmsted County, Minnesota for residents age 18 years of age and older 
-between 1995–2007.
+was a study conducted in Olmsted County, Minnesota for residents age 18 years of age and older
+between 1995 and 2007.
 }
 \keyword{datasets}

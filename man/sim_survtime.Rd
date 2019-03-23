@@ -4,10 +4,10 @@
 \alias{sim_survtime}
 \title{Simulate survival time for RA patients}
 \usage{
-sim_survtime(n = 1000, age = 55, haq0 = 1, male = 0, haq = rep(haq0,
-  12/cycle_length * (100 - age + 1)), ltfemale = iviRA::lifetable.female,
-  ltmale = iviRA::lifetable.male, x_mort = haq0,
-  logor = iviRA::mort.or$logor, cycle_length = 6,
+sim_survtime(n = 1000, age = 55, haq0 = 1, male = 0,
+  haq = rep(haq0, 12/cycle_length * (100 - age + 1)),
+  ltfemale = iviRA::lifetable.female, ltmale = iviRA::lifetable.male,
+  x_mort = haq0, logor = iviRA::mort.or$logor, cycle_length = 6,
   loghr = iviRA::mort.hr.haqdif$loghr)
 }
 \arguments{
