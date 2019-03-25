@@ -226,8 +226,8 @@ sim_iviRA <- function(tx_seqs, input_data, pars, model_structures,
   }
   
   ## indexing
-  cdmards.ind <- which(iviRA::treatments$sname == "cdmards") - 1
-  nbt.ind <- which(iviRA::treatments$sname == "nbt") - 1
+  cdmards.ind <- which(tx_data$sname == "cdmards") - 1
+  nbt.ind <- which(tx_data$sname == "nbt") - 1
   tx.inds <- tx.inds - 1
   
   ## default internal values
@@ -259,7 +259,7 @@ sim_iviRA <- function(tx_seqs, input_data, pars, model_structures,
   tc.seqs <- cbind(tx_seqs, "nbt")
   lookup.inds <- match(tc.seqs, tc$lookup$sname)
   agents <- aperm(array(match(unlist(tc$lookup[lookup.inds, -1, with = FALSE]),
-                         iviRA::tx.cost$cost$sname) - 1,
+                         tc$cost$sname) - 1,
                    dim = c(nrow(tc.seqs), ncol(tc.seqs), ncol(tc$lookup) - 1)),
                   perm = c(2, 3, 1))
   
