@@ -2244,13 +2244,21 @@ cost &= \lceil weight \cdot dose_{amt}/strength_{amt}\rceil \cdot doses_{num} \c
 where $weight$ is patient weight, $dose_{amt}$ is the dose per weight, and $strength_{amt}$, $price$, and $doses_{num}$ are defined in the same way as in the non-weight based scenario. To illustrate, the acquisition cost (before discounts and rebates) for infliximab after the first 6 months is calculated by multiplying each patient's weight by the dose (6 mg/kg) and dividing by the size of a vial (100 mg), and then multiplying by the number of doses (\Sexpr{formatC(ifx.cost$ann_num_doses, format = "f", digits = 2)}) and the price per unit (\$\Sexpr{formatC(ifx.cost$price_per_unit, format = "f", big.mark = ",", digits = 2)}). 
 
 \section{Annualized costs and benefits}\label{app:insurance-value}
-Annualized QALY gains and costs, which are used to estimate the annual insurance value of treatment, are calculated using the formula for a geometric series and assuming a constant flow rate each model cycle. In particular, if $t$ indexes time (in years), $\hat{cost}$ and $\hat{qalys}$ denote lifetime costs and QALYs simulated by the model, respectively, then annualized costs, $c$ and QALYs, $q$, can be derived from,  
+Letting $t$ index time (in years), total costs ($\hat{cost}$) and QALYs ($\hat{qalys}$) for each patient simulated over a time horizon $T$ are given by,
 
 \begin{align}
-\hat{cost} = \sum_{t=1}^T c \frac{1-\beta_c^T}{1- \beta_c}\\
-\hat{qalys} = \sum_{t=1}^T q \frac{1-\beta_q^T}{1- \beta_q},
+\hat{cost} &= \sum_{t=1}^T c_t \beta_c^t\\
+\hat{qalys} &= \sum_{t=1}^T q_t \beta_q^t,
 \end{align}
-where $\beta_c$ is the discount factor for costs and $\beta_q$ is the discount factor for QALYs. The discount factor is a function of the annual discount rate (typically assumed to be 0.03); that is, $\beta_s = 1/(1+r_s)$ where $r_s$ is the discount rate for $s=c,q$. The time horizon $T$ is set to equal the maximum number of years that a patient could survive within the model---currently the maximum age that a patient could survive to is 100 given the default lifetables used within the model, so $T$ is equal to 100 minus a patient's age at the start of the simulation.
+
+where costs and QALYs at time $t$, $c_t$ and $q_t$, are discounted using the discount factors $\beta_c$ and $\beta_q$, respectively. The discount factor is a function of the annual discount rate (typically assumed to be 0.03); that is, $\beta_s = 1/(1+r_s)$ where $r_s$ is the discount rate for $s=c,q$. The time horizon $T$ is set to equal the maximum number of years that a patient could survive within the model---currently the maximum age that a patient could survive to is 100 given the default lifetables used within the model, so $T$ is equal to 100 minus a patient's age at the start of the simulation. 
+
+Annualized QALY gains and costs, which are used to estimate the annual insurance value of treatment, can therefore be calculated using the formula for a geometric series and assuming a constant flow rate each model cycle (that is, by setting $c_t = c$ and $q_t = q$ in each time period). In particular, annualized costs $c$ and QALYs $q$, can be derived by solving the following equations for $c$ and $q$,  
+
+\begin{align}
+\hat{cost} = c \frac{1-\beta_c^T}{1- \beta_c}\\
+\hat{qalys} = q \frac{1-\beta_q^T}{1- \beta_q}.
+\end{align}
 
 \section{Network Meta-Analysis}\label{appendix:NMA}
 Treatment effects with tDMARDs relative to cDMARDs for moderate to severe RA patients who failed treatment with a conventional DMARD were estimated based on currently available evidence as reported in the literature. The two populations of interest were: 1) RA patients without a history of prior tDMARD treatment (tDMARD naive population); and 2) RA patient with a history of tDMARD treatment (tDMARD experienced population). Relevant randomized controlled trials were identified with a systematic literature review and treatment effects were estimated by means of a network meta-analysis.
