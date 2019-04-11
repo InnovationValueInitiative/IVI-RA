@@ -13,7 +13,7 @@ all: $(DATA)/mort-or.rda $(DATA)/mort-hr-haqdif.rda $(DATA)/lifetable-male.rda $
 all: $(DATA)/tx-cost.rda $(DATA)/hosp-cost.rda $(DATA)/mgmt-cost.rda $(DATA)/prod-loss.rda 
 all: $(DATA)/utility-tx-attr.rda $(DATA)/utility-mixture.rda $(DATA)/utility-wailoo.rda
 all: $(DATA)/incidence-female.rda $(DATA)/incidence-male.rda 
-all: figs/ttd-corrona-ipdsurv-gengamma.pdf figs/ttd-corrona-ipdsurv-gengamma.pdf
+all: figs/ttd-corrona-ipdsurv-gengamma.pdf 
 all: figs/ttd-bsrbr-ipdsurv-comp-gengamma-by-eular.pdf
 all: figs/haq-lcgm-obsexp.pdf
 all: tables/ttd-corrona-ipdsurv-ic.csv tables/ttd-bsrbr-ipdsurv-eular-ic.csv
@@ -51,7 +51,6 @@ TD_DEPS := ttd.R func.R ttd-bsrbr-eular-good-ggamma.csv ttd-bsrbr-eular-good-ris
 TD_DEPS += ttd-bsrbr-eular-moderate-ggamma.csv ttd-bsrbr-eular-moderate-risk.csv
 TD_DEPS += ttd-corrona-allpat.csv ttd-corrona-allpat-risk.csv
 TD_TARGET := $(DATA)/ttd.rda figs/ttd-corrona-ipdsurv-gengamma.pdf
-TD_TARGET += figs/ttd-corrona-ipdsurv-gengamma.pdf 
 TD_TARGET += figs/ttd-bsrbr-ipdsurv-comp-gengamma-by-eular.pdf
 TD_TARGET += tables/ttd-corrona-ipdsurv-ic.csv tables/ttd-bsrbr-ipdsurv-eular-ic.csv
 TD_TARGET += tables/ttd-bsrbr-ipdsurv-eular-adjusted-ic.csv
