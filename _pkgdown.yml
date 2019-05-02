@@ -19,8 +19,6 @@ articles:
   - title: "Collaborate"
     contents:
     - how-to-contribute
-    - suggested-improvements
-    - pull-requests
   - title: "About"
     contents:
     - reproducibility

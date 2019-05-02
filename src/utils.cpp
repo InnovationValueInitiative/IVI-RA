@@ -10,11 +10,16 @@ double discount_factor(double t, double discount, double period_length = 1){
 
 // Calculate constant from geometric series
 double const_geometric_series(double sum, double r, int T, int start = 1){
-  if (start == 1){
-    return sum * (1 - r)/(r * (1 - pow(r, T)));
+  if (r !=1){
+    if (start == 1) {
+      return sum * (1 - r)/(r * (1 - pow(r, T)));
+    }
+    else {
+      return sum * (1 - r)/(1 - pow(r, T));
+    } 
   }
   else {
-    return sum * (1 - r)/(1 - pow(r, T));
+    return sum/T;
   }
 }
 

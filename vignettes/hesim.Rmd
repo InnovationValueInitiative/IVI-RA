@@ -3,10 +3,10 @@ title: "hesim "
 output: html_document
 ---
 
-`hesim` is an R package for health economic simulation modeling and decision analysis and a part of the Innovation and Value Innitiative's Open Source Value Project (OSVP). More infromation about `hesim` can be found on the package [website](https://innovationvalueinitiative.github.io/hesim/).
+`hesim` is an R package for health economic simulation modeling and decision analysis. More infromation about `hesim` can be found on the package [website](https://hesim-dev.github.io/hesim/).
 
 `hesim` interacts wih the `iviRA` package in two ways.
 
 1. `hesim` can be used to analyze simulation output produced by the IVI-RA model (e.g., (individualized) cost-effectiveness analysis).
 
-2. The IVI-RA model uses `R` code from `hesim` to sample parameters from the probabilistic sensitivity analysis and `C++` [code](https://github.com/InnovationValueInitiative/hesim/blob/master/inst/include/hesim_RcppExports.h) from `hesim` in the individual patient simulation. 
+2. The IVI-RA model uses `R` code from `hesim` to sample parameters from the probabilistic sensitivity analysis and `C++` [code](https://github.com/hesim-dev/hesim/blob/master/inst/include/hesim_RcppExports.h) from `hesim` in the individual patient simulation. 
