@@ -26,7 +26,6 @@ Imports:
     msm,
     Rcpp,
     tmvtnorm
-Remotes: InnovationValueInitiative/hesim
 Suggests:
     covr,
     flexsurv,
