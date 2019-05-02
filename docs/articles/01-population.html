@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">iviRA</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">1.0.0.9000</span>
       </span>
     </div>
 
@@ -154,30 +154,30 @@
 pop &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pop.html">sample_pop</a></span>(<span class="dt">n =</span> n.pats, <span class="dt">type =</span> <span class="st">"heterog"</span>)
 <span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(pop)</code></pre></div>
 <pre><code>##           age male weight prev_dmards    das28     sdai     cdai      haq0
-## [1,] 58.26744    0     75           5 6.040668 29.76266 29.03008 2.3061129
-## [2,] 62.25519    0     75           4 5.713318 38.53744 41.15770 1.5151519
-## [3,] 57.61413    0     75           4 5.400915 28.37836 31.22170 0.8075926
-## [4,] 49.76701    0     75           5 5.403534 41.29927 44.43838 2.3531167
-## [5,] 50.36749    0     75           3 7.627312 58.21009 57.30001 0.9759281
-## [6,] 26.47107    0     75           5 5.194136 35.26140 35.42509 1.3478461</code></pre>
+## [1,] 53.88004    0     75           4 6.572856 54.38978 53.86545 1.7484387
+## [2,] 61.31761    0     75           4 4.208864 31.16897 33.95544 1.2841086
+## [3,] 62.73725    0     75           5 7.668678 60.63666 57.83942 2.0796582
+## [4,] 74.18800    0     75           2 8.618711 60.38622 66.83134 1.3406628
+## [5,] 52.06278    0     75           1 5.442815 38.14211 30.62040 0.1958937
+## [6,] 28.99411    0     75           2 6.348633 43.63887 39.52236 1.7382138</code></pre>
 <p>We can also customize the distribution of patients. For example, suppose we want to study a younger and healthier population. We might then sample patients by customizing arguments in <code>sample_pats</code>,</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pop2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pop.html">sample_pop</a></span>(<span class="dt">n =</span> n.pats, <span class="dt">type =</span> <span class="st">"heterog"</span>, <span class="dt">age_mean =</span> <span class="dv">45</span>, <span class="dt">das28_mean =</span> <span class="dv">4</span>, <span class="dt">sdai_mean =</span> <span class="dv">20</span>, 
                     <span class="dt">cdai_mean =</span> <span class="dv">18</span>)
 <span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(pop2)</code></pre></div>
 <pre><code>##           age male weight prev_dmards    das28      sdai      cdai
-## [1,] 33.16350    0     75           3 5.565471 34.623348 38.299772
-## [2,] 46.14925    0     75           4 4.251001 17.489256 10.931798
-## [3,] 50.19157    0     75           3 2.561757  5.685346  3.974609
-## [4,] 27.85229    0     75           1 4.754230 35.520840 24.846308
-## [5,] 36.29011    1     89           4 3.353213 15.498816 11.788131
-## [6,] 37.46652    0     75           1 3.593651 22.335083 13.271430
+## [1,] 23.99684    0     75           3 4.274272 26.084096 24.237744
+## [2,] 41.57558    1     89           2 5.558402 24.058515 17.056680
+## [3,] 49.69941    0     75           6 4.571363 20.651153 17.176171
+## [4,] 57.76840    1     89           4 3.721735 17.023215  4.697975
+## [5,] 51.46727    0     75           3 2.769621 13.795803 10.304489
+## [6,] 34.94004    0     75           4 3.401002  1.979372  3.454537
 ##           haq0
-## [1,] 2.1844184
-## [2,] 2.1093766
-## [3,] 0.8983779
-## [4,] 1.8959244
-## [5,] 1.9976150
-## [6,] 1.0331385</code></pre>
+## [1,] 1.7829844
+## [2,] 1.2804805
+## [3,] 1.7850090
+## [4,] 0.4630017
+## [5,] 0.5388198
+## [6,] 1.5940766</code></pre>
 </div>
 <div id="using-your-own-patient-population" class="section level2">
 <h2 class="hasAnchor">
