@@ -3,9 +3,9 @@ title: "hesim "
 output: html_document
 ---
 
-`hesim` is an R package for health economic simulation modeling and decision analysis. More infromation about `hesim` can be found on the package [website](https://hesim-dev.github.io/hesim/).
+`hesim` is an R package for health economic simulation modeling and decision analysis. More information about `hesim` can be found on the package [website](https://hesim-dev.github.io/hesim/).
 
-`hesim` interacts wih the `iviRA` package in two ways.
+`hesim` interacts with the `iviRA` package in two ways.
 
 1. `hesim` can be used to analyze simulation output produced by the IVI-RA model (e.g., (individualized) cost-effectiveness analysis).
 
