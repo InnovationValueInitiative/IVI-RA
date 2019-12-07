@@ -1,1 +1,51 @@
-num,nma_name,sname1,1 = DMARD/MTX,cdmards2,2 = ABA 10 + DMARD/MTX,abtivmtx3,3 = ABA SC 125 + DMARD/MTX,abtscmtx4,4 = ADA 40,ada5,5 = ANA 80 + DMARD/MTX,6,6 = CZP 200 + DMARD/MTX,7,7 = CZP 400,czp8,8 = CZP 400 + DMARD/MTX,czpmtx9,9 = ETN 50,etn10,10 = ETN 50 + DMARD/MTX,etnmtx11,11 = GOL 50 + DMARD/MTX,golmtx12,12 = INF 3 + DMARD/MTX,ifxmtx13,13 = PLAC,placebo14,14 = RTX 1000,rtx15,15 = RTX 1000 + DMARD/MTX,rtxmtx16,16 = SAR 200 Q2W,17,17 = TOC 4 + DMARD/MTX,18,18 = TOC 8,19,19 = TOC 8 + DMARD/MTX,tczmtx20,20 = TOC SC 162,tcz21,,nbt22,,adamtx23,,gol24,,tczmtx25,,tcz26,,tof27,,tofmtx28,,tt
+num,nma_name,sname
+1,cDMARD,cdmards
+2,ABT (10mg/kg IV) + cDMARD,abtivmtx
+3,ABT (125mg SC) + cDMARD,abtscmtx
+4,ABT (2mg/kg IV) + cDMARD,
+5,ADA-Cinnora (40mg SC) + cDMARD,
+6,ADA-Pfizer (40mg SC) + cDMARD,
+7,ADA-SB5 (40mg SC) + cDMARD,adabiosbwwdmtx
+8,ADA (20mg SC Q2WEEK),
+9,ADA (20mg SC QWEEK),
+10,ADA (40mg SC QWEEK),
+11,ADA (40mg SC),ada
+12,ADA (40mg SC) + cDMARD,adamtx
+13,ANA (80mg SC) + cDMARD,
+14,BCT (4mg PO) + cDMARD,
+15,CTZ (100mg SC) + cDMARD,
+16,CTZ (200mg SC) + cDMARD,
+17,CTZ (400mg SC) + cDMARD,czpmtx
+18,ETN SZZS (50mg SC) + cDMARD,etnbiosszzsmtx
+19,ETN YKRO (50mg SC) + cDMARD,etnbiosykromtx
+20,ETN (50mg SC),etn
+21,ETN (50mg SC) + cDMARD,etnmtx
+22,GOL (100mg SC) + cDMARD,
+23,GOL (2mg/kg IV) + cDMARD,
+24,GOL (50mg SC) + cDMARD,golmtx
+25,IFX (3mg/kg IV Q8WEEK) + cDMARD,ifxmtx
+26,Placebo,placebo
+27,RTX (1000mg IV),rtx
+28,RTX (1000mg IV) + cDMARD,rtxmtx
+29,RTX (500mg IV) + cDMARD,
+30,SAR (200mg SC),sar
+31,SSZ + HCQ + MTX,triple
+32,TOC (4mg/kg IV) + cDMARD,
+33,TOC (8mg/kg IV),tcz
+34,TOC (8mg/kg IV) + cDMARD,tczmtx
+35,TOF (10mg PO),
+36,TOF (15mg PO),
+37,TOF (1mg PO),
+38,TOF (3mg PO),
+39,TOF (5mg PO),tof
+40,TOF (5mg PO) + cDMARD,tofmtx
+41,UPA (15mg PO) + cDMARD,upamtx
+42,UPA (30mg PO) + cDMARD,
+43,,nbt
+44,,gol
+45,,anamtx
+46,,bct
+47,,bctmtx
+48,,czp 
+49,,sarmtx
+50,,ifxbiosqbtxmtx

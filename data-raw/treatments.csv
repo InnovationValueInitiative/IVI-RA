@@ -1,1 +1,32 @@
-name,mname,sname,route,approval_date,end_datecDMARDs,cDMARDs,cdmards,injection,12/31/88,11/6/17abatacept IV + methotrexate,ABT IV + MTX,abtivmtx,infusion/injection,12/23/05,11/6/17adalimumab + methotrexate,ADA + MTX,adamtx,injection,12/31/02,11/6/17adalimumab,ADA,ada,injection,12/31/02,11/6/17etanercept + methotrexate,ETN + MTX,etnmtx,injection,11/2/98,11/6/17etanercept,ETN,etn,injection,11/2/98,11/6/17golimumab + methotrexate,GOL + MTX,golmtx,injection,4/24/09,11/6/17infliximab + methotrexate,IFX + MTX,ifxmtx,infusion/injection,11/10/99,11/6/17placebo,Placebo,placebo,none,,11/6/17tocilizumab + methotrexate,TCZ + MTX,tczmtx,injection,10/21/13,11/6/17tocilizumab,TCZ,tcz,injection,10/21/13,11/6/17certolizumab pegol + methotrexate,CZP + MTX,czpmtx,injection,4/22/08,11/6/17abatacept SC + methotrexate,ABT SC + MTX,abtscmtx,injection,8/2/11,11/6/17non-biologic,NBT,nbt,injection,,11/6/17rituximab + methotrexate,RTX + MTX,rtxmtx,infusion/injection,2/28/06,11/6/17tofacitinib citrate + methotrexate,TOF + MTX,tofmtx,oral/injection,11/6/12,11/6/17rituximab,RTX,rtx,injection,2/28/06,11/6/17tofacitinib citrate,TOF,tof,oral,11/6/12,11/6/17certolizumab pegol,CZP,czp,injection,4/22/08,11/6/17golimumab,GOL,gol,injection,4/24/09,11/6/17
+name,mname,sname,route,approval_date,end_date
+cDMARDs,cDMARDs,cdmards,injection,12/31/88,12/31/20
+abatacept IV + methotrexate,ABT IV + MTX,abtivmtx,infusion/injection,12/23/05,12/31/20
+abatacept SC + methotrexate,ABT SC + MTX,abtscmtx,injection,8/2/11,12/31/20
+adalimumab + methotrexate,ADA + MTX,adamtx,injection,12/31/02,12/31/20
+adalimumab,ADA,ada,injection,12/31/02,12/31/20
+adalimumab-bwwd (biosimilar Samsung Bioepis) + methotrexate,ADA BWWD + MTX,adabiosbwwdmtx,injection,7/23/18,12/31/20
+anakinra + methotrexate,ANA + MTX,anamtx,injection,12/31/02,12/31/20
+baricitinib,BCT,bct,oral,5/31/18,12/31/20
+baricitinib + methotrexate,BCT + MTX,bctmtx,oral,5/31/18,12/31/20
+certolizumab pegol,CZP,czp,injection,4/22/08,12/31/20
+certolizumab pegol + methotrexate,CZP + MTX,czpmtx,injection,4/22/08,12/31/20
+etanercept,ETN,etn,injection,11/2/98,12/31/20
+etanercept + methotrexate,ETN + MTX,etnmtx,injection,11/2/98,12/31/20
+etanercept-szzs (biosimilar Sandoz) + methotrexate,ETN SZZS + MTX,etnbiosszzsmtx,injection,8/30/16,12/31/20
+etanercept-ykro (biosimilar Samsung Bioepis) + methotrexate,ETN YKRO + MTX,etnbiosykromtx,injection,4/25/19,12/31/20
+golimumab,GOL,gol,injection,4/24/09,12/31/20
+golimumab + methotrexate,GOL + MTX,golmtx,injection,4/24/09,12/31/20
+infliximab + methotrexate,IFX + MTX,ifxmtx,infusion/injection,11/10/99,12/31/20
+infliximab-qbtx (biosimilar Pfizer) + methotrexate,IFX QBTX + MTX,ifxbiosqbtxmtx,infusion/injection,12/13/17,12/31/20
+placebo,Placebo,placebo,none,,12/31/20
+non/biologic,NBT,nbt,injection,,12/31/20
+rituximab,RTX,rtx,injection,2/28/06,12/31/20
+rituximab + methotrexate,RTX + MTX,rtxmtx,infusion/injection,2/28/06,12/31/20
+sarilumab,SAR,sar,injection,22/05/17,12/31/20
+sarilumab + methotrexate,SAR + MTX,sarmtx,injection,22/05/17,12/31/20
+sulfasalazine + hydroxychloroquine + methotrexate,SSZ + HCQ + MTX,triple,injection,12/31/02,12/31/20
+tocilizumab,TCZ,tcz,injection,10/21/13,12/31/20
+tocilizumab + methotrexate,TCZ + MTX,tczmtx,injection,10/21/13,12/31/20
+tofacitinib + methotrexate,TOF + MTX,tofmtx,oral/injection,11/6/12,12/31/20
+tofacitinib,TOF,tof,oral,11/6/12,12/31/20
+upadacitinib + methotrexate,UPA + MTX,upamtx,oral,8/16/19,12/31/20

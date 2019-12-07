@@ -1,1 +1,56 @@
-num,nma_name,sname1,1 = DMARD/MTX,cdmards2,2 = ABA 10 + DMARD/MTX,abtivmtx3,3 = ABA SC 125 + DMARD/MTX,abtscmtx4,4 = ADA 40,ada5,5 = ADA 40 + DMARD/MTX,adamtx6,6 = ANA 100 + DMARD/MTX,7,7 = CZP 200 + DMARD/MTX,8,8 = CZP 400,czp9,9 = CZP 400 + DMARD/MTX,czpmtx10,10 = ETN 50,etn11,11 = ETN 50 + DMARD/MTX,etnmtx12,12 = GOL 50 + DMARD/MTX,golmtx13,13 = INF 3 + DMARD/MTX,ifxmtx14,14 = PLAC,placebo15,15 = RTX 1000 + DMARD/MTX,rtxmtx16,16 = SAR 200,17,17 = SAR 200 + DMARD/MTX,18,18 = TOC 4 + DMARD/MTX,19,29 = TOC 8,20,20 = TOC 8 + DMARD/MTX,tczmtx21,21 = TOC SC 162,tcz22,22 = TOF 5,tof23,,nbt24,,tofmtx25,,gol26,,golmtx27,,rtx28,,tt
+num,nma_name,sname
+1,cDMARD,cdmards
+2,ABT (10mg/kg IV) + cDMARD,abtivmtx
+3,ABT (125mg SC) + cDMARD,abtscmtx
+4,ABT (2mg/kg IV) + cDMARD,
+5,ADA-Pfizer (40mg SC) + cDMARD,
+6,ADA (20mg SC Q2WEEK),
+7,ADA (20mg SC QWEEK),
+8,ADA (20mg SC) + cDMARD,
+9,ADA (40mg SC QWEEK),
+10,ADA (40mg SC),ada
+11,ADA (40mg SC) + cDMARD,adamtx
+12,ADA (80mg SC),
+13,ADA (80mg SC) + cDMARD,
+14,ANA (100mg SC) + cDMARD,anamtx
+15,ANA (1mg/kg SC) + cDMARD,
+16,ANA (2mg/kg SC) + cDMARD,
+17,BCT (4mg PO) + cDMARD,
+18,CTZ (100mg SC) + cDMARD,
+19,CTZ (200mg SC) + cDMARD,
+20,CTZ (400mg SC),czp
+21,CTZ (400mg SC) + cDMARD,czpmtx
+22,ETN YKRO (50mg SC) + cDMARD,etnbiosykromtx
+23,ETN (10mg SC),
+24,ETN (50mg SC),etn
+25,ETN (50mg SC) + cDMARD,etnmtx
+26,GOL (100mg SC),
+27,GOL (100mg SC) + cDMARD,
+28,GOL (2mg/kg IV) + cDMARD,
+29,GOL (50mg SC) + cDMARD,golmtx
+30,IFX QBTX (3mg/kg IV) + cDMARD,ifxbiosqbtxmtx
+31,IFX (3mg/kg IV Q8WEEK) + cDMARD,ifxmtx
+32,Placebo,placebo
+33,RTX (1000mg IV) + cDMARD,rtxmtx
+34,RTX (500mg IV) + cDMARD,
+35,SAR (150mg SC) + cDMARD,
+36,SAR (200mg SC),sar
+37,SAR (200mg SC) + cDMARD,sarmtx
+38,SSZ + HCQ + MTX,triple
+39,TOC (4mg/kg IV) + cDMARD,
+40,TOC (8mg/kg IV),tcz
+41,TOC (8mg/kg IV) + cDMARD,tczmtx
+42,TOF (10mg PO),
+43,TOF (10mg PO) + cDMARD,
+44,TOF (15mg PO),
+45,TOF (5mg PO),tof
+46,TOF (5mg PO) + cDMARD,tofmtx
+47,UPA (15mg PO) + cDMARD,upamtx
+48,UPA (30mg PO) + cDMARD,
+49,,nbt
+50,,gol
+51,,adabiosbwwdmtx
+52,,bct
+53,,bctmtx
+54,,etnbiosszzsmtx
+55,,rtx

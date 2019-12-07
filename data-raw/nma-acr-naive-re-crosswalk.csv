@@ -1,1 +1,77 @@
-num,nma_name,sname1,cDMARD,cdmards2,ABA 10/kg + cDMARD,abtivmtx3,ABA SC 125 + cDMARD,abtscmtx4,TOC 8,5,TOC 8 + cDMARD,6,TOC 4 + cDMARD,7,ADA 40,ada8,ADA 40 + cDMARD,adamtx9,INF 3 + cDMARD,ifxmtx10,ANA 80 + MTX,11,TOC SC 162 + cDMARD,tczmtx12,CZP 400 + cDMARD,czpmtx13,PLAC,placebo14,ANA 100 + cDMARD,15,ETN 50,etn16,RTX 1000 + cDMARD,rtxmtx17,ETN 50 + cDMARD,etnmtx18,RTX 1000,rtx19,CZP 400,czp20,TOF 5,tof21,GOL 50 + cDMARD,golmtx22,GOL 2mg/kg + cDMARD,23,CZP 200 + cDMARD,24,ABA 2/kg + cDMARD,25,SAR 200 + cDMARD,26,SAR 200,27,TOF 5 + cDMARD,tofmtx28,,nbt29,,tt30,,gol31,,tcz
+num,nma_name,sname
+1,cDMARD,cdmards
+2,ABT (10mg/kg IV) + cDMARD,abtivmtx
+3,ABT (125mg SC) + cDMARD,abtscmtx
+4,ABT (2mg/kg IV) + cDMARD,
+5,ADA Cinnora (40mg SC) + cDMARD,
+6,ADA-Pfizer (40mg SC) + cDMARD,
+7,ADA BWWD (40mg SC) + cDMARD,adabiosbwwdmtx
+8,ADA (20mg SC Q2WEEK),
+9,ADA (20mg SC QWEEK),
+10,ADA (20mg SC) + cDMARD,
+11,ADA (40mg SC QWEEK),
+12,ADA (40mg SC),ada
+13,ADA (40mg SC) + cDMARD,adamtx
+14,ADA (80mg SC),
+15,ADA (80mg SC) + cDMARD,
+16,ANA (0.04mg/kg SC) + cDMARD,
+17,ANA (0.1mg/kg SC) + cDMARD,
+18,ANA (0.4mg/kg SC) + cDMARD,
+19,ANA (100mg SC) + cDMARD,anamtx
+20,ANA (1mg/kg SC) + cDMARD,
+21,ANA (2mg/kg SC) + cDMARD,
+22,ANA (80mg SC) + cDMARD,
+23,BCT (2mg PO),bct
+24,BCT (2mg PO) + cDMARD,bctmtx
+25,BCT (4mg PO),
+26,BCT (4mg PO) + cDMARD,
+27,CTZ (100mg SC) + cDMARD,
+28,CTZ (200mg SC) + cDMARD,
+29,CTZ (400mg SC),czp
+30,CTZ (400mg SC) + cDMARD,czpmtx
+31,ETN SZZS (50mg SC) + cDMARD,etnbiosszzsmtx
+32,ETN YKRO (50mg SC) + cDMARD,etnbiosykromtx
+33,ETN (10mg SC),
+34,ETN (50mg SC),etn
+35,ETN (50mg SC) + cDMARD,etnmtx
+36,GOL (100mg SC),
+37,GOL (100mg SC) + cDMARD,
+38,GOL (2/4mg/kg IV),
+39,GOL (2/4mg/kg IV) + cDMARD,
+40,GOL (2mg/kg IV),
+41,GOL (2mg/kg IV) + cDMARD,
+42,GOL (4mg/kg IV),
+43,GOL (4mg/kg IV) + cDMARD,
+44,GOL (50mg SC) + cDMARD,golmtx
+45,IFX (10mg/kg IV Q4WEEK) + cDMARD,
+46,IFX (10mg/kg IV Q8WEEK) + cDMARD,
+47,IFX (10mg/kg IV) + cDMARD,
+48,IFX (3mg/kg IV Q4WEEK) + cDMARD,
+49,IFX (3mg/kg IV Q8WEEK) + cDMARD,ifxmtx
+50,Placebo,placebo
+51,RTX (1000mg IV),rtx
+52,RTX (1000mg IV) + cDMARD,rtxmtx
+53,RTX (500mg IV) + cDMARD,
+54,SAR (150mg SC) + cDMARD,
+55,SAR (200mg SC),sar
+56,SAR (200mg SC) + cDMARD,sarmtx
+57,SSZ + HCQ + MTX,triple
+58,TOC (4mg/kg IV) + cDMARD,
+59,TOC (8mg/kg IV),tcz
+60,TOC (8mg/kg IV) + cDMARD,tczmtx
+61,TOF (10mg PO),
+62,TOF (10mg PO) + cDMARD,
+63,TOF (15mg PO),
+64,TOF (15mg PO) + cDMARD,
+65,TOF (1mg PO),
+66,TOF (1mg PO) + cDMARD,
+67,TOF (20mg PO) + cDMARD,
+68,TOF (3mg PO),
+69,TOF (3mg PO) + cDMARD,
+70,TOF (5mg PO),tof
+71,TOF (5mg PO) + cDMARD,tofmtx
+72,UPA (15mg PO) + cDMARD,upamtx
+73,UPA (30mg PO) + cDMARD,
+74,,nbt
+75,,gol
+76,,ifxbiosqbtxmtx

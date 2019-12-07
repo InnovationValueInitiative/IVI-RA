@@ -7,6 +7,9 @@ treatments[, approval_date := ifelse(sname %in% c("nbt", "placebo"),
 treatments[, years_since_approval := as.numeric(difftime(as.Date(end_date, "%m/%d/%y"), 
                                                          as.Date(approval_date, "%m/%d/%y"), 
                                                          unit = "weeks"))/52.25]
+treatments[is.na(years_since_approval), years_since_approval := 0.1]
+treatments[years_since_approval<0, years_since_approval := 0.1]
+
 treatments[, c("end_date") := NULL]
 save(treatments,
      file = "../data/treatments.rda", compress = "bzip2")

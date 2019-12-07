@@ -33,7 +33,7 @@ $(NMA_TARGET): $(NMA_DEPS)
 	Rscript nma.R
 
 # Mappings
-MAP_TARGET := := $(DATA)/acr2das28.rda $(DATA)/acr2sdai.rda $(DATA)/acr2cdai.rda 
+MAP_TARGET := $(DATA)/acr2das28.rda $(DATA)/acr2sdai.rda $(DATA)/acr2cdai.rda 
 MAP_TARGET += $(DATA)/acr2eular.rda $(DATA)/eular2haq.rda $(DATA)/acr2haq.rda
 $(MAP_TARGET): mappings.R
 	Rscript mappings.R

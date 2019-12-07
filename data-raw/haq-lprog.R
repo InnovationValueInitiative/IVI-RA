@@ -14,14 +14,23 @@ hlp.b.se <- se_normal(-.004, .002)
 # progression rate for biologic specific from Michaud (2011)
 hlp.ifxmtx <- -.001
 hlp.ifxmtx.se <- se_normal(-.008, .006) 
+hlp.ifxbiosqbtxmtx <- -.001
+hlp.ifxbiosqbtxmtx.se <- se_normal(-.008, .006) 
 hlp.etn <- -.003
 hlp.etn.se <- se_normal(-.010, .005)  
 hlp.etnmtx <- -.005
 hlp.etnmtx.se <- se_normal(-.012, .001)  
+hlp.etnbiosszzsmtx <- -.005
+hlp.etnbiosszzsmtx.se <- se_normal(-.012, .001) 
+hlp.etnbiosykromtx <- -.005
+hlp.etnbiosykromtx.se <- se_normal(-.012, .001) 
 hlp.adamtx <- -.003
 hlp.adamtx.se <- se_normal(-.018, .011)  
+hlp.adabiosbwwdmtx <- -.003
+hlp.adabiosbwwdmtx.se <- se_normal(-.018, .011)  
 hlp.ada <- .012
-hlp.ada.se <- se_normal(-.002, .025)  
+hlp.ada.se <- se_normal(-.002, .025) 
+
 
 # biologic specific progression rates from Michaud (2011) and above
 haq.lp.tx <- data.table(sname = treatments$sname, est = 0, se = 0)
@@ -29,18 +38,29 @@ haq.lp.tx[sname %in% c("cdmards", "placebo","nbt"),
          c("est", "se") :=  list(hlp.nb, hlp.nb.se)]
 haq.lp.tx[sname %in% c("abtivmtx", "golmtx", "tcz", "tczmtx",
                         "czpmtx", "abtscmtx","rtxmtx", "tofmtx", 
-                      "rtx", "tof", "czp", "gol"), 
+                      "rtx", "tof", "czp", "gol","anamtx","bct","bctmtx","sar","sarmtx","triple","upamtx" ), 
          c("est", "se") :=  list(hlp.b, hlp.b.se)]
 haq.lp.tx[sname == "ifxmtx", 
          c("est", "se") := list(hlp.ifxmtx, hlp.ifxmtx.se)]
+haq.lp.tx[sname == "ifxbiosqbtxmtx", 
+          c("est", "se") := list(hlp.ifxbiosqbtxmtx, hlp.ifxbiosqbtxmtx.se)]
 haq.lp.tx[sname == "etn", 
          c("est", "se") := list(hlp.etn, hlp.etn.se)]
 haq.lp.tx[sname == "etnmtx", 
          c("est", "se") := list(hlp.etnmtx, hlp.etnmtx.se)]
+haq.lp.tx[sname == "etnbiosszzsmtx", 
+          c("est", "se") := list(hlp.etnbiosszzsmtx, hlp.etnbiosszzsmtx.se)]
+haq.lp.tx[sname == "etnbiosykromtx", 
+          c("est", "se") := list(hlp.etnbiosykromtx, hlp.etnbiosykromtx.se)]
 haq.lp.tx[sname == "ada", 
          c("est", "se") := list(hlp.ada, hlp.ada.se)]
 haq.lp.tx[sname == "adamtx", 
          c("est", "se") := list(hlp.adamtx, hlp.adamtx.se)]
+haq.lp.tx[sname == "adabiosbwwdmtx", 
+          c("est", "se") := list(hlp.adabiosbwwdmtx, hlp.adabiosbwwdmtx.se)]
+
+
+
 
 # confidence bounds
 haq.lp.tx[, lower := est - qnorm(.975) * se]
