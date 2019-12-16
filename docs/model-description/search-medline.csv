@@ -1,1 +1,67 @@
-order,search_terms,results1,exp rheumatoid arthritis/,1061602,exp abatacept/,25943,"(Belatacept or Nulojix or Orencia).ti,ab.",3574,exp adalimumab/,40235,"(Humira or D2E7 Antibody).ti,ab.",1666,exp anakinra/,46517,"(Urine Interleukin 1 Inhibitor or Antril or Kineret or Anakinra).ti,ab.",13258,exp certolizumab pegol/,4509,"(Cimzia or Cimzias).ti,ab.",2610,exp etanercept/,523111,"(Enbrel or TNF Receptor Type II-IgG Fusion Protein or Recombinant Human Dimeric TNF Receptor Type II-IgG Fusion Protein).ti,ab.",26212,"golimumab.ti,ab.",65513,"Simponi.ti,ab.",1614,exp infliximab/,881815,"Remicade.ti,ab.",27716,exp rituximab/,1148317,"(Mabthera or Rituxan or Rituximab CD20 Antibody).ti,ab.",39118,"tocilizumab.ti,ab.",174519,"(atlizumab or Actemra).ti,ab.",4520,"tofacitinib.ti,ab.",48521,"(tasocitinib or tofacitinib citrate or Xeljanz).ti,ab.",3522,sarilumab.mp.,3123,or/2-22,3556724,Randomized Controlled Trials as Topic/,11410725,randomized controlled trial/,46593326,Random Allocation/,9312627,Double Blind Method/,14788928,Single Blind Method/,2476729,clinical trial/,52224830,"clinical trial, phase i.pt.",1886031,"clinical trial, phase ii.pt.",3039832,"clinical trial, phase iii.pt.",1398733,"clinical trial, phase iv.pt.",150034,controlled clinical trial.pt.,9420835,randomized controlled trial.pt.,46593336,multicenter study.pt.,22990337,clinical trial.pt.,52224838,exp Clinical Trials as topic/,31491139,23 or 24 or 25 or 26 or 27 or 28 or 29 or 30 or 31 or 32 or 33 or 34 or 35 or 36 or 37,123713640,(clinical adj trial$).tw.,29511941,((singl$ or doubl$ or treb$ or tripl$) adj (blind$3 or mask$3)).tw.,15621042,PLACEBOS/,3501943,placebo$.tw.,19376044,randomly allocated.tw.,2310145,(allocated adj2 random$).tw.,2608346,or/39-44,53909647,38 or 45,144188648,case report.tw.,25715749,letter/,96963850,historical article/,34820251,47 or 48 or 49,156110952,46 not 50,140866953,1 and 22 and 51,227054,limit 52 to english language,2099
+order,search_terms,results
+1,exp rheumatoid arthritis/,108325
+2,exp anakinra/,4930
+3,"(Urine Interleukin 1 Inhibitor or Antril or Kineret or Anakinra).ti,ab.",1538
+4,exp abatacept/,2724
+5,"(abatacept or Belatacept or Nulojix or Orencia or BMS-188667).ti,ab.",1728
+6,exp adalimumab/,4699
+7,"(adalimumab or Humira or D2E7 Antibody).ti,ab.",5935
+8,exp certolizumab pegol/,518
+9,"(certolizumab pegol or certolizumab or Cimzia or Cimzias or CDP-870).ti,ab.",943
+10,exp etanercept/,5517
+11,"(etanercept or Enbrel or TNF Receptor Type II-IgG Fusion Protein or Recombinant Human Dimeric TNF Receptor Type II-IgG Fusion Protein).ti,ab.",6417
+12,"golimumab.ti,ab.",903
+13,"(golimumab or Simponi or CNTO-148).ti,ab.",906
+14,exp infliximab/,9521
+15,"(infliximab or Remicade or Infliximab-dyyb or Inflectra or CenTNF or TA-650).ti,ab.",11088
+16,exp rituximab/,12594
+17,"(rituximab or Mabthera or Rituxan or Rituximab CD20 Antibody or IDEC-102 or IDEC-C2B8 or IDEC-C2B8-anti-CD20).ti,ab.",18312
+18,"tocilizumab.ti,ab.",2330
+19,"(tocilizumab or atlizumab or Actemra or ACTPen).ti,ab.",2350
+20,sarilumab.mp.,78
+21,"(sarilumab or iguratimod or Careram or Kolbet or T-614 or Kevzara or REGN-88 or SAR-153191).ti,ab.",161
+22,"tofacitinib.ti,ab.",858
+23,"(tasocitinib or tofacitinib citrate or Xeljanz or Cp-690,550 or CP-690550 or Jaquinus).ti,ab.",140
+24,baricitinib.mp.,180
+25,"(LY309104 or INCB028050 or Olumiant).ti,ab.",10
+26,upadacitinib.mp.,31
+27,"ABT-494.ti,ab.",8
+28,exp methotrexate/,36577
+29,"(amethopterin or mexate or methotrexate or Otrexup or VIBEX MTX or DepoMethotrexate or Jylamvo).ti,ab.",39062
+30,exp sulfasalazine/,4011
+31,"(sulfasalazine or salicylazosulfapyridine or salazosulfapyridine or Pyralin or azulfadine or asulfidine or Colo-Pleon or Colo Pleon or Pleon or Ulcol or sulfasalazin or Ucine or salazopyrin).ti,ab.",3643
+32,exp hydroxychloroquine/,2762
+33,"(hydroxychloroquine or oxychlorochin or oxychloroquine or hydroxychlorochin or plaquenil).ti,ab.",3528
+34,(28 or 29) and (30 or 31) and (32 or 33),356
+35,"triple therapy.ti,ab.",5454
+36,"or/2-29,34-35",105887
+37,Randomized Controlled Trials as Topic/,123625
+38,randomized controlled trial/,482117
+39,Random Allocation/,98976
+40,Double Blind Method/,151262
+41,Single Blind Method/,26752
+42,clinical trial/,516228
+43,"clinical trial, phase i.pt.",18921
+44,"clinical trial, phase ii.pt.",30565
+45,"clinical trial, phase iii.pt.",15033
+46,"clinical trial, phase iv.pt.",1707
+47,controlled clinical trial.pt.,93070
+48,randomized controlled trial.pt.,482117
+49,multicenter study.pt.,250224
+50,clinical trial.pt.,516228
+51,exp Clinical Trials as topic/,325643
+52,or/37-51,1293078
+53,(clinical adj trial$).tw.,332293
+54,((singl$ or doubl$ or treb$ or tripl$) adj (blind$3 or mask$3)).tw.,163549
+55,PLACEBOS/,34343
+56,placebo$.tw.,204048
+57,randomly allocated.tw.,26182
+58,(allocated adj2 random$).tw.,29328
+59,or/53-58,588391
+60,52 or 59,1534440
+61,case report.tw.,276026
+62,letter/,1026586
+63,historical article/,351546
+64,or/61-63,1639252
+65,60 not 64,1499796
+66,1 and 36 and 65,3747

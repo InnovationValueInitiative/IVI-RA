@@ -1,0 +1,51 @@
+This is BibTeX, Version 0.99d (TeX Live 2018)
+Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
+The top-level auxiliary file: model-description.aux
+The style file: apa.bst
+Database file #1: ../../vignettes/vignettes.bib
+Warning--can't use both volume and number fields in curtis2010comparison
+Warning--empty institution in gibson2016haq
+Warning--empty institution in icer2017tim
+Warning--can't use both volume and number fields in norton2014health
+You've used 72 entries,
+            1940 wiz_defined-function locations,
+            879 strings with 22314 characters,
+and the built_in function-call counts, 35685 in all, are:
+= -- 3360
+> -- 2067
+< -- 20
++ -- 772
+- -- 742
+* -- 3547
+:= -- 6200
+add.period$ -- 218
+call.type$ -- 72
+change.case$ -- 718
+chr.to.int$ -- 72
+cite$ -- 76
+duplicate$ -- 1072
+empty$ -- 2109
+format.name$ -- 831
+if$ -- 6709
+int.to.chr$ -- 1
+int.to.str$ -- 0
+missing$ -- 72
+newline$ -- 363
+num.names$ -- 216
+pop$ -- 598
+preamble$ -- 1
+purify$ -- 718
+quote$ -- 0
+skip$ -- 830
+stack$ -- 0
+substring$ -- 2450
+swap$ -- 212
+text.length$ -- 7
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 426
+warning$ -- 4
+while$ -- 267
+width$ -- 0
+write$ -- 935
+(There were 4 warnings)

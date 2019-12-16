@@ -172,8 +172,9 @@
 
 \date{\today}
 
+\usepackage{Sweave}
 \begin{document}
-\SweaveOpts{concordance=TRUE}
+\input{model-description-concordance}
 \maketitle
 
 \begingroup
@@ -182,24 +183,6 @@
  \listoftables
 \endgroup
 
-<<setup, echo= FALSE>>=
-# packages + settings
-library("pander")
-library("xtable")
-library("iviRA")
-library("data.table")
-library("ggplot2")
-theme_set(theme_bw())
-
-# some functions
-first_upper <- function(x) {
-   substr(x, 1, 1) <- toupper(substr(x, 1, 1))
-return(x)
-}
-
-# globals
-CACHE <- TRUE
-@
 
 \clearpage
 \phantomsection
@@ -385,37 +368,6 @@ There are many approaches to MCDA; here, we discuss the approach used by IVI in 
 
 Since different criteria may be measured using different units, performance on each criterion is converted into a common scale, for instance, ranging from 0 to 100. There are a number of techniques for creating a common scale; we use a simple linear partial value function to translate scores, which assumes a linear relationship between performance on the original scale of a given criterion and the common scale. To illustrate, \autoref{fig:lpvf} demonstrates two mappings between the original scale and the common scale.
 
-<<haq_lpvf, echo = FALSE, include = FALSE>>=
-linear_pvf <- function(x, x_min, x_max, scale_min = 0, scale_max = 100){
-  score <- (x - x_min) * (scale_max - scale_min) / (x_max - x_min) + scale_min
-  if (x_min == x_max){
-    score <- rep(0, length(score))
-  }
-  return(score)
-}
-
-# linear partial value function positive
-x.min <- 0
-x.max <- 12
-x <- seq(x.min, x.max, length.out = 100)
-y <- linear_pvf(x, x.min, x.max)
-dat.pos <- data.table(x = x, y = y)
-p.lpfv.pos <- ggplot(dat.pos, aes(x = x, y = y)) + geom_line() +
-  xlab("Performance on original scale") + ylab("Score on common scale") +
-  scale_x_continuous(breaks = seq(0, 12, 3))
-ggsave("figs/mcda-lpvf-pos.png", p.lpfv.pos, height = 3, width = 5)
-
-# linear partial value function positive
-x.min <- 90
-x.max <- 0
-x <- seq(x.max, x.min, length.out = 100)
-y <- linear_pvf(x, x.min, x.max)
-dat.neg <- data.table(x = x, y = y)
-p.lpfv.neg <- ggplot(dat.neg, aes(x = x, y = y)) + geom_line() +
-  xlab("Performance on original scale") + ylab("Score on common scale") +
-  scale_x_continuous(breaks = seq(0, 90, 15))
-ggsave("figs/mcda-lpvf-neg.png", p.lpfv.neg, height = 3, width = 5)
-@
 
 \begin{figure}[h]
 \begin{subfigure}{.5\textwidth}
@@ -481,25 +433,6 @@ To run the IPS, a patient population must be specified. The model is designed fo
 
 Two default options for the patient population are available. First, a homogeneous cohort of men and women with gender-specific weights but otherwise identical characteristics can be used. Second, a heterogeneous cohort of patients with gender-specific weights but varying across all other characteristics can be specified. Other populations (i.e., for certain subgroups or based on registry data) can be used as well but are not prespecified in our \R{} package. 
 
-<<pop, echo = FALSE, include = FALSE>>=
-args <- formals(sample_pop)
-mean <- c(args$age_mean, args$male_prop, args$wtfemale, args$wtmale,
-          args$prev_dmards_mean, args$das28_mean, args$sdai_mean, args$cdai_mean, args$haq0_mean)
-mean <- formatC(mean, format = "f", digits = 2)
-sd <-  c(args$age_sd, 0, 0, 0,
-          args$prev_dmards_sd, args$das28_sd, args$sdai_sd, args$cdai_sd, args$haq0_sd)
-sd <- formatC(sd, format = "f", digits = 2)
-sd[sd == "0.00"] <- "-"
-vars <- c("Age", "Male", "Female weight (kg)", "Male weight (kg)", 
-          "Previous   DMARDs","DAS28", "SDAI", "CDAI", "HAQ") 
-min <- c(18, "-", "-", "-", rep(0, 5))
-max <- c(85, rep("-", 4), 9.4, 86, 76, 3)
-tab <- data.frame(var = vars, mean = mean, sd = sd, min, max)
-tex <- print(xtable(tab), 
-      include.rownames = FALSE, include.colnames = FALSE,
-      only.contents = TRUE, sanitize.text.function = identity,
-      file = "tables/pat-inputs.txt")
-@
 
 Our default population consists of individuals that, on average, have high disease activity. The proportion that is female, age, the number of previous DMARDs, baseline HAQ, and DAS28 are based on the values reported in \citet{curtis2010comparison}. Mean values for the SDAI and CDAI are from the US301 clinical trial---which had a DAS28 score similar to the value from \citet{curtis2010comparison}---summarized in \citet{smolen2003simplified}. Summaries of each variable are reported in \autoref{tbl:pats}. Details on the algorithm for simulating heterogeneous patients are described in \autoref{app:population}.
 
@@ -667,93 +600,6 @@ When analyzing value to healthy individuals---rather than sick patients---we use
 \subsection{Treatment effects at 6 months}\label{nma-parameters}
 The effect of treatment on ACR response, DAS28, and HAQ at 6 months for tDMARD naive patients are estimated using Bayesian network meta-analyses (NMA) of published randomized controlled trials (RCTs). Primary outcomes were ACR response, change in DAS28 from baseline at 6 months, and the change in HAQ from baseline at 6 months. Results from the NMA are shown in \autoref{tbl:nma-acr-das28-haq}. Details of the systematic literature review and the statistical methodology are provided in the Appendix (\autoref{app:nma-analyses}).
 
-<<nma_results, cache=CACHE, echo=FALSE, include=FALSE>>=
-tx.snames <- iviRA::treatments[!sname %in% c("nbt", "gol"), sname]
-nsims <- 1000
-tx.inds <- which(iviRA::treatments$sname %in% tx.snames)
-tx.names <- iviRA::treatments[sname %in% tx.snames, mname]
-format_table <- function(m, l, u, digits = 3){
-  m <- formatC(m, format = "f", digits = digits)
-  l <- formatC(l, format = "f", digits = digits)
-  u <- formatC(u, format = "f", digits = digits)
-  m <- trimws(m); l <- trimws(l); u <- trimws(u)
-  m[m == "NA"] <- ""
-  l[l == "NA"] <- ""
-  u[u == "NA"] <- ""
-  tab <- paste0(m, " (", l, ", ", u, ")")
-  tab[tab == " (, )"] <- "-"
-  if (is.matrix(m)){
-      tab <- matrix(tab, nrow = nrow(m), ncol = ncol(m))
-  }  
-  return(tab)
-} 
-x <- matrix(1, nrow = 1, ncol = 1)
-
-# ACR response
-acr.pars <- sample_nma_acr(nsims, m = iviRA::nma.acr.naive$mean,
-                      vcov = iviRA::nma.acr.naive$vcov)
-dmat <- matrix(NA, nrow = dim(acr.pars$d)[1], ncol = dim(acr.pars$d)[3])
-for (i in 1:dim(acr.pars$d)[3]){
-  dmat[, i] <- acr.pars$d[,,i, drop = FALSE]  %*%  t(x)
-}
-acr.prob <- nma_acrprob(A = acr.pars$A, z2 = acr.pars$z2, z3 = acr.pars$z3,
-                        d = dmat)
-acr.mean <- formatC(apply(acr.prob$overlap, c(3, 2), mean), format = "f", digits = 3)
-acr.l <- formatC(apply(acr.prob$overlap, c(3, 2), quantile, .025, na.rm = TRUE), format = "f", digits = 3)
-acr.u <- formatC(apply(acr.prob$overlap, c(3,2), quantile, .975, na.rm = TRUE), format = "f", digits = 3)
-acr.tab <- format_table(acr.mean, acr.l, acr.u, digits = 3)
-acr.tab <- acr.tab[tx.inds, ]
-rownames(acr.tab) <- tx.names
-
-# DAS28
-das28.pars <- sample_nma_lm(nsims, m = iviRA::nma.das28.naive$mean,
-                      vcov = iviRA::nma.das28.naive$vcov)
-dmat <- matrix(NA, nrow = dim(das28.pars$d)[1], ncol = dim(das28.pars$d)[3])
-for (i in 1:dim(das28.pars$d)[3]){
-  dmat[, i] <- das28.pars$d[,,i, drop = FALSE]  %*%  t(x)
-}
-das28.dy <- nma_lm_dy(A = das28.pars$A, d = dmat)
-das28.mean <- apply(das28.dy, 2, mean)
-das28.l <- apply(das28.dy, 2, quantile, .025, na.rm = TRUE)
-das28.u <- apply(das28.dy, 2, quantile, .975, na.rm = TRUE)
-das28.tab <- format_table(das28.mean, das28.l, das28.u, digits = 3)
-das28.tab <- das28.tab[tx.inds]
-
-# HAQ
-haq.pars <- sample_nma_lm(nsims, m = iviRA::nma.haq.naive$mean,
-                      vcov = iviRA::nma.haq.naive$vcov)
-dmat <- matrix(NA, nrow = dim(haq.pars$d)[1], ncol = dim(haq.pars$d)[3])
-for (i in 1:dim(haq.pars$d)[3]){
-  dmat[, i] <- haq.pars$d[,,i, drop = FALSE]  %*%  t(x)
-}
-haq.dy <- nma_lm_dy(A = haq.pars$A, d = dmat)
-haq.mean <- apply(haq.dy, 2, mean)
-haq.l <- apply(haq.dy, 2, quantile, .025, na.rm = TRUE)
-haq.u <- apply(haq.dy, 2, quantile, .975, na.rm = TRUE)
-haq.tab <- format_table(haq.mean, haq.l, haq.u, digits = 3)
-haq.tab <- haq.tab[tx.inds]
-
-# NICE vs IVI NMA
-nice.po <- iviRA::nma.acr.naive.nice$p.overlap
-pos <- which(rownames(nice.po) %in% tx.snames)
-nice.po <- formatC(nice.po[pos, -1], format = "f", digits = 3)
-nice.po <- trimws(nice.po)
-nice.po[nice.po == "NA"] <- "-"
-tab.acr.comp <- cbind(acr.tab[, 2:4], nice.po)
-
-# TEX table NMA results
-tab <- cbind(acr.tab[, -1], das28.tab, haq.tab)
-tex <- print(xtable(tab),
-       include.rownames = TRUE, include.colnames = FALSE,
-       only.contents = TRUE, sanitize.text.function = identity,
-       file = "tables/nma-acr-das28-haq.txt")
-
-# TEX table IVI vs NICE
-tex <- print(xtable(tab.acr.comp),
-       include.rownames = TRUE, include.colnames = FALSE,
-       only.contents = TRUE, sanitize.text.function = identity,
-       file = "tables/nma-acr-nice-vs-ivi.txt")
-@
 
 \begin{sidewaystable}
 \begin{center}
@@ -789,16 +635,6 @@ The data required to determine treatment switching at 6 months depends on the se
 \subsubsection{ACR response and change in disease activity}
 There are currently no established mappings between mutually exclusive ACR response categories and DAS28, SDAI, or CDAI \citep{madan2015consensus}. However, \citet{aletaha2005simplified} provides evidence on the relationship between overlapping ACR response categories (ACR 20/50/70) and mean changes in each of the three disease activity measures. Results are reported for three cohorts---the Leflunomide datasets, the inception cohort, and the routine cohort---with 1,839, 91, and 279 patients, respectively. We transformed mean changes by overlapping ACR response categories to mean changes by mutually exclusive ACR response categories by using the number of patients in each mutually exclusive ACR response category as described in \autoref{app-acr-da}. \citet{smolen2003simplified} provided the number of patients in each ACR response category in the Leflunomide dataset and \citet{aletaha2005acute} provided the number of patients in the inception cohort. Mean changes in disease activity in each mutually exclusive ACR response category are shown in \autoref{tbl:acr2da}. However, note that the referenced publications did not report mean outcomes, so we were unable to generate standard errors for the estimates. We consequently assume allow the estimates to vary by 20\% in either direction.  
 
-<<acr2da, echo = FALSE, include = FALSE>>=
-tab <- cbind(iviRA::acr2sdai$leflunomide$mean, iviRA::acr2sdai$inception$mean,
-             iviRA::acr2cdai$inception$mean, iviRA::acr2das28$inception$mean)
-tab <- formatC(tab, format = "f", digits = 3)
-rownames(tab) <- c("<20", "20 to <50", "50 to <70", "$\\geq$70")
-tex <- print(xtable(tab), 
-      include.rownames = TRUE, include.colnames = FALSE,
-      only.contents = TRUE, sanitize.text.function = identity,
-      file = "tables/acr2da.txt")
-@
 
 \begin{table}[!ht]
 \begin{center}
@@ -826,15 +662,6 @@ We did not include estimates from the routine cohort for two reasons. First, we 
 \subsubsection{ACR response and change in EULAR response}
 ACR responses were translated into EULAR response probabilities based on evidence of their relationship reported in \citet{stevenson2016adalimumab} and obtained from the US Veterans Affairs Rheumatoid Arthritis (VARA) registry (\autoref{tbl:acr2eular}).
 
-<<acr2eular, echo = FALSE, include = FALSE>>=
-tab <- iviRA::acr2eular
-tab <- formatC(tab, format = "d", big.mark = ",")
-rownames(tab) <- c("<20", "20 to <50", "50 to <70", "$\\geq$70")
-tex <- print(xtable(tab), 
-      include.rownames = TRUE, include.colnames = FALSE,
-      only.contents = TRUE, sanitize.text.function = identity,
-      file = "tables/acr2eular.txt")
-@
 
 
 \begin{table}[!ht]
@@ -859,14 +686,6 @@ Notes: Obtained from the US Veterans Affairs Rheumatoid Arthritis (VARA) registr
 \subsection{Change in HAQ at 6 months}
 In model structures including \textbf{H1}, the impact of treatment on changes in HAQ at 6 months is modeled by first estimating the effect of treatment on ACR response and then mapping ACR response to a change in HAQ. As in \citet{icer2017tim}, ACR responses from the NMA were translated into HAQ scores based on evidence from the adalimumab monotherapy for treatment of rheumatoid arthritis (ADACTA) trial reported in \citet{carlson2015economic} (\autoref{tbl:acr2haq}).
 
-<<acr2haq, echo = FALSE, include = FALSE>>=
-tab <- formatC(as.matrix(iviRA::acr2haq[, .(mean, se)]))
-rownames(tab) <- c("<20", "20 to <50", "50 to <70", "$\\geq$70")
-tex <- print(xtable(tab), 
-      include.rownames = TRUE, include.colnames = FALSE,
-      only.contents = TRUE, sanitize.text.function = identity,
-      file = "tables/acr2haq.txt")
-@
 
 \begin{table}[!ht]
 \begin{center}
@@ -887,16 +706,8 @@ Source: \citet{carlson2015economic}
 \end{center}
 \end{table}
 
-<<eular2haq, echo = FALSE, include = FALSE>>=
-eular2haq.f <- formatC(as.matrix(iviRA::eular2haq[, .(mean, se)]), format = "f", digits = 3)
-rownames(eular2haq.f) <- c("None", "Moderate", "Good")
-tex <- print(xtable(eular2haq.f), 
-      include.rownames = TRUE, include.colnames = FALSE,
-      only.contents = TRUE, sanitize.text.function = identity,
-      file = "tables/eular2haq.txt")
-@
 
-The relationship between EULAR response and HAQ is based on analyses conducted by \citet{stevenson2016adalimumab} using the BSRBR database. Their analysis is based on predictions from a mixture model with covariates set to sample means. Moderate and good EULAR responses are associated with \Sexpr{eular2haq.f[2, "mean"]} (SE = \Sexpr{eular2haq.f[2, "se"]}) and \Sexpr{eular2haq.f[3, "mean"]} (SE = \Sexpr{eular2haq.f[3, "se"]}) changes in HAQ scores respectively (\autoref{tbl:eular2haq}). 
+The relationship between EULAR response and HAQ is based on analyses conducted by \citet{stevenson2016adalimumab} using the BSRBR database. Their analysis is based on predictions from a mixture model with covariates set to sample means. Moderate and good EULAR responses are associated with -0.317 (SE = 0.048) and -0.672 (SE = 0.112) changes in HAQ scores respectively (\autoref{tbl:eular2haq}). 
 
 \begin{table}[!ht]
 \begin{center}
@@ -917,45 +728,7 @@ Notes: Based on an analysis of the BSRBR database by \citet{stevenson2016adalimu
 
 \autoref{tbl:sim-haq-change} compares the impact of treatment on HAQ when using \textbf{H1-H3}. Results were estimated by simulating $1,000$ patients for 6 months and randomly sampling $1,000$ parameter sets. For each randomly sampled parameter set, we calculated the average decrease in HAQ at 6 months across the $1,000$ patients. Estimates reported in the table are the mean and 95\% credible interval of the mean decrease in HAQ at 6 months. To maintain consistency across \textbf{H1-H3}, we did not allow HAQ scores for patients who might have otherwise switched treatments accoring to \textbf{S1-S6} to rebound back to their baseline levels (i.e., levels at the start of the simulation) at the end of the 6 month period.   
 
-<<sim6-haq, echo=FALSE, results=hide>>=
-treatments <- iviRA::treatments[!sname %in% c("nbt", "gol"), sname]
-pop <- sample_pop(n = 1000)
-input.dat <- get_input_data(pop = pop)
-parsamp <- sample_pars(n = 1000, input_data = input.dat)
-dhaq6.sim <- sim_dhaq6(treatments = treatments, input_data = input.dat,
-                       pars = parsamp, hist = "naive")
-dhaq6.means <- dhaq6.sim[, .(dhaq = mean(dhaq, na.rm = TRUE)),
-                           by = c("tx", "model", "sim")]
-dhaq6.means.summary <- dhaq6.means[, .(mean = mean(dhaq),
-                                       lower = quantile(dhaq, .025, na.rm = TRUE),
-                                        upper = quantile(dhaq, .975, na.rm = TRUE)),
-                                   by = c("tx", "model")]
-@
 
-<<sim6-haq-tables, echo=FALSE, results=hide>>=
-# Format results
-dhaq6.means.summary[, tx_sname := iviRA::treatments[tx, sname]]
-dhaq.mat <- as.matrix(dhaq6.means.summary[, .(lower, mean, upper)])
-dhaq.fmat <- trimws(formatC(dhaq.mat, format = "f", digits = 2))
-dhaq.fmat[dhaq.fmat == "NA" | dhaq.fmat == "NaN"] <- ""
-dhaq.fest <- trimws(paste0(dhaq.fmat[, "mean"], " (", dhaq.fmat[, "lower"], ", ", 
-                    dhaq.fmat[, "upper"], ")"))
-dhaq.fest[dhaq.fest == "(, )"] <- "-"
-dhaq6.dt <- data.table(tx_name = dhaq6.means.summary$tx_sname,
-                     model = as.character(dhaq6.means.summary$model),
-                     est = dhaq.fest)
-dhaq6.dt[, model := factor(model, levels = c("acr-haq", "acr-eular-haq", "haq"))]
-dhaq6.table <- dcast(dhaq6.dt, tx_name ~ model, value.var = "est")
-dhaq6.table <- dhaq6.table[match(treatments, tx_name)]
-mname <- iviRA::treatments[match(dhaq6.table$tx_name, iviRA::treatments$sname), mname]
-dhaq6.table[, tx_name := mname]
-
-# TEX table
-tex <- print(xtable(dhaq6.table),
-      include.rownames = FALSE, include.colnames = FALSE,
-      only.contents = TRUE, sanitize.text.function = identity,
-      file = "tables/sim-dhaq-6months.txt")
-@
 
 \begin{table}[!ht]
 \begin{center}
@@ -985,26 +758,6 @@ The rate of progression in the linear case is based on the observational study b
 
 Based on the same data, \citet{michaud2011treatment} reported overall and age-specific specific HAQ progression rates. The differences between the overall and age specific rates are as follows: \textless{}40: -0.020 (95\%CI: -0.0223 to -0.0177); 40-64: -0.008 (95\%CI: -0.0101 to -0.0059); \(\geq\) 65 0.017 (95\%CI: 0.0136 to 0.0204). These estimates are applied to the overall progression rate of 0.031 to obtain age specific HAQ progression rates (see \autoref{app:age-linear-haq}).
 
-<<haq_lp, echo = FALSE, include = FALSE>>=
-tab1 <- iviRA::haq.lprog$tx[sname == "cdmards", .(est, lower, upper)]
-tab1 <- formatC(as.matrix(tab1), format = "f", digits = 3)
-tab1 <- cbind(tab1, "\\citet{wolfe2010loss}")
-tab1 <- cbind("\\hspace{3mm}MTX or non-biologic treatment", tab1)
-tex1 <- print(xtable(tab1), 
-      include.rownames = FALSE, include.colnames = FALSE,
-      only.contents = TRUE, sanitize.text.function = identity, hline.after = NULL,
-      file = "tables/haq-lprog-cdmards.txt")
-
-tab2 <- iviRA::haq.lprog$diff.age[, .(est, lower, upper)] 
-tab2 <- formatC(as.matrix(tab2), format = "f", digits = 3)
-tab2 <- cbind(paste0("\\hspace{3mm}", c("<40", "40-64", "65+")), 
-                   tab2)
-tab2 <- cbind(tab2, "\\citet{michaud2011treatment}")
-tex2 <- print(xtable(tab2), 
-      include.rownames = FALSE, include.colnames = FALSE,
-      only.contents = TRUE, sanitize.text.function = identity, hline.after = NULL,
-      file = "tables/haq-lprog-diff-byage.txt")
-@
 
 \begin{table}[!ht]
 \begin{center}
@@ -1032,17 +785,6 @@ Notes: 95\% confidence intervals are calculated using a normal distribution. Con
 \subsubsection{Latent class growth model} \label{sec:haq-lcgm}
 We also model the rate of HAQ progression in the absence of tDMARDs using a mixture model approach that has increasingly been used to model HAQ progression over time \citep{stevenson2016adalimumab, norton2013trajectories, norton2014health}. These models suggest that different subgroups have distinct HAQ trajectories and that the rate of worsening of HAQ progression decreases over time. We use the LCGM estimated by \citet{norton2014health} and since we aim to model trajectories for cDMARDs and NBTs we chose the specification based on data from the Early Rheumatoid Arthritis Cohort Study (ERAS) cohort, which has a high percentage of patients receiving methotrexate and a very small percentage receiving biologics. Complete details of the LCGM are provided in \autoref{app:lcgm-haq}. 
 
-<<haq_lcgm_probs, echo = FALSE, include = FALSE>>=
-# latent class probabilities 
-args <- formals(sample_pop)
-rf <- .73
-acr.criteria <- 1 
-imdq <- 0.49
-x <- c(1, args$age_mean, 0, args$das28_mean, 8.2, rf, acr.criteria, imdq)
-delta <- matrix(iviRA::haq.lcgm$coef[parameter %in% c("delta2", "delta3", "delta4"), est],
-                nrow = 3, byrow = TRUE)
-probs <- iviRA:::mlogit_probC(x, delta)
-@
 
 The \citet{norton2014health} LCGM determined that there are four classes of patients and thus four distinct HAQ trajectories. The probability of class membership depends on 7 variables: age, gender, DAS28, disease duration, rheumatoid factor, the ACR 1987 criteria for RA, and a measure of socioeconomic status. Age, gender, and the DAS28 are relevant to the way the population is defined within our model (see \autoref{sec:populations}) and are therefore important determinants of the HAQ trajectory. Other variables (disease duration, rheumatoid factor, ACR criteria, and socioeconomic status) are not defined within our population. We consequently set disease duration (8.2 months), rheumatoid factor (0.73), and the socioeconomic status variable (0.49) equal to their mean values with the ERAS cohort. The ACR criteria was set to 1. 
 
@@ -1057,44 +799,10 @@ Notes: The first three data points corresponds to years 0, 0.5, and 1, respectiv
 \end{minipage}
 \end{figure}
 
-<<haq_lcgm, echo = FALSE, results=hide>>=
-# haq trajectories
-t <- seq(2, 30)
-xt <- 1 - (1/(1 + t))
-haq_lcgm <- function(beta){
-  return(beta[1] + beta[2] * xt + beta[3] * xt^2 + beta[4] * xt^3)
-}
-beta1 <- iviRA::haq.lcgm$coef[parameter == "beta1", est]
-beta2 <- iviRA::haq.lcgm$coef[parameter == "beta2", est]
-beta3 <- iviRA::haq.lcgm$coef[parameter == "beta3", est]
-beta4 <- iviRA::haq.lcgm$coef[parameter == "beta4", est]
-haq.lcgm1 <- haq_lcgm(beta1)
-haq.lcgm2 <- haq_lcgm(beta2)
-haq.lcgm3 <- haq_lcgm(beta3)
-haq.lcgm4 <- haq_lcgm(beta4)
-haq.lprog <- iviRA::haq.lprog$tx[sname == "cdmards", est] 
-haq.dt <- data.table(t = t[-1], dhaq_lcgm1 = diff(haq.lcgm1), dhaq_lcgm2 = diff(haq.lcgm2),
-                     dhaq_lcgm3 = diff(haq.lcgm3), dhaq_lcgm4 = diff(haq.lcgm4),
-                     dhaq_lp1 = haq.lprog, dhaq_lp2 = haq.lprog,
-                     dhaq_lp3 = haq.lprog, dhaq_lp4 = haq.lprog)
 
-# plot
-p.dat <- melt(haq.dt, id.vars = "t")
-p.dat[, type := ifelse(grepl("dhaq_lp", variable) == TRUE, "Constant linear progression", "LCGM")]
-p.dat[, class := ifelse(variable %in% c("dhaq_lcgm1", "dhaq_lp1"), "Class 1", NA)]
-p.dat[, class := ifelse(variable %in% c("dhaq_lcgm2", "dhaq_lp2"), "Class 2", class)]
-p.dat[, class := ifelse(variable %in% c("dhaq_lcgm3", "dhaq_lp3"), "Class 3", class)]
-p.dat[, class := ifelse(variable %in% c("dhaq_lcgm4", "dhaq_lp4"), "Class 4", class)]
-p <- ggplot(p.dat, aes(x = t, y = value, col = factor(type))) + geom_line() + 
-  geom_point(size = .75) +
-  facet_wrap(~class) +  xlab("Follow-up in years") + ylab("Yearly change in HAQ") +  
-  scale_color_discrete("") + theme(legend.position = "bottom")
-ggsave("figs/haq-lcgm-vs-linear.png", p, height = 5, width = 7)
-@
+An important question for modeling disease progression in RA is how the rate of progression within each class in the LCGM compares to a constant linear trajectory. We examine this question in \autoref{fig:lcgm-vs-linear}, which compares yearly rates of changes in HAQ using the LCGM and with constant annual rates of change (0.031 per year) based on the \citet{wolfe2010loss} analysis. The LCGM was simulated over 30 years and differences between year $t$ and year $t-1$ were used to assess changes in HAQ score from one year to the next.  
 
-An important question for modeling disease progression in RA is how the rate of progression within each class in the LCGM compares to a constant linear trajectory. We examine this question in \autoref{fig:lcgm-vs-linear}, which compares yearly rates of changes in HAQ using the LCGM and with constant annual rates of change (\Sexpr{haq.lprog} per year) based on the \citet{wolfe2010loss} analysis. The LCGM was simulated over 30 years and differences between year $t$ and year $t-1$ were used to assess changes in HAQ score from one year to the next.  
-
-In the moderate, high, and severe groups the rate of HAQ progression is higher initially in the LCGM than in the \citet{wolfe2010loss} analysis; however, the LCGM modeled rate of HAQ progression declines over time and eventually begins to approach zero. In the low group, HAQ increases at a rate less than \Sexpr{haq.lprog} per year and the rate of increase declines over time. 
+In the moderate, high, and severe groups the rate of HAQ progression is higher initially in the LCGM than in the \citet{wolfe2010loss} analysis; however, the LCGM modeled rate of HAQ progression declines over time and eventually begins to approach zero. In the low group, HAQ increases at a rate less than 0.031 per year and the rate of increase declines over time. 
 
 \begin{figure}[H]
 \centering
@@ -1113,14 +821,6 @@ We based our estimates of treatment duration during the maintenance phase for pa
 
 7 parametric survival models (exponential, Weibull, Gompertz, gamma, log-logistic, lognormal, and generalized gamma) were estimated on individual patient data reconstructed from a Kaplan-Meier curve from the CORRONA analysis using the algorithm developed in \citet{guyot2012enhanced}. We compared fit using the Akaike Information Criteria (AIC) and Bayesian Information Criteria (BIC). The generalized gamma had the lowest AIC and BIC, so we consider it to be the preferred model. A plot of of the generalized gamma distribution against the Kaplan-Meier curve is shown in \autoref{fig:corrona-gg}. As can be seen in the plot, the shape of the survival curve estimated using a generalized gamma distribution tracks the Kaplan-Meier curve closely.  
 
-<<ipdsurv-corrona, echo = FALSE, resutls = 'tex'>>=
-tab <- read.csv("../../data-raw/tables/ttd-corrona-ipdsurv-ic.csv")
-tab <- cbind(as.matrix(tab[, 1]), formatC(as.matrix(tab[, -1]), format = "d", big.mark = ","))
-tex <- print(xtable(tab), 
-      include.rownames = FALSE, include.colnames = FALSE,
-      only.contents = TRUE, sanitize.text.function = identity,
-      file = "tables/ttd-corrona-ipdsurv-ic.txt")
-@
 
 \begin{table}[!ht]
 \begin{center}
@@ -1163,16 +863,6 @@ Notes: The shaded region denotes the simulation based 95\% confidence interval \
 \subsubsection{Treatment duration by EULAR response} \label{ttd-eular}
 In \textbf{S6}, we stratify time to treatment discontinuation by EULAR response based on analyses of the British Society for Rheumatology Biologics Registers (BSRBR) database \citep{stevenson2016adalimumab}. We again fit 7 parametric survival models using reconstructed individual patient data. The survival curves reported in \citet{stevenson2016adalimumab} were used to create the patient data. The AIC and BIC of each model by EULAR response category are shown in \autoref{tbl:ic-dur-eular}.
 
-<<ipdsurv, echo = FALSE, resutls = 'tex'>>=
-tab <- read.csv("../../data-raw/tables/ttd-bsrbr-ipdsurv-eular-ic.csv")
-tab <- cbind(as.matrix(tab[, 1]), formatC(as.matrix(tab[, -1]), format = "d", big.mark = ","))
-# colnames(tab) <- c("Distribution", "AIC (moderate)", "BIC (moderate)", "AIC (good)", "BIC (good)")
-# ptab <- pandoc.table(tab)
-tex <- print(xtable(tab), 
-      include.rownames = FALSE, include.colnames = FALSE,
-      only.contents = TRUE, sanitize.text.function = identity,
-      file = "tables/ttd-bsrbr-ipdsurv-eular-ic.txt")
-@
 
 \begin{table}[!ht]
 \begin{center}
@@ -1233,16 +923,6 @@ Notes: The shaded region denotes the simulation based 95\% confidence interval \
 \end{figure}
 
 
-<<bsrbr-eular-surv, echo = FALSE>>=
-tab <- read.csv("../../data-raw/tables/ttd-bsrbr-ipdsurv-eular-adjusted-ic.csv")
-tab <- cbind(as.matrix(tab[, 1]), formatC(as.matrix(tab[, -1]), format = "d", big.mark = ","))
-# colnames(tab) <- c("Distribution", "AIC (moderate)", "BIC (moderate)", "AIC (good)", "BIC (good)")
-# ptab <- pandoc.table(tab)
-tex <- print(xtable(tab), 
-      include.rownames = FALSE, include.colnames = FALSE,
-      only.contents = TRUE, sanitize.text.function = identity,
-      file = "tables/ttd-bsrbr-ipdsurv-eular-adjusted-ic.txt")
-@
 
 \begin{table}[!ht]
 \begin{center}
@@ -1270,66 +950,8 @@ Since no data exists on the size of the HAQ rebound post treatment, we vary its 
 \subsection{Serious infections}
 Based on the NMA by \citet{singh2011adverse} and in accordance with \citet{stevenson2016adalimumab}, we assume a rate of 0.035 (95\% CI: 0.027 to 0.046) infections per person-year with all tDMARDs and a rate of 0.026 (no CI reported) infections per person-year with cDMARDs. The rate of infection is assumed to be equal across tDMARDs because the published results for specific tDMARDs are estimated with very little precision. The standard error on the infection rate for tDMARDs is assumed to be the same as the standard error for cDMARDs since no standard error was reported for tDMARDs in \citet{singh2011adverse}.
 
-<<si, echo=FALSE, results=hide>>=
-set.seed(100)
-pop <- sample_pop(n = 1000)
-input.dat <- get_input_data(pop = pop)
-parsamp <- sample_pars(n = 100, input_data = input.dat)
-tx.snames <- c("cdmards", "adamtx")
-tx.names <- c("cDMARDs or NBT", "tDMARDs")
-dur.dist <- c("exponential", "weibull", "gompertz", "gamma", "llogis", "lnorm", "gengamma")
-dur.dist.l <- c("Exponential", "Weibull", "Gompertz", "Gamma", "Log-logistic", "Lognormal",
-                   "Generalized gamma")
-sim6 <- vector(length(dur.dist) * length(tx.snames), mode = "list")
-counter <- 1
-for (i in 1:length(tx.snames)){
-  for(j in 1:length(dur.dist)){
-    mod.struct <- select_model_structures(tx_ihaq = "acr-haq",
-                                     tx_iswitch = "acr-switch",
-                                     cdmards_haq_model = "lcgm",
-                                     ttd_dist = dur.dist[i],
-                                     utility_model = "wailoo")
-    sim6[[counter]] <- sim_iviRA(tx_seqs = tx.snames[i], input_data = input.dat, pars = parsamp,
-                     model_structures = mod.struct, max_months = 6)
-    sim6[[counter]][, dur_dist := dur.dist.l[j]]
-    sim6[[counter]][, txseq := tx.names[i]]
-    counter <- counter + 1
-    print(paste0("txseq ", i, ", distribution ", j))
-  }
-}
-sim6 <- rbindlist(sim6)
-sim6[, si_ever := ifelse(ttsi <= ttd, 1, 0)]
-si.prop <- sim6[, .(si = mean(si_ever)), by = c("dur_dist", "txseq", "sim")]
-si.prop <- si.prop[, .(si_mean = mean(si), si_lower = quantile(si, .025),
-                       si_upper = quantile(si, .974)), by = c("dur_dist", "txseq")]
 
-# tables comparing serious infection rates by drugs
-si1.mtx <- si.prop[dur_dist == "Generalized gamma" & txseq == "cDMARDs or NBT",
-                   si_mean]
-si1.bio <- si.prop[dur_dist == "Generalized gamma" & txseq == "tDMARDs",
-                   si_mean]
-tab1 <- si.prop[dur_dist == "Generalized gamma", .(txseq, si_mean, si_lower, si_upper)]
-tab1[, si_mean := formatC(si_mean, format = "f", digits = 4)]
-tab1[, si_lower := formatC(si_lower, format = "f", digits = 4)]
-tab1[, si_upper := formatC(si_upper, format = "f", digits = 4)]
-tex <- print(xtable(tab1),
-      include.rownames = FALSE, include.colnames = FALSE,
-      only.contents = TRUE, sanitize.text.function = identity,
-      file = "tables/si-prop-gengamma.txt")
-
-# tables comparing serious infection by distribution
-tab2 <- si.prop[txseq == tx.names[1], .(dur_dist, si_mean)]
-tab2[, si_mean := formatC(si_mean, format = "f", digits = 4)]
-tex <- print(xtable(tab2),
-      include.rownames = FALSE, include.colnames = FALSE,
-      only.contents = TRUE, sanitize.text.function = identity,
-      file = "tables/si-prop-mtx-bydist.txt")
-
-# clean up
-rm(sim6)
-@
-
-A patient in the IPS has a serious infection if the simulated time to serious infection occurs before the simulated time of treatment discontinuation. \autoref{tbl:si-prob} shows the probability of this occurring when treatment duration is modeled using a generalized gamma distribution. The probability of a serious infection is relatively rare as only \Sexpr{formatC(100 * si1.mtx, format = "f", digits = 2)}\% of patients using cDMARDs and \Sexpr{formatC(100 * si1.bio, format = "f", digits = 2)}\% of patients using tDMARDs have serious infections. However, differences between cDMARDs and tDMARDs are not insignificant as the probability of a serious infection is almost \Sexpr{formatC(100*(si1.bio - si1.mtx), format = "f", digits = 0)} percentage points higher with tDMARDs than with cDMARDs.
+A patient in the IPS has a serious infection if the simulated time to serious infection occurs before the simulated time of treatment discontinuation. \autoref{tbl:si-prob} shows the probability of this occurring when treatment duration is modeled using a generalized gamma distribution. The probability of a serious infection is relatively rare as only 3.82\% of patients using cDMARDs and 8.55\% of patients using tDMARDs have serious infections. However, differences between cDMARDs and tDMARDs are not insignificant as the probability of a serious infection is almost 5 percentage points higher with tDMARDs than with cDMARDs.
 
 \begin{table}[!ht]
 \begin{center}
@@ -1378,25 +1000,6 @@ Two algorithms can be used to map HAQ to an EQ-5D utility score. Each is used to
 
 \autoref{fig:util-comparison} compares results from the two algorithms. Mean utility scores from the \citet{alava2013relationship} mixture model lie above those from the \citet{wailoo2006modeling} equation for all values of HAQ. Moreover, the slope of utility curve produced from the mixture model is steeper (although less so for the commonly observed HAQ scores between 1 and 1.5), implying that changes in HAQ from the mixture model predict larger changes in utility. Given that the mixture models have been shown to predict utility more accurately \citep{alava2012tails, alava2013relationship, hernandez2014comparison}, this suggests that standard models underestimate the quality-adjusted life-year benefits, and hence, the cost-effectiveness of treatments. 
 
-<<utility, echo=FALSE, include=FALSE, cache=CACHE>>=
-n <- 1000
-pat <- sample_pop(n = n)
-haq = seq(0, 3, .1)
-simhaq <- data.table(id = 1, sim = rep(seq(1, n), each = length(haq)), haq = rep(haq, n), age = 55)
-input.dat <- get_input_data(pat)
-parsamp <- sample_pars(n = n, input_data = input.dat)
-util.mix <- sim_utility_mixture(simhaq, male = pat[, "male"], pars = parsamp$utility.mixture)
-util.wailoo <- sim_utility_wailoo(simhaq, haq0 = pat[, "haq0"], male = pat[, "male"],
-                                  prev_dmards = pat[, "prev_dmards"], 
-                                  coefs = parsamp$utility.wailoo)
-util.dt <- data.table(util = c(util.mix, util.wailoo), haq = rep(simhaq$haq, 2),
-                      lab = c(rep("Alava (2013) mixture model", nrow(simhaq)),
-                              rep("Wailoo (2006)", nrow(simhaq))))
-util.dt <- util.dt[, .(mean_util = mean(util)), by = c("haq", "lab")]
-p <- ggplot(util.dt, aes(x = haq, y = mean_util, col = lab)) + geom_line() + xlab("HAQ") + ylab("Mean utility") +
-  scale_colour_discrete("") + theme(legend.position = "bottom")
-ggsave("figs/util-byhaq-comparison.png", p, height = 5, width = 7)
-@
 
 \begin{figure}
 \centering
@@ -1412,27 +1015,6 @@ Finally, in the \R{} package, we also allow users to incorporate treatment attri
 \subsection{Mortality}
 The probability of death is simulated as a function of age/sex specific mortality from U.S. lifetables \citep{arias2015united}, baseline HAQ, and changes in HAQ from baseline. \citet{wolfe2003predicting} estimate an odds ratio for the effect of HAQ on mortality of 2.22, which is applied to the absolute mortality rates of the general population (HAQ score of 0). To capture the effect of treatment on mortality, we assume that, for every 0.25-unit increase in HAQ score, subsequent 6-month mortality increases according to the hazard ratios reported in \citet{michaud2012mortality}. Parameter estimates are shown in \autoref{tbl:mortpars}.
 
-<<mortpars, echo = FALSE, results = hide>>=
-# odds ratio baseline haq
-tab1 <- iviRA::mort.or[, .(logor, logor_lower, logor_upper)]
-tab1 <- formatC(as.matrix(tab1), format = "f", digits = 3)
-tab1 <- cbind("\\hspace{3mm}Log odds of mortality", tab1, "\\citet{wolfe2003predicting}")
-tex1 <- print(xtable(tab1), 
-      include.rownames = FALSE, include.colnames = FALSE,
-      only.contents = TRUE, sanitize.text.function = identity, hline.after = NULL,
-      file = "tables/mort-or.txt")
-
-# hazard ratio change in haqq
-tab2 <- iviRA::mort.hr.haqdif[, .(loghr, loghr_lower, loghr_upper)]
-tab2 <- formatC(as.matrix(tab2), format = "f", digits = 3)
-tab2.names <- paste0("\\hspace{3mm}Log hazard ratio ", c("0-6 months", ">6-12 months", ">12-24 months",
-                                           ">24-36 months", ">36 months"))
-tab2 <- cbind(tab2.names, tab2, "\\citet{michaud2012mortality}")
-tex2 <- print(xtable(tab2), 
-      include.rownames = FALSE, include.colnames = FALSE,
-      only.contents = TRUE, sanitize.text.function = identity, hline.after = NULL,
-      file = "tables/mort-hr-haqdif.txt")
-@
 
 \begin{table}[!ht]
 \begin{center}
@@ -1458,40 +1040,10 @@ and log hazard ratio scales.
 \end{center}
 \end{table}
 
-<<survplot, echo=FALSE, results=hide>>=
-set.seed(100)
-theme_set(theme_bw())
-n <- 1000; age <- 55; haq0 <- 1; cycle.len <- 6; max.age <- 100
-t <- seq(0, 12/cycle.len * (max.age - age) - 1)
-haq.ts0 <- rep(0, length(t))
-haq.ts1 <- pmin(haq0 + 0 * t, 3)
-haq.ts2 <- pmin(haq0 + .03 * t, 3)
-surv <- c(sim_survtime(n = n, haq = haq.ts0, male = 0),
-          sim_survtime(n = n, haq = haq.ts0, male = 1),
-          sim_survtime(n = n, haq = haq.ts1, male = 0),
-          sim_survtime(n = n, haq = haq.ts1, male = 1),
-          sim_survtime(n = n, haq = haq.ts2, male = 0),
-          sim_survtime(n = n, haq = haq.ts2, male = 1))
-lab <- c(rep("No RA", 2 * n),
-         rep("Constant HAQ", 2 * n),
-         rep("HAQ increase of 0.03 per year", 2 * n))
-gender <- rep(rep(c("Female", "Male"), each = n), 3)
-surv <- data.table(surv = surv, lab = lab, gender = gender)
-surv[, ecdf := ecdf(surv)(surv), by = c("lab", "gender")]
-surv.mean.nora <- mean(surv[gender == "Female" & lab == "No RA", surv])
-surv.mean.chaq <- mean(surv[gender == "Female" & lab == "Constant HAQ", surv])
-surv.mean.lhaq <- mean(surv[gender == "Female" & lab == "HAQ increase of 0.03 per year", surv])
-surv.mean.nora.m <- mean(surv[gender == "Male" & lab == "No RA", surv])
-surv.mean.chaq.m <- mean(surv[gender == "Male" & lab == "Constant HAQ", surv])
-surv.mean.lhaq.m <- mean(surv[gender == "Male" & lab == "HAQ increase of 0.03 per year", surv])
-p <- ggplot(surv, aes(x = surv, y = 1 - ecdf, col = lab)) + geom_line() + xlab("Age") + ylab("Proportion surviving") + facet_wrap(~gender) +
-  scale_colour_discrete("") + theme(legend.position = "bottom")
-ggsave("figs/surv.png", p, width = 7, height = 5)
-@
 
 \autoref{fig:surv} plots survival curves by gender for $1,000$ patients with a baseline age of 55. Survival was simulated by setting the log odds ratios and log hazard ratios from \autoref{tbl:mortpars} equal to their point estimates. Three scenarios are considerd. In scenario one, patients do not have RA (i.e., HAQ score of 0). In the second scenario, patients have baseline HAQ score of 1 but it does not increase over time. In the third scenario, patients still have a baseline HAQ score of 1, but it increases by 0.03 per year. The third scenario, therefore, utilizes the relationship between changes and HAQ and mortality from \citet{michaud2012mortality} while the second scenario does not. 
 
-Mean survival for females without RA was \Sexpr{formatC(surv.mean.nora, format = "f", digits = 1)} years and declined to \Sexpr{formatC(surv.mean.chaq, format = "f", digits = 1)} for females with a constant baseline HAQ of 1 and to \Sexpr{formatC(surv.mean.lhaq, format = "f", digits = 1)} when HAQ increased by 0.03 per year. Mean survival for males in the first, second, and third scenario were \Sexpr{formatC(surv.mean.nora.m, format = "f", digits = 1)}, \Sexpr{formatC(surv.mean.chaq.m, format = "f", digits = 1)}, and \Sexpr{formatC(surv.mean.lhaq.m, format = "f", digits = 1)} years respectively. Overall, the figure suggests that RA increases mortality and that larger increases in HAQ over time increase mortality by even more.
+Mean survival for females without RA was 82.5 years and declined to 77.0 for females with a constant baseline HAQ of 1 and to 72.4 when HAQ increased by 0.03 per year. Mean survival for males in the first, second, and third scenario were 79.4, 73.2, and 70.1 years respectively. Overall, the figure suggests that RA increases mortality and that larger increases in HAQ over time increase mortality by even more.
 
 \begin{figure}[H]
 \centering
@@ -1506,46 +1058,8 @@ Notes: Baseline HAQ is 1 for the ``Constant HAQ'' and ``HAQ increase of 0.03 per
 \FloatBarrier
 
 \subsection{Costs}\label{cost}
-<<treat_cost, echo = FALSE, results=hide>>=
-# cost for non-weight based dosing
-tab = copy(iviRA::tx.cost$cost)
-tab[, init_cost := init_dose_val/strength_val * init_num_doses * price_per_unit + init_num_doses * infusion_cost]
-tab[, ann_cost := ann_dose_val/strength_val * ann_num_doses * price_per_unit + ann_num_doses * infusion_cost]
 
-# cost for weight based dosing
-wt <- sample_pop(1000)[, "weight"]
-male.prop <- formals(sample_pop)$male_prop * 100
-wtmale <- formals(sample_pop)$wtmale
-wtfemale <- formals(sample_pop)$wtfemale
-ifx <- tab[sname == "ifx"]
-init.cost.ifx <- mean(ceiling(wt * ifx$init_dose_val / ifx$strength_val) * ifx$init_num_doses * ifx$price_per_unit + ifx$init_num_doses * ifx$infusion_cost)
-ann.cost.ifx <- mean(ceiling(wt * ifx$ann_dose_val / ifx$strength_val) * ifx$ann_num_doses * ifx$price_per_unit + ifx$ann_num_doses * ifx$infusion_cost) 
-tab[sname == "ifx", init_cost := init.cost.ifx]
-tab[sname == "ifx", ann_cost := ann.cost.ifx]
-
-# formatting
-tab1 <- tab[, .(name, dosage, strength_dosage_form)]
-tab2 <- tab[, .(init_num_doses, ann_num_doses, price_per_unit, infusion_cost, 
-                              init_cost, ann_cost)]
-tab2[, ann_num_doses := round(ann_num_doses, 2)]
-tab2f <- matrix(NA, nrow = nrow(tab2), ncol = ncol(tab2))
-for (i in 1:ncol(tab2)){
-  if (names(tab2)[i] %in% c("ann_num_doses", "price_per_unit")){
-      tab2f[, i] <- formatC(tab2[[i]], format = "f", digits = 2, big.mark = ",")
-  } else{
-      tab2f[, i] <- formatC(tab2[[i]], format = "d", big.mark = ",") 
-  }
-}
-tab2f[, 2] <- sub(".00", "", tab2f[, 2])
-tab <- cbind(tab1, tab2f)
-tab[, name := first_upper(name)]
-tex <- print(xtable(tab), 
-      include.rownames = FALSE, include.colnames = FALSE,
-      only.contents = TRUE, sanitize.text.function = identity, hline.after = NULL,
-      file = "tables/treat-cost.txt")
-@
-
-An overview of drug acquisition and administration costs is presented in \autoref{tbl:treat-cost}. Costs are a function of dose and frequency of administration, strength and dosage form, price, and infusion costs. Since infliximab dosing depend on patient weight, the costs for infliximab reported in the table average over a patient population that is \Sexpr{male.prop}\% male. The prices in the table are based on the wholesale acquisition cost (WAC) and do not include discounts or rebates so they may be higher than actual drug costs. In the simulation, a unique discount can be used for each drug; currently the discount is assumed to range from 20\% to 30\%. The methodology used to calculate drug acquisition and administration costs is described in more detail in \autoref{app:treat-cost}. 
+An overview of drug acquisition and administration costs is presented in \autoref{tbl:treat-cost}. Costs are a function of dose and frequency of administration, strength and dosage form, price, and infusion costs. Since infliximab dosing depend on patient weight, the costs for infliximab reported in the table average over a patient population that is 21\% male. The prices in the table are based on the wholesale acquisition cost (WAC) and do not include discounts or rebates so they may be higher than actual drug costs. In the simulation, a unique discount can be used for each drug; currently the discount is assumed to range from 20\% to 30\%. The methodology used to calculate drug acquisition and administration costs is described in more detail in \autoref{app:treat-cost}. 
 
 \begin{sidewaystable}
 \begin{center}
@@ -1568,7 +1082,7 @@ An overview of drug acquisition and administration costs is presented in \autore
 \hline
 \end{tabular}
 \tiny
-Notes: Costs in the table do not include rebates or discounts, but rebates and discounts are used in the simulation. Cost for infliximab are calculated by assuming that \Sexpr{male.prop}\% of patients are male and that the weight of men and women are \Sexpr{wtmale} kg and \Sexpr{wtfemale} kg respectively. Tocilizumab is dosed weekly if weight is greater than 100 kg; costs for tocilizumab reported in the table are for patients weighing less than 100 kg. IV = intravenous; SC = subcutaneous. 
+Notes: Costs in the table do not include rebates or discounts, but rebates and discounts are used in the simulation. Cost for infliximab are calculated by assuming that 21\% of patients are male and that the weight of men and women are 89 kg and 75 kg respectively. Tocilizumab is dosed weekly if weight is greater than 100 kg; costs for tocilizumab reported in the table are for patients weighing less than 100 kg. IV = intravenous; SC = subcutaneous. 
 \end{threeparttable}
 \end{center}
 \end{sidewaystable}
@@ -1577,59 +1091,6 @@ Notes: Costs in the table do not include rebates or discounts, but rebates and d
 
 Parameters associated with resource use are show in in \autoref{tbl:resource-use-pars}. Costs related to physician visits, chest X-rays, tuberculosis tests, and outpatient follow-up are based on \citet{claxton2016economic}. The cost per hospital day and the relationship between the HAQ score and the annual number of hospital days are from \citet{carlson2015economic}. Cost of any serious infection are assumed to be equal to the cost of pneumonia hospitalization at \$5,873, based on Medicare reimbursement rates. \citet{wolfe2005household} provide an estimate of annual income loss in relation to HAQ scores: \$4,372 (95\% CI: 2,078 to 6,607; 2002 dollars) change per unit HAQ change, which are inflated to 2019 dollars.
 
-<<resource_cost, echo = FALSE, results = hide>>=
-# hospital days by HAQ
-tab1 <- data.table(mean = iviRA::hosp.cost$days_mean,
-                   se = iviRA::hosp.cost$days_se)
-quant1 <- mom_gamma(tab1$mean, tab1$se, quant = c(.025, .975))
-tab1[, lower := quant1$q0.025]
-tab1[, upper := quant1$q0.975]
-tab1[, se := NULL]
-tab1 <- formatC(as.matrix(tab1), format = "f", digits = 3)
-tab1.names <- paste0("\\hspace{3mm}HAQ: ", c("0-<0.5", "0.5-<1", "1-<1.5", "1.5-<2", "2-<2.5",
-                                ">2.5"))
-tab1 <- cbind(tab1.names, tab1, "\\citet{carlson2015economic}")
-tex1 <- print(xtable(tab1), 
-      include.rownames = FALSE, include.colnames = FALSE,
-      only.contents = TRUE, sanitize.text.function = identity, hline.after = NULL,
-      file = "tables/hosp-days-haq.txt")
-
-# hospital cost per day in hospital
-tab2 <-data.table(mean = iviRA::hosp.cost$cost_pday_mean,
-                   se = iviRA::hosp.cost$cost_pday_se)
-quant2 <- mom_gamma(tab2$mean, tab2$se, quant = c(.025, .975))
-tab2[, lower := quant2$q0.025]
-tab2[, upper := quant2$q0.975]
-tab2[, se := NULL]
-tab2 <- formatC(as.matrix(tab2), format = "d", big.mark = ",")
-tab2 <- cbind("Cost per day in hospital", tab2, "\\citet{carlson2015economic}")
-tex2 <- print(xtable(tab2), 
-      include.rownames = FALSE, include.colnames = FALSE,
-      only.contents = TRUE, sanitize.text.function = identity, hline.after = NULL,
-      file = "tables/hosp-cost-perday.txt")
-
-# General management cost
-tab3 <- iviRA::mgmt.cost[, .(est, lower, upper)]
-tab3 <- formatC(as.matrix(tab3), format = "d", big.mark = ",")
-tab3.names <- paste0("\\hspace{3mm}", c("Chest x-ray", "X-ray visit", "Outpatient follow-up", "Mantoux tuberculin skin test"))
-tab3 <- cbind(tab3.names, tab3, "\\citet{claxton2016economic}")
-tex3 <- print(xtable(tab3), 
-      include.rownames = FALSE, include.colnames = FALSE,
-      only.contents = TRUE, sanitize.text.function = identity, hline.after = NULL,
-      file = "tables/mgmt-cost.txt")
-
-# productivity loss
-tab4 <- data.table(mean = iviRA::prod.loss$est,
-                   se = iviRA::prod.loss$se)
-tab4[, lower := mean - qnorm(.975) * se]
-tab4[, upper := mean + qnorm(.975) * se]
-tab4 <- formatC(as.matrix(tab4[, .(mean, lower, upper)]), format = "d", big.mark = ",")
-tab4 <- cbind("\\hspace{3mm}Linear regression coefficient - HAQ", tab4, "\\citet{wolfe2005household}")
-tex4 <- print(xtable(tab4), 
-      include.rownames = FALSE, include.colnames = FALSE,
-      only.contents = TRUE, sanitize.text.function = identity, hline.after = NULL,
-      file = "tables/prod-loss.txt")
-@
 
 \begin{table}[H]
 \begin{center}
@@ -1849,42 +1310,6 @@ When generating heterogeneous patient populations, we sample binary variables fr
 
 In particular, the proportion of the female population is drawn from a binomial distribution while age, disease duration and the number of previous DMARDs are drawn from truncated normal distributions. Each sampled value of the number of previous DMARDs is rounded to the nearest integer. Baseline HAQ and three disease activity measures (DAS28, SDAI, and CDAI) are drawn from truncated multivariate normal distributions. The covariance matrix is calculated using the correlations reported in \citet{aletaha2005acute} (\autoref{fig:da-cor}).
 
-<<da-cor, echo = FALSE, include = FALSE>>=
-args <- formals(sample_pop)
-cor <- matrix(NA, nrow = 4, ncol = 4)
-cor[1, 1] <- 1
-cor[1, 2] <- args$cor_das28_sdai 
-cor[1, 3] <- args$cor_das28_cdai
-cor[1, 4] <- args$cor_das28_haq
-cor[2, 2] <- 1
-cor[2, 3] <- args$cor_sdai_cdai
-cor[2, 4] <- args$cor_sdai_haq
-cor[3, 3] <- 1
-cor[3, 4] <- args$cor_cdai_haq
-cor[4, 4] <- 1
-rownames(cor) <- colnames(cor) <- c("DAS28", "SDAI", "CDAI", "HAQ")
-cormat <- melt(cor)
-p <- ggplot(cormat, aes(Var2, Var1, fill = value))+
- geom_tile(color = "white")+
- scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
-   midpoint = 0.5, limit = c(0,1), space = "Lab", 
-    name="Correlation", na.value="transparent") +
-  theme_minimal() +
- theme(axis.text.x = element_text(angle = 45, vjust = 1, 
-    size = 12, hjust = 1))+
- coord_fixed() +
-  geom_text(aes(Var2, Var1, label = value), color = "black", size = 4) +
-  theme(panel.grid.major = element_blank(),
-        axis.title.x = element_blank(),
-        axis.title.y = element_blank(),
-         axis.ticks = element_blank(),
-        legend.justification = c(1, 0),
-         legend.position = c(0.5, 0.75),
-        legend.direction = "horizontal") +
-         guides(fill = guide_colorbar(barwidth = 7, barheight = 1,
-                title.position = "top", title.hjust = 0.5))
-ggsave("figs/da-cor.png", p, height = 5, width = 7)
-@
 
 \begin{figure}[H]
 \centering
@@ -1894,23 +1319,9 @@ ggsave("figs/da-cor.png", p, height = 5, width = 7)
 
 We used the correlations from the routine cohort (during visit 1) rather than correlations in the inception cohort (at baseline) since the correlation between HAQ and the disease activity measures were more similar to those from the Leflunomide database \citep{smolen2003simplified}. That said, correlations between the three disease activity measures were nearly identical in each cohort. The one exception was that the correlation between SDAI and CDAI of 1 in the routine cohort seemed unreasonably high so we used the value of 0.94 from the inception cohort. 
 
-<<pop-app, echo = FALSE, include = FALSE>>=
-npats <- 1000
-pop <- sample_pop(n = npats, type = "heterog")
-tab <- cbind(apply(pop, 2, mean, na.rm = TRUE), 
-            apply(pop, 2, quantile, .025, na.rm = TRUE),
-            apply(pop, 2, quantile, .975, na.rm = TRUE))
-rownames(tab) <- c("Age", "Male", "Weight (kg)", "Previous DMARDs",
-                   "DAS28", "SDAI", "CDAI", "HAQ")
-tab <- formatC(tab, format = "f", digits = 2)
-tex <- print(xtable(tab), 
-      include.rownames = TRUE, include.colnames = FALSE,
-      only.contents = TRUE, sanitize.text.function = identity,
-      file = "tables/pats-samp.txt")
-@
 
 
-We used this sampling procedure to simulate \Sexpr{formatC(npats, format = "d", big.mark = ",")} patients. Summary statistics from a simulated patient cohort of size \Sexpr{formatC(npats, format = "d", big.mark = ",")} are shown in \autoref{tbl:pats-samp}.
+We used this sampling procedure to simulate 1,000 patients. Summary statistics from a simulated patient cohort of size 1,000 are shown in \autoref{tbl:pats-samp}.
 
 \begin{table}[!ht]
 \begin{center}
@@ -1967,93 +1378,6 @@ P(C_{it} = c) &= \frac{\exp(w_{it}^T\delta_c)}{\sum_{s=1}^{4}\exp(w_{it}^T\delta
 
 where $\delta_s$ is the vector of regression coefficients associated with class $s$ and $w_{it}$ is the corresponding vector of regressors. The variables included in $w_{it}$ are age, gender, baseline DAS28, symptom duration, rheumatoid factor, ACR criteria, and socioeconomic status. Regression coefficients for classes 2-4 relative to class 1 are shown in \autoref{tbl:lcmm-class-coefs}. Older age and female gender are especially important predictors of membership in higher risk classes; a worse DAS28 score, rheumatoid factor positivity, fulfillment of the 1987 ACR criteria, lower socioeconomic status, and longer disease duration are also predictors of membership in classes with worse HAQ progression. 
 
-<<app-lcgm-class, echo = FALSE, results = hide>>=
-coefs = copy(iviRA::haq.lcgm)$coef
-coefs[, lower := est - qnorm(.975) * se]
-coefs[, upper := est + qnorm(.975) * se]
-
-## class membership
-coefs.c <- coefs[parameter %in% c("delta2", "delta3", "delta4")]
-varnames <- c("Intercept", "Age at onset", "Female gender", "Disease duration (months)",
-                 "DAS28 score", "Rheumatoid factor positive", "ACR criteria for RA",
-                 "Socioeconomic status")
-coefs.c <- coefs.c[, .(parameter, est, lower, upper)]
-
-# class 2
-tab <- coefs.c[parameter == "delta2", !"parameter", with = FALSE]
-tab <- formatC(as.matrix(tab), format = "f", digits = 3)
-tab <- cbind(paste0("\\;", varnames), tab)
-tex <- print(xtable(tab), 
-      include.rownames = FALSE, include.colnames = FALSE,
-      only.contents = TRUE, sanitize.text.function = identity,
-      hline.after = NULL,
-      file = "tables/lcgm-coef-class2.txt")
-
-# class 3
-tab <- coefs.c[parameter == "delta3", !"parameter", with = FALSE]
-tab <- formatC(as.matrix(tab), format = "f", digits = 3)
-tab <- cbind(paste0("\\;", varnames), tab)
-tex <- print(xtable(tab), 
-      include.rownames = FALSE, include.colnames = FALSE,
-      only.contents = TRUE, sanitize.text.function = identity,
-      hline.after = NULL,
-      file = "tables/lcgm-coef-class3.txt")
-
-# class 4
-tab <- coefs.c[parameter == "delta4", !"parameter", with = FALSE]
-tab <- formatC(as.matrix(tab), format = "f", digits = 3)
-tab <- cbind(paste0("\\;", varnames), tab)
-tex <- print(xtable(tab), 
-      include.rownames = FALSE, include.colnames = FALSE,
-      only.contents = TRUE, sanitize.text.function = identity,
-      hline.after = NULL,
-      file = "tables/lcgm-coef-class4.txt")
-
-## trajectory
-coefs.t <- coefs[parameter %in% c("beta1", "beta2", "beta3", "beta4")]
-varnames <- c("Intercept", "Linear", "Quadratic", "Cubic")
-coefs.t <- coefs.t[, .(parameter, est, se)]
-
-# class 1
-tab <- coefs.t[parameter == "beta1", !"parameter", with = FALSE]
-tab <- formatC(as.matrix(tab), format = "f", digits = 3)
-tab <- cbind(paste0("\\;", varnames), tab)
-tex <- print(xtable(tab), 
-      include.rownames = FALSE, include.colnames = FALSE,
-      only.contents = TRUE, sanitize.text.function = identity,
-      hline.after = NULL,
-      file = "tables/lcgm-coef-growth-class1.txt")
-
-# class 2
-tab <- coefs.t[parameter == "beta2", !"parameter", with = FALSE]
-tab <- formatC(as.matrix(tab), format = "f", digits = 3)
-tab <- cbind(paste0("\\;", varnames), tab)
-tex <- print(xtable(tab), 
-      include.rownames = FALSE, include.colnames = FALSE,
-      only.contents = TRUE, sanitize.text.function = identity,
-      hline.after = NULL,
-      file = "tables/lcgm-coef-growth-class2.txt")
-
-# class 3
-tab <- coefs.t[parameter == "beta3", !"parameter", with = FALSE]
-tab <- formatC(as.matrix(tab), format = "f", digits = 3)
-tab <- cbind(paste0("\\;", varnames), tab)
-tex <- print(xtable(tab), 
-      include.rownames = FALSE, include.colnames = FALSE,
-      only.contents = TRUE, sanitize.text.function = identity,
-      hline.after = NULL,
-      file = "tables/lcgm-coef-growth-class3.txt")
-
-# class 4
-tab <- coefs.t[parameter == "beta4", !"parameter", with = FALSE]
-tab <- formatC(as.matrix(tab), format = "f", digits = 3)
-tab <- cbind(paste0("\\;", varnames), tab)
-tex <- print(xtable(tab), 
-      include.rownames = FALSE, include.colnames = FALSE,
-      only.contents = TRUE, sanitize.text.function = identity,
-      hline.after = NULL,
-      file = "tables/lcgm-coef-growth-class4.txt")
-@
 
 \begin{table}[!ht] 
 \begin{center}
@@ -2163,9 +1487,9 @@ d \sim \text{Bin}(1, p_m).
 The mixture model estimated by \citet{alava2013relationship} simulates utility in two stages. In the first stage, we sampled pain for a given individual in a particular model cycle based on the HAQ score. In the second stage, we simulated utility as a function of HAQ, pain and age/sex.
 
 \subsubsection{Simulating pain}
-To simulate pain from HAQ, we used the summary statistics for pain and HAQ reported in \citet{sarzi2002correlation}. Pain was measured with the visual analog scale (VAS) with mean  $\mu_{pain} =$ \Sexpr{pain$pain.mean} and standard deviation $\sigma_{pain} =$ \Sexpr{formatC(sqrt(pain$pain.var), format = "f", digits = 2)}, while HAQ was reported to have mean $\mu_{haq} =$ \Sexpr{pain$haq.mean} and standard deviation $\sigma_{haq} =$ \Sexpr{formatC(sqrt(pain$haq.var), format = "f", digits = 2)}. 
+To simulate pain from HAQ, we used the summary statistics for pain and HAQ reported in \citet{sarzi2002correlation}. Pain was measured with the visual analog scale (VAS) with mean  $\mu_{pain} =$ 61.65 and standard deviation $\sigma_{pain} =$ 19.10, while HAQ was reported to have mean $\mu_{haq} =$ 1.39 and standard deviation $\sigma_{haq} =$ 0.59. 
 
-We then estimated the correlation between pain and HAQ by digitally scanning the curve depicting the (linear) relationship between pain and HAQ (Figure 114) shown in \citet{stevenson2016adalimumab}. Using the scanned data, we regressed pain on HAQ using simple ordinary least squares (OLS). The correlation between pain and HAQ, estimated as $\rho =$ \Sexpr{formatC(pain$painhaq.cor, digits = 2)}, was calculated by rearranging the OLS estimate for the slope, $\beta$, of the regression model,
+We then estimated the correlation between pain and HAQ by digitally scanning the curve depicting the (linear) relationship between pain and HAQ (Figure 114) shown in \citet{stevenson2016adalimumab}. Using the scanned data, we regressed pain on HAQ using simple ordinary least squares (OLS). The correlation between pain and HAQ, estimated as $\rho =$ 0.52, was calculated by rearranging the OLS estimate for the slope, $\beta$, of the regression model,
 
 \begin{align}
 \rho = \beta \cdot \frac{\sigma_{haq}}{\sigma_{pain}}.
@@ -2218,17 +1542,6 @@ We sampled from the mixture model as follows.
 \subsection{Logistic regression model}\label{app:sim-utility-logistic}
 \citet{wailoo2006modeling} use a logistic regression equation to predict utility as a function of patient demographics, disease history, and current disease status. The regression coefficients from the model are shown in \autoref{tbl:util-wailoo-coef} and used to predict utility with the inverse logit function. Specifically, if the vector of coefficients is denoted by $\beta$ and the corresponding vector of explanatory variables is denoted by the vector $x$, then predicted utility is given by $1/(1 + \exp(-x^T\beta))$.
 
-<<util-wailoo-pars, echo = FALSE, include = FALSE>>=
-tab <- data.frame(coef = iviRA::utility.wailoo$est,
-                  se = iviRA::utility.wailoo$se)
-tab <- formatC(as.matrix(tab), format = "f")
-rownames(tab) <- c("Intercept", "Age", "Disease duration", "Baseline HAQ",
-                   "Male", "Number of previous DMARDs", "Current HAQ")
-tex <- print(xtable(tab), 
-      include.rownames = TRUE, include.colnames = FALSE,
-      only.contents = TRUE, sanitize.text.function = identity,
-      file = "tables/util-wailoo-pars.txt")
-@
 
 \begin{table}[!ht]
 \begin{center}
@@ -2248,10 +1561,6 @@ Notes: Coefficients are from the logistic regression reported in \citet{wailoo20
 \end{table}
 
 \section{Drug acquisition and administration costs}\label{app:treat-cost}
-<<ada_cost, echo = FALSE, include = FALSE>>=
-ada.cost <- iviRA::tx.cost$cost[sname == "ada"]
-ifx.cost <- iviRA::tx.cost$cost[sname == "ifx"]
-@
 
 Drug acquisition and administration costs are calculated separately during the initial treatment phase and the maintenance phase since dosing typically differs. Costs are separated into acquisition costs and infusion costs. Infusion costs are calculated by multiplying the number of doses in a 6 month period by the cost of an infusion and acquisition costs are calculated as,
 
@@ -2259,7 +1568,7 @@ Drug acquisition and administration costs are calculated separately during the i
 cost = \left\lceil\frac{dose_{amt}}{strength_{amt}}\right\rceil \cdot doses_{num} \cdot price,
 \end{align}
 
-where $\lceil\cdot\rceil$ is the ceiling function and implies that products cannot be reused after opening, $dose_{amt}$ is the recommended dose of the drug, $strength_{amt}$ is the strength of the drug, $doses_{num}$ is the number of doses in a 6 month period, and $price$ is the price per unit of the treatment after discounts and rebates. For example, as shown in \autoref{tbl:treat-cost}, both the strength and the dose of adalimumab are 50 mg, so costs (before discounts and rebates) for the initial 6 month period are calculated by multiplying the number of doses (\Sexpr{ada.cost$init_num_doses}) by the WAC (\$\Sexpr{formatC(ada.cost$price_per_unit, format = "f", big.mark = ",", digits = 2)}).
+where $\lceil\cdot\rceil$ is the ceiling function and implies that products cannot be reused after opening, $dose_{amt}$ is the recommended dose of the drug, $strength_{amt}$ is the strength of the drug, $doses_{num}$ is the number of doses in a 6 month period, and $price$ is the price per unit of the treatment after discounts and rebates. For example, as shown in \autoref{tbl:treat-cost}, both the strength and the dose of adalimumab are 50 mg, so costs (before discounts and rebates) for the initial 6 month period are calculated by multiplying the number of doses (13) by the WAC (\$2,587.05).
 
 When dosing depends on weight, costs are calculated separately for each patient in the simulation. In particular, costs are calculated as,
 
@@ -2267,7 +1576,7 @@ When dosing depends on weight, costs are calculated separately for each patient 
 cost &= \lceil weight \cdot dose_{amt}/strength_{amt}\rceil \cdot doses_{num} \cdot price,
 \end{align}
 
-where $weight$ is patient weight, $dose_{amt}$ is the dose per weight, and $strength_{amt}$, $price$, and $doses_{num}$ are defined in the same way as in the non-weight based scenario. To illustrate, the acquisition cost (before discounts and rebates) for infliximab after the first 6 months is calculated by multiplying each patient's weight by the dose (6 mg/kg) and dividing by the size of a vial (100 mg), and then multiplying by the number of doses (\Sexpr{formatC(ifx.cost$ann_num_doses, format = "f", digits = 2)}) and the price per unit (\$\Sexpr{formatC(ifx.cost$price_per_unit, format = "f", big.mark = ",", digits = 2)}). 
+where $weight$ is patient weight, $dose_{amt}$ is the dose per weight, and $strength_{amt}$, $price$, and $doses_{num}$ are defined in the same way as in the non-weight based scenario. To illustrate, the acquisition cost (before discounts and rebates) for infliximab after the first 6 months is calculated by multiplying each patient's weight by the dose (6 mg/kg) and dividing by the size of a vial (100 mg), and then multiplying by the number of doses (8.67) and the price per unit (\$1,167.82). 
 
 \section{Annualized costs and benefits}\label{app:insurance-value}
 Letting $t$ index time (in years), total costs ($\hat{cost}$) and QALYs ($\hat{qalys}$) for each patient simulated over a time horizon $T$ are given by,
@@ -2323,21 +1632,6 @@ Other & Only full text reported in Enlgish were included. Studies only available
 \subsubsection{Literature search}
 Relevant studies were identified by searching the following databases: Medline, EMBASE, and Cochrane Central Register of Controlled Trials. The searches were executed June 2017 with the following predefined search strategies and corresponding results.
 
-<<search, echo = FALSE, include = FALSE>>=
-search <- list()
-search$medline <- read.csv("search-medline.csv")
-search$embase <- read.csv("search-embase.csv")
-search$cochrane <- read.csv("search-cochrane.csv")
-for (i in 1:length(search)){
-  search[[i]]$results <- formatC(search[[i]]$results , format = "d", big.mark = ",")
-  search[[i]]$search_terms <- gsub("\\$", "\\\\$",  search[[i]]$search_terms)
-  tex <- print(xtable(search[[i]]), 
-      include.rownames = FALSE, include.colnames = FALSE,
-      only.contents = TRUE, sanitize.text.function = identity,
-      hline.after = NULL,
-      file = paste0("tables/", names(search)[i], "-search.txt"))
-}
-@
 
 \setlength\LTleft{0pt}
 \setlength\LTright{0pt}
@@ -2540,14 +1834,6 @@ where $\gamma$ is defined as in \autoref{eqn:ACR-overlap}. Uninformative priors 
 
 
 
-<<included-studies, echo = FALSE, include = FALSE>>=
-included.studies <- read.csv("included-studies.csv")
-tex <- print(xtable(included.studies), 
-      include.rownames = FALSE, include.colnames = FALSE,
-      only.contents = TRUE, sanitize.text.function = identity,
-      hline.after = NULL,
-      file = "tables/included-studies.txt")
-@
 
 \begin{landscape}
 \scriptsize
@@ -2574,14 +1860,6 @@ tex <- print(xtable(included.studies),
 
 
 
-<<excluded-studies, echo = FALSE, include = FALSE>>=
-excluded.studies <- read.csv("excluded-studies.csv")
-tex <- print(xtable(excluded.studies), 
-      include.rownames = FALSE, include.colnames = FALSE,
-      only.contents = TRUE, sanitize.text.function = identity,
-      hline.after = NULL,
-      file = "tables/excluded-studies.txt")
-@
 
 \begin{landscape}
 \scriptsize
@@ -2610,15 +1888,6 @@ tex <- print(xtable(excluded.studies),
 
 
 
-<<eligibility-criteria, echo = FALSE, include = FALSE>>=
-eli.data <- read.csv("eligibility-criteria.csv")
-eli.data <- gsub("\\%", "\\\\%", as.matrix(eli.data))
-tex <- print(xtable(eli.data), 
-      include.rownames = FALSE, include.colnames = FALSE,
-      only.contents = TRUE, sanitize.text.function = identity,
-      hline.after = NULL,
-      file = "tables/eligibility-criteria.txt")
-@
 
 
 
@@ -2658,15 +1927,6 @@ tex <- print(xtable(eli.data),
 
 
 
-<<tdmard-naive-definition, echo = FALSE, include = FALSE>>=
-tdmardnaive.data <- read.csv("tdmard-naive-definition.csv")
-tdmardnaive.data <- gsub("\\%", "\\\\%", as.matrix(tdmardnaive.data))
-tex <- print(xtable(tdmardnaive.data), 
-      include.rownames = FALSE, include.colnames = FALSE,
-      only.contents = TRUE, sanitize.text.function = identity,
-      hline.after = NULL,
-      file = "tables/tdmard-naive-definition.txt")
-@
 
 \scriptsize
 \begin{longtable}{p{5cm}p{5cm}p{5cm}}
@@ -2686,15 +1946,6 @@ tex <- print(xtable(tdmardnaive.data),
 
 
 
-<<study-characteristics, echo = FALSE, include = FALSE>>=
-studychar.data <- read.csv("study-characteristics.csv")
-studychar.data <- gsub("\\%", "\\\\%", as.matrix(studychar.data))
-tex <- print(xtable(studychar.data), 
-      include.rownames = FALSE, include.colnames = FALSE,
-      only.contents = TRUE, sanitize.text.function = identity,
-      hline.after = NULL,
-      file = "tables/study-characteristics.txt")
-@
 
 \begin{landscape}
 \scriptsize
@@ -2722,15 +1973,6 @@ tex <- print(xtable(studychar.data),
 \end{landscape}
 
 
-<<patient-characteristics, echo = FALSE, include = FALSE>>=
-patientchar.data <- read.csv("patient-characteristics.csv")
-patientchar.data <- gsub("\\%", "\\\\%", as.matrix(patientchar.data))
-tex <- print(xtable(patientchar.data), 
-      include.rownames = FALSE, include.colnames = FALSE,
-      only.contents = TRUE, sanitize.text.function = identity,
-      hline.after = NULL,
-      file = "tables/patient-characteristics.txt")
-@
 
 \begin{landscape}
 \scriptsize
@@ -2776,15 +2018,6 @@ tex <- print(xtable(patientchar.data),
 \end{figure}
 
 \subsubsection{Study specific 6-month data, tDMARD naive population}
-<<study-data, echo = FALSE, include = FALSE>>=
-trial.data <- read.csv("trial-data.csv")
-trial.data <- gsub("\\%", "\\\\%", as.matrix(trial.data))
-tex <- print(xtable(trial.data), 
-      include.rownames = FALSE, include.colnames = FALSE,
-      only.contents = TRUE, sanitize.text.function = identity,
-      hline.after = NULL,
-      file = "tables/trial-data.txt")
-@
 
 \begin{center}
 \scriptsize
