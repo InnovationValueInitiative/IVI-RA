@@ -1596,8 +1596,11 @@ Annualized QALY gains and costs, which are used to estimate the annual insurance
 \end{align}
 
 \section{Network Meta-Analysis}\label{appendix:NMA}
-Treatment effects with tDMARDs relative to cDMARDs for moderate to severe RA patients who failed treatment with a conventional DMARD were estimated based on currently available evidence as reported in the literature. The two populations of interest were: 1) RA patients without a history of prior tDMARD treatment (tDMARD naive population); and 2) RA patient with a history of tDMARD treatment (tDMARD experienced population). Relevant randomized controlled trials were identified with a systematic literature review and treatment effects were estimated by means of a network meta-analysis.
+Treatment effects with tDMARDs relative to cDMARDs for moderate to severe RA patients who failed treatment with a conventional DMARD were estimated based on currently available evidence as reported in the literature. Relevant randomized controlled trials were identified with a systematic literature review and treatment effects were estimated by means of a network meta-analysis.
+
+
 \subsection{Systematic literature review to identify relevant studies}\label{systematic-literature-review}
+
 \subsubsection{Eligibility criteria}
 Study eligibility criteria were defined in terms of the population, interventions, comparisons, outcomes, and study design (PICOS).
 
@@ -1610,10 +1613,9 @@ Study eligibility criteria were defined in terms of the population, intervention
 \hline
 \multicolumn{1}{l}{Criteria} & \multicolumn{1}{l}{Description}\\
 \hline
-Population & Adult (>18) patients with moderate to severe active rheumatoid arthritis who failed treatment with a conventional DMARD and were either targeted DMARD naive or experienced. \\
+Population & Adult (>18) patients with moderate to severe active rheumatoid arthritis who failed treatment with a conventional DMARD and were either tDMARD naive or experienced. \\
 &\\
-Interventions & Approved dosing regimens (or equivalent) of the following tDMARDs as monotherapy or in combination with a cDMARD: adalimumab, certolizumab pegol, etanercept, golimumab, infliximab, rituximab, abatacept, tocilizumab, sarilumab, anakinra, tofacitinib, baricitinib, upadacitinib, biosimilars; triple therapy (methotrexate, sulfasalazine, and hydroxychloroquine)\\
-
+Interventions & Approved dosing regimens (or equivalent) of the following tDMARDs as monotherapy or in combination with a cDMARD: adalimumab, certolizumab pegol, etanercept, golimumab, infliximab, rituximab, abatacept, tocilizumab, sarilumab, anakinra, tofacitinib, baricitinib, upadacitinib, biosimilars; triple therapy (methotrexate + sulfasalazine + hydroxychloroquine)\\
 & \\
 Comparators & cDMARDs; placebo; any of the interventions of interest; any other intervention (or dosing regimen) that facilitates an indirect comparison between the interventions of interest \\
 &\\
@@ -1629,8 +1631,10 @@ Other & Only full text reported in Enlgish were included. Studies only available
 \end{center}
 \end{table}
 
+\FloatBarrier
+
 \subsubsection{Literature search}
-Relevant studies were identified by searching the following databases: Medline, EMBASE, and Cochrane Central Register of Controlled Trials. The searches were executed June 2017 with the following predefined search strategies and corresponding results.
+Relevant studies were identified by searching the following databases: Medline, EMBASE, and Cochrane Central Register of Controlled Trials. The searches were executed May 2019 with the following predefined search strategies and corresponding results.
 
 
 \setlength\LTleft{0pt}
@@ -1827,18 +1831,16 @@ where $\gamma$ is defined as in \autoref{eqn:ACR-overlap}. Uninformative priors 
 \centering
 \includegraphics{study-selection.png}
 \vspace*{10mm}
-\caption{Study identification and selection}\label{fig:study-identification}
+\caption{Summary of the study identification and selection process}\label{fig:study-identification}
 \end{figure}
 
 \subsubsection{Included studies}
 
 
-
-
 \begin{landscape}
 \scriptsize
 \begin{longtable}{p{2cm}p{2cm}p{10cm}p{4cm}}
-\caption{Included studies and publications} 
+\caption{Studies meeting the eligibility criteria for inclusion in the evidence base} 
 \label{tbl:included studies} \\
 \hline
 \textbf{Trial ID}&\textbf{Author and Year}&\textbf{Title}&\textbf{Journal} \\
@@ -1861,40 +1863,13 @@ where $\gamma$ is defined as in \autoref{eqn:ACR-overlap}. Uninformative priors 
 
 
 
-\begin{landscape}
-\scriptsize
-\begin{longtable}{p{2cm}p{8cm}p{4cm}p{2cm}p{2cm}}
-\caption{Excluded publications} 
-\label{tbl:excluded-publications} \\
-\hline
-\textbf{Author and Year}&\textbf{Title}&\textbf{Journal}&\textbf{Reason}&\textbf{Subreason}& \\
-\hline
-\endfirsthead
-\hline
-\textbf{Author and Year}&\textbf{Title}&\textbf{Journal}&\textbf{Reason}&\textbf{Subreason}& \\
-\hline
-\endhead
-\hline 
-\multicolumn{7}{l}{\emph{Continued on next page}} \\
-\endfoot
-\endlastfoot
-
-\input{tables/excluded-studies.txt} \\
-\hline 
-\end{longtable}
-\end{landscape}
-
-
-
-
-
 
 
 
 \begin{landscape}
 \scriptsize
 \begin{longtable}{p{2cm}p{2cm}p{2cm}p{2cm}p{4cm}p{4cm}p{4cm}}
-\caption{Eligibility criteria of included studies}
+\caption{Inclusion and exclusion criteria of the individual studies}
 \label{tbl:eli-criteria}\\
 \hline
 \textbf{Trial}&\textbf{Disease duration}&\textbf{Acute-phase reactant}&\textbf{Swollen and tender joint count}&\textbf{Prior treatment requirement}&\textbf{Prior treatment failure requirement}&\textbf{Exclusion criteria prior treatment history} \\
@@ -1928,12 +1903,15 @@ where $\gamma$ is defined as in \autoref{eqn:ACR-overlap}. Uninformative priors 
 
 
 
+\subsubsection{Subset of studies that provide evidence for estimation of treatment effects among tDMARD naive population}
+
+
 \scriptsize
 \begin{longtable}{p{5cm}p{5cm}p{5cm}}
-\caption{Definition of tDMARD naive population regarding study selection for estimation of treatment effects} 
+\caption{Criteria for selection of subset of studies that provide evidence for estimation of treatment effects among the tDMARD naive population} 
 \label{tbl:tdmard-naive-selection}\\
 \hline
-\textbf{Criteria for selection of studies}&\textbf{Criteria for exclusion}&\textbf{Comments} 
+\textbf{Criteria for selection}&\textbf{Criteria for exclusion}&\textbf{Comments} 
 \\
 \hline
 \endfirsthead
@@ -1945,6 +1923,7 @@ where $\gamma$ is defined as in \autoref{eqn:ACR-overlap}. Uninformative priors 
 
 
 
+\subsubsubsection{Study characteristics}
 
 
 \begin{landscape}
@@ -1973,6 +1952,8 @@ where $\gamma$ is defined as in \autoref{eqn:ACR-overlap}. Uninformative priors 
 \end{landscape}
 
 
+
+\subsubsubsection{Patient characteristics}
 
 \begin{landscape}
 \scriptsize
@@ -2006,9 +1987,7 @@ where $\gamma$ is defined as in \autoref{eqn:ACR-overlap}. Uninformative priors 
 
 
 
-
-
-\subsubsection{Evidence network, tDMARD naive population}
+\subsubsubsection{Evidence network}
 
 \begin{figure}[H]
 \centering
@@ -2017,7 +1996,7 @@ where $\gamma$ is defined as in \autoref{eqn:ACR-overlap}. Uninformative priors 
 \caption{Evidence network, tDMARD naive population}\label{fig:evidence-network}
 \end{figure}
 
-\subsubsection{Study specific 6-month data, tDMARD naive population}
+\subsubsubsection{Study specific 6-month data used for estimation of treatment effects, tDMARD naive population}
 
 \begin{center}
 \scriptsize
@@ -2073,7 +2052,7 @@ where $\gamma$ is defined as in \autoref{eqn:ACR-overlap}. Uninformative priors 
 \end{center}
 
 
-\subsection{Comparing the IVI NMA to the NICE NMA}\label{app:nma-ivi-nice-comp}
+\subsection{Comparing the IVI network meta-analysis to the NICE network meta-analysis}\label{app:nma-ivi-nice-comp}
 To help ensure that differences in cost-effectiveness estimates from our model relative to others are not driven by the NMA results, we compared our NMA estimates to estimates reported by NICE in \citet{stevenson2016adalimumab}. We focus on ACR response, since the NICE report and other models use treatment pathways similar to \textbf{H1} and \textbf{H2} and rarely use DAS28 to inform treatment duration. As shown in \autoref{tbl:nma-acr-nice-vs-ivi}, our results are similar and the NICE point estimates are generally within the 95\% credible intervals surrounding our point estimates.
 
 \begin{table}[!ht]
@@ -2091,10 +2070,41 @@ To help ensure that differences in cost-effectiveness estimates from our model r
 \hline
 \end{tabularx}
 \scriptsize
-Notes: ACR20/50/70 categories are the probability of at least a 20/50/70\% improvement. 95\% credible intervals are in parentheses. IVI estimates are based on 6-month simulations of 1,000 patients and 1,000 parameters sets for each therapy. NICE estimates are from Table 37 in \citet{stevenson2017cost}. cDMARDs = conventional disease-modifying antirheumatic drugs; MTX = methotrexate; ABT IV = abatacept intravenous; ADA = adalimumab; ETN = etanercept; GOL = golimumab; IFX = infliximab; TCZ = tocilizumab; CZP = certolizumab pegol; ABT SC = abatacept subcutaneous; RTX = rituximab; TOF = tofacitinib. ACR = American College of Rheumatology.
+Notes: ACR20/50/70 categories are the probability of at least a 20/50/70\% improvement. 95\% credible intervals are in parentheses. IVI estimates are based on 6-month simulations of 1,000 patients and 1,000 parameters sets for each therapy. NICE estimates are from Table 37 in \citet{stevenson2017cost}. cDMARDs = conventional disease-modifying antirheumatic drugs; MTX = methotrexate; ABT IV = abatacept intravenous; ABT SC = abatacept subcutaneous; ADA = adalimumab; ADA BWWD = adalimumab-bwwd (biosimilar Samsung Bioepis); ANA = anakinra; BCT = baricitinib; CZP = certolizumab pegol; ETN = etanercept; ETN SZZS = etanercept-szzs (biosimilar Sandoz); ETN YKRO = etanercept-ykro (biosimilar Samsung Bioepis); GOL = golimumab; HCQ = hydroxychloroquine sulfate; IFX = infliximab; IFX QBTX = infliximab-qbtx (biosimilar Pfizer); RTX = rituximab; SAR = sarilumab; SSZ = sulfazalazine; TCZ = tocilizumab; TOF = tofacitinib; UPA = upadacitinib;  ACR = American College of Rheumatology. 
 \end{threeparttable}
 \end{center}
 \end{table}
+
+\FloatBarrier
+
+\subsection{Excluded publications after full-text screening}
+
+\begin{landscape}
+\scriptsize
+\begin{longtable}{p{2cm}p{8cm}p{4cm}p{2cm}p{2cm}}
+\caption{Publications not meeting the systematic review eligibility criteria; excluded from the evidence base} 
+\label{tbl:excluded-publications} \\
+\hline
+\textbf{Author and Year}&\textbf{Title}&\textbf{Journal}&\textbf{Reason}&\textbf{Subreason}& \\
+\hline
+\endfirsthead
+\hline
+\textbf{Author and Year}&\textbf{Title}&\textbf{Journal}&\textbf{Reason}&\textbf{Subreason}& \\
+\hline
+\endhead
+\hline 
+\multicolumn{7}{l}{\emph{Continued on next page}} \\
+\endfoot
+\endlastfoot
+
+\input{tables/excluded-studies.txt} \\
+\hline 
+\end{longtable}
+\end{landscape}
+
+
+
+
 
 \end{appendices}
 
