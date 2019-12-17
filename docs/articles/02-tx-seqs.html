@@ -7,8 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Selecting treatment sequences • iviRA</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/simplex/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous">
+<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><meta property="og:title" content="Selecting treatment sequences">
 <meta property="og:description" content="">
 <meta name="twitter:card" content="summary">
@@ -30,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">iviRA</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">1.0.0.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">2.0.0</span>
       </span>
     </div>
 
@@ -118,7 +119,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/InnovationValueInitiative/IVI-RA">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -131,6 +132,7 @@
 <!--/.navbar -->
 
       
+
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
@@ -150,64 +152,121 @@
 <p>The primary purpose of the model is to simulate health and cost outcomes for patients with RA treated as a function of the treatments use. Since patients typically use multiple treatments over a lifetime, the model is capable of simulating a treatment sequence of any arbitrary length. Treatments that can be included in a sequence are cDMARDs, bDMARDs, and JAK/STAT inhibitors. We refer to bDMARDs and JAK/STAT inhibitors collectively as targeted DMARDs (tDMARDs).</p>
 <p>A dataset of available treatments loads with the <code>iviRA</code> package. The <code>name</code>, <code>mname</code>, and <code>sname</code> columns are long-form, medium-form, and short-form names, respectively. The column <code>route</code> refers to route of administration; if a treatment is a combination therapy, then all routes of administration in the combination are listed. Finally, <code>approval_date</code> is the date that a treatment was approved by the FDA in the US and <code>years_since_approval</code> is the number of years (from the last update of the model) since the treatment was approved.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iviRA<span class="op">::</span>treatments</code></pre></div>
-<pre><code>##                                   name        mname    sname
-##  1:                            cDMARDs      cDMARDs  cdmards
-##  2:        abatacept IV + methotrexate ABT IV + MTX abtivmtx
-##  3:          adalimumab + methotrexate    ADA + MTX   adamtx
-##  4:                         adalimumab          ADA      ada
-##  5:          etanercept + methotrexate    ETN + MTX   etnmtx
-##  6:                         etanercept          ETN      etn
-##  7:           golimumab + methotrexate    GOL + MTX   golmtx
-##  8:          infliximab + methotrexate    IFX + MTX   ifxmtx
-##  9:                            placebo      Placebo  placebo
-## 10:         tocilizumab + methotrexate    TCZ + MTX   tczmtx
-## 11:                        tocilizumab          TCZ      tcz
-## 12:  certolizumab pegol + methotrexate    CZP + MTX   czpmtx
-## 13:        abatacept SC + methotrexate ABT SC + MTX abtscmtx
-## 14:                       non-biologic          NBT      nbt
-## 15:           rituximab + methotrexate    RTX + MTX   rtxmtx
-## 16: tofacitinib citrate + methotrexate    TOF + MTX   tofmtx
-## 17:                          rituximab          RTX      rtx
-## 18:                tofacitinib citrate          TOF      tof
-## 19:                 certolizumab pegol          CZP      czp
-## 20:                          golimumab          GOL      gol
-##                  route approval_date years_since_approval
-##  1:          injection      12/31/88            28.809296
-##  2: infusion/injection      12/23/05            11.855092
-##  3:          injection      12/31/02            14.829802
-##  4:          injection      12/31/02            14.829802
-##  5:          injection       11/2/98            18.985646
-##  6:          injection       11/2/98            18.985646
-##  7:          injection       4/24/09             8.524949
-##  8: infusion/injection      11/10/99            17.965824
-##  9:               none      12/31/88            28.809296
-## 10:          injection      10/21/13             4.038278
-## 11:          injection      10/21/13             4.038278
-## 12:          injection       4/22/08             9.528366
-## 13:          injection        8/2/11             6.255639
-## 14:          injection      12/31/88            28.809296
-## 15: infusion/injection       2/28/06            11.671907
-## 16:     oral/injection       11/6/12             4.992481
-## 17:          injection       2/28/06            11.671907
-## 18:               oral       11/6/12             4.992481
-## 19:          injection       4/22/08             9.528366
-## 20:          injection       4/24/09             8.524949</code></pre>
+<pre><code>##                                                            name
+##  1:                                                     cDMARDs
+##  2:                                 abatacept IV + methotrexate
+##  3:                                 abatacept SC + methotrexate
+##  4:                                   adalimumab + methotrexate
+##  5:                                                  adalimumab
+##  6: adalimumab-bwwd (biosimilar Samsung Bioepis) + methotrexate
+##  7:                                     anakinra + methotrexate
+##  8:                                                 baricitinib
+##  9:                                  baricitinib + methotrexate
+## 10:                                          certolizumab pegol
+## 11:                           certolizumab pegol + methotrexate
+## 12:                                                  etanercept
+## 13:                                   etanercept + methotrexate
+## 14:          etanercept-szzs (biosimilar Sandoz) + methotrexate
+## 15: etanercept-ykro (biosimilar Samsung Bioepis) + methotrexate
+## 16:                                                   golimumab
+## 17:                                    golimumab + methotrexate
+## 18:                                   infliximab + methotrexate
+## 19:          infliximab-qbtx (biosimilar Pfizer) + methotrexate
+## 20:                                                     placebo
+## 21:                                                non/biologic
+## 22:                                                   rituximab
+## 23:                                    rituximab + methotrexate
+## 24:                                                   sarilumab
+## 25:                                    sarilumab + methotrexate
+## 26:           sulfasalazine + hydroxychloroquine + methotrexate
+## 27:                                                 tocilizumab
+## 28:                                  tocilizumab + methotrexate
+## 29:                                  tofacitinib + methotrexate
+## 30:                                                 tofacitinib
+## 31:                                 upadacitinib + methotrexate
+##                                                            name
+##               mname          sname              route approval_date
+##  1:         cDMARDs        cdmards          injection      12/31/88
+##  2:    ABT IV + MTX       abtivmtx infusion/injection      12/23/05
+##  3:    ABT SC + MTX       abtscmtx          injection        8/2/11
+##  4:       ADA + MTX         adamtx          injection      12/31/02
+##  5:             ADA            ada          injection      12/31/02
+##  6:  ADA BWWD + MTX adabiosbwwdmtx          injection       7/23/18
+##  7:       ANA + MTX         anamtx          injection      12/31/02
+##  8:             BCT            bct               oral       5/31/18
+##  9:       BCT + MTX         bctmtx               oral       5/31/18
+## 10:             CZP            czp          injection       4/22/08
+## 11:       CZP + MTX         czpmtx          injection       4/22/08
+## 12:             ETN            etn          injection       11/2/98
+## 13:       ETN + MTX         etnmtx          injection       11/2/98
+## 14:  ETN SZZS + MTX etnbiosszzsmtx          injection       8/30/16
+## 15:  ETN YKRO + MTX etnbiosykromtx          injection       4/25/19
+## 16:             GOL            gol          injection       4/24/09
+## 17:       GOL + MTX         golmtx          injection       4/24/09
+## 18:       IFX + MTX         ifxmtx infusion/injection      11/10/99
+## 19:  IFX QBTX + MTX ifxbiosqbtxmtx infusion/injection      12/13/17
+## 20:         Placebo        placebo               none      12/31/88
+## 21:             NBT            nbt          injection      12/31/88
+## 22:             RTX            rtx          injection       2/28/06
+## 23:       RTX + MTX         rtxmtx infusion/injection       2/28/06
+## 24:             SAR            sar          injection      22/05/17
+## 25:       SAR + MTX         sarmtx          injection      22/05/17
+## 26: SSZ + HCQ + MTX         triple          injection      12/31/02
+## 27:             TCZ            tcz          injection      10/21/13
+## 28:       TCZ + MTX         tczmtx          injection      10/21/13
+## 29:       TOF + MTX         tofmtx     oral/injection       11/6/12
+## 30:             TOF            tof               oral       11/6/12
+## 31:       UPA + MTX         upamtx               oral       8/16/19
+##               mname          sname              route approval_date
+##     years_since_approval
+##  1:            31.956254
+##  2:            15.002051
+##  3:             9.402597
+##  4:            17.976760
+##  5:            17.976760
+##  6:             2.438824
+##  7:            17.976760
+##  8:             2.583732
+##  9:             2.583732
+## 10:            12.675325
+## 11:            12.675325
+## 12:            22.132604
+## 13:            22.132604
+## 14:             4.330827
+## 15:             1.684211
+## 16:            11.671907
+## 17:            11.671907
+## 18:            21.112782
+## 19:             3.045796
+## 20:            31.956254
+## 21:            31.956254
+## 22:            14.818865
+## 23:            14.818865
+## 24:             0.100000
+## 25:             0.100000
+## 26:            17.976760
+## 27:             7.185236
+## 28:             7.185236
+## 29:             8.139440
+## 30:             8.139440
+## 31:             1.375256
+##     years_since_approval</code></pre>
 </div>
 <div id="selecting-treatments" class="section level2">
 <h2 class="hasAnchor">
 <a href="#selecting-treatments" class="anchor"></a>Selecting treatments</h2>
 <p>To run the model, we must specify a treatment sequence. The treatment sequence can consist of a single sequence of treatments for all patients in the population or can vary for each patient.</p>
 <p>For example, suppose that we want to simulate a treatment sequence of three biologics: adalimumab + methotrexate, etanercept + methotrexate, and infliximab + methotrexate. They should be specified as a vector with elements matching the <code>sname</code> in <code><a href="../reference/treatments.html">iviRA::treatments</a></code>. For comparison purposes, we might want to also simulate outcomes for a non-biologic treatment sequence of only cDMARDs.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">txseq1 &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"adamtx"</span>, <span class="st">"etnmtx"</span>, <span class="st">"ifxmtx"</span>)
-txseq2 &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"cdmards"</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">txseq1 &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"adamtx"</span>, <span class="st">"etnmtx"</span>, <span class="st">"ifxmtx"</span>)
+txseq2 &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"cdmards"</span>)</code></pre></div>
 <p>In some cases, it might also be useful to allow treatments to differ across patients. This could be useful when, for example, comparing treatment strategies that tailor treatment to individuals against one size fits all strategies. This can be done by creating a matrix of treatment sequences where the number of rows is equal to the number of patients in the cohort. Below we consider a scenario where some patients receive one of two sequences:</p>
 <ol style="list-style-type: decimal">
 <li>adalimumab + methotrexate -&gt; etanercept + methotrexate -&gt; infliximab + methotrexate</li>
 <li>etanercept + methotrexate -&gt; adalimumab + methotrexate -&gt; infliximab + methotrexate</li>
 </ol>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">txseq.mat &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/matrix">matrix</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"adamtx"</span>, <span class="st">"etnmtx"</span>, <span class="st">"ifxmtx"</span>, <span class="st">"etnmtx"</span>, <span class="st">"adamtx"</span>, <span class="st">"ifxmtx"</span>), 
-                     <span class="dt">nrow =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/nrow">nrow</a></span>(pop), <span class="dt">ncol =</span> <span class="dv">3</span>, <span class="dt">byrow =</span> <span class="ot">TRUE</span>)
-<span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(txseq.mat)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">txseq.mat &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"adamtx"</span>, <span class="st">"etnmtx"</span>, <span class="st">"ifxmtx"</span>, <span class="st">"etnmtx"</span>, <span class="st">"adamtx"</span>, <span class="st">"ifxmtx"</span>), 
+                     <span class="dt">nrow =</span> <span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(pop), <span class="dt">ncol =</span> <span class="dv">3</span>, <span class="dt">byrow =</span> <span class="ot">TRUE</span>)
+<span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(txseq.mat)</code></pre></div>
 <pre><code>##      [,1]     [,2]     [,3]    
 ## [1,] "adamtx" "etnmtx" "ifxmtx"
 ## [2,] "etnmtx" "adamtx" "ifxmtx"
@@ -215,9 +274,9 @@ txseq2 &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocu
 ## [4,] "etnmtx" "adamtx" "ifxmtx"
 ## [5,] "adamtx" "etnmtx" "ifxmtx"
 ## [6,] "etnmtx" "adamtx" "ifxmtx"</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/nrow">nrow</a></span>(txseq.mat)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(txseq.mat)</code></pre></div>
 <pre><code>## [1] 100</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/nrow">nrow</a></span>(pop)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(pop)</code></pre></div>
 <pre><code>## [1] 100</code></pre>
 <div>
 <ul class="pager">
@@ -246,17 +305,20 @@ txseq2 &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocu
 </div>
 
 
+
       <footer><div class="copyright">
-  <p>Developed by Devin Incerti, Jeroen P. Jansen.</p>
+  <p>Developed by Jeroen P. Jansen, Devin Incerti.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
+
       </footer>
 </div>
 
   
+
 
   </body>
 </html>

@@ -7,8 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Value assessment • iviRA</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/simplex/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous">
+<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><meta property="og:title" content="Value assessment">
 <meta property="og:description" content="">
 <meta name="twitter:card" content="summary">
@@ -30,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">iviRA</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">1.0.0.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">2.0.0</span>
       </span>
     </div>
 
@@ -118,7 +119,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/InnovationValueInitiative/IVI-RA">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -131,6 +132,7 @@
 <!--/.navbar -->
 
       
+
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
@@ -152,11 +154,11 @@
 <p>To prepare the data so that it can be analyzed with <code>hesim</code>, mean (discounted) clinical effectiveness and costs can be calculated for each simulation number and each treatment sequence.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sim.out[, hc_cost <span class="op">:</span><span class="er">=</span><span class="st"> </span>tx_cost <span class="op">+</span><span class="st"> </span>hosp_cost <span class="op">+</span><span class="st"> </span>mgmt_cost <span class="op">+</span><span class="st"> </span>si_cost]
 sim.out[, pv <span class="op">:</span><span class="er">=</span><span class="st"> </span>(<span class="dv">1</span><span class="op">/</span>(<span class="dv">1</span> <span class="op">+</span><span class="st"> </span>.<span class="dv">03</span>))<span class="op">^</span>(month<span class="op">/</span><span class="dv">12</span>)]
-sim.out.means &lt;-<span class="st"> </span>sim.out[, .(<span class="dt">qalys =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sum">sum</a></span>(qalys)<span class="op">/</span>n.pats,
-                             <span class="dt">dqalys =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sum">sum</a></span>(qalys <span class="op">*</span><span class="st"> </span>pv)<span class="op">/</span>n.pats,
-                             <span class="dt">hc_cost =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sum">sum</a></span>(hc_cost)<span class="op">/</span>n.pats,
-                             <span class="dt">dhc_cost =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sum">sum</a></span>(hc_cost <span class="op">*</span><span class="st"> </span>pv)<span class="op">/</span>n.pats),
-                         by =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"sim"</span>, <span class="st">"txseq"</span>)]</code></pre></div>
+sim.out.means &lt;-<span class="st"> </span>sim.out[, .(<span class="dt">qalys =</span> <span class="kw"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(qalys)<span class="op">/</span>n.pats,
+                             <span class="dt">dqalys =</span> <span class="kw"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(qalys <span class="op">*</span><span class="st"> </span>pv)<span class="op">/</span>n.pats,
+                             <span class="dt">hc_cost =</span> <span class="kw"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(hc_cost)<span class="op">/</span>n.pats,
+                             <span class="dt">dhc_cost =</span> <span class="kw"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(hc_cost <span class="op">*</span><span class="st"> </span>pv)<span class="op">/</span>n.pats),
+                         by =<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"sim"</span>, <span class="st">"txseq"</span>)]</code></pre></div>
 <p>The <code>sim.out.means</code> object can be analyzed in <code>hesim</code> using the <a href="https://hesim-dev.github.io/hesim/reference/icea.html"><code>icea</code></a> and <a href="https://hesim-dev.github.io/hesim/reference/icea.html"><code>icea_pw</code></a> functions, which are designed for individualized (i.e., subgroup) CEA. A tutorial on individualized CEA with <code>hesim</code> is available <a href="https://hesim-dev.github.io/hesim/articles/icea.html">here</a>. Analysis from a health care sector perspective would compare clinical effectiveness as measured by discounted QALYs (<code>dqalys</code>) to costs as measured by discounted health care sector costs (<code>dhc_cost</code>). An analysis from a societal perspective would add productivity losses to health care sector costs.</p>
 </div>
 <div id="multi-criteria-decision-analysis" class="section level2">
@@ -187,17 +189,20 @@ sim.out.means &lt;-<span class="st"> </span>sim.out[, .(<span class="dt">qalys =
 </div>
 
 
+
       <footer><div class="copyright">
-  <p>Developed by Devin Incerti, Jeroen P. Jansen.</p>
+  <p>Developed by Jeroen P. Jansen, Devin Incerti.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
+
       </footer>
 </div>
 
   
+
 
   </body>
 </html>

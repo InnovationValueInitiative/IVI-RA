@@ -16,13 +16,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+<!-- headroom.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -47,6 +49,7 @@
 <![endif]-->
 
 
+
   </head>
 
   <body>
@@ -63,7 +66,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">iviRA</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">1.0.0.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">2.0.0</span>
       </span>
     </div>
 
@@ -152,7 +155,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/InnovationValueInitiative/IVI-RA">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -163,6 +166,7 @@
 </div><!--/.navbar -->
 
       
+
       </header>
 
 <div class="row">
@@ -179,7 +183,7 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>sample_pop</span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"homog"</span>, <span class='st'>"heterog"</span>), <span class='kw'>age_mean</span> <span class='kw'>=</span> <span class='fl'>55</span>,
+    <pre class="usage"><span class='fu'>sample_pop</span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"homog"</span>, <span class='st'>"heterog"</span>), <span class='kw'>age_mean</span> <span class='kw'>=</span> <span class='fl'>55</span>,
   <span class='kw'>age_sd</span> <span class='kw'>=</span> <span class='fl'>13</span>, <span class='kw'>male_prop</span> <span class='kw'>=</span> <span class='fl'>0.21</span>, <span class='kw'>haq0_mean</span> <span class='kw'>=</span> <span class='fl'>1.5</span>, <span class='kw'>haq0_sd</span> <span class='kw'>=</span> <span class='fl'>0.7</span>,
   <span class='kw'>wtmale</span> <span class='kw'>=</span> <span class='fl'>89</span>, <span class='kw'>wtfemale</span> <span class='kw'>=</span> <span class='fl'>75</span>, <span class='kw'>prev_dmards_mean</span> <span class='kw'>=</span> <span class='fl'>3.28</span>,
   <span class='kw'>prev_dmards_sd</span> <span class='kw'>=</span> <span class='fl'>1.72</span>, <span class='kw'>das28_mean</span> <span class='kw'>=</span> <span class='fl'>6</span>, <span class='kw'>das28_sd</span> <span class='kw'>=</span> <span class='fl'>1.2</span>,
@@ -297,22 +301,23 @@ for each variable. Current variables are:</p><dl class='dl-horizontal'>
   <dt>sdai</dt><dd><p>SDAI score.</p></dd>
   <dt>cdai</dt><dd><p>CDAI score.</p></dd>
   <dt>haq0</dt><dd><p>Baseline HAQ score.</p></dd>
+
 </dl>
 
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>sample_pop</span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"heterog"</span>, <span class='kw'>age_mean</span> <span class='kw'>=</span> <span class='fl'>50</span>)</div><div class='output co'>#&gt;            age male weight prev_dmards    das28     sdai     cdai       haq0
-#&gt;  [1,] 27.15680    0     75           2 7.775938 56.65645 58.73401 2.41916910
-#&gt;  [2,] 69.26645    0     75           5 5.121937 37.62798 31.56455 1.31145364
-#&gt;  [3,] 50.46303    1     89           4 5.105261 38.87250 35.96980 1.49617308
-#&gt;  [4,] 47.02475    0     75           2 7.337008 52.61008 51.64376 1.16185901
-#&gt;  [5,] 35.05341    0     75           5 5.054066 35.23737 35.07829 0.04472744
-#&gt;  [6,] 53.47048    0     75           4 7.385975 55.93197 58.01044 0.81204246
-#&gt;  [7,] 58.55695    0     75           2 6.176493 34.83110 37.34499 1.35270951
-#&gt;  [8,] 65.18576    0     75           3 4.934270 36.74544 33.78261 2.40322100
-#&gt;  [9,] 36.51517    1     89           5 5.902747 37.97200 29.12129 0.94576462
-#&gt; [10,] 36.35420    0     75           3 7.349944 69.06357 62.74117 2.70328336</div><div class='input'>
+    <pre class="examples"><div class='input'><span class='fu'>sample_pop</span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"heterog"</span>, <span class='kw'>age_mean</span> <span class='kw'>=</span> <span class='fl'>50</span>)</div><div class='output co'>#&gt;            age male weight prev_dmards    das28     sdai     cdai      haq0
+#&gt;  [1,] 57.80100    1     89           3 7.634467 65.35644 62.76758 1.2817643
+#&gt;  [2,] 45.49448    0     75           5 6.376763 50.67509 44.82911 2.0146699
+#&gt;  [3,] 46.29300    0     75           4 6.998589 43.42228 48.90367 1.2222298
+#&gt;  [4,] 41.58052    0     75           3 3.603166 23.54906 18.04258 1.2235002
+#&gt;  [5,] 33.46121    0     75           1 7.674845 57.42469 55.57379 0.7902820
+#&gt;  [6,] 47.72275    0     75           4 6.395844 54.80798 54.77467 2.2995913
+#&gt;  [7,] 21.38285    0     75           5 5.549343 33.93788 29.69137 0.7628540
+#&gt;  [8,] 57.53839    0     75           4 7.027274 50.28449 58.01731 2.7244855
+#&gt;  [9,] 50.81635    0     75           4 5.079985 48.19259 41.99686 0.6317067
+#&gt; [10,] 73.07662    0     75           5 6.645056 46.45549 37.84887 0.8588147</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -328,19 +333,23 @@ for each variable. Current variables are:</p><dl class='dl-horizontal'>
   </div>
 </div>
 
+
       <footer>
       <div class="copyright">
-  <p>Developed by Devin Incerti, Jeroen P. Jansen.</p>
+  <p>Developed by Jeroen P. Jansen, Devin Incerti.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
+
       </footer>
    </div>
 
   
 
+
   </body>
 </html>
+
 

@@ -1,0 +1,17 @@
+pandoc: 1.19.2.1
+pkgdown: 1.4.1
+pkgdown_sha: ~
+articles:
+  00-intro: 00-intro.html
+  01-population: 01-population.html
+  02-tx-seqs: 02-tx-seqs.html
+  03-structures: 03-structures.html
+  04-input-data: 04-input-data.html
+  05-parameters: 05-parameters.html
+  06-ips: 06-ips.html
+  07-analysis: 07-analysis.html
+  hesim: hesim.html
+  how-to-contribute: how-to-contribute.html
+  pull-requests: pull-requests.html
+  reproducibility: reproducibility.html
+

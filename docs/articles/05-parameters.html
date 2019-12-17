@@ -7,8 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sampling the model parameters • iviRA</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/simplex/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous">
+<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><meta property="og:title" content="Sampling the model parameters">
 <meta property="og:description" content="">
 <meta name="twitter:card" content="summary">
@@ -30,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">iviRA</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">1.0.0.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">2.0.0</span>
       </span>
     </div>
 
@@ -118,7 +119,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/InnovationValueInitiative/IVI-RA">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -131,6 +132,7 @@
 <!--/.navbar -->
 
       
+
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
@@ -148,7 +150,7 @@
 <p>The random samples depend on the underlying statistical estimates of the distribution of the parameters. We can generate a sample of size 100 using default values.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">parsamp &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pars.html">sample_pars</a></span>(<span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">input_data =</span> input.dat)</code></pre></div>
 <p>The object <code>parsamp</code> returned from <code>sample_pars</code> is a list of random draws of the parameters used in the IPS.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/names">names</a></span>(parsamp)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://rdrr.io/r/base/names.html">names</a></span>(parsamp)</code></pre></div>
 <pre><code>##  [1] "n"                 "acr"               "das28"            
 ##  [4] "haq"               "acr2haq"           "acr2das28"        
 ##  [7] "acr2sdai"          "acr2cdai"          "acr2eular"        
@@ -164,44 +166,70 @@
 <pre><code>## [1] 100</code></pre>
 <p>Users can generate samples with <code>iviRA</code> defaults or feed custom inputs into <code>sample_pars</code>. For example, we can generate a sample in which the cost of a serious infection is $7,000 instead of its default value of $5,873.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">parsamp2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pars.html">sample_pars</a></span>(<span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">input_data =</span> input.dat, <span class="dt">si_cost =</span> <span class="dv">7000</span>)
-<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/summary">summary</a></span>(parsamp2<span class="op">$</span>si.cost)</code></pre></div>
+<span class="kw"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(parsamp2<span class="op">$</span>si.cost)</code></pre></div>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##    5613    6312    7269    7126    7886    8396</code></pre>
-<p>To view the full list of arguments in <code>sample_pars</code> that can changed by the user view the documentation by typing <code><a href="../reference/sample_pars.html">?sample_pars</a></code>. All default arguments are loaded with the package and are based on IVI’s statistical estimates and synthesis of the literature. The parameter estimates can be viewed by typing the command <code><a href="https://www.rdocumentation.org/packages/utils/topics/data">data(package = "iviRA")</a></code> into the R console.</p>
+##    5616    6250    6922    6913    7487    8301</code></pre>
+<p>To view the full list of arguments in <code>sample_pars</code> that can changed by the user view the documentation by typing <code><a href="../reference/sample_pars.html">?sample_pars</a></code>. All default arguments are loaded with the package and are based on IVI’s statistical estimates and synthesis of the literature. The parameter estimates can be viewed by typing the command <code><a href="https://rdrr.io/r/utils/data.html">data(package = "iviRA")</a></code> into the R console.</p>
 <p>Below we describe these parameter estimates and separate them into 8 main categories: treatment effects estimated from a network meta-analysis (NMA); mappings between various measured of treatment response, disease activity, and/or function; long-term progression of disease, treatment duration, serious infections, mortality, utility, and costs.</p>
 <div id="treatment-effects-during-initial-6-month-period" class="section level2">
 <h2 class="hasAnchor">
 <a href="#treatment-effects-during-initial-6-month-period" class="anchor"></a>Treatment effects during initial 6 month period</h2>
 <p>The effect of treatment on ACR response at 6 months, change in DAS28 at 6 months, and the change in the HAQ score at 6 months are estimated using a NMA. Default NMA parameter estimates are based on results from an NMA conduced by IVI using a Bayesian random effects approach. Each object is a list containing the mean and variance-covariance matrix of the posterior distribution of the parameters.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/names">names</a></span>(iviRA<span class="op">::</span>nma.acr.naive)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://rdrr.io/r/base/names.html">names</a></span>(iviRA<span class="op">::</span>nma.acr.naive)</code></pre></div>
 <pre><code>## [1] "mean" "vcov"</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iviRA<span class="op">::</span>nma.acr.naive<span class="op">$</span>mean</code></pre></div>
-<pre><code>##          A         z1         z2         z3  d_cdmards d_abtivmtx 
-##  0.6329128  0.0000000  0.6414534  1.2243365  0.0000000 -0.7924898 
-##   d_adamtx      d_ada   d_etnmtx      d_etn   d_golmtx   d_ifxmtx 
-## -0.7712937 -0.3653499 -0.9443291 -0.5837728 -0.8819216 -0.6760986 
-##  d_placebo   d_tczmtx      d_tcz   d_czpmtx d_abtscmtx      d_nbt 
-##  0.5629207 -0.8111553         NA -1.2556327 -0.8405713  0.0000000 
-##   d_rtxmtx   d_tofmtx      d_rtx      d_tof      d_czp      d_gol 
-## -0.7595393 -0.9111716 -0.5802354 -0.2177813 -0.6178098         NA</code></pre>
+<pre><code>##                A               z1               z2               z3 
+##        0.5499991        0.0000000        0.6231056        1.2020253 
+##        d_cdmards       d_abtivmtx       d_abtscmtx         d_adamtx 
+##        0.0000000       -0.9007627       -0.9005787       -0.7743447 
+##            d_ada d_adabiosbwwdmtx         d_anamtx            d_bct 
+##       -0.5470945       -0.7678458       -0.4505512       -0.8477756 
+##         d_bctmtx            d_czp         d_czpmtx            d_etn 
+##       -0.6992776       -0.7559150       -1.1912514       -0.7941323 
+##         d_etnmtx d_etnbiosszzsmtx d_etnbiosykromtx            d_gol 
+##       -0.7628515       -0.5468121       -0.8449216               NA 
+##         d_golmtx         d_ifxmtx d_ifxbiosqbtxmtx        d_placebo 
+##       -0.8450899       -0.7734014               NA        0.3774837 
+##            d_nbt            d_rtx         d_rtxmtx            d_sar 
+##        0.0000000       -0.5237583       -0.7040334       -0.9321168 
+##         d_sarmtx         d_triple            d_tcz         d_tczmtx 
+##       -0.8696777       -0.5961814       -1.0482577       -0.9883258 
+##         d_tofmtx            d_tof         d_upamtx 
+##       -0.7667502       -0.5347355       -0.7271539</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iviRA<span class="op">::</span>nma.das28.naive<span class="op">$</span>mean</code></pre></div>
-<pre><code>##          A  d_cdmards d_abtivmtx   d_adamtx      d_ada   d_etnmtx 
-## -1.1211094  0.0000000 -1.1052728         NA -0.2868123 -1.4966904 
-##      d_etn   d_golmtx   d_ifxmtx  d_placebo   d_tczmtx      d_tcz 
-## -0.7606214 -1.4478931 -0.7988820  0.6348693 -1.8619306 -0.8324263 
-##   d_czpmtx d_abtscmtx      d_nbt   d_rtxmtx   d_tofmtx      d_rtx 
-## -2.0054776 -1.1220057  0.0000000 -1.1918102         NA -0.8508762 
-##      d_tof      d_czp      d_gol 
-##         NA -0.2687301         NA</code></pre>
+<pre><code>##                A        d_cdmards       d_abtivmtx       d_abtscmtx 
+##       -0.9906912        0.0000000       -1.3419370       -1.2905265 
+##         d_adamtx            d_ada d_adabiosbwwdmtx         d_anamtx 
+##       -1.1957996       -0.3846224       -1.2555142               NA 
+##            d_bct         d_bctmtx            d_czp         d_czpmtx 
+##               NA               NA               NA       -2.0094080 
+##            d_etn         d_etnmtx d_etnbiosszzsmtx d_etnbiosykromtx 
+##       -1.5127713       -1.5699353       -1.5696227       -1.6663967 
+##            d_gol         d_golmtx         d_ifxmtx d_ifxbiosqbtxmtx 
+##               NA       -1.4525273       -0.9384479               NA 
+##        d_placebo            d_nbt            d_rtx         d_rtxmtx 
+##        0.4588825        0.0000000       -0.7546151       -0.9851809 
+##            d_sar         d_sarmtx         d_triple            d_tcz 
+##       -1.2770095               NA       -1.3012420       -1.7762413 
+##         d_tczmtx         d_tofmtx            d_tof         d_upamtx 
+##       -1.9362256       -0.9513472       -0.7044028       -1.2288702</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iviRA<span class="op">::</span>nma.haq.naive<span class="op">$</span>mean</code></pre></div>
-<pre><code>##           A   d_cdmards  d_abtivmtx    d_adamtx       d_ada    d_etnmtx 
-## -0.22058104  0.00000000 -0.22532161 -0.32124573 -0.07129560 -0.34065638 
-##       d_etn    d_golmtx    d_ifxmtx   d_placebo    d_tczmtx       d_tcz 
-## -0.24156205 -0.27247774 -0.21678447  0.20456867 -0.24777323  0.02597454 
-##    d_czpmtx  d_abtscmtx       d_nbt    d_rtxmtx    d_tofmtx       d_rtx 
-## -0.35480646 -0.21472087  0.00000000 -0.27057962          NA          NA 
-##       d_tof       d_czp       d_gol 
-## -0.28168946 -0.28382294          NA</code></pre>
+<pre><code>##                A        d_cdmards       d_abtivmtx       d_abtscmtx 
+##       -0.2328891        0.0000000       -0.2317792       -0.2229830 
+##         d_adamtx            d_ada d_adabiosbwwdmtx         d_anamtx 
+##       -0.3204838       -0.1601882               NA       -0.1104685 
+##            d_bct         d_bctmtx            d_czp         d_czpmtx 
+##               NA               NA       -0.3193571       -0.3883754 
+##            d_etn         d_etnmtx d_etnbiosszzsmtx d_etnbiosykromtx 
+##       -0.1512577       -0.3369290               NA       -0.2390994 
+##            d_gol         d_golmtx         d_ifxmtx d_ifxbiosqbtxmtx 
+##               NA       -0.3436631       -0.2168854       -0.2400438 
+##        d_placebo            d_nbt            d_rtx         d_rtxmtx 
+##        0.1710748        0.0000000               NA       -0.2510926 
+##            d_sar         d_sarmtx         d_triple            d_tcz 
+##       -0.3404208       -0.2506528       -0.2673432       -0.2480185 
+##         d_tczmtx         d_tofmtx            d_tof         d_upamtx 
+##       -0.2386515       -0.4050463       -0.3117164       -0.3516575</code></pre>
 <p>In the PSA, we use a multivariate normal distribution to sample the NMA parameters. The advantage of this approach is that we do not have to load the entire posterior distribution with the package. The justification is the Bayesian central limit theorem, which states that under large samples, the posterior distribution will approach a multivariate normal distribution.</p>
 </div>
 <div id="treatment-response-mappings" class="section level2">
@@ -254,27 +282,39 @@
 <p>The progression of HAQ over time is modeled in two ways: first, assuming a constant annual rate, and second, by using a LCGM. The LCGM can currently only be used to model progression in the absence of tDMARDs while a constant annual rate can be used for all treatments.</p>
 <p>The constant annual rate of progression for patients on cDMARDs (and NBT) are based on <a href="https://arthritis-research.biomedcentral.com/articles/10.1186/ar2944">Wolfe and Michaud’s (2010)</a> analysis of 3,829 RA patients who switched from non-biologic treatment to biologic treatment and participated in the National Data Bank for Rheumatic Diseases (NDB). The progression rate for patients on biologics are based on treatment-specific rates from <a href="http://onlinelibrary.wiley.com/doi/10.1002/acr.20405/full">Michaud et al. (2011)</a> adjusted for baseline HAQ score, age, sex, education, smoking, BMI, comorbidity, and RA onset. Importantly, The average HAQ rate among patients on a biologic was -0.001 in the Michaud et al. analysis, which instills confidence that the reported HAQ progression rates for different bDMARDs can be directly compared with the overall annual HAQ progression rate of 0.031 reported in the 2010 Wolfe and Michaud analysis.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iviRA<span class="op">::</span>haq.lprog<span class="op">$</span>tx</code></pre></div>
-<pre><code>##        sname    est          se   lower  upper
-##  1:  cdmards  0.031 0.002551067  0.0260 0.0360
-##  2: abtivmtx -0.001 0.001530640 -0.0040 0.0020
-##  3:   adamtx -0.003 0.007398095 -0.0175 0.0115
-##  4:      ada  0.012 0.006887882 -0.0015 0.0255
-##  5:   etnmtx -0.005 0.003316387 -0.0115 0.0015
-##  6:      etn -0.003 0.003826601 -0.0105 0.0045
-##  7:   golmtx -0.001 0.001530640 -0.0040 0.0020
-##  8:   ifxmtx -0.001 0.003571494 -0.0080 0.0060
-##  9:  placebo  0.031 0.002551067  0.0260 0.0360
-## 10:   tczmtx -0.001 0.001530640 -0.0040 0.0020
-## 11:      tcz -0.001 0.001530640 -0.0040 0.0020
-## 12:   czpmtx -0.001 0.001530640 -0.0040 0.0020
-## 13: abtscmtx -0.001 0.001530640 -0.0040 0.0020
-## 14:      nbt  0.031 0.002551067  0.0260 0.0360
-## 15:   rtxmtx -0.001 0.001530640 -0.0040 0.0020
-## 16:   tofmtx -0.001 0.001530640 -0.0040 0.0020
-## 17:      rtx -0.001 0.001530640 -0.0040 0.0020
-## 18:      tof -0.001 0.001530640 -0.0040 0.0020
-## 19:      czp -0.001 0.001530640 -0.0040 0.0020
-## 20:      gol -0.001 0.001530640 -0.0040 0.0020</code></pre>
+<pre><code>##              sname    est          se   lower  upper
+##  1:        cdmards  0.031 0.002551067  0.0260 0.0360
+##  2:       abtivmtx -0.001 0.001530640 -0.0040 0.0020
+##  3:       abtscmtx -0.001 0.001530640 -0.0040 0.0020
+##  4:         adamtx -0.003 0.007398095 -0.0175 0.0115
+##  5:            ada  0.012 0.006887882 -0.0015 0.0255
+##  6: adabiosbwwdmtx -0.003 0.007398095 -0.0175 0.0115
+##  7:         anamtx -0.001 0.001530640 -0.0040 0.0020
+##  8:            bct -0.001 0.001530640 -0.0040 0.0020
+##  9:         bctmtx -0.001 0.001530640 -0.0040 0.0020
+## 10:            czp -0.001 0.001530640 -0.0040 0.0020
+## 11:         czpmtx -0.001 0.001530640 -0.0040 0.0020
+## 12:            etn -0.003 0.003826601 -0.0105 0.0045
+## 13:         etnmtx -0.005 0.003316387 -0.0115 0.0015
+## 14: etnbiosszzsmtx -0.005 0.003316387 -0.0115 0.0015
+## 15: etnbiosykromtx -0.005 0.003316387 -0.0115 0.0015
+## 16:            gol -0.001 0.001530640 -0.0040 0.0020
+## 17:         golmtx -0.001 0.001530640 -0.0040 0.0020
+## 18:         ifxmtx -0.001 0.003571494 -0.0080 0.0060
+## 19: ifxbiosqbtxmtx -0.001 0.003571494 -0.0080 0.0060
+## 20:        placebo  0.031 0.002551067  0.0260 0.0360
+## 21:            nbt  0.031 0.002551067  0.0260 0.0360
+## 22:            rtx -0.001 0.001530640 -0.0040 0.0020
+## 23:         rtxmtx -0.001 0.001530640 -0.0040 0.0020
+## 24:            sar -0.001 0.001530640 -0.0040 0.0020
+## 25:         sarmtx -0.001 0.001530640 -0.0040 0.0020
+## 26:         triple -0.001 0.001530640 -0.0040 0.0020
+## 27:            tcz -0.001 0.001530640 -0.0040 0.0020
+## 28:         tczmtx -0.001 0.001530640 -0.0040 0.0020
+## 29:         tofmtx -0.001 0.001530640 -0.0040 0.0020
+## 30:            tof -0.001 0.001530640 -0.0040 0.0020
+## 31:         upamtx -0.001 0.001530640 -0.0040 0.0020
+##              sname    est          se   lower  upper</code></pre>
 <p>The constant annual rate of HAQ progression is also adjusted by age based on differences between overall and age specific rates as reported by Michaud et al. (2011).</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iviRA<span class="op">::</span>haq.lprog<span class="op">$</span>diff.age</code></pre></div>
 <pre><code>##       age    est          se       lower       upper
@@ -332,11 +372,11 @@
 <a href="#time-to-treatment-discontinuation" class="anchor"></a>Time to treatment discontinuation</h2>
 <p>Time to treatment discontinuation depends on the pathway (<strong>S1-S6</strong>) used to model treatment switching. If <strong>S1</strong> is selected, a single treatment discontinuation curve is used for all patients. The parameters needed to simulate this curve are stored in. In <strong>S2-S5</strong>, time to treatment discontinuation is stratified by the level of disease activity, and in <strong>S6</strong> treatment duration depends on EULAR response (st. The parameters used to simulate treatment duration based on <strong>S1</strong>, <strong>S2-S5</strong>, and <strong>S6</strong> are stored in <code><a href="../reference/ttd.html">iviRA::ttd.all</a></code>, <code><a href="../reference/ttd.html">iviRA::ttd.da</a></code>, and <code><a href="../reference/ttd.html">iviRA::ttd.eular</a></code>, respectively.</p>
 <p>The treatment duration curves are estimated using parametric survival models with the <code>flexsurv</code> package. Parameters from the survival analyses used in the IVI-RA model are stored in two-level lists. The names in the first level correspond to the name of the parametric survival model.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/names">names</a></span>(iviRA<span class="op">::</span>ttd.all)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://rdrr.io/r/base/names.html">names</a></span>(iviRA<span class="op">::</span>ttd.all)</code></pre></div>
 <pre><code>## [1] "exponential" "weibull"     "gompertz"    "gamma"       "llogis"     
 ## [6] "lnorm"       "gengamma"</code></pre>
 <p>7 parametric distributions are currently supported including the exponential, Weibull, Gompertz, gamma, log-logistic, lognormal, and generalized gamma distributions. The parameter of the survival model are stored in the second level of the list. For example, we can examine results from a Weibull fit.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/names">names</a></span>(iviRA<span class="op">::</span>ttd.all<span class="op">$</span>weibull)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://rdrr.io/r/base/names.html">names</a></span>(iviRA<span class="op">::</span>ttd.all<span class="op">$</span>weibull)</code></pre></div>
 <pre><code>## [1] "est"        "vcov"       "loc.index"  "anc1.index" "anc2.index"</code></pre>
 <p>Point estimates are stored in the element <code>est</code> and the variance-covariance matrix is stored in the element <code>vcov</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iviRA<span class="op">::</span>ttd.all<span class="op">$</span>weibull<span class="op">$</span>est</code></pre></div>
@@ -426,35 +466,47 @@
 <div id="serious-infections" class="section level2">
 <h2 class="hasAnchor">
 <a href="#serious-infections" class="anchor"></a>Serious infections</h2>
-<p>Serious infection rates are based on the NMA and Cochrane review by <a href="http://onlinelibrary.wiley.com/doi/10.1002/14651858.CD008794/full">Singh et al. (2011)</a>. In accordance with the 2016 NICE report we assume a constant serious infection rate of 0.026 for patients using cDMARDs and a constant rate of <code><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp(iviRA::ttsi[sname == "etnmtx", lograte])</a></code> for patient using tDMARDs. A such we constantly assume that the time to a serious infection is exponentially distributed and that it does not vary across tDMARDs.</p>
+<p>Serious infection rates are based on the NMA and Cochrane review by <a href="http://onlinelibrary.wiley.com/doi/10.1002/14651858.CD008794/full">Singh et al. (2011)</a>. In accordance with the 2016 NICE report we assume a constant serious infection rate of 0.026 for patients using cDMARDs and a constant rate of <code><a href="https://rdrr.io/r/base/Log.html">exp(iviRA::ttsi[sname == "etnmtx", lograte])</a></code> for patient using tDMARDs. A such we constantly assume that the time to a serious infection is exponentially distributed and that it does not vary across tDMARDs.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iviRA<span class="op">::</span>ttsi</code></pre></div>
-<pre><code>##        sname    lograte lograte_se
-##  1:  cdmards  -3.649659   0.135922
-##  2: abtivmtx  -3.352407   0.135922
-##  3:   adamtx  -3.352407   0.135922
-##  4:      ada  -3.352407   0.135922
-##  5:   etnmtx  -3.352407   0.135922
-##  6:      etn  -3.352407   0.135922
-##  7:   golmtx  -3.352407   0.135922
-##  8:   ifxmtx  -3.352407   0.135922
-##  9:  placebo -23.025851   0.135922
-## 10:   tczmtx  -3.352407   0.135922
-## 11:      tcz  -3.352407   0.135922
-## 12:   czpmtx  -3.352407   0.135922
-## 13: abtscmtx  -3.352407   0.135922
-## 14:      nbt -23.025851   0.135922
-## 15:   rtxmtx  -3.352407   0.135922
-## 16:   tofmtx  -3.352407   0.135922
-## 17:      rtx  -3.352407   0.135922
-## 18:      tof  -3.352407   0.135922
-## 19:      czp  -3.352407   0.135922
-## 20:      gol  -3.352407   0.135922</code></pre>
+<pre><code>##              sname    lograte lograte_se
+##  1:        cdmards  -3.649659   0.135922
+##  2:       abtivmtx  -3.352407   0.135922
+##  3:       abtscmtx  -3.352407   0.135922
+##  4:         adamtx  -3.352407   0.135922
+##  5:            ada  -3.352407   0.135922
+##  6: adabiosbwwdmtx  -3.352407   0.135922
+##  7:         anamtx  -3.352407   0.135922
+##  8:            bct  -3.352407   0.135922
+##  9:         bctmtx  -3.352407   0.135922
+## 10:            czp  -3.352407   0.135922
+## 11:         czpmtx  -3.352407   0.135922
+## 12:            etn  -3.352407   0.135922
+## 13:         etnmtx  -3.352407   0.135922
+## 14: etnbiosszzsmtx  -3.352407   0.135922
+## 15: etnbiosykromtx  -3.352407   0.135922
+## 16:            gol  -3.352407   0.135922
+## 17:         golmtx  -3.352407   0.135922
+## 18:         ifxmtx  -3.352407   0.135922
+## 19: ifxbiosqbtxmtx  -3.352407   0.135922
+## 20:        placebo -23.025851   0.135922
+## 21:            nbt -23.025851   0.135922
+## 22:            rtx  -3.352407   0.135922
+## 23:         rtxmtx  -3.352407   0.135922
+## 24:            sar  -3.352407   0.135922
+## 25:         sarmtx  -3.352407   0.135922
+## 26:         triple  -3.649659   0.135922
+## 27:            tcz  -3.352407   0.135922
+## 28:         tczmtx  -3.352407   0.135922
+## 29:         tofmtx  -3.352407   0.135922
+## 30:            tof  -3.352407   0.135922
+## 31:         upamtx  -3.352407   0.135922
+##              sname    lograte lograte_se</code></pre>
 </div>
 <div id="mortality" class="section level2">
 <h2 class="hasAnchor">
 <a href="#mortality" class="anchor"></a>Mortality</h2>
 <p>Baseline mortality for patients without RA are based on gender-specific US life tables. More specifically, we use the probability of mortality, <code>qx</code>, between ages <span class="math inline">\(x\)</span> and <span class="math inline">\(x+1\)</span>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(iviRA<span class="op">::</span>lifetable.male)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(iviRA<span class="op">::</span>lifetable.male)</code></pre></div>
 <pre><code>##    age       qx     lx  dx     L      Tx   ex
 ## 1:   0 0.006575 100000 658 99427 7629389 76.3
 ## 2:   1 0.000445  99342  44 99320 7529961 75.8
@@ -462,7 +514,7 @@
 ## 4:   3 0.000240  99268  24 99256 7331358 73.9
 ## 5:   4 0.000183  99244  18 99235 7232101 72.9
 ## 6:   5 0.000169  99226  17 99218 7132866 71.9</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(iviRA<span class="op">::</span>lifetable.female)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(iviRA<span class="op">::</span>lifetable.female)</code></pre></div>
 <pre><code>##    age       qx     lx  dx     L      Tx   ex
 ## 1:   0 0.005516 100000 552 99514 8105137 81.1
 ## 2:   1 0.000382  99448  38 99429 8005623 80.5
@@ -506,7 +558,7 @@
 ## 6: prev_dmards  0.0249 0.0028
 ## 7:         haq -0.8647 0.0103</code></pre>
 <p>The information needed to sample from the mixture model are stored in the list <code><a href="../reference/utility.mixture.html">iviRA::utility.mixture</a></code>. The setup is the same as with the LCGM in that the list contains a table of coefficient estimates as well as the corresponding variance covariance matrix.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/names">names</a></span>(iviRA<span class="op">::</span>utility.mixture)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://rdrr.io/r/base/names.html">names</a></span>(iviRA<span class="op">::</span>utility.mixture)</code></pre></div>
 <pre><code>## [1] "coef" "vcov"</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iviRA<span class="op">::</span>utility.mixture<span class="op">$</span>coef</code></pre></div>
 <pre><code>##            var parameter           est
@@ -553,9 +605,9 @@
 ## 41    Pain/100    delta3  25.339552780
 ## 42   Pain/1002    delta3 -16.962219250</code></pre>
 <p>Quality-adjusted life-years are also decreased in each period that there is a serious infection and is assumed to vary by 20 percent in either direction.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/formals">formals</a></span>(sample_pars)<span class="op">$</span>si_ul</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://rdrr.io/r/base/formals.html">formals</a></span>(sample_pars)<span class="op">$</span>si_ul</code></pre></div>
 <pre><code>## [1] 0.156</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/formals">formals</a></span>(sample_pars)<span class="op">$</span>si_ul_range</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://rdrr.io/r/base/formals.html">formals</a></span>(sample_pars)<span class="op">$</span>si_ul_range</code></pre></div>
 <pre><code>## [1] 0.2</code></pre>
 </div>
 <div id="costs" class="section level2">
@@ -567,8 +619,8 @@
 <a href="#treatment-costs" class="anchor"></a>Treatment costs</h3>
 <p>Drug acquisition and administration costs are separated into costs associated with the first 6 months of treatment and costs after the first 6 months. Costs are a function of the FDA recommended dose and frequency of administration, strength and dosage form, the price, and infusion. Prices with the simulation are reduced according to assumed discounts and rebates. If dosing is weight based, then the dose is calculated by multiplying the dose value (e.g., <code>init_dose_val</code> and <code>ann_dose_val</code>) by each patients weight in kilograms; otherwise the dose is simply equal to the dose value. For example, the dose for infliximab during the first six months is equal to 3 multiplied by the weight of the patient.</p>
 <p>Information related to treatment costs are stored in the list <code><a href="../reference/tx.cost.html">iviRA::tx.cost</a></code>. Data related to the costs of treatment for each medication are in the data table <code>iviRA::tx.cost$cost</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(knitr)
-<span class="kw"><a href="https://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(iviRA<span class="op">::</span>tx.cost<span class="op">$</span>cost)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(knitr)
+<span class="kw"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>(iviRA<span class="op">::</span>tx.cost<span class="op">$</span>cost)</code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">name</th>
@@ -591,25 +643,44 @@
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="left">etanercept</td>
-<td align="left">etn</td>
-<td align="left">50 mg QW</td>
-<td align="left">50 mg/0.98 mL syringe or pen injector</td>
-<td align="right">50</td>
-<td align="right">50</td>
+<td align="left">abatacept IV</td>
+<td align="left">abtiv</td>
+<td align="left">750 mg IV at weeks 0, 2, 4 then Q4W</td>
+<td align="left">250mg vial</td>
+<td align="right">750</td>
+<td align="right">750</td>
 <td align="left">mg</td>
-<td align="right">26</td>
-<td align="right">52.000000</td>
-<td align="right">50.0</td>
+<td align="right">8</td>
+<td align="right">13.000000</td>
+<td align="right">250.0</td>
 <td align="left">mg</td>
-<td align="right">1110.50000</td>
+<td align="right">1167.33000</td>
 <td align="right">0.2</td>
 <td align="right">0.3</td>
-<td align="right">0</td>
+<td align="right">164</td>
 <td align="right">0</td>
 <td align="right">0</td>
 </tr>
 <tr class="even">
+<td align="left">abatacept SC</td>
+<td align="left">abtsc</td>
+<td align="left">125 mg SC QW with IV loading dose</td>
+<td align="left">125mg/ml syringe</td>
+<td align="right">125</td>
+<td align="right">125</td>
+<td align="left">mg</td>
+<td align="right">26</td>
+<td align="right">52.000000</td>
+<td align="right">125.0</td>
+<td align="left">mg</td>
+<td align="right">1094.72250</td>
+<td align="right">0.2</td>
+<td align="right">0.3</td>
+<td align="right">164</td>
+<td align="right">1</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
 <td align="left">adalimumab</td>
 <td align="left">ada</td>
 <td align="left">40 mg EOW</td>
@@ -621,7 +692,26 @@
 <td align="right">26.000000</td>
 <td align="right">40.0</td>
 <td align="left">mg</td>
-<td align="right">2220.62000</td>
+<td align="right">2587.04500</td>
+<td align="right">0.2</td>
+<td align="right">0.3</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">adalimumab-bwwd (biosimilar Samsung Bioepis)</td>
+<td align="left">adabiosbwwd</td>
+<td align="left">40 mg EOW</td>
+<td align="left">40 mg/0.8 mL syringe or pen injector</td>
+<td align="right">40</td>
+<td align="right">40</td>
+<td align="left">mg</td>
+<td align="right">13</td>
+<td align="right">26.000000</td>
+<td align="right">40.0</td>
+<td align="left">mg</td>
+<td align="right">2069.63600</td>
 <td align="right">0.2</td>
 <td align="right">0.3</td>
 <td align="right">0</td>
@@ -629,37 +719,37 @@
 <td align="right">0</td>
 </tr>
 <tr class="odd">
-<td align="left">infliximab</td>
-<td align="left">ifx</td>
-<td align="left">3 mg/kg at 0, 2, and 6 weeks, 3mg/kg Q8W, 6 mg/kg Q6W after 6 months</td>
-<td align="left">100 mg vial</td>
-<td align="right">3</td>
-<td align="right">6</td>
-<td align="left">mg/kg</td>
-<td align="right">5</td>
-<td align="right">8.666667</td>
+<td align="left">anakinra</td>
+<td align="left">ana</td>
+<td align="left">100 mg daily</td>
+<td align="left">100 mg syringe</td>
+<td align="right">100</td>
+<td align="right">100</td>
+<td align="left">mg</td>
+<td align="right">182</td>
+<td align="right">364.000000</td>
 <td align="right">100.0</td>
 <td align="left">mg</td>
-<td align="right">1113.27000</td>
+<td align="right">147.06714</td>
 <td align="right">0.2</td>
 <td align="right">0.3</td>
-<td align="right">164</td>
 <td align="right">0</td>
-<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
 </tr>
 <tr class="even">
-<td align="left">golimumab</td>
-<td align="left">gol</td>
-<td align="left">50 mg QM</td>
-<td align="left">50 mg/0.5 mL syringe or pen injector</td>
-<td align="right">50</td>
-<td align="right">50</td>
+<td align="left">baricitinib</td>
+<td align="left">bct</td>
+<td align="left">2 mg daily</td>
+<td align="left">2 mg tablet</td>
+<td align="right">2</td>
+<td align="right">2</td>
 <td align="left">mg</td>
-<td align="right">6</td>
-<td align="right">12.000000</td>
-<td align="right">50.0</td>
+<td align="right">182</td>
+<td align="right">364.000000</td>
+<td align="right">2.0</td>
 <td align="left">mg</td>
-<td align="right">3811.18000</td>
+<td align="right">71.23000</td>
 <td align="right">0.2</td>
 <td align="right">0.3</td>
 <td align="right">0</td>
@@ -678,7 +768,7 @@
 <td align="right">26.000000</td>
 <td align="right">200.0</td>
 <td align="left">mg</td>
-<td align="right">1839.94000</td>
+<td align="right">4327.43000</td>
 <td align="right">0.2</td>
 <td align="right">0.3</td>
 <td align="right">0</td>
@@ -686,56 +776,18 @@
 <td align="right">0</td>
 </tr>
 <tr class="even">
-<td align="left">abatacept IV</td>
-<td align="left">abtiv</td>
-<td align="left">750 mg IV at weeks 0, 2, 4 then Q4W</td>
-<td align="left">250mg vial</td>
-<td align="right">750</td>
-<td align="right">750</td>
-<td align="left">mg</td>
-<td align="right">8</td>
-<td align="right">13.000000</td>
-<td align="right">250.0</td>
-<td align="left">mg</td>
-<td align="right">931.16000</td>
-<td align="right">0.2</td>
-<td align="right">0.3</td>
-<td align="right">164</td>
-<td align="right">0</td>
-<td align="right">0</td>
-</tr>
-<tr class="odd">
-<td align="left">abatacept SC</td>
-<td align="left">abtsc</td>
-<td align="left">125 mg SC QW with IV loading dose</td>
-<td align="left">125mg/ml syringe</td>
-<td align="right">125</td>
-<td align="right">125</td>
+<td align="left">etanercept</td>
+<td align="left">etn</td>
+<td align="left">50 mg QW</td>
+<td align="left">50 mg/0.98 mL syringe or pen injector</td>
+<td align="right">50</td>
+<td align="right">50</td>
 <td align="left">mg</td>
 <td align="right">26</td>
 <td align="right">52.000000</td>
-<td align="right">125.0</td>
+<td align="right">50.0</td>
 <td align="left">mg</td>
-<td align="right">957.14000</td>
-<td align="right">0.2</td>
-<td align="right">0.3</td>
-<td align="right">164</td>
-<td align="right">1</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td align="left">tocilizumab</td>
-<td align="left">tcz</td>
-<td align="left">162 mg SC EOW</td>
-<td align="left">162 mg/0.9 mL syringe</td>
-<td align="right">162</td>
-<td align="right">162</td>
-<td align="left">mg</td>
-<td align="right">13</td>
-<td align="right">26.000000</td>
-<td align="right">162.0</td>
-<td align="left">mg</td>
-<td align="right">898.31000</td>
+<td align="right">1293.51500</td>
 <td align="right">0.2</td>
 <td align="right">0.3</td>
 <td align="right">0</td>
@@ -743,6 +795,139 @@
 <td align="right">0</td>
 </tr>
 <tr class="odd">
+<td align="left">etanercept-szzs (biosimilar Sandoz)</td>
+<td align="left">etnbiosszzs</td>
+<td align="left">50 mg QW</td>
+<td align="left">50 mg/0.98 mL syringe or pen injector</td>
+<td align="right">50</td>
+<td align="right">50</td>
+<td align="left">mg</td>
+<td align="right">26</td>
+<td align="right">52.000000</td>
+<td align="right">50.0</td>
+<td align="left">mg</td>
+<td align="right">1034.81200</td>
+<td align="right">0.2</td>
+<td align="right">0.3</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">etanercept-ykro (biosimilar Samsung Bioepis)</td>
+<td align="left">etnbiosykro</td>
+<td align="left">50 mg QW</td>
+<td align="left">50 mg/0.98 mL syringe or pen injector</td>
+<td align="right">50</td>
+<td align="right">50</td>
+<td align="left">mg</td>
+<td align="right">26</td>
+<td align="right">52.000000</td>
+<td align="right">50.0</td>
+<td align="left">mg</td>
+<td align="right">1034.81200</td>
+<td align="right">0.2</td>
+<td align="right">0.3</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">golimumab</td>
+<td align="left">gol</td>
+<td align="left">50 mg QM</td>
+<td align="left">50 mg/0.5 mL syringe or pen injector</td>
+<td align="right">50</td>
+<td align="right">50</td>
+<td align="left">mg</td>
+<td align="right">6</td>
+<td align="right">12.000000</td>
+<td align="right">50.0</td>
+<td align="left">mg</td>
+<td align="right">4809.02000</td>
+<td align="right">0.2</td>
+<td align="right">0.3</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">hydroxychloroquine sulfate</td>
+<td align="left">hcl</td>
+<td align="left">400 mg daily</td>
+<td align="left">200 mg tablet</td>
+<td align="right">400</td>
+<td align="right">400</td>
+<td align="left">mg</td>
+<td align="right">182</td>
+<td align="right">364.000000</td>
+<td align="right">200.0</td>
+<td align="left">mg</td>
+<td align="right">3.88200</td>
+<td align="right">0.2</td>
+<td align="right">0.3</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">infliximab</td>
+<td align="left">ifx</td>
+<td align="left">3 mg/kg at 0, 2, and 6 weeks, 3mg/kg Q8W, 6 mg/kg Q6W after 6 months</td>
+<td align="left">100 mg vial</td>
+<td align="right">3</td>
+<td align="right">6</td>
+<td align="left">mg/kg</td>
+<td align="right">5</td>
+<td align="right">8.666667</td>
+<td align="right">100.0</td>
+<td align="left">mg</td>
+<td align="right">1167.82000</td>
+<td align="right">0.2</td>
+<td align="right">0.3</td>
+<td align="right">164</td>
+<td align="right">0</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">infliximab-qbtx (biosimilar Pfizer)</td>
+<td align="left">ifxbiosqbtx</td>
+<td align="left">3 mg/kg at 0, 2, and 6 weeks, 3mg/kg Q8W, 6 mg/kg Q6W after 6 months</td>
+<td align="left">100 mg vial</td>
+<td align="right">3</td>
+<td align="right">6</td>
+<td align="left">mg/kg</td>
+<td align="right">5</td>
+<td align="right">8.666667</td>
+<td align="right">100.0</td>
+<td align="left">mg</td>
+<td align="right">946.28000</td>
+<td align="right">0.2</td>
+<td align="right">0.3</td>
+<td align="right">164</td>
+<td align="right">0</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">methotrexate</td>
+<td align="left">cdmards</td>
+<td align="left">15mg QW</td>
+<td align="left">15 mg injection</td>
+<td align="right">15</td>
+<td align="right">15</td>
+<td align="left">mg</td>
+<td align="right">26</td>
+<td align="right">52.000000</td>
+<td align="right">15.0</td>
+<td align="left">mg</td>
+<td align="right">5.81000</td>
+<td align="right">0.2</td>
+<td align="right">0.3</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
 <td align="left">rituximab</td>
 <td align="left">rtx</td>
 <td align="left">1000 mg at weeks 0, 2; then Q24 W</td>
@@ -754,71 +939,33 @@
 <td align="right">4.333333</td>
 <td align="right">500.0</td>
 <td align="left">mg</td>
-<td align="right">4176.10000</td>
+<td align="right">4697.60000</td>
 <td align="right">0.2</td>
 <td align="right">0.3</td>
 <td align="right">164</td>
 <td align="right">0</td>
 <td align="right">0</td>
 </tr>
-<tr class="even">
-<td align="left">tofaticinib citrate</td>
-<td align="left">tof</td>
-<td align="left">5 mg BID</td>
-<td align="left">5mg tablet</td>
-<td align="right">5</td>
-<td align="right">5</td>
-<td align="left">mg</td>
-<td align="right">364</td>
-<td align="right">728.000000</td>
-<td align="right">5.0</td>
-<td align="left">mg</td>
-<td align="right">63.26000</td>
-<td align="right">0.2</td>
-<td align="right">0.3</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-</tr>
 <tr class="odd">
-<td align="left">methotrexate monotherapy</td>
-<td align="left">cdmards</td>
-<td align="left">15mg QW</td>
-<td align="left">15 mg injection</td>
-<td align="right">15</td>
-<td align="right">15</td>
+<td align="left">sarilumab</td>
+<td align="left">sar</td>
+<td align="left">200 mg EOW</td>
+<td align="left">200mg/1.14 mL syringe</td>
+<td align="right">200</td>
+<td align="right">200</td>
 <td align="left">mg</td>
-<td align="right">26</td>
-<td align="right">52.000000</td>
-<td align="right">15.0</td>
-<td align="left">mg</td>
-<td align="right">32.41875</td>
-<td align="right">0.2</td>
-<td align="right">0.3</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td align="left">hydroxychlorquine sulfate</td>
-<td align="left">hcl</td>
-<td align="left">400mg daily</td>
-<td align="left">200 mg tablet</td>
-<td align="right">400</td>
-<td align="right">400</td>
-<td align="left">mg</td>
-<td align="right">182</td>
-<td align="right">364.000000</td>
+<td align="right">13</td>
+<td align="right">26.000000</td>
 <td align="right">200.0</td>
 <td align="left">mg</td>
-<td align="right">3.18000</td>
+<td align="right">1457.57456</td>
 <td align="right">0.2</td>
 <td align="right">0.3</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">sulfazalazine</td>
 <td align="left">ssz</td>
 <td align="left">1-2 g daily</td>
@@ -830,7 +977,64 @@
 <td align="right">364.000000</td>
 <td align="right">0.5</td>
 <td align="left">g</td>
-<td align="right">0.47000</td>
+<td align="right">0.24202</td>
+<td align="right">0.2</td>
+<td align="right">0.3</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">tocilizumab</td>
+<td align="left">tcz</td>
+<td align="left">162 mg SC EOW</td>
+<td align="left">162 mg/0.9 mL syringe</td>
+<td align="right">162</td>
+<td align="right">162</td>
+<td align="left">mg</td>
+<td align="right">13</td>
+<td align="right">26.000000</td>
+<td align="right">162.0</td>
+<td align="left">mg</td>
+<td align="right">1014.26000</td>
+<td align="right">0.2</td>
+<td align="right">0.3</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">tofaticinib</td>
+<td align="left">tof</td>
+<td align="left">5 mg BID</td>
+<td align="left">5 mg tablet</td>
+<td align="right">5</td>
+<td align="right">5</td>
+<td align="left">mg</td>
+<td align="right">364</td>
+<td align="right">728.000000</td>
+<td align="right">5.0</td>
+<td align="left">mg</td>
+<td align="right">74.67717</td>
+<td align="right">0.2</td>
+<td align="right">0.3</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">upadacitinib</td>
+<td align="left">upa</td>
+<td align="left">15 mg daily</td>
+<td align="left">15 mg tablet</td>
+<td align="right">15</td>
+<td align="right">15</td>
+<td align="left">mg</td>
+<td align="right">182</td>
+<td align="right">364.000000</td>
+<td align="right">15.0</td>
+<td align="left">mg</td>
+<td align="right">163.88900</td>
 <td align="right">0.2</td>
 <td align="right">0.3</td>
 <td align="right">0</td>
@@ -842,27 +1046,39 @@
 <p>The variable <code>init_num_doses</code> is the number of doses during the first 6 months after beginning a new treatment and the variable <code>ann_num_doses</code> is the number of doses <em>per year</em> after the first 6 months. The variables <code>discount_lower</code> and <code>discount_upper</code> are lower and upper bounds for the amount by which prices (<code>price_per_unit</code>) are decreased after discounts and rebates.</p>
 <p>Costs for individual therapeutic agents are used to calculate costs for the (combination) treatments in a treatment sequence by using the lookup data table <code>iviRA::tx.cost$lookup</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iviRA<span class="op">::</span>tx.cost<span class="op">$</span>lookup</code></pre></div>
-<pre><code>##        sname  agent1  agent2
-##  1:  cdmards cdmards    &lt;NA&gt;
-##  2: abtivmtx   abtiv cdmards
-##  3:   adamtx     ada cdmards
-##  4:      ada     ada    &lt;NA&gt;
-##  5:   etnmtx     etn cdmards
-##  6:      etn     etn    &lt;NA&gt;
-##  7:   golmtx     gol cdmards
-##  8:   ifxmtx     ifx cdmards
-##  9:  placebo placebo    &lt;NA&gt;
-## 10:   tczmtx     tcz cdmards
-## 11:      tcz     tcz    &lt;NA&gt;
-## 12:   czpmtx     czp cdmards
-## 13: abtscmtx   abtsc cdmards
-## 14:      nbt cdmards    &lt;NA&gt;
-## 15:   rtxmtx     rtx cdmards
-## 16:   tofmtx     tof cdmards
-## 17:      rtx     rtx    &lt;NA&gt;
-## 18:      tof     tof    &lt;NA&gt;
-## 19:      czp     czp    &lt;NA&gt;
-## 20:      gol     gol    &lt;NA&gt;</code></pre>
+<pre><code>##              sname      agent1  agent2
+##  1:        cdmards     cdmards    &lt;NA&gt;
+##  2:       abtivmtx       abtiv cdmards
+##  3:       abtscmtx       abtsc cdmards
+##  4:         adamtx         ada cdmards
+##  5:            ada         ada    &lt;NA&gt;
+##  6: adabiosbwwdmtx adabiosbwwd cdmards
+##  7:         anamtx         ana cdmards
+##  8:            bct         bct    &lt;NA&gt;
+##  9:         bctmtx         bct cdmards
+## 10:            czp         czp    &lt;NA&gt;
+## 11:         czpmtx         czp cdmards
+## 12:            etn         etn    &lt;NA&gt;
+## 13:         etnmtx         etn cdmards
+## 14: etnbiosszzsmtx etnbiosszzs cdmards
+## 15: etnbiosykromtx etnbiosykro cdmards
+## 16:            gol         gol    &lt;NA&gt;
+## 17:         golmtx         gol cdmards
+## 18:         ifxmtx         ifx cdmards
+## 19: ifxbiosqbtxmtx ifxbiosqbtx cdmards
+## 20:        placebo     placebo    &lt;NA&gt;
+## 21:            nbt         nbt    &lt;NA&gt;
+## 22:            rtx         rtx    &lt;NA&gt;
+## 23:         rtxmtx         rtx cdmards
+## 24:            sar         sar    &lt;NA&gt;
+## 25:         sarmtx         sar cdmards
+## 26:         triple         hcl cdmards
+## 27:            tcz         tcz    &lt;NA&gt;
+## 28:         tczmtx         tcz cdmards
+## 29:         tofmtx         tof cdmards
+## 30:            tof         tof    &lt;NA&gt;
+## 31:         upamtx         upa cdmards
+##              sname      agent1  agent2</code></pre>
 <p>The treatment names in the first column (<code>sname</code>) must match the names of the treatments selected in a treatment sequence. All subsequent columns refer to the names of the therapeutic agents used for a particular treatment. For example, the treatment <code>etnmtx</code> contains both etanercept and methotrexate/conventional cDMARDs.</p>
 </div>
 <div id="other-health-care-sector-costs" class="section level3">
@@ -871,19 +1087,19 @@
 <p>Hospitalization costs are estimated as a function of the HAQ score. In particular, <a href="https://www.ncbi.nlm.nih.gov/pubmed/25773552">Carlson 2015</a>, report estimates of the number of days in the hospital for a given HAQ score range as well as the cost of a single day in the hospital.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iviRA<span class="op">::</span>hosp.cost</code></pre></div>
 <pre><code>##          haq days_mean days_se cost_pday_mean cost_pday_se
-## 1: 0 to &lt;0.5      0.26     0.5       1292.358     197.3144
-## 2: 0.5 to &lt;1      0.13     0.5       1292.358     197.3144
-## 3: 1 to &lt;1.5      0.51     0.5       1292.358     197.3144
-## 4: 1.5 to &lt;2      0.72     0.5       1292.358     197.3144
-## 5: 2 to &lt;2.5      1.86     0.5       1292.358     197.3144
-## 6:      &gt;2.5      4.16     0.5       1292.358     197.3144</code></pre>
+## 1: 0 to &lt;0.5      0.26     0.5       1347.088     205.6705
+## 2: 0.5 to &lt;1      0.13     0.5       1347.088     205.6705
+## 3: 1 to &lt;1.5      0.51     0.5       1347.088     205.6705
+## 4: 1.5 to &lt;2      0.72     0.5       1347.088     205.6705
+## 5: 2 to &lt;2.5      1.86     0.5       1347.088     205.6705
+## 6:      &gt;2.5      4.16     0.5       1347.088     205.6705</code></pre>
 <p>Management costs are based on mean costs and cost ranges reported in <a href="http://www.jmcp.org/doi/full/10.18553/jmcp.2016.22.9.1088">Claxton (2016)</a>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iviRA<span class="op">::</span>mgmt.cost</code></pre></div>
 <pre><code>##                service       est     lower     upper        se
-## 1:          chest_xray 112.60353 100.20681 125.00025  6.324973
-## 2:          xray_visit  54.75218  46.48770  63.01666  4.216649
-## 3: outpatient_followup 193.18221 164.25653 222.10788 14.758270
-## 4:                 tst  31.50833  31.50833  31.50833  0.000000</code></pre>
+## 1:          chest_xray 117.37215 104.45045 130.29386  6.592828
+## 2:          xray_visit  57.07086  48.45639  65.68533  4.395218
+## 3: outpatient_followup 201.36323 171.21259 231.51388 15.383265
+## 4:                 tst  32.84267  32.84267  32.84267  0.000000</code></pre>
 </div>
 <div id="productivity-losses" class="section level3">
 <h3 class="hasAnchor">
@@ -891,7 +1107,7 @@
 <p>We use estimates of productivity loss from <a href="http://www.jrheum.org/content/32/10/1875.short">Wolfe et al. (2005)</a>. The authors provide estimates of the annual loss in earnings associated with a 1-unit increase in HAQ, which we convert to 2017 dollars.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iviRA<span class="op">::</span>prod.loss</code></pre></div>
 <pre><code>##         est       se
-## 1: 5965.952 1576.608</code></pre>
+## 1: 6218.603 1643.376</code></pre>
 <div>
 <ul class="pager">
 <li class="previous">
@@ -926,17 +1142,20 @@
 </div>
 
 
+
       <footer><div class="copyright">
-  <p>Developed by Devin Incerti, Jeroen P. Jansen.</p>
+  <p>Developed by Jeroen P. Jansen, Devin Incerti.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
+
       </footer>
 </div>
 
   
+
 
   </body>
 </html>

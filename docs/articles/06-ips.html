@@ -7,8 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Run the IPS • iviRA</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/simplex/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous">
+<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><meta property="og:title" content="Run the IPS">
 <meta property="og:description" content="">
 <meta name="twitter:card" content="summary">
@@ -30,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">iviRA</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">1.0.0.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">2.0.0</span>
       </span>
     </div>
 
@@ -118,7 +119,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/InnovationValueInitiative/IVI-RA">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -131,6 +132,7 @@
 <!--/.navbar -->
 
       
+
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
@@ -155,29 +157,29 @@ sim.out1[, txseq <span class="op">:</span><span class="er">=</span><span class="
 sim.out2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sim_iviRA.html">sim_iviRA</a></span>(<span class="dt">tx_seqs =</span> txseq2, <span class="dt">input_data =</span> input.dat, <span class="dt">pars =</span> parsamp,
                      <span class="dt">model_structures =</span> mod.structs, <span class="dt">output =</span> <span class="st">"data"</span>)
 sim.out2[, txseq <span class="op">:</span><span class="er">=</span><span class="st"> "Sequence 2"</span>]
-sim.out &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cbind">rbind</a></span>(sim.out1, sim.out2)
-<span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(sim.out)</code></pre></div>
-<pre><code>##    model sim id month tx line tx_cycle death      age         ttd acr
-## 1:     1   1  1     6  3    1        1     0 53.88004  0.00000000   0
-## 2:     1   1  1    12  5    2        1     0 54.38004  3.96800684   0
-## 3:     1   1  1    18  5    2        2     0 54.88004  2.96800684   0
-## 4:     1   1  1    24  5    2        3     0 55.38004  1.96800684   0
-## 5:     1   1  1    30  5    2        4     0 55.88004  0.96800684   0
-## 6:     1   1  1    36  5    2        5     0 56.38004 -0.03199316   0
-##    eular das28 sdai cdai      haq     ttsi si yrlen  tx_cost  hosp_days
-## 1:     0    NA   NA   NA 1.748439 36.06485  0   0.5 22115.24 0.66999367
-## 2:     1    NA   NA   NA 1.412559 35.39017  0   0.5 22278.58 0.07371646
-## 3:     1    NA   NA   NA 1.406302 34.39017  0   0.5 22278.58 0.07371646
-## 4:     1    NA   NA   NA 1.400044 33.39017  0   0.5 22278.58 0.07371646
-## 5:     1    NA   NA   NA 1.393786 32.39017  0   0.5 22278.58 0.07371646
-## 6:     1    NA   NA   NA 1.668734 31.39017  0   0.5 22278.58 0.66999367
-##    hosp_cost mgmt_cost si_cost prod_loss    utility      qalys      txseq
-## 1: 877.44936  206.5151       0  4641.221 0.53897897 0.26948948 Sequence 1
-## 2:  92.04092  206.5151       0  3749.631 0.52073151 0.26036576 Sequence 1
-## 3:  92.04092  206.5151       0  3733.020 0.07084795 0.03542397 Sequence 1
-## 4:  92.04092  206.5151       0  3716.409 0.66197195 0.33098597 Sequence 1
-## 5:  92.04092  206.5151       0  3699.798 0.05287038 0.02643519 Sequence 1
-## 6: 877.44936  206.5151       0  4429.647 0.58830246 0.29415123 Sequence 1</code></pre>
+sim.out &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(sim.out1, sim.out2)
+<span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(sim.out)</code></pre></div>
+<pre><code>##    model sim id month tx line tx_cycle death      age        ttd acr eular
+## 1:     1   1  1     6  4    1        1     0 49.84687  0.0000000   0     0
+## 2:     1   1  1    12 13    2        1     0 50.34687  1.1540831   3     1
+## 3:     1   1  1    18 13    2        2     0 50.84687  0.1540831   3     1
+## 4:     1   1  1    24 13    2        3     0 51.34687 -0.8459169   3     1
+## 5:     1   1  1    30 18    3        1     0 51.84687 69.2988412   0     1
+## 6:     1   1  1    36 18    3        2     0 52.34687 68.2988412   0     1
+##    das28 sdai cdai      haq     ttsi si yrlen  tx_cost hosp_days hosp_cost
+## 1:    NA   NA   NA 1.443428 126.4363  0   0.5 25830.03 0.3049917  429.8086
+## 2:    NA   NA   NA 1.118326 116.7123  0   0.5 24899.03 0.3049917  429.8086
+## 3:    NA   NA   NA 1.110336 115.7123  0   0.5 24899.03 0.3049917  429.8086
+## 4:    NA   NA   NA 1.416580 114.7123  0   0.5 24899.03 0.3049917  429.8086
+## 5:    NA   NA   NA 1.091478  71.5888  0   0.5 13775.80 0.3049917  429.8086
+## 6:    NA   NA   NA 1.085430  70.5888  0   0.5 19375.69 0.3049917  429.8086
+##    mgmt_cost si_cost prod_loss   utility      qalys      txseq
+## 1:  213.6983       0  4213.829 0.7185028 0.35925139 Sequence 1
+## 2:  213.6983       0  3264.752 0.7136521 0.35682605 Sequence 1
+## 3:  213.6983       0  3241.426 1.0000000 0.50000000 Sequence 1
+## 4:  213.6983       0  4135.448 0.1733729 0.08668645 Sequence 1
+## 5:  213.6983       0  3186.372 0.8268782 0.41343909 Sequence 1
+## 6:  213.6983       0  3168.717 0.1898230 0.09491150 Sequence 1</code></pre>
 <p>The output is data.table which is an enhanced data.frame from the data.table package designed for fast data manipulation. For a given model structure (<code>model</code>) and sampled parameter set (<code>sim</code>), a sampled patient (<code>id</code>) remains on a given treatment until time to treatment discontinuation (<code>ttd</code>) becomes less than zero in a given month. Treatment discontinuation is caused by a serious infection (<code>si = 1</code>) if the sampled time to serious infection at treatment initiation is less than the sampled time to discontinuation. After discontinuation, a patient switches to the next line of treatment and <code>line</code> increments by one. Patient age (<code>age</code>) increases in 6-month increments.</p>
 <p>The HAQ score (<code>haq</code>) during the initial 6-month period (<code>therapy_cycle = 1</code>), disease activity measures (<code>das28</code>, <code>sdai</code>, and <code>cdai</code>), and <code>ttd</code> depend on the model structure chosen. For example, in the first model structure, HAQ and time to treatment discontinuation depend on ACR response (<code>acr</code>) and in turn, EULAR response (<code>eular</code>). The simulation returned NA values for the three disease activity measures because treatment switching is is not a function of disease activity (i.e., <strong>S6</strong> was chosen in the first model structure). The simulation ends when a patient dies (<code>death = 1</code>).</p>
 <p>Health care sector costs consist of treatment costs (<code>tx_cost</code>); hospital costs (<code>hosp_cost</code>), which increase with the HAQ score; general management costs (<code>mgmt_cost</code>); and the costs of caused by serious infections (<code>si_cost</code>). Non-health care sector costs are those due to lost wages. Analyses performed from a societal perspective should include these productivity losses (<code>prod_loss</code>).</p>
@@ -190,65 +192,65 @@ sim.out &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdoc
 <p>In particular, by invoking the <code>output = summary</code> option, the data.table objects <code>means</code>, <code>time.means</code>, and <code>out0</code> are returned. <code>means</code> reports simulated outcomes averaged over individuals and time and <code>tmeans</code> reports simulated outcomes averaged across individuals but conditional on time. <code>out0</code> provides outcomes for the first model cycle including time to treatment discontinuation and time to a serious infection. Output is always conditional on the model structure and sampled parameter set.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sim.out1.summary &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sim_iviRA.html">sim_iviRA</a></span>(<span class="dt">tx_seqs =</span> txseq1, <span class="dt">input_data =</span> input.dat, <span class="dt">pars =</span> parsamp,
                      <span class="dt">model_structures =</span> mod.structs, <span class="dt">output =</span> <span class="st">"summary"</span>)
-<span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(sim.out1.summary<span class="op">$</span>means)</code></pre></div>
+<span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(sim.out1.summary<span class="op">$</span>means)</code></pre></div>
 <pre><code>##    model sim    lys     dlys lys_infusion lys_injection lys_oral
-## 1:     1   1 19.190 13.33928       1.3750       17.8150        0
-## 2:     1   2 20.450 14.06886       1.2475       19.2025        0
-## 3:     1   3 18.405 12.97018       1.2000       17.2050        0
-## 4:     1   4 22.080 14.83969       1.3025       20.7775        0
-## 5:     1   5 19.420 13.30105       1.1250       18.2950        0
-## 6:     1   6 18.870 12.89980       0.9625       17.9075        0
-##           dhaq   si     qalys   dqalys  tx_cost dtx_cost hosp_days
-## 1: -0.01256774 0.18 10.053779 7.141130 426760.2 328453.3  14.94116
-## 2:  0.15197556 0.23 10.198160 7.170670 363637.6 287592.3  16.23963
-## 3:  0.07048098 0.14 10.081042 7.209824 369094.2 294109.8  12.40449
-## 4:  0.07373880 0.17 11.806656 8.088598 434507.4 341601.5  21.67478
-## 5:  0.18486994 0.17  9.374515 6.626901 399391.4 309583.6  21.17218
-## 6:  0.19772908 0.14  9.736306 6.765677 394434.6 295464.6  10.29068
-##    hosp_cost dhosp_cost mgmt_cost dmgmt_cost   si_cost dsi_cost prod_loss
-## 1:  19674.73  12934.243  7926.049   5509.525  999.0275 641.9417  130789.6
-## 2:  22286.10  14203.282  7866.493   5411.863 1158.2648 923.8942  163303.1
-## 3:  15594.11  10526.067  6967.812   4910.285  955.3593 723.7438  111502.7
-## 4:  25497.53  15910.507  8999.035   6048.138 1020.7943 863.5781  157884.1
-## 5:  26560.56  17080.036  7658.567   5245.469  948.0979 704.0521  268486.4
-## 6:  15224.50   9377.341  7883.200   5389.069  826.6805 628.3806  222620.7
+## 1:     1   1 19.525 13.29338       1.3525       18.1725        0
+## 2:     1   2 19.800 13.56440       1.2150       18.5850        0
+## 3:     1   3 20.475 13.90775       1.2625       19.2125        0
+## 4:     1   4 21.170 14.53485       1.5125       19.6575        0
+## 5:     1   5 22.005 14.67130       1.3350       20.6700        0
+## 6:     1   6 16.790 12.09503       0.9900       15.8000        0
+##          dhaq   si     qalys   dqalys  tx_cost dtx_cost hosp_days
+## 1: 0.18712426 0.26 10.262908 7.152354 463498.7 360019.5  15.99079
+## 2: 0.12057788 0.20 10.792507 7.514815 442710.6 339818.3  16.03915
+## 3: 0.10641342 0.17 11.646163 8.097517 425032.1 332217.6  13.57745
+## 4: 0.31037336 0.26 10.587122 7.550120 463604.4 360344.3  27.77616
+## 5: 0.09351525 0.16 12.346799 8.445869 478687.4 374574.7  19.32301
+## 6: 0.25110862 0.17  8.649115 6.343089 329535.6 272107.2  13.27179
+##    hosp_cost dhosp_cost mgmt_cost dmgmt_cost   si_cost  dsi_cost prod_loss
+## 1:  21314.99   13335.60  8344.918   5681.545 1762.1620 1288.3519  141482.6
+## 2:  24511.20   16794.10  8096.845   5546.910 1398.1803 1023.7696  133605.0
+## 3:  18233.87   12795.23  8060.424   5475.084  994.8754  701.5489  179352.7
+## 4:  38288.19   24405.66  9495.565   6519.445 1547.6906 1277.8669  196768.8
+## 5:  28986.38   17413.67  9637.182   6425.357 1102.9894  842.6168  222860.7
+## 6:  20409.22   14190.70  6785.452   4888.043  826.2197  660.9843  124984.1
 ##    dprod_loss dhc_cost dtot_cost yrs_since_approval dqalys_ann
-## 1:   87873.24 347539.0  435412.3           21.73401  0.2846090
-## 2:  108665.27 308131.3  416796.6           22.71512  0.2839645
-## 3:   76804.50 310269.8  387074.4           22.00427  0.2890435
-## 4:  102496.77 364423.8  466920.5           22.64487  0.3233713
-## 5:  176261.58 332613.2  508874.7           21.61206  0.2654827
-## 6:  148878.64 310859.3  459738.0           22.25244  0.2676979
+## 1:   93528.24 380325.0  473853.3           24.57639  0.2873988
+## 2:   89170.95 363183.1  452354.1           25.07969  0.2986760
+## 3:  116146.61 351189.5  467336.1           25.19834  0.3255651
+## 4:  128582.14 392547.3  521129.4           25.35939  0.3047764
+## 5:  140697.64 399256.3  539953.9           25.14687  0.3389818
+## 6:   87709.45 291846.9  379556.3           25.35094  0.2522893
 ##    dhc_cost_ann dprod_loss_ann
-## 1:     13994.14       3457.607
-## 2:     12377.06       4271.318
-## 3:     12530.70       3076.920
-## 4:     14814.88       4024.812
-## 5:     13435.59       6960.148
-## 6:     12340.11       5862.680</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(sim.out1.summary<span class="op">$</span>time.means)</code></pre></div>
+## 1:     15519.67       3729.357
+## 2:     14477.08       3524.583
+## 3:     14510.86       4599.598
+## 4:     16116.13       5155.390
+## 5:     16521.01       5579.099
+## 6:     11781.11       3470.203</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(sim.out1.summary<span class="op">$</span>time.means)</code></pre></div>
 <pre><code>##    model sim month alive     qalys      haq  tx_cost hosp_cost mgmt_cost
-## 1:     1   1     6   100 0.2881622 1.244936 22115.24  467.1567  206.5151
-## 2:     1   1    12    99 0.2799452 1.160639 22177.94  402.1655  206.5151
-## 3:     1   1    18    99 0.2821838 1.066589 20278.46  394.1646  206.5151
-## 4:     1   1    24    98 0.2938425 1.044726 19628.86  382.7827  206.5151
-## 5:     1   1    30    97 0.2912116 1.079306 18805.75  359.6472  206.5151
-## 6:     1   1    36    96 0.2927717 1.076499 17305.43  382.4209  206.5151
-##     si_cost prod_loss
-## 1: 55.50153  3304.677
-## 2: 56.06215  3080.909
-## 3:  0.00000  2831.254
-## 4:  0.00000  2773.220
-## 5:  0.00000  2865.012
-## 6:  0.00000  2857.560</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(sim.out1.summary<span class="op">$</span>out0)</code></pre></div>
-<pre><code>##    model sim id tx acr eular       ttd      ttsi
-## 1:     1   1  1  3   1     2  2.668269  35.64467
-## 2:     1   1  1  5   1     2  1.785475  93.92105
-## 3:     1   1  1  8   2     1  8.051842  30.13126
-## 4:     1   1  2  3   1     1  1.676008  10.30048
-## 5:     1   1  2  5   2     2 15.705864 110.92480
-## 6:     1   1  2  8   0     0  0.000000  46.17941</code></pre>
+## 1:     1   1     6   100 0.2813569 1.198226 25830.03  398.2340  213.6983
+## 2:     1   1    12    97 0.2679136 1.147984 25522.90  407.7391  213.6983
+## 3:     1   1    18    96 0.2827968 1.106899 23993.52  379.2144  213.6983
+## 4:     1   1    24    94 0.2958422 1.093639 23282.47  355.0465  213.6983
+## 5:     1   1    30    93 0.2886165 1.091556 21576.11  362.3822  213.6983
+## 6:     1   1    36    92 0.3006256 1.102462 20520.81  367.6719  213.6983
+##      si_cost prod_loss
+## 1: 135.55093  3498.006
+## 2:   0.00000  3351.332
+## 3:  70.59944  3231.392
+## 4:  72.10156  3192.683
+## 5:  72.87684  3186.602
+## 6:   0.00000  3218.440</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(sim.out1.summary<span class="op">$</span>out0)</code></pre></div>
+<pre><code>##    model sim id tx acr eular        ttd      ttsi
+## 1:     1   1  1  4   0     0   0.000000  9.789617
+## 2:     1   1  1 13   0     0   0.000000 67.856535
+## 3:     1   1  1 18   1     1 104.090799 14.915593
+## 4:     1   1  2  4   0     0   0.000000  5.536752
+## 5:     1   1  2 13   1     1   1.122873 21.529146
+## 6:     1   1  2 18   0     0   0.000000  6.164344</code></pre>
 <div>
 <ul class="pager">
 <li class="previous">
@@ -276,17 +278,20 @@ sim.out &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdoc
 </div>
 
 
+
       <footer><div class="copyright">
-  <p>Developed by Devin Incerti, Jeroen P. Jansen.</p>
+  <p>Developed by Jeroen P. Jansen, Devin Incerti.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
+
       </footer>
 </div>
 
   
+
 
   </body>
 </html>

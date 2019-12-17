@@ -16,13 +16,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+<!-- headroom.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -47,6 +49,7 @@
 <![endif]-->
 
 
+
   </head>
 
   <body>
@@ -63,7 +66,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">iviRA</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">1.0.0.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">2.0.0</span>
       </span>
     </div>
 
@@ -152,7 +155,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/InnovationValueInitiative/IVI-RA">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -163,6 +166,7 @@
 </div><!--/.navbar -->
 
       
+
       </header>
 
 <div class="row">
@@ -179,49 +183,49 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>sample_pars</span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='no'>input_data</span>, <span class='kw'>tx_names</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/treatments'>treatments</a></span>$<span class='no'>sname</span>,
-  <span class='kw'>nma_acr_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/nma'>nma.acr.naive</a></span>$<span class='no'>mean</span>,
-  <span class='kw'>nma_acr_vcov</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/nma'>nma.acr.naive</a></span>$<span class='no'>vcov</span>, <span class='kw'>nma_acr_k_lower</span> <span class='kw'>=</span> <span class='fl'>0.75</span>,
-  <span class='kw'>nma_acr_k_upper</span> <span class='kw'>=</span> <span class='fl'>0.92</span>, <span class='kw'>nma_das28_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/nma'>nma.das28.naive</a></span>$<span class='no'>mean</span>,
-  <span class='kw'>nma_das28_vcov</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/nma'>nma.das28.naive</a></span>$<span class='no'>vcov</span>,
+    <pre class="usage"><span class='fu'>sample_pars</span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='no'>input_data</span>, <span class='kw'>tx_names</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/treatments.html'>treatments</a></span>$<span class='no'>sname</span>,
+  <span class='kw'>nma_acr_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/nma.html'>nma.acr.naive</a></span>$<span class='no'>mean</span>,
+  <span class='kw'>nma_acr_vcov</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/nma.html'>nma.acr.naive</a></span>$<span class='no'>vcov</span>, <span class='kw'>nma_acr_k_lower</span> <span class='kw'>=</span> <span class='fl'>0.75</span>,
+  <span class='kw'>nma_acr_k_upper</span> <span class='kw'>=</span> <span class='fl'>0.92</span>, <span class='kw'>nma_das28_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/nma.html'>nma.das28.naive</a></span>$<span class='no'>mean</span>,
+  <span class='kw'>nma_das28_vcov</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/nma.html'>nma.das28.naive</a></span>$<span class='no'>vcov</span>,
   <span class='kw'>nma_das28_k_lower</span> <span class='kw'>=</span> <span class='fl'>0.75</span>, <span class='kw'>nma_das28_k_upper</span> <span class='kw'>=</span> <span class='fl'>0.92</span>,
-  <span class='kw'>nma_haq_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/nma'>nma.haq.naive</a></span>$<span class='no'>mean</span>,
-  <span class='kw'>nma_haq_vcov</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/nma'>nma.haq.naive</a></span>$<span class='no'>vcov</span>, <span class='kw'>nma_haq_k_lower</span> <span class='kw'>=</span> <span class='fl'>0.75</span>,
-  <span class='kw'>nma_haq_k_upper</span> <span class='kw'>=</span> <span class='fl'>0.92</span>, <span class='kw'>acr2haq_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/acr2haq'>acr2haq</a></span>$<span class='no'>mean</span>,
-  <span class='kw'>acr2haq_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/acr2haq'>acr2haq</a></span>$<span class='no'>se</span>,
-  <span class='kw'>acr2das28_lower</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/acr2das28'>acr2das28</a></span>$<span class='no'>inception</span>$<span class='no'>lower</span>,
-  <span class='kw'>acr2das28_upper</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/acr2das28'>acr2das28</a></span>$<span class='no'>inception</span>$<span class='no'>upper</span>,
-  <span class='kw'>acr2sdai_lower</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/acr2sdai'>acr2sdai</a></span>$<span class='no'>inception</span>$<span class='no'>lower</span>,
-  <span class='kw'>acr2sdai_upper</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/acr2sdai'>acr2sdai</a></span>$<span class='no'>inception</span>$<span class='no'>upper</span>,
-  <span class='kw'>acr2cdai_lower</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/acr2cdai'>acr2cdai</a></span>$<span class='no'>inception</span>$<span class='no'>lower</span>,
-  <span class='kw'>acr2cdai_upper</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/acr2cdai'>acr2cdai</a></span>$<span class='no'>inception</span>$<span class='no'>upper</span>,
-  <span class='kw'>acr2eular_mat</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/acr2eular'>acr2eular</a></span>,
-  <span class='kw'>eular2haq_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/eular2haq'>eular2haq</a></span>$<span class='no'>mean</span>,
-  <span class='kw'>eular2haq_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/eular2haq'>eular2haq</a></span>$<span class='no'>se</span>, <span class='kw'>rebound_lower</span> <span class='kw'>=</span> <span class='fl'>0.7</span>,
-  <span class='kw'>rebound_upper</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>haq_lprog_tx_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/haq.lprog'>haq.lprog</a></span>$<span class='no'>tx</span>$<span class='no'>est</span>,
-  <span class='kw'>haq_lprog_tx_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/haq.lprog'>haq.lprog</a></span>$<span class='no'>tx</span>$<span class='no'>se</span>,
-  <span class='kw'>haq_lprog_age_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/haq.lprog'>haq.lprog</a></span>$<span class='no'>diff.age</span>$<span class='no'>est</span>,
-  <span class='kw'>haq_lprog_age_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/haq.lprog'>haq.lprog</a></span>$<span class='no'>diff.age</span>$<span class='no'>se</span>,
-  <span class='kw'>haq_lcgm_pars</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/haq.lcgm'>haq.lcgm</a></span>, <span class='kw'>ltfemale</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/lifetable'>lifetable.female</a></span>,
-  <span class='kw'>ltmale</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/lifetable'>lifetable.male</a></span>, <span class='kw'>mort_logor</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/mort.or'>mort.or</a></span>$<span class='no'>logor</span>,
-  <span class='kw'>mort_logor_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/mort.or'>mort.or</a></span>$<span class='no'>logor_se</span>,
-  <span class='kw'>mort_loghr_haqdif</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/mort.hr.haqdif'>mort.hr.haqdif</a></span>$<span class='no'>loghr</span>,
-  <span class='kw'>mort_loghr_se_haqdif</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/mort.hr.haqdif'>mort.hr.haqdif</a></span>$<span class='no'>loghr_se</span>,
-  <span class='kw'>ttd_all</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/ttd'>ttd.all</a></span>, <span class='kw'>ttd_da</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/ttd'>ttd.da</a></span>,
-  <span class='kw'>ttd_eular</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/ttd'>ttd.eular</a></span>, <span class='kw'>ttsi</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/ttsi'>ttsi</a></span>,
-  <span class='kw'>tx_cost</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/tx.cost'>tx.cost</a></span>,
-  <span class='kw'>hosp_days_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/hosp.cost'>hosp.cost</a></span>$<span class='no'>days_mean</span>,
-  <span class='kw'>hosp_days_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/hosp.cost'>hosp.cost</a></span>$<span class='no'>days_se</span>,
-  <span class='kw'>hosp_cost_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/hosp.cost'>hosp.cost</a></span>$<span class='no'>cost_pday_mean</span>,
-  <span class='kw'>hosp_cost_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/hosp.cost'>hosp.cost</a></span>$<span class='no'>cost_pday_se</span>,
-  <span class='kw'>mgmt_cost_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/mgmt.cost'>mgmt.cost</a></span>$<span class='no'>est</span>,
-  <span class='kw'>mgmt_cost_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/mgmt.cost'>mgmt.cost</a></span>$<span class='no'>se</span>, <span class='kw'>si_cost</span> <span class='kw'>=</span> <span class='fl'>5873</span>,
+  <span class='kw'>nma_haq_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/nma.html'>nma.haq.naive</a></span>$<span class='no'>mean</span>,
+  <span class='kw'>nma_haq_vcov</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/nma.html'>nma.haq.naive</a></span>$<span class='no'>vcov</span>, <span class='kw'>nma_haq_k_lower</span> <span class='kw'>=</span> <span class='fl'>0.75</span>,
+  <span class='kw'>nma_haq_k_upper</span> <span class='kw'>=</span> <span class='fl'>0.92</span>, <span class='kw'>acr2haq_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/acr2haq.html'>acr2haq</a></span>$<span class='no'>mean</span>,
+  <span class='kw'>acr2haq_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/acr2haq.html'>acr2haq</a></span>$<span class='no'>se</span>,
+  <span class='kw'>acr2das28_lower</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/acr2das28.html'>acr2das28</a></span>$<span class='no'>inception</span>$<span class='no'>lower</span>,
+  <span class='kw'>acr2das28_upper</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/acr2das28.html'>acr2das28</a></span>$<span class='no'>inception</span>$<span class='no'>upper</span>,
+  <span class='kw'>acr2sdai_lower</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/acr2sdai.html'>acr2sdai</a></span>$<span class='no'>inception</span>$<span class='no'>lower</span>,
+  <span class='kw'>acr2sdai_upper</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/acr2sdai.html'>acr2sdai</a></span>$<span class='no'>inception</span>$<span class='no'>upper</span>,
+  <span class='kw'>acr2cdai_lower</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/acr2cdai.html'>acr2cdai</a></span>$<span class='no'>inception</span>$<span class='no'>lower</span>,
+  <span class='kw'>acr2cdai_upper</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/acr2cdai.html'>acr2cdai</a></span>$<span class='no'>inception</span>$<span class='no'>upper</span>,
+  <span class='kw'>acr2eular_mat</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/acr2eular.html'>acr2eular</a></span>,
+  <span class='kw'>eular2haq_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/eular2haq.html'>eular2haq</a></span>$<span class='no'>mean</span>,
+  <span class='kw'>eular2haq_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/eular2haq.html'>eular2haq</a></span>$<span class='no'>se</span>, <span class='kw'>rebound_lower</span> <span class='kw'>=</span> <span class='fl'>0.7</span>,
+  <span class='kw'>rebound_upper</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>haq_lprog_tx_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/haq.lprog.html'>haq.lprog</a></span>$<span class='no'>tx</span>$<span class='no'>est</span>,
+  <span class='kw'>haq_lprog_tx_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/haq.lprog.html'>haq.lprog</a></span>$<span class='no'>tx</span>$<span class='no'>se</span>,
+  <span class='kw'>haq_lprog_age_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/haq.lprog.html'>haq.lprog</a></span>$<span class='no'>diff.age</span>$<span class='no'>est</span>,
+  <span class='kw'>haq_lprog_age_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/haq.lprog.html'>haq.lprog</a></span>$<span class='no'>diff.age</span>$<span class='no'>se</span>,
+  <span class='kw'>haq_lcgm_pars</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/haq.lcgm.html'>haq.lcgm</a></span>, <span class='kw'>ltfemale</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/lifetable.html'>lifetable.female</a></span>,
+  <span class='kw'>ltmale</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/lifetable.html'>lifetable.male</a></span>, <span class='kw'>mort_logor</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/mort.or.html'>mort.or</a></span>$<span class='no'>logor</span>,
+  <span class='kw'>mort_logor_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/mort.or.html'>mort.or</a></span>$<span class='no'>logor_se</span>,
+  <span class='kw'>mort_loghr_haqdif</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/mort.hr.haqdif.html'>mort.hr.haqdif</a></span>$<span class='no'>loghr</span>,
+  <span class='kw'>mort_loghr_se_haqdif</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/mort.hr.haqdif.html'>mort.hr.haqdif</a></span>$<span class='no'>loghr_se</span>,
+  <span class='kw'>ttd_all</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/ttd.html'>ttd.all</a></span>, <span class='kw'>ttd_da</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/ttd.html'>ttd.da</a></span>,
+  <span class='kw'>ttd_eular</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/ttd.html'>ttd.eular</a></span>, <span class='kw'>ttsi</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/ttsi.html'>ttsi</a></span>,
+  <span class='kw'>tx_cost</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/tx.cost.html'>tx.cost</a></span>,
+  <span class='kw'>hosp_days_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/hosp.cost.html'>hosp.cost</a></span>$<span class='no'>days_mean</span>,
+  <span class='kw'>hosp_days_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/hosp.cost.html'>hosp.cost</a></span>$<span class='no'>days_se</span>,
+  <span class='kw'>hosp_cost_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/hosp.cost.html'>hosp.cost</a></span>$<span class='no'>cost_pday_mean</span>,
+  <span class='kw'>hosp_cost_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/hosp.cost.html'>hosp.cost</a></span>$<span class='no'>cost_pday_se</span>,
+  <span class='kw'>mgmt_cost_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/mgmt.cost.html'>mgmt.cost</a></span>$<span class='no'>est</span>,
+  <span class='kw'>mgmt_cost_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/mgmt.cost.html'>mgmt.cost</a></span>$<span class='no'>se</span>, <span class='kw'>si_cost</span> <span class='kw'>=</span> <span class='fl'>5873</span>,
   <span class='kw'>si_cost_range</span> <span class='kw'>=</span> <span class='fl'>0.2</span>, <span class='kw'>si_ul</span> <span class='kw'>=</span> <span class='fl'>0.156</span>, <span class='kw'>si_ul_range</span> <span class='kw'>=</span> <span class='fl'>0.2</span>,
-  <span class='kw'>tx_attr_utilcoef_lower</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/utility.tx.attr'>utility.tx.attr</a></span>$<span class='no'>coef</span>$<span class='no'>lower</span>,
-  <span class='kw'>tx_attr_utilcoef_upper</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/utility.tx.attr'>utility.tx.attr</a></span>$<span class='no'>coef</span>$<span class='no'>upper</span>,
-  <span class='kw'>tx_attr_utilcoef_names</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/utility.tx.attr'>utility.tx.attr</a></span>$<span class='no'>coef</span>$<span class='no'>var</span>,
-  <span class='kw'>utility_mixture_pain</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/pain'>pain</a></span>, <span class='kw'>pl_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/prod.loss'>prod.loss</a></span>$<span class='no'>est</span>,
-  <span class='kw'>pl_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/iviRA/topics/prod.loss'>prod.loss</a></span>$<span class='no'>se</span>)</pre>
+  <span class='kw'>tx_attr_utilcoef_lower</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/utility.tx.attr.html'>utility.tx.attr</a></span>$<span class='no'>coef</span>$<span class='no'>lower</span>,
+  <span class='kw'>tx_attr_utilcoef_upper</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/utility.tx.attr.html'>utility.tx.attr</a></span>$<span class='no'>coef</span>$<span class='no'>upper</span>,
+  <span class='kw'>tx_attr_utilcoef_names</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/utility.tx.attr.html'>utility.tx.attr</a></span>$<span class='no'>coef</span>$<span class='no'>var</span>,
+  <span class='kw'>utility_mixture_pain</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/pain.html'>pain</a></span>, <span class='kw'>pl_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/prod.loss.html'>prod.loss</a></span>$<span class='no'>est</span>,
+  <span class='kw'>pl_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/prod.loss.html'>prod.loss</a></span>$<span class='no'>se</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -575,13 +579,15 @@ should be the same as iviRA::pain. Currently, each element of the list must be o
    <dt>utility.tx.attr</dt><dd><p>Matrix of sampled values of utility gains. Each column is a different treatment
    attribute.</p></dd>
    <dt>prod.loss</dt><dd><p>Vector of sampled values of decrease in wages (e.g. productivity loss) per unit increase in HAQ.</p></dd>
+
 </dl>
 
     
     <h2 class="hasAnchor" id="time-to-treatment-discontinuation"><a class="anchor" href="#time-to-treatment-discontinuation"></a>Time to treatment discontinuation</h2>
 
     
-    <p>Time to treatment discontinuation parameters should be contained in a list of lists. The top-level
+
+<p>Time to treatment discontinuation parameters should be contained in a list of lists. The top-level
  list identifies the name of the probability distribution; the possible distributions are the 
  exponential (<code>exponential</code>), Weibull (<code>weibull</code>), Gompertz (<code>gompertz</code>),
 gamma (<code>gamma</code>), log-logistic (<code>llogis</code>), lognormal (<code>lnorm</code>), and generalized gamma (<code>gengamma</code>). Each distribution 
@@ -591,13 +597,15 @@ should also contain a list with five elements:</p><dl class='dl-horizontal'>
 <dt>loc.index</dt><dd><p>A vector of the indices of the location parameters.</p></dd>
 <dt>anc1.index</dt><dd><p>A vector of the indices of the first ancillary parameter.</p></dd>
 <dt>anc2.index</dt><dd><p>A vector of indices of the second ancillary parameter.</p></dd>
+
 </dl><p>The maximum likelihood estimates should be transformed to the real line. For example, if the model is fit using 
 <code>flexsurvreg</code> in the <code>flexsurv</code> package, the output should be returned from <code>res.t</code>.</p>
     
     <h2 class="hasAnchor" id="sampled-mixture-model-parameters"><a class="anchor" href="#sampled-mixture-model-parameters"></a>Sampled mixture model parameters</h2>
 
     
-    <p>The sampled mixture model parameters are contained in a list containing the following:</p><dl class='dl-horizontal'>
+
+<p>The sampled mixture model parameters are contained in a list containing the following:</p><dl class='dl-horizontal'>
 <dt>beta1</dt><dd><p>Coefficients for class 1 explanatory variables. A matrix of random draws where each
  column is an explanatory variable.</p></dd>
 <dt>beta2</dt><dd><p>Coefficients for class 2 explanatory variables. A matrix of random draws where each
@@ -619,6 +627,7 @@ should also contain a list with five elements:</p><dl class='dl-horizontal'>
 <dt>delta</dt><dd><p>Coefficients for explanatory variables explaining the probbaility
 of class membership. An array of matrices where each matrix is a random draw. There are three rows in each matrix (one for each class) and
 four columns (one for each explanatory variable).</p></dd>
+
 </dl><p>The list also contains summary statistics for pain and HAQ, which is needed to simulate pain. 
 In particular, the object 'pain' in the list is a list containing:</p><dl class='dl-horizontal'>
 <dt>pain.mean</dt><dd><p>Mean of pain score in the population.</p></dd>
@@ -626,7 +635,9 @@ In particular, the object 'pain' in the list is a list containing:</p><dl class=
 <dt>pain.var</dt><dd><p>Variance of pain score in the population.</p></dd>
 <dt>haq.var</dt><dd><p>Variance of HAQ in the population.</p></dd>
 <dt>painhaq.cor</dt><dd><p>Correlation between pain and HAQ in the population.</p></dd>
+
 </dl>
+
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -651,19 +662,23 @@ In particular, the object 'pain' in the list is a list containing:</p><dl class=
   </div>
 </div>
 
+
       <footer>
       <div class="copyright">
-  <p>Developed by Devin Incerti, Jeroen P. Jansen.</p>
+  <p>Developed by Jeroen P. Jansen, Devin Incerti.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
+
       </footer>
    </div>
 
   
 
+
   </body>
 </html>
+
 

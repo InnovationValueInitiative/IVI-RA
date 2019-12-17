@@ -7,8 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The patient population • iviRA</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/simplex/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous">
+<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><meta property="og:title" content="The patient population">
 <meta property="og:description" content="">
 <meta name="twitter:card" content="summary">
@@ -30,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">iviRA</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">1.0.0.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">2.0.0</span>
       </span>
     </div>
 
@@ -118,7 +119,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/InnovationValueInitiative/IVI-RA">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -131,6 +132,7 @@
 <!--/.navbar -->
 
       
+
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
@@ -152,38 +154,38 @@
 <p>We can randomly sample a heterogeneous population with default setting. To examine these settings type <code>?sample_pats</code> into the console.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">n.pats &lt;-<span class="st"> </span><span class="dv">100</span>
 pop &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pop.html">sample_pop</a></span>(<span class="dt">n =</span> n.pats, <span class="dt">type =</span> <span class="st">"heterog"</span>)
-<span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(pop)</code></pre></div>
+<span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(pop)</code></pre></div>
 <pre><code>##           age male weight prev_dmards    das28     sdai     cdai      haq0
-## [1,] 53.88004    0     75           4 6.572856 54.38978 53.86545 1.7484387
-## [2,] 61.31761    0     75           4 4.208864 31.16897 33.95544 1.2841086
-## [3,] 62.73725    0     75           5 7.668678 60.63666 57.83942 2.0796582
-## [4,] 74.18800    0     75           2 8.618711 60.38622 66.83134 1.3406628
-## [5,] 52.06278    0     75           1 5.442815 38.14211 30.62040 0.1958937
-## [6,] 28.99411    0     75           2 6.348633 43.63887 39.52236 1.7382138</code></pre>
+## [1,] 49.84687    0     75           3 5.278941 35.30405 30.88360 1.4434283
+## [2,] 63.93068    0     75           3 7.879359 64.69121 63.10818 1.3403692
+## [3,] 54.31851    0     75           3 4.351003 32.23475 27.36186 1.0101867
+## [4,] 61.55152    0     75           3 5.491656 41.14569 32.46161 0.2523587
+## [5,] 46.81421    0     75           3 5.586092 49.22267 43.54197 2.0331631
+## [6,] 52.44612    1     89           6 5.155279 26.15368 23.36092 0.6068555</code></pre>
 <p>We can also customize the distribution of patients. For example, suppose we want to study a younger and healthier population. We might then sample patients by customizing arguments in <code>sample_pats</code>,</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pop2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_pop.html">sample_pop</a></span>(<span class="dt">n =</span> n.pats, <span class="dt">type =</span> <span class="st">"heterog"</span>, <span class="dt">age_mean =</span> <span class="dv">45</span>, <span class="dt">das28_mean =</span> <span class="dv">4</span>, <span class="dt">sdai_mean =</span> <span class="dv">20</span>, 
                     <span class="dt">cdai_mean =</span> <span class="dv">18</span>)
-<span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(pop2)</code></pre></div>
-<pre><code>##           age male weight prev_dmards    das28      sdai      cdai
-## [1,] 23.99684    0     75           3 4.274272 26.084096 24.237744
-## [2,] 41.57558    1     89           2 5.558402 24.058515 17.056680
-## [3,] 49.69941    0     75           6 4.571363 20.651153 17.176171
-## [4,] 57.76840    1     89           4 3.721735 17.023215  4.697975
-## [5,] 51.46727    0     75           3 2.769621 13.795803 10.304489
-## [6,] 34.94004    0     75           4 3.401002  1.979372  3.454537
+<span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(pop2)</code></pre></div>
+<pre><code>##           age male weight prev_dmards    das28     sdai      cdai
+## [1,] 35.80678    0     75           4 3.147109 10.45602  5.330694
+## [2,] 50.84882    1     89           4 4.917489 35.44312 28.536867
+## [3,] 45.62702    1     89           4 4.923688 31.30804 31.798102
+## [4,] 50.55279    1     89           0 3.092341 14.46860 11.001725
+## [5,] 33.50284    0     75           4 4.017811 24.24751 18.708423
+## [6,] 34.39638    0     75           3 4.558657 16.26253 13.870842
 ##           haq0
-## [1,] 1.7829844
-## [2,] 1.2804805
-## [3,] 1.7850090
-## [4,] 0.4630017
-## [5,] 0.5388198
-## [6,] 1.5940766</code></pre>
+## [1,] 1.4348361
+## [2,] 1.9746129
+## [3,] 1.8481884
+## [4,] 0.4218599
+## [5,] 1.3028964
+## [6,] 1.0850781</code></pre>
 </div>
 <div id="using-your-own-patient-population" class="section level2">
 <h2 class="hasAnchor">
 <a href="#using-your-own-patient-population" class="anchor"></a>Using your own patient population</h2>
 <p>Users who have data on their own patient population may wish to run the simulation using their own data. To do this, users can simply load their own data and convert it to an R matrix. The matrix must have 1 row for each patient and the same columns as returned by <code>sample_pats</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/colnames">colnames</a></span>(pop)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(pop)</code></pre></div>
 <pre><code>## [1] "age"         "male"        "weight"      "prev_dmards" "das28"      
 ## [6] "sdai"        "cdai"        "haq0"</code></pre>
 <div>
@@ -213,17 +215,20 @@ pop &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sample_
 </div>
 
 
+
       <footer><div class="copyright">
-  <p>Developed by Devin Incerti, Jeroen P. Jansen.</p>
+  <p>Developed by Jeroen P. Jansen, Devin Incerti.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
+
       </footer>
 </div>
 
   
+
 
   </body>
 </html>
