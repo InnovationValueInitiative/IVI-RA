@@ -116,7 +116,7 @@ navbar:
   - text: "Web apps"
     menu:
       - text: "IVI-RA Model Interface"
-        href: https://innovationandvalueinitiative.shinyapps.io/ivi-ra-expert/
+        href: https://ivi-ra-expert.clarityviz.com/
       - text: "IVI-RA Value Tool"
-        href: https://innovationandvalueinitiative.shinyapps.io/ivi-ra/
+        href: https://ivi-ra.clarityviz.com/
 
