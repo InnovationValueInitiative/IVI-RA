@@ -544,7 +544,7 @@ sample_mvnorm <- function(n, mu, Sigma){
   mu.na.pos <- which(is.na(mu))
   if (length(mu.na.pos) == 0){
       sim <- MASS::mvrnorm(n, mu, Sigma)
-      if (class(sim) == "numeric") sim <- t(as.matrix(sim)) 
+      if (inherits(sim, "numeric")) sim <- t(as.matrix(sim)) 
   } else{
       if (length(mu) == 1){
         stop("mu is missing and of length 1.")
@@ -558,7 +558,7 @@ sample_mvnorm <- function(n, mu, Sigma){
          contains missing values.")
       }
       sim <- MASS::mvrnorm(n, mu, Sigma)
-      if (class(sim) == "numeric") sim <- t(as.matrix(sim)) 
+      if (inherits(sim, "numeric")) sim <- t(as.matrix(sim)) 
       sim.na <- matrix(NA, nrow = n, ncol = length(mu.na.pos))
       colnames(sim.na) <- mu.na.names
       sim <- cbind(sim, sim.na)
