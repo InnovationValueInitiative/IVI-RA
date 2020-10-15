@@ -8,29 +8,23 @@
 
 <title>Time to treatment discontinuation parameters — ttd • iviRA</title>
 
-
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/simplex/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/simplex/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
-
-<!-- bootstrap-toc -->
-<link rel="stylesheet" href="../bootstrap-toc.css">
-<script src="../bootstrap-toc.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -38,14 +32,14 @@
 
 
 
-
 <meta property="og:title" content="Time to treatment discontinuation parameters — ttd" />
+
 <meta property="og:description" content="ttd.all, ttd.da, and ttd.eular are lists of lists containing parameters 
 from statistical models of time to treatment discontinuation. ttd.all contains 
 parameters representative of all patients, ttd.da contains covariates for disease 
 activity level (moderate, high), and ttd.eular is stratified by EULAR response 
 (moderate, good)." />
-
+<meta name="twitter:card" content="summary" />
 
 
 
@@ -62,7 +56,7 @@ activity level (moderate, high), and ttd.eular is stratified by EULAR response
 
   </head>
 
-  <body data-spy="scroll" data-target="#toc">
+  <body>
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -161,9 +155,10 @@ activity level (moderate, high), and ttd.eular is stratified by EULAR response
   </ul>
 </li>
       </ul>
+      
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/InnovationValueInitiative/IVI-RA/">
+  <a href="https://github.com/InnovationValueInitiative/IVI-RA">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -187,11 +182,13 @@ activity level (moderate, high), and ttd.eular is stratified by EULAR response
     </div>
 
     <div class="ref-description">
+    
     <p><code>ttd.all</code>, <code>ttd.da</code>, and <code>ttd.eular</code> are lists of lists containing parameters 
 from statistical models of time to treatment discontinuation. <code>ttd.all</code> contains 
 parameters representative of all patients, <code>ttd.da</code> contains covariates for disease 
 activity level (moderate, high), and <code>ttd.eular</code> is stratified by EULAR response 
 (moderate, good).</p>
+    
     </div>
 
     <pre class="usage"><span class='no'>ttd.eular</span>
@@ -199,11 +196,11 @@ activity level (moderate, high), and <code>ttd.eular</code> is stratified by EUL
 <span class='no'>ttd.da</span>
 
 <span class='no'>ttd.all</span></pre>
-
-
+        
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
     <p>A list as described in <a href='sample_pars.html'>sample_pars</a></p>
+    
     <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
 
     <p>Stevenson, Matt, et al. "Adalimumab, etanercept, infliximab, certolizumab pegol, 
@@ -217,16 +214,25 @@ Arthritis care &amp; research 63.12 (2011): 1672-1679.</p>
 <p>Guyot, Patricia, et al. "Enhanced secondary analysis of survival data: reconstructing the data
  from published Kaplan-Meier survival curves." BMC medical research 
  methodology 12.1 (2012): 9.</p>
+    
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>Models were fit using <em>flexsurv</em>.
 Survival curves are based on analyses of reconstructed individual patient data.</p>
+    
 
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
-    <nav id="toc" data-toggle="toc" class="sticky-top">
-      <h2 data-toc-skip>Contents</h2>
-    </nav>
+  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+    <h2>Contents</h2>
+    <ul class="nav nav-pills nav-stacked">
+      
+      <li><a href="#format">Format</a></li>
+
+      <li><a href="#source">Source</a></li>
+
+      <li><a href="#details">Details</a></li>
+          </ul>
+
   </div>
 </div>
 
@@ -237,7 +243,7 @@ Survival curves are based on analyses of reconstructed individual patient data.<
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
 
       </footer>

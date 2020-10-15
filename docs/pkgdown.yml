@@ -1,5 +1,5 @@
-pandoc: 2.7.3
-pkgdown: 1.5.1
+pandoc: 1.19.2.1
+pkgdown: 1.4.1
 pkgdown_sha: ~
 articles:
   00-intro: 00-intro.html
@@ -14,5 +14,4 @@ articles:
   how-to-contribute: how-to-contribute.html
   pull-requests: pull-requests.html
   reproducibility: reproducibility.html
-last_built: 2020-10-15T03:33Z
 
