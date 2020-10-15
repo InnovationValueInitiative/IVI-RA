@@ -3,7 +3,7 @@ template:
     bootswatch: simplex
     
 development:
-  mode: unreleased     
+  mode: auto     
     
 articles:
   - title: "How to run the model"
