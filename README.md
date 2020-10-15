@@ -26,8 +26,8 @@ library(iviRA)
 ## Web interfaces
 You can also run the model online using our web interfaces.
 
-* [IVI-RA Model Interface](https://innovationandvalueinitiative.shinyapps.io/ivi-ra-expert/): full control over treatment sequences, the patient population, model parameters, model structures, and the time horizon. 
-* [IVI-RA Value Tool](http://apps.thevalueinitiative.org/ivi-ra/): a more streamlined experience for users with less experience in decision-analytic modeling and rheumatoid arthritis. 
+* [IVI-RA Model Interface](https://ivi-ra-expert.clarityviz.com/): full control over treatment sequences, the patient population, model parameters, model structures, and the time horizon. 
+* [IVI-RA Value Tool](https://ivi-ra.clarityviz.com/): a more streamlined experience for users with less experience in decision-analytic modeling and rheumatoid arthritis. 
 
 ## Collaborate
 * If you found a bug or would like to request a new feature, then submit an [issue](https://github.com/InnovationValueInitiative/IVI-RA/issues).

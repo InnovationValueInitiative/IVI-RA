@@ -31,5 +31,5 @@ The IVI-RA model is part of the [Open Source Value Project (OSVP)](http://www.th
 ## Web applications
 In addition to running the model with the R package, users can run the model online with our web interfaces:
 
-* [IVI-RA Model Interface](https://innovationandvalueinitiative.shinyapps.io/ivi-ra-expert/): full control over treatment sequences, the patient population, model parameters, model structures, and the time horizon.
-* [IVI-RA Value Tool](https://innovationandvalueinitiative.shinyapps.io/ivi-ra): a more streamlined experience for users with less experience in decision-analytic modeling and rheumatoid arthritis.
+* [IVI-RA Model Interface](https://ivi-ra-expert.clarityviz.com/): full control over treatment sequences, the patient population, model parameters, model structures, and the time horizon.
+* [IVI-RA Value Tool](https://ivi-ra.clarityviz.com/): a more streamlined experience for users with less experience in decision-analytic modeling and rheumatoid arthritis.
