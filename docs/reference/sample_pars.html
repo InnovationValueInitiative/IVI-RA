@@ -8,23 +8,29 @@
 
 <title>Sample parameters — sample_pars • iviRA</title>
 
-<!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-<!-- Bootstrap -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/simplex/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<!-- jquery -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+<!-- Bootstrap -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/simplex/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -32,10 +38,10 @@
 
 
 
-<meta property="og:title" content="Sample parameters — sample_pars" />
 
+<meta property="og:title" content="Sample parameters — sample_pars" />
 <meta property="og:description" content="Randomly draw parameters from their (joint) probability distribution." />
-<meta name="twitter:card" content="summary" />
+
 
 
 
@@ -52,7 +58,7 @@
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -66,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">iviRA</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">2.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0</span>
       </span>
     </div>
 
@@ -143,18 +149,17 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra-expert/">IVI-RA Model Interface</a>
+      <a href="https://ivi-ra-expert.clarityviz.com/">IVI-RA Model Interface</a>
     </li>
     <li>
-      <a href="https://innovationandvalueinitiative.shinyapps.io/ivi-ra/">IVI-RA Value Tool</a>
+      <a href="https://ivi-ra.clarityviz.com/">IVI-RA Value Tool</a>
     </li>
   </ul>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/InnovationValueInitiative/IVI-RA">
+  <a href="https://github.com/InnovationValueInitiative/IVI-RA/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -178,55 +183,53 @@
     </div>
 
     <div class="ref-description">
-    
     <p>Randomly draw parameters from their (joint) probability distribution.</p>
-    
     </div>
 
-    <pre class="usage"><span class='fu'>sample_pars</span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='no'>input_data</span>, <span class='kw'>tx_names</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/treatments.html'>treatments</a></span>$<span class='no'>sname</span>,
-  <span class='kw'>nma_acr_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/nma.html'>nma.acr.naive</a></span>$<span class='no'>mean</span>,
-  <span class='kw'>nma_acr_vcov</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/nma.html'>nma.acr.naive</a></span>$<span class='no'>vcov</span>, <span class='kw'>nma_acr_k_lower</span> <span class='kw'>=</span> <span class='fl'>0.75</span>,
-  <span class='kw'>nma_acr_k_upper</span> <span class='kw'>=</span> <span class='fl'>0.92</span>, <span class='kw'>nma_das28_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/nma.html'>nma.das28.naive</a></span>$<span class='no'>mean</span>,
-  <span class='kw'>nma_das28_vcov</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/nma.html'>nma.das28.naive</a></span>$<span class='no'>vcov</span>,
+    <pre class="usage"><span class='fu'>sample_pars</span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='no'>input_data</span>, <span class='kw'>tx_names</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='treatments.html'>treatments</a></span>$<span class='no'>sname</span>,
+  <span class='kw'>nma_acr_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='nma.html'>nma.acr.naive</a></span>$<span class='no'>mean</span>,
+  <span class='kw'>nma_acr_vcov</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='nma.html'>nma.acr.naive</a></span>$<span class='no'>vcov</span>, <span class='kw'>nma_acr_k_lower</span> <span class='kw'>=</span> <span class='fl'>0.75</span>,
+  <span class='kw'>nma_acr_k_upper</span> <span class='kw'>=</span> <span class='fl'>0.92</span>, <span class='kw'>nma_das28_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='nma.html'>nma.das28.naive</a></span>$<span class='no'>mean</span>,
+  <span class='kw'>nma_das28_vcov</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='nma.html'>nma.das28.naive</a></span>$<span class='no'>vcov</span>,
   <span class='kw'>nma_das28_k_lower</span> <span class='kw'>=</span> <span class='fl'>0.75</span>, <span class='kw'>nma_das28_k_upper</span> <span class='kw'>=</span> <span class='fl'>0.92</span>,
-  <span class='kw'>nma_haq_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/nma.html'>nma.haq.naive</a></span>$<span class='no'>mean</span>,
-  <span class='kw'>nma_haq_vcov</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/nma.html'>nma.haq.naive</a></span>$<span class='no'>vcov</span>, <span class='kw'>nma_haq_k_lower</span> <span class='kw'>=</span> <span class='fl'>0.75</span>,
-  <span class='kw'>nma_haq_k_upper</span> <span class='kw'>=</span> <span class='fl'>0.92</span>, <span class='kw'>acr2haq_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/acr2haq.html'>acr2haq</a></span>$<span class='no'>mean</span>,
-  <span class='kw'>acr2haq_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/acr2haq.html'>acr2haq</a></span>$<span class='no'>se</span>,
-  <span class='kw'>acr2das28_lower</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/acr2das28.html'>acr2das28</a></span>$<span class='no'>inception</span>$<span class='no'>lower</span>,
-  <span class='kw'>acr2das28_upper</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/acr2das28.html'>acr2das28</a></span>$<span class='no'>inception</span>$<span class='no'>upper</span>,
-  <span class='kw'>acr2sdai_lower</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/acr2sdai.html'>acr2sdai</a></span>$<span class='no'>inception</span>$<span class='no'>lower</span>,
-  <span class='kw'>acr2sdai_upper</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/acr2sdai.html'>acr2sdai</a></span>$<span class='no'>inception</span>$<span class='no'>upper</span>,
-  <span class='kw'>acr2cdai_lower</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/acr2cdai.html'>acr2cdai</a></span>$<span class='no'>inception</span>$<span class='no'>lower</span>,
-  <span class='kw'>acr2cdai_upper</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/acr2cdai.html'>acr2cdai</a></span>$<span class='no'>inception</span>$<span class='no'>upper</span>,
-  <span class='kw'>acr2eular_mat</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/acr2eular.html'>acr2eular</a></span>,
-  <span class='kw'>eular2haq_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/eular2haq.html'>eular2haq</a></span>$<span class='no'>mean</span>,
-  <span class='kw'>eular2haq_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/eular2haq.html'>eular2haq</a></span>$<span class='no'>se</span>, <span class='kw'>rebound_lower</span> <span class='kw'>=</span> <span class='fl'>0.7</span>,
-  <span class='kw'>rebound_upper</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>haq_lprog_tx_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/haq.lprog.html'>haq.lprog</a></span>$<span class='no'>tx</span>$<span class='no'>est</span>,
-  <span class='kw'>haq_lprog_tx_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/haq.lprog.html'>haq.lprog</a></span>$<span class='no'>tx</span>$<span class='no'>se</span>,
-  <span class='kw'>haq_lprog_age_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/haq.lprog.html'>haq.lprog</a></span>$<span class='no'>diff.age</span>$<span class='no'>est</span>,
-  <span class='kw'>haq_lprog_age_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/haq.lprog.html'>haq.lprog</a></span>$<span class='no'>diff.age</span>$<span class='no'>se</span>,
-  <span class='kw'>haq_lcgm_pars</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/haq.lcgm.html'>haq.lcgm</a></span>, <span class='kw'>ltfemale</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/lifetable.html'>lifetable.female</a></span>,
-  <span class='kw'>ltmale</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/lifetable.html'>lifetable.male</a></span>, <span class='kw'>mort_logor</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/mort.or.html'>mort.or</a></span>$<span class='no'>logor</span>,
-  <span class='kw'>mort_logor_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/mort.or.html'>mort.or</a></span>$<span class='no'>logor_se</span>,
-  <span class='kw'>mort_loghr_haqdif</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/mort.hr.haqdif.html'>mort.hr.haqdif</a></span>$<span class='no'>loghr</span>,
-  <span class='kw'>mort_loghr_se_haqdif</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/mort.hr.haqdif.html'>mort.hr.haqdif</a></span>$<span class='no'>loghr_se</span>,
-  <span class='kw'>ttd_all</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/ttd.html'>ttd.all</a></span>, <span class='kw'>ttd_da</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/ttd.html'>ttd.da</a></span>,
-  <span class='kw'>ttd_eular</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/ttd.html'>ttd.eular</a></span>, <span class='kw'>ttsi</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/ttsi.html'>ttsi</a></span>,
-  <span class='kw'>tx_cost</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/tx.cost.html'>tx.cost</a></span>,
-  <span class='kw'>hosp_days_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/hosp.cost.html'>hosp.cost</a></span>$<span class='no'>days_mean</span>,
-  <span class='kw'>hosp_days_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/hosp.cost.html'>hosp.cost</a></span>$<span class='no'>days_se</span>,
-  <span class='kw'>hosp_cost_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/hosp.cost.html'>hosp.cost</a></span>$<span class='no'>cost_pday_mean</span>,
-  <span class='kw'>hosp_cost_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/hosp.cost.html'>hosp.cost</a></span>$<span class='no'>cost_pday_se</span>,
-  <span class='kw'>mgmt_cost_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/mgmt.cost.html'>mgmt.cost</a></span>$<span class='no'>est</span>,
-  <span class='kw'>mgmt_cost_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/mgmt.cost.html'>mgmt.cost</a></span>$<span class='no'>se</span>, <span class='kw'>si_cost</span> <span class='kw'>=</span> <span class='fl'>5873</span>,
+  <span class='kw'>nma_haq_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='nma.html'>nma.haq.naive</a></span>$<span class='no'>mean</span>,
+  <span class='kw'>nma_haq_vcov</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='nma.html'>nma.haq.naive</a></span>$<span class='no'>vcov</span>, <span class='kw'>nma_haq_k_lower</span> <span class='kw'>=</span> <span class='fl'>0.75</span>,
+  <span class='kw'>nma_haq_k_upper</span> <span class='kw'>=</span> <span class='fl'>0.92</span>, <span class='kw'>acr2haq_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='acr2haq.html'>acr2haq</a></span>$<span class='no'>mean</span>,
+  <span class='kw'>acr2haq_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='acr2haq.html'>acr2haq</a></span>$<span class='no'>se</span>,
+  <span class='kw'>acr2das28_lower</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='acr2das28.html'>acr2das28</a></span>$<span class='no'>inception</span>$<span class='no'>lower</span>,
+  <span class='kw'>acr2das28_upper</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='acr2das28.html'>acr2das28</a></span>$<span class='no'>inception</span>$<span class='no'>upper</span>,
+  <span class='kw'>acr2sdai_lower</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='acr2sdai.html'>acr2sdai</a></span>$<span class='no'>inception</span>$<span class='no'>lower</span>,
+  <span class='kw'>acr2sdai_upper</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='acr2sdai.html'>acr2sdai</a></span>$<span class='no'>inception</span>$<span class='no'>upper</span>,
+  <span class='kw'>acr2cdai_lower</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='acr2cdai.html'>acr2cdai</a></span>$<span class='no'>inception</span>$<span class='no'>lower</span>,
+  <span class='kw'>acr2cdai_upper</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='acr2cdai.html'>acr2cdai</a></span>$<span class='no'>inception</span>$<span class='no'>upper</span>,
+  <span class='kw'>acr2eular_mat</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='acr2eular.html'>acr2eular</a></span>,
+  <span class='kw'>eular2haq_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='eular2haq.html'>eular2haq</a></span>$<span class='no'>mean</span>,
+  <span class='kw'>eular2haq_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='eular2haq.html'>eular2haq</a></span>$<span class='no'>se</span>, <span class='kw'>rebound_lower</span> <span class='kw'>=</span> <span class='fl'>0.7</span>,
+  <span class='kw'>rebound_upper</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>haq_lprog_tx_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='haq.lprog.html'>haq.lprog</a></span>$<span class='no'>tx</span>$<span class='no'>est</span>,
+  <span class='kw'>haq_lprog_tx_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='haq.lprog.html'>haq.lprog</a></span>$<span class='no'>tx</span>$<span class='no'>se</span>,
+  <span class='kw'>haq_lprog_age_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='haq.lprog.html'>haq.lprog</a></span>$<span class='no'>diff.age</span>$<span class='no'>est</span>,
+  <span class='kw'>haq_lprog_age_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='haq.lprog.html'>haq.lprog</a></span>$<span class='no'>diff.age</span>$<span class='no'>se</span>,
+  <span class='kw'>haq_lcgm_pars</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='haq.lcgm.html'>haq.lcgm</a></span>, <span class='kw'>ltfemale</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='lifetable.html'>lifetable.female</a></span>,
+  <span class='kw'>ltmale</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='lifetable.html'>lifetable.male</a></span>, <span class='kw'>mort_logor</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='mort.or.html'>mort.or</a></span>$<span class='no'>logor</span>,
+  <span class='kw'>mort_logor_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='mort.or.html'>mort.or</a></span>$<span class='no'>logor_se</span>,
+  <span class='kw'>mort_loghr_haqdif</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='mort.hr.haqdif.html'>mort.hr.haqdif</a></span>$<span class='no'>loghr</span>,
+  <span class='kw'>mort_loghr_se_haqdif</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='mort.hr.haqdif.html'>mort.hr.haqdif</a></span>$<span class='no'>loghr_se</span>,
+  <span class='kw'>ttd_all</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='ttd.html'>ttd.all</a></span>, <span class='kw'>ttd_da</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='ttd.html'>ttd.da</a></span>,
+  <span class='kw'>ttd_eular</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='ttd.html'>ttd.eular</a></span>, <span class='kw'>ttsi</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='ttsi.html'>ttsi</a></span>,
+  <span class='kw'>tx_cost</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='tx.cost.html'>tx.cost</a></span>,
+  <span class='kw'>hosp_days_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='hosp.cost.html'>hosp.cost</a></span>$<span class='no'>days_mean</span>,
+  <span class='kw'>hosp_days_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='hosp.cost.html'>hosp.cost</a></span>$<span class='no'>days_se</span>,
+  <span class='kw'>hosp_cost_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='hosp.cost.html'>hosp.cost</a></span>$<span class='no'>cost_pday_mean</span>,
+  <span class='kw'>hosp_cost_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='hosp.cost.html'>hosp.cost</a></span>$<span class='no'>cost_pday_se</span>,
+  <span class='kw'>mgmt_cost_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='mgmt.cost.html'>mgmt.cost</a></span>$<span class='no'>est</span>,
+  <span class='kw'>mgmt_cost_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='mgmt.cost.html'>mgmt.cost</a></span>$<span class='no'>se</span>, <span class='kw'>si_cost</span> <span class='kw'>=</span> <span class='fl'>5873</span>,
   <span class='kw'>si_cost_range</span> <span class='kw'>=</span> <span class='fl'>0.2</span>, <span class='kw'>si_ul</span> <span class='kw'>=</span> <span class='fl'>0.156</span>, <span class='kw'>si_ul_range</span> <span class='kw'>=</span> <span class='fl'>0.2</span>,
-  <span class='kw'>tx_attr_utilcoef_lower</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/utility.tx.attr.html'>utility.tx.attr</a></span>$<span class='no'>coef</span>$<span class='no'>lower</span>,
-  <span class='kw'>tx_attr_utilcoef_upper</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/utility.tx.attr.html'>utility.tx.attr</a></span>$<span class='no'>coef</span>$<span class='no'>upper</span>,
-  <span class='kw'>tx_attr_utilcoef_names</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/utility.tx.attr.html'>utility.tx.attr</a></span>$<span class='no'>coef</span>$<span class='no'>var</span>,
-  <span class='kw'>utility_mixture_pain</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/pain.html'>pain</a></span>, <span class='kw'>pl_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/prod.loss.html'>prod.loss</a></span>$<span class='no'>est</span>,
-  <span class='kw'>pl_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/iviRA/man/prod.loss.html'>prod.loss</a></span>$<span class='no'>se</span>)</pre>
-    
+  <span class='kw'>tx_attr_utilcoef_lower</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='utility.tx.attr.html'>utility.tx.attr</a></span>$<span class='no'>coef</span>$<span class='no'>lower</span>,
+  <span class='kw'>tx_attr_utilcoef_upper</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='utility.tx.attr.html'>utility.tx.attr</a></span>$<span class='no'>coef</span>$<span class='no'>upper</span>,
+  <span class='kw'>tx_attr_utilcoef_names</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='utility.tx.attr.html'>utility.tx.attr</a></span>$<span class='no'>coef</span>$<span class='no'>var</span>,
+  <span class='kw'>utility_mixture_pain</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='pain.html'>pain</a></span>, <span class='kw'>pl_mean</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='prod.loss.html'>prod.loss</a></span>$<span class='no'>est</span>,
+  <span class='kw'>pl_se</span> <span class='kw'>=</span> <span class='kw pkg'>iviRA</span><span class='kw ns'>::</span><span class='no'><a href='prod.loss.html'>prod.loss</a></span>$<span class='no'>se</span>)</pre>
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -511,11 +514,11 @@ should be the same as iviRA::pain. Currently, each element of the list must be o
       <td><p>Standard error of mean annual productivity loss per 1-unit increase in HAQ.</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>List containing samples for the following model parameters:</p>
-<dl class='dl-horizontal'>
+<dl'>
   <dt>acr</dt><dd><p>A list containing randomly sampled values of the parameters of the 
   statistical model of ACR response at 6 months.</p></dd> 
   <dt>das28</dt><dd><p>A list containing randomly sampled values of the parameters of the 
@@ -582,7 +585,6 @@ should be the same as iviRA::pain. Currently, each element of the list must be o
 
 </dl>
 
-    
     <h2 class="hasAnchor" id="time-to-treatment-discontinuation"><a class="anchor" href="#time-to-treatment-discontinuation"></a>Time to treatment discontinuation</h2>
 
     
@@ -591,7 +593,7 @@ should be the same as iviRA::pain. Currently, each element of the list must be o
  list identifies the name of the probability distribution; the possible distributions are the 
  exponential (<code>exponential</code>), Weibull (<code>weibull</code>), Gompertz (<code>gompertz</code>),
 gamma (<code>gamma</code>), log-logistic (<code>llogis</code>), lognormal (<code>lnorm</code>), and generalized gamma (<code>gengamma</code>). Each distribution 
-should also contain a list with five elements:</p><dl class='dl-horizontal'>
+should also contain a list with five elements:</p><dl'>
 <dt>est</dt><dd><p>A vector of the maximum likelihood estimates of the parameters.</p></dd>
 <dt>vcov</dt><dd><p>The variance-covariance of the parameters.</p></dd>
 <dt>loc.index</dt><dd><p>A vector of the indices of the location parameters.</p></dd>
@@ -600,12 +602,11 @@ should also contain a list with five elements:</p><dl class='dl-horizontal'>
 
 </dl><p>The maximum likelihood estimates should be transformed to the real line. For example, if the model is fit using 
 <code>flexsurvreg</code> in the <code>flexsurv</code> package, the output should be returned from <code>res.t</code>.</p>
-    
     <h2 class="hasAnchor" id="sampled-mixture-model-parameters"><a class="anchor" href="#sampled-mixture-model-parameters"></a>Sampled mixture model parameters</h2>
 
     
 
-<p>The sampled mixture model parameters are contained in a list containing the following:</p><dl class='dl-horizontal'>
+<p>The sampled mixture model parameters are contained in a list containing the following:</p><dl'>
 <dt>beta1</dt><dd><p>Coefficients for class 1 explanatory variables. A matrix of random draws where each
  column is an explanatory variable.</p></dd>
 <dt>beta2</dt><dd><p>Coefficients for class 2 explanatory variables. A matrix of random draws where each
@@ -629,7 +630,7 @@ of class membership. An array of matrices where each matrix is a random draw. Th
 four columns (one for each explanatory variable).</p></dd>
 
 </dl><p>The list also contains summary statistics for pain and HAQ, which is needed to simulate pain. 
-In particular, the object 'pain' in the list is a list containing:</p><dl class='dl-horizontal'>
+In particular, the object 'pain' in the list is a list containing:</p><dl'>
 <dt>pain.mean</dt><dd><p>Mean of pain score in the population.</p></dd>
 <dt>haq.mean</dt><dd><p>Mean of HAQ score in the population.</p></dd>
 <dt>pain.var</dt><dd><p>Variance of pain score in the population.</p></dd>
@@ -638,27 +639,16 @@ In particular, the object 'pain' in the list is a list containing:</p><dl class=
 
 </dl>
 
-    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='no'>pop</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='sample_pop.html'>sample_pop</a></span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"homog"</span>)
 <span class='no'>input.dat</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='get_input_data.html'>get_input_data</a></span>(<span class='kw'>pop</span> <span class='kw'>=</span> <span class='no'>pop</span>)
 <span class='no'>parsamp</span> <span class='kw'>&lt;-</span> <span class='fu'>sample_pars</span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>input_dat</span> <span class='kw'>=</span> <span class='no'>input.dat</span>)</div></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      
-      <li><a href="#value">Value</a></li>
-
-      <li><a href="#time-to-treatment-discontinuation">Time to treatment discontinuation</a></li>
-
-      <li><a href="#sampled-mixture-model-parameters">Sampled mixture model parameters</a></li>
-      
-      <li><a href="#examples">Examples</a></li>
-    </ul>
-
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -669,7 +659,7 @@ In particular, the object 'pain' in the list is a list containing:</p><dl class=
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>
